@@ -27,6 +27,7 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Transparência dos sprites | `alpha_cut = 1` (DISCARD) | Evita bugs de ordem de desenho entre sprites sobrepostos (usa o depth buffer). |
 | Filtro de textura | Nearest (`texture_filter = 0`) nos sprites; nearest com mipmaps no chão | Pixel art nítida; o chão com mipmaps não "cintila" ao longe. |
 | Importação de PNG | Lossless (`compress/mode=0`), sem "detect 3D" (`detect_3d/compress_to=0`) | Compressão VRAM borra/estraga pixel art. |
+| Iluminação | Sprites e chão **unshaded** (mostram a cor exata da pixel art); o sol fica na cena para objetos 3D futuros | Com luz, o chão ficava "lavado" e não combinava com os sprites. |
 | Sombra do personagem | Sombra falsa (sprite oval deitado no chão); o sprite não projeta sombra | Sombra real de billboard fica estranha. |
 | Movimento suave | Interpolação de física ligada; câmera move em `_process` usando `get_global_transform_interpolated()` | Evita tremedeira em monitores com Hz diferente da física (60). |
 | Arte | Provisória gerada por script (`scripts/ferramentas/gerar_arte_provisoria.gd`); arte final pelo SpriteCook | Começar sem depender de arte externa; SpriteCook gasta créditos. |
