@@ -27,6 +27,10 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Herói | `CharacterBody2D` + `AnimatedSprite2D`; origem nos pés; espelha com `flip_h` | Simples e padrão do Godot. |
 | Sensação do pulo | Altura variável (soltar corta o pulo), coyote time, buffer de pulo, gravidade maior na queda | Controle "justo", típico do gênero. |
 | Fase | `TileMapLayer` gerado por script a partir de um mapa em texto (`scripts/ferramentas/gerar_fase_teste.gd`); plataformas finas são *one-way* (atravessa por baixo) | Fácil de mudar o layout; depois dá para editar no editor. |
+| Fase atual | **Reta**, 120 ladrilhos, sem plataformas nem buracos (pedido do usuário). Os tipos `=` e `P` continuam disponíveis no gerador para depois. | Focar em andar, correr e pular. |
+| Correr | **Dois toques rápidos na direção** e segurar (`janela_toque_duplo` = 0,25 s). Soltar ou inverter volta a andar. Lógica reutilizável em `ToqueDuplo`. | Escolha do usuário. |
+| Animação de correr | **Provisória:** quadros do walk a 20 fps (animação `correr` em `heroi_frames.tres`). Trocar pela animação `run` do SpriteCook (~32 créditos) sem mexer no código. | Só sobraram 2 créditos. |
+| Arquitetura do herói | `jogador.gd` = só física (passos pequenos). `componentes/animacao_jogador.gd` = só visual, lê o Jogador e escuta o sinal `aterrissou`. | Responsabilidade única (SOLID). |
 | Câmera | `Camera2D` filha do herói, com suavização, olha à frente na direção em que ele corre; limites calculados pelo tamanho da fase | Ver o que vem pela frente. |
 | Movimento suave | Interpolação de física ligada | Sem tremedeira em monitores de 144 Hz. |
 
@@ -35,7 +39,10 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 scenes/               cenas (.tscn); main.tscn é a cena principal
 scenes/fases/         fases (geradas ou montadas no editor)
 scripts/              scripts GDScript das cenas
+scripts/componentes/  componentes reutilizáveis (nós com um trabalho só)
+scripts/utilitarios/  classes sem nó (RefCounted), reutilizáveis
 scripts/ferramentas/  utilitários rodados pela linha de comando (não fazem parte do jogo)
+.claude/skills/       skills da IA (regras de código e revisão)
 assets/sprites/       sprites e SpriteFrames (assets/sprites/heroi/ = herói)
 assets/tiles/         ladrilhos e TileSet
 assets/audio/         sons e músicas
@@ -45,6 +52,7 @@ tests/                testes automáticos (rodam headless)
 ```
 
 ## Convenções
+- **Antes de escrever ou mudar qualquer `.gd`/`.tscn`, carregue a skill `codigo-limpo-godot`** (Clean Code, SOLID, DRY). Antes de fechar uma fatia, rode a skill `revisar-codigo` nos arquivos mudados.
 - **Arquivos e funções:** `snake_case` (ex.: `jogador.gd`, `_atualizar_animacao()`).
 - **Classes e nós:** `PascalCase` (ex.: `class_name Jogador`, nó `Sprite`).
 - **Comentários e nomes do jogo em português.** Termos do Godot ficam em inglês.
@@ -92,11 +100,17 @@ PowerShell:
 ```
 
 ## Como rodar os testes
-Cada teste é um script em `tests/` que estende `SceneTree`, imprime `PASSOU`/`FALHOU` e sai com código 0 ou 1:
+Cada teste é um script `tests/teste_*.gd` que estende `SceneTree`, imprime `PASSOU`/`FALHOU` e sai com código 0 ou 1.
+Rodar **tudo** (importa, roda o jogo procurando erros/avisos e roda todos os testes):
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tests\rodar_testes.ps1
+```
+Um teste só:
 ```powershell
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tests/teste_jogador.gd
 ```
 
 ## Estado atual
 - Fatias 1 e 2 (2.5D): boneco na relva e herói do SpriteCook. Substituídas pela fatia 3.
-- Fatia 3: herói correndo e pulando numa fase de teste em 2D lateral.
+- Fatia 3: herói andando e pulando numa fase de teste em 2D lateral.
+- Fatia 4: skills de código limpo, corrida com dois toques (animação provisória), fase reta, herói refatorado em física + componente visual.

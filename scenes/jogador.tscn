@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/jogador.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/componentes/animacao_jogador.gd" id="4_animacao"]
 [ext_resource type="SpriteFrames" path="res://assets/sprites/heroi/heroi_frames.tres" id="2_frames"]
 [ext_resource type="Script" path="res://scripts/camera_jogador.gd" id="3_camera"]
 
@@ -20,6 +21,7 @@ position = Vector2(0, -40)
 sprite_frames = ExtResource("2_frames")
 animation = &"idle"
 autoplay = "idle"
+script = ExtResource("4_animacao")
 
 [node name="Camera" type="Camera2D" parent="."]
 position = Vector2(0, -48)

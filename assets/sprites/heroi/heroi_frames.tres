@@ -150,6 +150,35 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("w0")
+}, {
+"duration": 1.0,
+"texture": SubResource("w1")
+}, {
+"duration": 1.0,
+"texture": SubResource("w2")
+}, {
+"duration": 1.0,
+"texture": SubResource("w3")
+}, {
+"duration": 1.0,
+"texture": SubResource("w4")
+}, {
+"duration": 1.0,
+"texture": SubResource("w5")
+}, {
+"duration": 1.0,
+"texture": SubResource("w6")
+}, {
+"duration": 1.0,
+"texture": SubResource("w7")
+}],
+"loop": true,
+"name": &"correr",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("j4")
 }],
 "loop": false,

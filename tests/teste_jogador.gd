@@ -24,11 +24,11 @@ func _rodar() -> void:
 	_checar(camera.limit_left == 0, "câmera limitada à esquerda da fase")
 	var inicio := _jogador.global_position
 
-	# Corre para a direita
+	# Anda para a direita
 	Input.action_press("mover_direita")
 	await _esperar(30)
-	_checar(_jogador.global_position.x > inicio.x + 40.0, "corre para a direita")
-	_checar(_sprite.animation == &"walk", "correndo toca walk")
+	_checar(_jogador.global_position.x > inicio.x + 40.0, "anda para a direita")
+	_checar(_sprite.animation == &"walk", "andando toca walk")
 	_checar(not _sprite.flip_h and _jogador.direcao_olhar == 1, "olha para a direita")
 	Input.action_release("mover_direita")
 
@@ -39,6 +39,30 @@ func _rodar() -> void:
 	Input.action_release("mover_esquerda")
 	await _esperar(30)
 	_checar(absf(_jogador.velocity.x) < 0.01, "para ao soltar")
+
+	# Correr: dois toques rápidos na direção e segurar
+	Input.action_press("mover_direita")
+	await _esperar(3)
+	Input.action_release("mover_direita")
+	await _esperar(3)
+	Input.action_press("mover_direita")
+	await _esperar(40)
+	_checar(_jogador.esta_correndo(), "dois toques na direção = corre")
+	_checar(_jogador.velocity.x > _jogador.velocidade * 1.3,
+		"correndo é mais rápido que andando (%.0f px/s)" % _jogador.velocity.x)
+	_checar(_sprite.animation == &"correr", "correndo toca correr")
+	Input.action_release("mover_direita")
+	await _esperar(3)
+	_checar(not _jogador.esta_correndo(), "soltar a direção para de correr")
+	await _esperar(30)
+
+	# Um toque só: anda
+	Input.action_press("mover_direita")
+	await _esperar(40)
+	_checar(not _jogador.esta_correndo(), "um toque só = anda")
+	_checar(_jogador.velocity.x <= _jogador.velocidade + 0.1, "andando não passa da velocidade de andar")
+	Input.action_release("mover_direita")
+	await _esperar(30)
 
 	# Pulo cheio (segura o botão)
 	var altura_cheia := await _medir_pulo(60)

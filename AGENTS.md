@@ -8,6 +8,7 @@ Resumo das regras que não podem ser quebradas:
 - Responda em português; termine com (1) o que foi feito, (2) como testar, (3) próxima sugestão.
 - Uma fatia pequena por vez; não comece a próxima sem o "ok" do usuário.
 - `snake_case` em arquivos e funções, `PascalCase` em classes e nós, comentários em português.
+- Siga Clean Code, SOLID e DRY como descrito em `.claude/skills/codigo-limpo-godot/SKILL.md` (leia antes de codar).
 - Rode o jogo headless e os testes de `tests/` antes de entregar; corrija erros e avisos.
 - Um commit por fatia, em português. Nunca apague arquivos do usuário nem faça force-push.
 - Sem addons ou arquitetura nova sem aprovação. SpriteCook gasta créditos: avise antes.

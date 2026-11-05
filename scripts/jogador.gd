@@ -1,14 +1,19 @@
 class_name Jogador
 extends CharacterBody2D
-## Herói de ação lateral: corre, pula com altura variável, coyote time e buffer de pulo.
+## Física do herói de ação lateral: anda, corre (dois toques na direção) e pula.
+## O visual fica no componente AnimacaoJogador (nó Sprite), que escuta os sinais daqui.
 
 signal pulou
 signal aterrissou
 signal reapareceu
 
-@export_group("Corrida")
-## Velocidade máxima correndo (pixels por segundo).
+@export_group("Andar e correr")
+## Velocidade máxima andando (pixels por segundo).
 @export var velocidade: float = 160.0
+## Velocidade máxima correndo (px/s). Corre com dois toques rápidos na direção.
+@export var velocidade_corrida: float = 290.0
+## Tempo máximo entre os dois toques para começar a correr (s).
+@export var janela_toque_duplo: float = 0.25
 ## Quão rápido chega na velocidade máxima no chão (px/s²).
 @export var aceleracao: float = 1400.0
 ## Quão rápido para no chão ao soltar (px/s²).
@@ -40,101 +45,116 @@ signal reapareceu
 var direcao_olhar: int = 1
 var posicao_inicial: Vector2
 
+var _correndo: bool = false
+var _direcao_corrida: int = 0
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _estava_no_chao: bool = true
-
-@onready var sprite: AnimatedSprite2D = $Sprite
+var _toque_duplo: ToqueDuplo
 
 
 func _ready() -> void:
 	posicao_inicial = global_position
+	_toque_duplo = ToqueDuplo.new(janela_toque_duplo)
 
 
 func _physics_process(delta: float) -> void:
-	# A gravidade e a força do pulo saem da altura e do tempo desejados
-	# (assim você ajusta "quão alto" e "quão rápido", e a física se ajusta sozinha).
-	var gravidade := 2.0 * altura_pulo / (tempo_ate_topo * tempo_ate_topo)
-	var forca_pulo := 2.0 * altura_pulo / tempo_ate_topo
-	var no_chao := is_on_floor()
-
-	# Coyote time: um tempinho de "graça" depois de sair da beirada.
-	if no_chao:
-		_contador_coyote = tempo_coyote
-	else:
-		_contador_coyote -= delta
-
-	# Buffer: guarda o aperto do botão por um instante.
-	if Input.is_action_just_pressed("pular"):
-		_contador_buffer = tempo_buffer
-	else:
-		_contador_buffer -= delta
-
-	# Gravidade (mais forte caindo do que subindo).
-	if not no_chao:
-		var g := gravidade if velocity.y < 0.0 else gravidade * multiplicador_queda
-		velocity.y = minf(velocity.y + g * delta, velocidade_max_queda)
-
-	# Pulo.
-	if _contador_buffer > 0.0 and _contador_coyote > 0.0:
-		velocity.y = -forca_pulo
-		_contador_buffer = 0.0
-		_contador_coyote = 0.0
-		pulou.emit()
-
-	# Pulo de altura variável: soltou o botão subindo -> corta a subida.
-	if Input.is_action_just_released("pular") and velocity.y < 0.0:
-		velocity.y *= corte_pulo
-
-	# Corrida.
 	var direcao := Input.get_axis("mover_esquerda", "mover_direita")
-	var taxa: float
-	if not no_chao:
-		taxa = aceleracao_no_ar
-	elif direcao != 0.0:
-		taxa = aceleracao
-	else:
-		taxa = desaceleracao
-	velocity.x = move_toward(velocity.x, direcao * velocidade, taxa * delta)
-	if direcao != 0.0:
-		direcao_olhar = 1 if direcao > 0.0 else -1
-		sprite.flip_h = direcao_olhar < 0
-
+	_atualizar_corrida(direcao, delta)
+	_atualizar_contadores(delta)
+	_aplicar_gravidade(delta)
+	_tentar_pular()
+	_mover_horizontal(direcao, delta)
 	move_and_slide()
-
-	if is_on_floor() and not _estava_no_chao:
-		aterrissou.emit()
-		sprite.play(&"aterrissar")
-	_estava_no_chao = is_on_floor()
-
-	_atualizar_animacao()
-
+	_checar_aterrissagem()
 	if global_position.y > limite_queda:
 		reaparecer()
 
 
-func _atualizar_animacao() -> void:
-	sprite.speed_scale = 1.0
-	if not is_on_floor():
-		if velocity.y < -80.0:
-			sprite.play(&"pulo_subindo")
-		elif velocity.y > 80.0:
-			sprite.play(&"pulo_caindo")
-		else:
-			sprite.play(&"pulo_topo")
-	elif absf(velocity.x) > 10.0:
-		sprite.play(&"walk")
-		# Os passos acompanham a velocidade (evita o pé "patinar").
-		sprite.speed_scale = maxf(absf(velocity.x) / velocidade, 0.5)
-	elif sprite.animation == &"aterrissar" and sprite.is_playing():
-		pass  # deixa a aterrissagem terminar
-	else:
-		sprite.play(&"idle")
+## True enquanto estiver correndo (dois toques na direção e segurando).
+func esta_correndo() -> bool:
+	return _correndo
 
 
 ## Volta para o início da fase (ex.: caiu num buraco).
 func reaparecer() -> void:
 	global_position = posicao_inicial
 	velocity = Vector2.ZERO
+	_correndo = false
 	reset_physics_interpolation()
 	reapareceu.emit()
+
+
+# --- Passos da física ---------------------------------------------------------
+
+func _atualizar_corrida(direcao: float, delta: float) -> void:
+	_toque_duplo.janela = janela_toque_duplo
+	var apertada := _direcao_apertada_agora()
+	if _toque_duplo.registrar(apertada, delta):
+		_correndo = true
+		_direcao_corrida = apertada
+	# Soltou ou inverteu a direção: volta a andar.
+	if direcao == 0.0 or signf(direcao) != _direcao_corrida:
+		_correndo = false
+
+
+func _direcao_apertada_agora() -> int:
+	if Input.is_action_just_pressed("mover_direita"):
+		return 1
+	if Input.is_action_just_pressed("mover_esquerda"):
+		return -1
+	return 0
+
+
+func _atualizar_contadores(delta: float) -> void:
+	# Coyote time: um tempinho de "graça" depois de sair da beirada.
+	_contador_coyote = tempo_coyote if is_on_floor() else _contador_coyote - delta
+	# Buffer: guarda o aperto do botão de pulo por um instante.
+	_contador_buffer = tempo_buffer if Input.is_action_just_pressed("pular") else _contador_buffer - delta
+
+
+func _aplicar_gravidade(delta: float) -> void:
+	if is_on_floor():
+		return
+	var g := _gravidade() if velocity.y < 0.0 else _gravidade() * multiplicador_queda
+	velocity.y = minf(velocity.y + g * delta, velocidade_max_queda)
+
+
+func _tentar_pular() -> void:
+	if _contador_buffer > 0.0 and _contador_coyote > 0.0:
+		velocity.y = -_forca_pulo()
+		_contador_buffer = 0.0
+		_contador_coyote = 0.0
+		pulou.emit()
+	# Pulo de altura variável: soltou o botão subindo -> corta a subida.
+	if Input.is_action_just_released("pular") and velocity.y < 0.0:
+		velocity.y *= corte_pulo
+
+
+func _mover_horizontal(direcao: float, delta: float) -> void:
+	var maxima := velocidade_corrida if _correndo else velocidade
+	velocity.x = move_toward(velocity.x, direcao * maxima, _taxa_aceleracao(direcao) * delta)
+	if direcao != 0.0:
+		direcao_olhar = 1 if direcao > 0.0 else -1
+
+
+func _taxa_aceleracao(direcao: float) -> float:
+	if not is_on_floor():
+		return aceleracao_no_ar
+	return aceleracao if direcao != 0.0 else desaceleracao
+
+
+func _checar_aterrissagem() -> void:
+	if is_on_floor() and not _estava_no_chao:
+		aterrissou.emit()
+	_estava_no_chao = is_on_floor()
+
+
+# A gravidade e a força do pulo saem da altura e do tempo desejados:
+# você ajusta "quão alto" e "quão rápido", e a física se ajusta sozinha.
+func _gravidade() -> float:
+	return 2.0 * altura_pulo / (tempo_ate_topo * tempo_ate_topo)
+
+
+func _forca_pulo() -> float:
+	return 2.0 * altura_pulo / tempo_ate_topo
