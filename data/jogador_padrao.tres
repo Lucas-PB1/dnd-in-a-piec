@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="StatsJogador" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://features/jogador/stats_jogador.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+velocidade = 160.0
+velocidade_corrida = 290.0
+janela_toque_duplo = 0.25
+aceleracao = 1400.0
+desaceleracao = 1800.0
+aceleracao_no_ar = 1100.0
+altura_pulo = 104.0
+tempo_ate_topo = 0.38
+multiplicador_queda = 1.6
+corte_pulo = 0.45
+velocidade_max_queda = 700.0
+tempo_coyote = 0.1
+tempo_buffer = 0.12

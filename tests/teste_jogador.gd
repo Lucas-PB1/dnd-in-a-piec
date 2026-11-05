@@ -12,7 +12,7 @@ func _initialize() -> void:
 
 
 func _rodar() -> void:
-	var cena: Node = load("res://scenes/main.tscn").instantiate()
+	var cena: Node = load("res://levels/main.tscn").instantiate()
 	root.add_child(cena)
 	_jogador = cena.get_node("Jogador")
 	_sprite = _jogador.get_node("Sprite")
@@ -21,12 +21,14 @@ func _rodar() -> void:
 	await _esperar(20)
 	_checar(_jogador.is_on_floor(), "começa no chão")
 	_checar(_sprite.animation == &"idle", "parado toca idle")
+	_checar(_jogador.nome_estado() == &"Parado", "estado inicial é Parado")
 	_checar(camera.limit_left == 0, "câmera limitada à esquerda da fase")
 	var inicio := _jogador.global_position
 
 	# Anda para a direita
 	Input.action_press("mover_direita")
 	await _esperar(30)
+	_checar(_jogador.nome_estado() == &"Andando", "andando = estado Andando")
 	_checar(_jogador.global_position.x > inicio.x + 40.0, "anda para a direita")
 	_checar(_sprite.animation == &"walk", "andando toca walk")
 	_checar(not _sprite.flip_h and _jogador.direcao_olhar == 1, "olha para a direita")
@@ -39,6 +41,7 @@ func _rodar() -> void:
 	Input.action_release("mover_esquerda")
 	await _esperar(30)
 	_checar(absf(_jogador.velocity.x) < 0.01, "para ao soltar")
+	_checar(_jogador.nome_estado() == &"Parado", "parou = estado Parado")
 
 	# Correr: dois toques rápidos na direção e segurar
 	Input.action_press("mover_direita")
@@ -48,7 +51,7 @@ func _rodar() -> void:
 	Input.action_press("mover_direita")
 	await _esperar(40)
 	_checar(_jogador.esta_correndo(), "dois toques na direção = corre")
-	_checar(_jogador.velocity.x > _jogador.velocidade * 1.3,
+	_checar(_jogador.velocity.x > _jogador.stats.velocidade * 1.3,
 		"correndo é mais rápido que andando (%.0f px/s)" % _jogador.velocity.x)
 	_checar(_sprite.animation == &"correr", "correndo toca correr")
 	Input.action_release("mover_direita")
@@ -60,14 +63,14 @@ func _rodar() -> void:
 	Input.action_press("mover_direita")
 	await _esperar(40)
 	_checar(not _jogador.esta_correndo(), "um toque só = anda")
-	_checar(_jogador.velocity.x <= _jogador.velocidade + 0.1, "andando não passa da velocidade de andar")
+	_checar(_jogador.velocity.x <= _jogador.stats.velocidade + 0.1, "andando não passa da velocidade de andar")
 	Input.action_release("mover_direita")
 	await _esperar(30)
 
 	# Pulo cheio (segura o botão)
 	var altura_cheia := await _medir_pulo(60)
-	_checar(absf(altura_cheia - _jogador.altura_pulo) < 12.0,
-		"pulo cheio ~%.0f px (deu %.0f)" % [_jogador.altura_pulo, altura_cheia])
+	_checar(absf(altura_cheia - _jogador.stats.altura_pulo) < 12.0,
+		"pulo cheio ~%.0f px (deu %.0f)" % [_jogador.stats.altura_pulo, altura_cheia])
 
 	# Pulo curto (toque rápido)
 	var altura_curta := await _medir_pulo(2)
@@ -93,6 +96,14 @@ func _rodar() -> void:
 	await _esperar(3)
 	_checar(_jogador.global_position.distance_to(_jogador.posicao_inicial) < 40.0, "reaparece no início ao cair")
 
+	# A cena do herói roda sozinha (como no F6), sem fase em volta
+	cena.queue_free()
+	var sozinho: Jogador = load("res://features/jogador/jogador.tscn").instantiate()
+	root.add_child(sozinho)
+	await _esperar(20)
+	_checar(sozinho.stats != null and sozinho.nome_estado() == &"NoAr", "jogador.tscn roda sozinho (cai no vazio sem erro)")
+	sozinho.queue_free()
+
 	if _falhas == 0:
 		print("PASSOU: todos os testes do jogador")
 	else:
@@ -106,6 +117,7 @@ func _medir_pulo(quadros: int) -> float:
 	var y_inicial := _jogador.global_position.y
 	var y_min := y_inicial
 	var viu_subindo := false
+	var viu_no_ar := false
 	Input.action_press("pular")
 	for i in 90:
 		if i == quadros:
@@ -113,11 +125,14 @@ func _medir_pulo(quadros: int) -> float:
 		await physics_frame
 		y_min = minf(y_min, _jogador.global_position.y)
 		viu_subindo = viu_subindo or _sprite.animation == &"pulo_subindo"
+		viu_no_ar = viu_no_ar or _jogador.nome_estado() == &"NoAr"
 		if i > 5 and _jogador.is_on_floor():
 			break
 	Input.action_release("pular")
 	_checar(viu_subindo, "pulando toca pulo_subindo")
+	_checar(viu_no_ar, "pulando = estado NoAr")
 	await _esperar_chao()
+	_checar(_jogador.nome_estado() == &"Parado", "aterrissou parado = estado Parado")
 	return y_inicial - y_min
 
 

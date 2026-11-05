@@ -26,38 +26,52 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Importação de PNG | Lossless, sem mipmaps | Não estragar a pixel art. |
 | Herói | `CharacterBody2D` + `AnimatedSprite2D`; origem nos pés; espelha com `flip_h` | Simples e padrão do Godot. |
 | Sensação do pulo | Altura variável (soltar corta o pulo), coyote time, buffer de pulo, gravidade maior na queda | Controle "justo", típico do gênero. |
-| Fase | `TileMapLayer` gerado por script a partir de um mapa em texto (`scripts/ferramentas/gerar_fase_teste.gd`); plataformas finas são *one-way* (atravessa por baixo) | Fácil de mudar o layout; depois dá para editar no editor. |
+| Fase | `TileMapLayer` gerado por script a partir de um mapa em texto (`tools/gerar_fase_teste.gd`); plataformas finas são *one-way* (atravessa por baixo). Script raiz `levels/fase.gd` (`Fase`) expõe `posicao_inicio()`, `area_jogavel()` e `limite_queda()` | Fácil de mudar o layout; quem usa a fase não mexe nos nós internos. |
 | Fase atual | **Reta**, 120 ladrilhos, sem plataformas nem buracos (pedido do usuário). Os tipos `=` e `P` continuam disponíveis no gerador para depois. | Focar em andar, correr e pular. |
 | Correr | **Dois toques rápidos na direção** e segurar (`janela_toque_duplo` = 0,25 s). Soltar ou inverter volta a andar. Lógica reutilizável em `ToqueDuplo`. | Escolha do usuário. |
 | Animação de correr | **Provisória:** quadros do walk a 20 fps (animação `correr` em `heroi_frames.tres`). Trocar pela animação `run` do SpriteCook (~32 créditos) sem mexer no código. | Só sobraram 2 créditos. |
-| Arquitetura do herói | `jogador.gd` = só física (passos pequenos). `componentes/animacao_jogador.gd` = só visual, lê o Jogador e escuta o sinal `aterrissou`. | Responsabilidade única (SOLID). |
+| Arquitetura do herói | `jogador.gd` = ferramentas de física + API pública. Comportamento na **máquina de estados** (`core/estados/`): estados `Parado`, `Andando`, `Correndo`, `NoAr` em `features/jogador/estados/`. Números em `data/jogador_padrao.tres` (`StatsJogador`). `AnimacaoJogador` e `CameraJogador` não conhecem o Jogador: ele chama `atualizar()`/`olhar_para()` (call down). | Skills godot-*. |
+| Mudar balanceamento | Edite `data/jogador_padrao.tres` no Inspector (velocidade, pulo, toque duplo). | Dados separados do código. |
 | Câmera | `Camera2D` filha do herói, com suavização, olha à frente na direção em que ele corre; limites calculados pelo tamanho da fase | Ver o que vem pela frente. |
 | Movimento suave | Interpolação de física ligada | Sem tremedeira em monitores de 144 Hz. |
 
+## Skills do projeto (`.claude/skills/`)
+**Carregue as skills de godot-* relevantes antes de qualquer mudança de código.**
+
+| Skill | Quando usar |
+|---|---|
+| `godot-estrutura-pastas` | Criar, mover ou referenciar arquivos. `core/`, `features/<nome>/`, `levels/`, `ui/`, `data/`, `assets/`, `tests/`; feature não importa feature. |
+| `godot-cenas-e-sinais` | Criar ou mudar cenas e ligações. Cena roda sozinha (F6), "call down, signal up", sem `get_parent()` para mexer no pai. |
+| `godot-componentes-e-dados` | Montar entidades e definir números. Componentes, Resources `.tres` em `data/`, regras em `RefCounted`. |
+| `godot-maquina-de-estados` | Comportamento do jogador e dos inimigos. Um estado por comportamento, sem cadeia de `if`. |
+| `godot-estilo-gdscript` | Todo `.gd`. Tipagem, nomes, funções curtas, sem números mágicos, regra de três, autoload só com justificativa. |
+| `revisar-codigo` | Revisão e a checagem no fim de cada tarefa. |
+
+Regras de uso:
+- Ao terminar cada tarefa, faça a checagem contra as skills usadas e diga em **1 linha**: `Conforme as skills` ou quais regras foram violadas e por quê.
+- Se o usuário pedir algo que quebre uma regra, **avise e explique o impacto antes**; só quebre se ele confirmar.
+- Se uma regra precisar mudar, **proponha a alteração na skill e espere o ok**. Nunca desvie da skill em silêncio.
+
 ## Estrutura de pastas
+Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
-scenes/               cenas (.tscn); main.tscn é a cena principal
-scenes/fases/         fases (geradas ou montadas no editor)
-scripts/              scripts GDScript das cenas
-scripts/componentes/  componentes reutilizáveis (nós com um trabalho só)
-scripts/utilitarios/  classes sem nó (RefCounted), reutilizáveis
-scripts/ferramentas/  utilitários rodados pela linha de comando (não fazem parte do jogo)
-.claude/skills/       skills da IA (regras de código e revisão)
-assets/sprites/       sprites e SpriteFrames (assets/sprites/heroi/ = herói)
-assets/tiles/         ladrilhos e TileSet
-assets/audio/         sons e músicas
-assets/shaders/       shaders
-autoload/             singletons globais (só o que for realmente global)
-tests/                testes automáticos (rodam headless)
+core/estados/            Estado, MaquinaEstados (genéricos)
+core/utilitarios/        ToqueDuplo
+features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
+                         camera_jogador.gd, estados/, sprites/
+levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
+data/                    jogador_padrao.tres
+assets/tiles/            ladrilhos e TileSet (compartilhado)
+tools/                   gerar_arte_provisoria.gd, gerar_fase_teste.gd, capturar_tela.gd
+tests/                   teste_*.gd, rodar_testes.ps1
 ```
 
 ## Convenções
-- **Antes de escrever ou mudar qualquer `.gd`/`.tscn`, carregue a skill `codigo-limpo-godot`** (Clean Code, SOLID, DRY). Antes de fechar uma fatia, rode a skill `revisar-codigo` nos arquivos mudados.
+- Os detalhes de estilo estão na skill `godot-estilo-gdscript`; abaixo ficam só os específicos do projeto.
 - **Arquivos e funções:** `snake_case` (ex.: `jogador.gd`, `_atualizar_animacao()`).
 - **Classes e nós:** `PascalCase` (ex.: `class_name Jogador`, nó `Sprite`).
 - **Comentários e nomes do jogo em português.** Termos do Godot ficam em inglês.
-- Valores ajustáveis usam `@export`.
-- Cenas pequenas e reutilizáveis; comunicação por **signals**; autoload só para o que é global.
+- Balanceamento em Resources (`data/`); ajustes só visuais podem ficar em `@export` do componente.
 - Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑).
 - Edite `.tscn` à mão só em mudanças pequenas e seguras. Estruturas grandes: script gerador, MCP do Godot ou editor.
 - Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha 2 opções com prós e contras.
@@ -92,11 +106,11 @@ PowerShell:
 # Rodar headless por ~3 s só para ver erros no log
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --quit-after 180
 # Regerar a arte provisória (ladrilhos) e depois a fase de teste
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://scripts/ferramentas/gerar_arte_provisoria.gd
+& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_arte_provisoria.gd
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --import
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://scripts/ferramentas/gerar_fase_teste.gd
+& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_fase_teste.gd
 # Tirar um print segurando teclas (precisa de janela; sem --headless)
-& $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg --script res://scripts/ferramentas/capturar_tela.gd -- mover_direita 40 C:/caminho/print.png
+& $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg --script res://tools/capturar_tela.gd -- mover_direita 40 C:/caminho/print.png
 ```
 
 ## Como rodar os testes
@@ -114,3 +128,4 @@ Um teste só:
 - Fatias 1 e 2 (2.5D): boneco na relva e herói do SpriteCook. Substituídas pela fatia 3.
 - Fatia 3: herói andando e pulando numa fase de teste em 2D lateral.
 - Fatia 4: skills de código limpo, corrida com dois toques (animação provisória), fase reta, herói refatorado em física + componente visual.
+- Skills godot-* criadas e código migrado: novas pastas, máquina de estados do herói, `StatsJogador` em `data/`, sem `get_parent()`, fase com API própria.

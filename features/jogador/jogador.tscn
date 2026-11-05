@@ -1,0 +1,54 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://features/jogador/jogador.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/jogador_padrao.tres" id="2_stats"]
+[ext_resource type="SpriteFrames" path="res://features/jogador/sprites/heroi_frames.tres" id="3_frames"]
+[ext_resource type="Script" path="res://features/jogador/animacao_jogador.gd" id="4_animacao"]
+[ext_resource type="Script" path="res://features/jogador/camera_jogador.gd" id="5_camera"]
+[ext_resource type="Script" path="res://core/estados/maquina_estados.gd" id="6_maquina"]
+[ext_resource type="Script" path="res://features/jogador/estados/estado_parado.gd" id="7_parado"]
+[ext_resource type="Script" path="res://features/jogador/estados/estado_andando.gd" id="8_andando"]
+[ext_resource type="Script" path="res://features/jogador/estados/estado_correndo.gd" id="9_correndo"]
+[ext_resource type="Script" path="res://features/jogador/estados/estado_no_ar.gd" id="10_no_ar"]
+
+[sub_resource type="RectangleShape2D" id="Forma"]
+size = Vector2(22, 56)
+
+[node name="Jogador" type="CharacterBody2D"]
+floor_snap_length = 4.0
+script = ExtResource("1_script")
+stats = ExtResource("2_stats")
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+position = Vector2(0, -28)
+shape = SubResource("Forma")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -40)
+sprite_frames = ExtResource("3_frames")
+animation = &"idle"
+autoplay = "idle"
+script = ExtResource("4_animacao")
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(0, -48)
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+script = ExtResource("5_camera")
+
+[node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]
+script = ExtResource("6_maquina")
+estado_inicial = NodePath("Parado")
+
+[node name="Parado" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_parado")
+
+[node name="Andando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("8_andando")
+
+[node name="Correndo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("9_correndo")
+
+[node name="NoAr" type="Node" parent="MaquinaEstados"]
+script = ExtResource("10_no_ar")
