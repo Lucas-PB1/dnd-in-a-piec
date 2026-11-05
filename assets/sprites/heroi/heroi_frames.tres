@@ -1,65 +1,119 @@
-[gd_resource type="SpriteFrames" load_steps=10 format=3]
+[gd_resource type="SpriteFrames" load_steps=23 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/sprites/heroi/heroi_idle.png" id="1_idle"]
+[ext_resource type="Texture2D" path="res://assets/sprites/heroi/heroi_walk.png" id="2_walk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/heroi/heroi_jump.png" id="3_jump"]
 
-[sub_resource type="AtlasTexture" id="q0"]
+[sub_resource type="AtlasTexture" id="i0"]
 atlas = ExtResource("1_idle")
 region = Rect2(0, 0, 80, 80)
 
-[sub_resource type="AtlasTexture" id="q1"]
+[sub_resource type="AtlasTexture" id="i1"]
 atlas = ExtResource("1_idle")
 region = Rect2(80, 0, 80, 80)
 
-[sub_resource type="AtlasTexture" id="q2"]
+[sub_resource type="AtlasTexture" id="i2"]
 atlas = ExtResource("1_idle")
 region = Rect2(160, 0, 80, 80)
 
-[sub_resource type="AtlasTexture" id="q3"]
+[sub_resource type="AtlasTexture" id="i3"]
 atlas = ExtResource("1_idle")
 region = Rect2(240, 0, 80, 80)
 
-[sub_resource type="AtlasTexture" id="q4"]
+[sub_resource type="AtlasTexture" id="i4"]
 atlas = ExtResource("1_idle")
 region = Rect2(320, 0, 80, 80)
 
-[sub_resource type="AtlasTexture" id="q5"]
+[sub_resource type="AtlasTexture" id="i5"]
 atlas = ExtResource("1_idle")
 region = Rect2(400, 0, 80, 80)
 
-[sub_resource type="AtlasTexture" id="q6"]
+[sub_resource type="AtlasTexture" id="i6"]
 atlas = ExtResource("1_idle")
 region = Rect2(480, 0, 80, 80)
 
-[sub_resource type="AtlasTexture" id="q7"]
+[sub_resource type="AtlasTexture" id="i7"]
 atlas = ExtResource("1_idle")
+region = Rect2(560, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w0"]
+atlas = ExtResource("2_walk")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w1"]
+atlas = ExtResource("2_walk")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w2"]
+atlas = ExtResource("2_walk")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w3"]
+atlas = ExtResource("2_walk")
+region = Rect2(240, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w4"]
+atlas = ExtResource("2_walk")
+region = Rect2(320, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w5"]
+atlas = ExtResource("2_walk")
+region = Rect2(400, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w6"]
+atlas = ExtResource("2_walk")
+region = Rect2(480, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="w7"]
+atlas = ExtResource("2_walk")
+region = Rect2(560, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="j2"]
+atlas = ExtResource("3_jump")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="j4"]
+atlas = ExtResource("3_jump")
+region = Rect2(320, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="j5"]
+atlas = ExtResource("3_jump")
+region = Rect2(400, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="j6"]
+atlas = ExtResource("3_jump")
+region = Rect2(480, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="j7"]
+atlas = ExtResource("3_jump")
 region = Rect2(560, 0, 80, 80)
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("q0")
+"texture": SubResource("i0")
 }, {
 "duration": 1.0,
-"texture": SubResource("q1")
+"texture": SubResource("i1")
 }, {
 "duration": 1.0,
-"texture": SubResource("q2")
+"texture": SubResource("i2")
 }, {
 "duration": 1.0,
-"texture": SubResource("q3")
+"texture": SubResource("i3")
 }, {
 "duration": 1.0,
-"texture": SubResource("q4")
+"texture": SubResource("i4")
 }, {
 "duration": 1.0,
-"texture": SubResource("q5")
+"texture": SubResource("i5")
 }, {
 "duration": 1.0,
-"texture": SubResource("q6")
+"texture": SubResource("i6")
 }, {
 "duration": 1.0,
-"texture": SubResource("q7")
+"texture": SubResource("i7")
 }],
 "loop": true,
 "name": &"idle",
@@ -67,18 +121,65 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("q0")
+"texture": SubResource("w0")
 }, {
 "duration": 1.0,
-"texture": SubResource("q2")
+"texture": SubResource("w1")
 }, {
 "duration": 1.0,
-"texture": SubResource("q4")
+"texture": SubResource("w2")
 }, {
 "duration": 1.0,
-"texture": SubResource("q6")
+"texture": SubResource("w3")
+}, {
+"duration": 1.0,
+"texture": SubResource("w4")
+}, {
+"duration": 1.0,
+"texture": SubResource("w5")
+}, {
+"duration": 1.0,
+"texture": SubResource("w6")
+}, {
+"duration": 1.0,
+"texture": SubResource("w7")
 }],
 "loop": true,
 "name": &"walk",
-"speed": 8.0
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("j4")
+}],
+"loop": false,
+"name": &"pulo_subindo",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("j5")
+}],
+"loop": false,
+"name": &"pulo_topo",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("j6")
+}],
+"loop": false,
+"name": &"pulo_caindo",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("j2")
+}, {
+"duration": 1.0,
+"texture": SubResource("j7")
+}],
+"loop": false,
+"name": &"aterrissar",
+"speed": 14.0
 }]

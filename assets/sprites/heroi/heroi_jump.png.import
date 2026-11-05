@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chwqqlmwwhe1o"
-path="res://.godot/imported/grama.png-b7696b932ad4940aa70363f5b2160511.ctex"
+uid="uid://pu2t74ep8i5n"
+path="res://.godot/imported/heroi_jump.png-d5a14c72cea3500078622964eacc0bc4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/grama.png"
-dest_files=["res://.godot/imported/grama.png-b7696b932ad4940aa70363f5b2160511.ctex"]
+source_file="res://assets/sprites/heroi/heroi_jump.png"
+dest_files=["res://.godot/imported/heroi_jump.png-d5a14c72cea3500078622964eacc0bc4.ctex"]
 
 [params]
 
@@ -23,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

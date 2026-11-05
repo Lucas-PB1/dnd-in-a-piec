@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbcf6jkawm2u6"
-path="res://.godot/imported/jogador.png-79cc45635892714235ec7059ebff5914.ctex"
+uid="uid://bugl04s1y0jbj"
+path="res://.godot/imported/heroi_walk.png-3e11cfe15be65ee1fbd3f8808a27dd21.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/jogador.png"
-dest_files=["res://.godot/imported/jogador.png-79cc45635892714235ec7059ebff5914.ctex"]
+source_file="res://assets/sprites/heroi/heroi_walk.png"
+dest_files=["res://.godot/imported/heroi_walk.png-3e11cfe15be65ee1fbd3f8808a27dd21.ctex"]
 
 [params]
 
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

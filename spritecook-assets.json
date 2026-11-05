@@ -3,14 +3,26 @@
     {
       "asset_id": "b484dd94-593b-4f7b-a97a-0786ac93147d",
       "sha12": "8e3e4c876df5",
-      "label": "heroi_base (platformer, 74x74)",
+      "label": "heroi_base (platformer, 74x74) - fonte de todas as animações",
       "file": "assets/sprites/heroi/heroi_base.png"
     },
     {
       "asset_id": "fe1cef8d-d945-4b60-9eb4-fcf640a46c17",
       "sha12": "6ba37b76e61e",
-      "label": "heroi_idle (8 quadros 80x80, 8 fps)",
+      "label": "heroi_idle (8 quadros 80x80)",
       "file": "assets/sprites/heroi/heroi_idle.png"
+    },
+    {
+      "asset_id": "47c20808-5fea-41c4-9d1b-735164f98e53",
+      "sha12": "19951712ebdd",
+      "label": "heroi_walk (8 quadros 80x80) - run 596f57a3-200b-4a54-9aaa-51e65b73678a",
+      "file": "assets/sprites/heroi/heroi_walk.png"
+    },
+    {
+      "asset_id": "58b9c863-337c-4c2e-9687-fb367dbe7222",
+      "sha12": "f472227bcc55",
+      "label": "heroi_jump (8 quadros 80x80: 0 em pé, 1-2 agacha, 3 impulso, 4 subindo, 5 topo, 6 caindo, 7 aterrissa)",
+      "file": "assets/sprites/heroi/heroi_jump.png"
     }
   ]
 }

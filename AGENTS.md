@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instruções para agentes de IA neste repositório (jogo 2.5D em Godot 4.7, GDScript).
+Instruções para agentes de IA neste repositório (jogo original de ação e plataforma 2D lateral em Godot 4.7, GDScript).
 
 **A fonte da verdade é o [CLAUDE.md](CLAUDE.md).** Leia-o inteiro antes de qualquer mudança: visão do jogo, decisões, convenções, como rodar e testar.
 
