@@ -30,7 +30,10 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Iluminação | Sprites e chão **unshaded** (mostram a cor exata da pixel art); o sol fica na cena para objetos 3D futuros | Com luz, o chão ficava "lavado" e não combinava com os sprites. |
 | Sombra do personagem | Sombra falsa (sprite oval deitado no chão); o sprite não projeta sombra | Sombra real de billboard fica estranha. |
 | Movimento suave | Interpolação de física ligada; câmera move em `_process` usando `get_global_transform_interpolated()` | Evita tremedeira em monitores com Hz diferente da física (60). |
-| Arte | Provisória gerada por script (`scripts/ferramentas/gerar_arte_provisoria.gd`); arte final pelo SpriteCook | Começar sem depender de arte externa; SpriteCook gasta créditos. |
+| Arte do herói | SpriteCook, perspectiva *platformer* (3/4 virado para a direita), quadros 80x80, `pixel_size = 0.022` (~1,6 m), pés na última linha do quadro | Gerado com 32 créditos. IDs no `spritecook-assets.json`. |
+| Animação de andar | **Provisória:** quadros do idle mais rápidos + "pulinho" por código (`altura_passo`, `passos_por_segundo`) | Créditos não deram para o walk (~26). Trocar quando gerar o walk no SpriteCook. |
+| Densidade de pixels | Herói ~45 px/m; grama e tufos 16 px/m (arte provisória do script) | Misturado por enquanto; ao refazer o cenário, usar ~45 px/m para combinar. |
+| Arte provisória | Gerada por script (`scripts/ferramentas/gerar_arte_provisoria.gd`): grama, tufo, sombra e o boneco antigo (`jogador_frames.tres`, não usado) | Começar sem depender de arte externa. |
 
 ## Estrutura de pastas
 ```
@@ -63,7 +66,7 @@ tests/                testes automáticos (rodam headless)
 ## Ferramentas disponíveis para a IA
 - **MCP do Godot** (`godot`, em `.mcp.json`): rodar o projeto, ler o output de debug, criar cenas e nós.
 - **Plugin GDScript LSP** (`gdscript@claude-code-gdscript`): diagnósticos e navegação em `.gd`. Usa `GODOT_EDITOR_PATH`.
-- **SpriteCook** (plugin): gera sprites, animações e tilesets. **Gasta créditos**: avise o custo antes de gerar.
+- **SpriteCook** (plugin): gera sprites, animações e tilesets. **Gasta créditos**: avise o custo antes de gerar. Plano grátis: 40 créditos. Personagem base = 12; 1ª animação = 20, cada animação extra na mesma rodada = 14; preparo de pose (ex.: walk) = 12. Todo asset gerado vai para o `spritecook-assets.json` (asset_id + sha12). As chamadas de animação podem estourar o tempo de espera mesmo dando certo: confira com `list_animation_outputs` antes de repetir (para não pagar duas vezes).
 
 ## Como rodar
 O executável do Godot está na variável de ambiente `GODOT_EDITOR_PATH`:
@@ -96,3 +99,4 @@ Cada teste é um script em `tests/` que estende `SceneTree`, imprime `PASSOU`/`F
 
 ## Estado atual
 - Fatia 1: boneco andando numa relva verde (`scenes/main.tscn`).
+- Fatia 2: herói do SpriteCook com idle animado; andar provisório com pulinho.

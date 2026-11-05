@@ -11,9 +11,17 @@ extends CharacterBody3D
 ## Abaixo desta velocidade o boneco é considerado parado (troca para idle).
 @export var limite_parado: float = 0.2
 
+@export_group("Pulinho do passo")
+## Altura do pulinho a cada passo (metros). 0 desliga.
+@export var altura_passo: float = 0.06
+## Passos por segundo andando na velocidade máxima.
+@export var passos_por_segundo: float = 4.0
+
 @onready var sprite: AnimatedSprite3D = $Sprite
+@onready var _altura_base_sprite: float = sprite.position.y
 
 var _gravidade: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+var _fase_passo: float = 0.0
 
 
 func _physics_process(delta: float) -> void:
@@ -36,6 +44,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_atualizar_animacao(entrada, horizontal.length())
+	_atualizar_pulinho(horizontal.length(), delta)
 
 
 func _atualizar_animacao(entrada: Vector2, rapidez: float) -> void:
@@ -49,3 +58,16 @@ func _atualizar_animacao(entrada: Vector2, rapidez: float) -> void:
 		sprite.flip_h = true
 	elif entrada.x > 0.1:
 		sprite.flip_h = false
+
+
+## Faz o sprite dar um pulinho a cada passo (enquanto não temos animação de andar).
+## Roda na física: a interpolação deixa o movimento suave em qualquer FPS.
+func _atualizar_pulinho(rapidez: float, delta: float) -> void:
+	if rapidez > limite_parado:
+		# A cadência acompanha a velocidade: andando devagar, passos mais lentos.
+		_fase_passo += delta * passos_por_segundo * (rapidez / velocidade) * PI
+		sprite.position.y = _altura_base_sprite + absf(sin(_fase_passo)) * altura_passo
+	else:
+		# Ao parar, desce suavemente para o chão.
+		_fase_passo = 0.0
+		sprite.position.y = move_toward(sprite.position.y, _altura_base_sprite, delta * 1.0)

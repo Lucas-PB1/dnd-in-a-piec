@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "asset_id": "b484dd94-593b-4f7b-a97a-0786ac93147d",
+      "sha12": "8e3e4c876df5",
+      "label": "heroi_base (platformer, 74x74)",
+      "file": "assets/sprites/heroi/heroi_base.png"
+    },
+    {
+      "asset_id": "fe1cef8d-d945-4b60-9eb4-fcf640a46c17",
+      "sha12": "6ba37b76e61e",
+      "label": "heroi_idle (8 quadros 80x80, 8 fps)",
+      "file": "assets/sprites/heroi/heroi_idle.png"
+    }
+  ]
+}

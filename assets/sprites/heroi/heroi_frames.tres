@@ -1,0 +1,84 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/heroi/heroi_idle.png" id="1_idle"]
+
+[sub_resource type="AtlasTexture" id="q0"]
+atlas = ExtResource("1_idle")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="q1"]
+atlas = ExtResource("1_idle")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="q2"]
+atlas = ExtResource("1_idle")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="q3"]
+atlas = ExtResource("1_idle")
+region = Rect2(240, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="q4"]
+atlas = ExtResource("1_idle")
+region = Rect2(320, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="q5"]
+atlas = ExtResource("1_idle")
+region = Rect2(400, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="q6"]
+atlas = ExtResource("1_idle")
+region = Rect2(480, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="q7"]
+atlas = ExtResource("1_idle")
+region = Rect2(560, 0, 80, 80)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("q0")
+}, {
+"duration": 1.0,
+"texture": SubResource("q1")
+}, {
+"duration": 1.0,
+"texture": SubResource("q2")
+}, {
+"duration": 1.0,
+"texture": SubResource("q3")
+}, {
+"duration": 1.0,
+"texture": SubResource("q4")
+}, {
+"duration": 1.0,
+"texture": SubResource("q5")
+}, {
+"duration": 1.0,
+"texture": SubResource("q6")
+}, {
+"duration": 1.0,
+"texture": SubResource("q7")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("q0")
+}, {
+"duration": 1.0,
+"texture": SubResource("q2")
+}, {
+"duration": 1.0,
+"texture": SubResource("q4")
+}, {
+"duration": 1.0,
+"texture": SubResource("q6")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
