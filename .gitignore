@@ -1,0 +1,17 @@
+# Godot 4+
+.godot/
+/android/
+*.translation
+
+# Builds e exportações
+/builds/
+/export/
+export_credentials.cfg
+*.tmp
+
+# Configurações locais do Claude Code (pessoais)
+.claude/settings.local.json
+
+# Sistema
+.DS_Store
+Thumbs.db
