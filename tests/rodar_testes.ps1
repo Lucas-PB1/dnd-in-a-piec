@@ -9,12 +9,13 @@ Write-Host "== Importando assets"
 & $godot --headless --path $raiz --import 2>&1 | Select-String "ERROR|WARNING"
 
 Write-Host "== Rodando o jogo por 3 s (procurando erros e avisos)"
-$log = & $godot --headless --path $raiz --quit-after 180 2>&1 | Select-String "ERROR|WARNING"
+# --debug: igual ao editor, mostra os avisos de GDScript (ex.: UNUSED_SIGNAL).
+$log = & $godot --headless --debug --path $raiz --quit-after 180 2>&1 | Select-String "ERROR|WARNING"
 if ($log) { $log; $falhou = $true } else { Write-Host "   sem erros nem avisos" }
 
 foreach ($teste in Get-ChildItem (Join-Path $PSScriptRoot "teste_*.gd")) {
     Write-Host "== $($teste.Name)"
-    & $godot --headless --path $raiz --script "res://tests/$($teste.Name)" 2>&1 |
+    & $godot --headless --debug --path $raiz --script "res://tests/$($teste.Name)" 2>&1 |
         Select-String "ok |PASSOU|FALHOU|ERRO|ERROR|WARNING"
     if ($LASTEXITCODE -ne 0) { $falhou = $true }
 }

@@ -4,6 +4,8 @@ extends Node
 ## Para trocar de estado, emita `trocar_para` com o nome do nó do próximo estado.
 
 ## Pede à máquina para trocar para outro estado (nome do nó, ex.: &"NoAr").
+## Quem emite são as subclasses; por isso o aviso de "sinal não usado" é desligado aqui.
+@warning_ignore("unused_signal")
 signal trocar_para(nome_estado: StringName)
 
 

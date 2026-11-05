@@ -58,7 +58,7 @@ Regras na skill `godot-estrutura-pastas`. Hoje:
 core/estados/            Estado, MaquinaEstados (genéricos)
 core/utilitarios/        ToqueDuplo
 features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
-                         camera_jogador.gd, estados/, sprites/
+						 camera_jogador.gd, estados/, sprites/
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
 data/                    jogador_padrao.tres
 assets/tiles/            ladrilhos e TileSet (compartilhado)
@@ -103,8 +103,10 @@ PowerShell:
 & $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg
 # Importar assets novos (depois de adicionar ou gerar PNGs)
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --import
-# Rodar headless por ~3 s só para ver erros no log
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --quit-after 180
+# Rodar headless por ~3 s só para ver erros no log.
+# --debug é OBRIGATÓRIO: sem ele, os avisos de GDScript (ex.: UNUSED_SIGNAL) não aparecem,
+# mas o editor mostra. O tests/rodar_testes.ps1 já usa --debug.
+& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --quit-after 180
 # Regerar a arte provisória (ladrilhos) e depois a fase de teste
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_arte_provisoria.gd
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --import
