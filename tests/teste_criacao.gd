@@ -39,6 +39,20 @@ func _testar_tela_sozinha() -> void:
 	tela.confirmada.connect(func(f: Ficha, _p: PacoteInicial) -> void: recebida.append(f))
 	var escolha: OptionButton = tela.get_node("%Classe")
 	_checar(escolha.item_count == 1 and escolha.get_item_text(0) == "Guerreiro", "classe: só Guerreiro por enquanto")
+	var lista: ItemList = tela.get_node("%ListaMaestrias")
+	_checar(lista.select_mode == ItemList.SELECT_TOGGLE, "clique marca e desmarca a maestria")
+	_checar(tela.armas_marcadas().size() == 3, "o pacote já marca 3 armas")
+	tela.marcar_arma("Adaga", true)
+	_checar(tela.armas_marcadas().size() == 3 and not tela.armas_marcadas().has("Adaga"),
+		"a quarta arma não entra")
+	tela.marcar_arma("Espada Grande", false)
+	var sem_espada := tela.armas_marcadas()
+	_checar(sem_espada.size() == 2 and not sem_espada.has("Espada Grande")
+		and sem_espada.has("Mangual") and sem_espada.has("Azagaia"),
+		"desmarcar tira só a arma clicada")
+	tela.marcar_arma("Adaga", true)
+	_checar(tela.armas_marcadas().size() == 3 and tela.armas_marcadas().has("Adaga"),
+		"com uma vaga, a outra arma entra")
 	tela.aplicar_sugestao()
 	tela.confirmar()
 	_checar(recebida.is_empty(), "não deixa começar sem nome")
