@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://ui/criacao_personagem/tela_criacao.gd" id="1_script"]
 [ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="2_classe"]
 [ext_resource type="Resource" path="res://data/arma_espada_curta.tres" id="3_arma"]
+[ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="4_classe_rpg"]
 
 [node name="TelaCriacao" type="Control"]
 layout_mode = 3
@@ -12,7 +13,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
-classe = ExtResource("2_classe")
+classes = Array[ExtResource("4_classe_rpg")]([ExtResource("2_classe")])
 arma_previa = ExtResource("3_arma")
 
 [node name="Fundo" type="ColorRect" parent="."]
@@ -22,7 +23,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.08, 0.07, 0.12, 0.85)
+color = Color(0.08, 0.07, 0.12, 0.9)
 
 [node name="Centro" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -38,18 +39,35 @@ layout_mode = 2
 [node name="Margem" type="MarginContainer" parent="Centro/Painel"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
+theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_bottom = 6
 
 [node name="Coluna" type="VBoxContainer" parent="Centro/Painel/Margem"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
-[node name="Titulo" type="Label" parent="Centro/Painel/Margem/Coluna"]
+[node name="Identidade" type="HBoxContainer" parent="Centro/Painel/Margem/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RotuloNome" type="Label" parent="Centro/Painel/Margem/Coluna/Identidade"]
+layout_mode = 2
+text = "Nome:"
+
+[node name="Nome" type="LineEdit" parent="Centro/Painel/Margem/Coluna/Identidade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+placeholder_text = "Seu herói"
+
+[node name="RotuloClasse" type="Label" parent="Centro/Painel/Margem/Coluna/Identidade"]
+layout_mode = 2
+text = "Classe:"
+
+[node name="Classe" type="OptionButton" parent="Centro/Painel/Margem/Coluna/Identidade"]
 unique_name_in_owner = true
 layout_mode = 2
-horizontal_alignment = 1
 
 [node name="Pontos" type="Label" parent="Centro/Painel/Margem/Coluna"]
 unique_name_in_owner = true
@@ -60,7 +78,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 2
+theme_override_constants/v_separation = 0
 columns = 5
 
 [node name="Previa" type="Label" parent="Centro/Painel/Margem/Coluna"]
@@ -70,13 +88,13 @@ horizontal_alignment = 1
 
 [node name="Botoes" type="HBoxContainer" parent="Centro/Painel/Margem/Coluna"]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
 [node name="Sugestao" type="Button" parent="Centro/Painel/Margem/Coluna/Botoes"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Sugestão do Guerreiro"
+text = "Sugestão"
 
 [node name="Comecar" type="Button" parent="Centro/Painel/Margem/Coluna/Botoes"]
 unique_name_in_owner = true

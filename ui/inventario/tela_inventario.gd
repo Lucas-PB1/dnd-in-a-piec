@@ -131,7 +131,7 @@ func _atualizar_detalhes() -> void:
 
 
 func _atualizar_ficha() -> void:
-	var linhas: PackedStringArray = []
+	var linhas: PackedStringArray = ["%s, %s" % [_ficha.nome, _ficha.classe.nome]]
 	for atributo in Atributos.TODOS:
 		var valor: int = _ficha.atributos[atributo]
 		linhas.append("%s %d (%s)" % [Atributos.SIGLAS[atributo], valor, Atributos.texto_modificador(valor)])

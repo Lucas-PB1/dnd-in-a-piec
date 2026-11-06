@@ -6,9 +6,12 @@
 [ext_resource type="PackedScene" path="res://features/boneco_treino/boneco_treino.tscn" id="4_boneco"]
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://ui/inventario/tela_inventario.tscn" id="6_inventario"]
+[ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="7_guerreiro"]
+[ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="8_classe_rpg"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
+classes_disponiveis = Array[ExtResource("8_classe_rpg")]([ExtResource("7_guerreiro")])
 
 [node name="FaseTeste" parent="." instance=ExtResource("2_fase")]
 

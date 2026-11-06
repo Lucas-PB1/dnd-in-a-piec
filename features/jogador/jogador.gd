@@ -88,6 +88,7 @@ func posicionar_no_inicio(posicao: Vector2) -> void:
 ## Troca a ficha de D&D (ex.: vinda da tela de criação) e recalcula a vida.
 func configurar_ficha(nova: Ficha) -> void:
 	ficha = nova
+	classe = nova.classe
 	_vida.configurar(ficha.vida_maxima())
 
 

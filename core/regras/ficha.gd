@@ -1,20 +1,38 @@
 class_name Ficha
 extends RefCounted
-## Ficha de personagem de D&D (nível 1): atributos + classe. Calcula vida e dano. Regra pura.
+## Ficha de personagem de D&D (nível 1): nome, classe e atributos. Calcula vida e dano. Regra pura.
 
 ## Dano mínimo de um acerto (com modificador negativo o total poderia dar 0).
 const DANO_MINIMO := 1
 ## Vida mínima no nível 1, mesmo com Constituição muito baixa.
 const VIDA_MINIMA := 1
+## Nome usado quando nenhum foi escolhido.
+const NOME_PADRAO := "Aventureiro"
+## Tamanho máximo do nome do personagem (letras).
+const TAMANHO_MAXIMO_NOME := 16
 
+var nome: String
 var classe: ClasseRPG
 var atributos: Dictionary[StringName, int] = {}
 
 
-func _init(classe_rpg: ClasseRPG, valores: Dictionary) -> void:
+func _init(classe_rpg: ClasseRPG, valores: Dictionary, nome_personagem: String = NOME_PADRAO) -> void:
 	classe = classe_rpg
+	nome = limpar_nome(nome_personagem)
+	if nome.is_empty():
+		nome = NOME_PADRAO
 	for atributo in Atributos.TODOS:
 		atributos[atributo] = valores.get(atributo, Atributos.VALOR_MEDIO)
+
+
+## Tira espaços das pontas e corta no tamanho máximo.
+static func limpar_nome(texto: String) -> String:
+	return texto.strip_edges().left(TAMANHO_MAXIMO_NOME)
+
+
+## Um nome serve se, depois de limpo, sobrar pelo menos uma letra.
+static func nome_valido(texto: String) -> bool:
+	return not limpar_nome(texto).is_empty()
 
 
 func modificador(atributo: StringName) -> int:

@@ -36,8 +36,10 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Regras de D&D 5e | Classes puras em `core/regras/`: `Dado` ("1d6"), `Atributos` (mod = (valor-10)/2 p/ baixo), `CompraDePontos` (27 pts, 8 a 15, custos do livro), `Ficha` (vida e dano). Testes em `tests/teste_regras_dnd.gd`. | Testável sem abrir o jogo. |
 | Vida | Nível 1 = **dado de vida máximo da classe + mod. CON** (Guerreiro d10, `data/classe_guerreiro.tres`). Mínimo 1. `HealthComponent` guarda a vida (sem dano ainda). | Regra do livro; usuário escolheu d10. |
 | Dano | **Dados da arma + mod.** a cada golpe. Arma com `acuidade` usa o maior entre FOR e DES (espada curta: 1d6, acuidade). **Mínimo 1** por acerto. | Regra do livro; mínimo 1 é regra da casa. |
-| Atributos | Escolhidos na **tela de criação** (`ui/criacao_personagem/`) por **compra de pontos**, no início do jogo (pausado). Botão com a sugestão da classe. INT, SAB e CAR ainda não fazem nada. | Pedido do usuário. |
-| HUD | `ui/hud/`: "PV atual/máximo". | |
+| Nome do jogo | **"DnD in a Piece"**, em `project.godot` (`application/config/name`); a tela de título lê de lá. "D&D" é marca da Wizards of the Coast: trocar o nome se um dia for publicar. | Pedido do usuário. |
+| Início do jogo | `main`: **tela de título** (`ui/titulo/`: Novo Jogo, Sair) -> **criação** -> jogo. Título e criação pausam o jogo e escondem o HUD. `mostrar_inicio = false` pula tudo (testes). | Pedido do usuário. |
+| Criação | `ui/criacao_personagem/`: **nome** (até 16 letras, obrigatório), **classe** (lista `classes_disponiveis` da `main`; hoje só Guerreiro) e atributos por **compra de pontos**. Botão com a sugestão da classe. INT, SAB e CAR ainda não fazem nada. | Pedido do usuário. |
+| HUD | `ui/hud/`: "Nome (Classe)" e "PV atual/máximo". | |
 | Itens | `Item` (`core/dados/item.gd`: nome, descrição, ícone, `espaco`). `Arma` é um `Item` do espaço `mao`. | Base para qualquer item. |
 | Inventário | Regra pura `Inventario` (`core/regras/`): adicionar (capacidade 12), equipar (troca; o antigo fica na mochila), desequipar, **jogar fora = apaga** (desequipa antes). Item equipado continua na lista. O herói tem `inventario` e `itens_iniciais` (a espada começa na mochila, sem equipar). | Pedido do usuário. |
 | Tela de inventário | `ui/inventario/`, tecla **I** (Esc também fecha), **pausa o jogo**. Lista, detalhes, Equipar/Desequipar/Jogar fora (com confirmação) e a ficha. Não conhece o herói: emite `abrir_pedido` e a `main` chama `abrir(...)`. Não abre durante a criação. | |
@@ -76,7 +78,8 @@ core/estados/            Estado, MaquinaEstados (genéricos)
 core/componentes/        HitboxComponent, HurtboxComponent, HealthComponent
 core/dados/              Item, Arma, ClasseRPG (Resources)
 core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario (regras puras)
-ui/criacao_personagem/   tela de criação (compra de pontos)
+ui/titulo/               tela de título (DnD in a Piece)
+ui/criacao_personagem/   tela de criação (nome, classe, compra de pontos)
 ui/inventario/           tela de inventário (tecla I)
 ui/hud/                  HUD (vida)
 core/utilitarios/        ToqueDuplo
@@ -138,7 +141,7 @@ PowerShell:
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_fase_teste.gd
 # Remarcar o ponto da mão (depois de mudar a arte do herói); o argumento salva uma folha de revisão
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/marcar_pontos_mao.gd -- C:/caminho/revisao.png
-# Tirar um print segurando teclas (precisa de janela; sem --headless). Opções: criacao, equipar
+# Tirar um print segurando teclas (precisa de janela; sem --headless). Opções: inicio, equipar
 & $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg --script res://tools/capturar_tela.gd -- mover_direita 40 C:/caminho/print.png equipar
 ```
 **Atenção:** depois de criar um `class_name` novo, rode `--import` antes de qualquer script de `tools/`.
@@ -167,4 +170,5 @@ Um teste só:
 - Fatia 6a: ficha de D&D (compra de pontos, vida d10 + CON, dano 1d6 + FOR/DES), tela de criação, HUD de vida.
 - Fatia 6b: inventário (Item, Inventario, tela com I), espada começa na mochila, soco desarmado.
 - Fatia 6c: espada equipada sempre na mão (ponto da mão por quadro), golpe girando a partir da mão.
+- Fatia 7: tela de título "DnD in a Piece", criação com nome e classe, nome no HUD e no inventário.
 - Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.

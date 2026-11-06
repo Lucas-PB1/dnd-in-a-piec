@@ -5,7 +5,7 @@ extends SceneTree
 ## Ex.: ... -- mover_direita,pular 40 C:/tmp/print.png equipar
 ## <acoes> separadas por vírgula, ou "nenhuma". <quadros> = passos de física (60 por segundo)
 ## contados DEPOIS de apertar as teclas. [opcoes] separadas por vírgula:
-##   criacao = mostra a tela de criação;  equipar = começa com a 1ª arma da mochila na mão.
+##   inicio = mostra o título e a criação;  equipar = começa com a 1ª arma da mochila na mão.
 
 ## Passos de física de espera antes de apertar as teclas (a fase estabiliza depois de carregar).
 const ESPERA_INICIAL := 30
@@ -24,7 +24,7 @@ func _rodar() -> void:
 	var opcoes: PackedStringArray = args[3].split(",") if args.size() > 3 else PackedStringArray()
 
 	var cena: Node = load("res://levels/main.tscn").instantiate()
-	cena.mostrar_criacao = "criacao" in opcoes
+	cena.mostrar_inicio = "inicio" in opcoes
 	root.add_child(cena)
 	if "equipar" in opcoes:
 		var jogador: Jogador = cena.get_node("Jogador")

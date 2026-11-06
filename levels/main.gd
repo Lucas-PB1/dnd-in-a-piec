@@ -1,13 +1,17 @@
 extends Node2D
 ## Cena principal: monta o jogo ligando fase, herói e interface (só pelas APIs públicas).
-## Começa pela tela de criação do personagem, com o jogo pausado.
+## Fluxo: tela de título -> criação do personagem -> jogo. Título e criação pausam o jogo.
 
+const CENA_TITULO := preload("res://ui/titulo/tela_titulo.tscn")
 const CENA_CRIACAO := preload("res://ui/criacao_personagem/tela_criacao.tscn")
 
-## Abre a tela de criação ao iniciar. Os testes desligam para jogar direto com a sugestão.
-@export var mostrar_criacao: bool = true
+## Começa pelo título e pela criação. Os testes desligam para jogar direto com a sugestão.
+@export var mostrar_inicio: bool = true
+## Classes que dá para escolher na criação.
+@export var classes_disponiveis: Array[ClasseRPG] = []
 
-var _criando_personagem: bool = false
+## True enquanto o título ou a criação estão abertos (o inventário não abre).
+var _no_inicio: bool = false
 
 @onready var _fase: Fase = $FaseTeste
 @onready var _jogador: Jogador = $Jogador
@@ -21,24 +25,29 @@ func _ready() -> void:
 	_jogador.definir_limites_camera(_fase.area_jogavel())
 	_jogador.limite_queda = _fase.limite_queda()
 	_jogador.vida_mudou.connect(_hud.mostrar_vida)
-	_hud.mostrar_vida(_jogador.vida_atual(), _jogador.vida_maxima())
+	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
-	if mostrar_criacao:
-		_abrir_criacao()
+	if mostrar_inicio:
+		_abrir_titulo()
 
 
-func _abrir_inventario() -> void:
-	if _criando_personagem:
-		return
-	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
-		_jogador.vida_maxima(), _jogador.ataque_desarmado)
+func _abrir_titulo() -> void:
+	_pausar_inicio(true)
+	var titulo: TelaTitulo = CENA_TITULO.instantiate()
+	titulo.novo_jogo_escolhido.connect(_ao_escolher_novo_jogo.bind(titulo))
+	titulo.sair_escolhido.connect(get_tree().quit)
+	_interface.add_child(titulo)
+
+
+func _ao_escolher_novo_jogo(titulo: TelaTitulo) -> void:
+	titulo.queue_free()
+	_abrir_criacao()
 
 
 func _abrir_criacao() -> void:
-	_criando_personagem = true
-	get_tree().paused = true
 	var tela: TelaCriacao = CENA_CRIACAO.instantiate()
-	tela.classe = _jogador.classe
+	if not classes_disponiveis.is_empty():
+		tela.classes = classes_disponiveis
 	tela.arma_previa = _primeira_arma(_jogador.inventario)
 	tela.confirmada.connect(_ao_criar_personagem.bind(tela))
 	_interface.add_child(tela)
@@ -46,9 +55,28 @@ func _abrir_criacao() -> void:
 
 func _ao_criar_personagem(ficha: Ficha, tela: TelaCriacao) -> void:
 	_jogador.configurar_ficha(ficha)
+	_mostrar_personagem_no_hud()
 	tela.queue_free()
-	_criando_personagem = false
-	get_tree().paused = false
+	_pausar_inicio(false)
+
+
+func _abrir_inventario() -> void:
+	if _no_inicio:
+		return
+	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
+		_jogador.vida_maxima(), _jogador.ataque_desarmado)
+
+
+## Título e criação pausam o jogo e escondem o HUD (o personagem ainda não existe).
+func _pausar_inicio(pausar: bool) -> void:
+	_no_inicio = pausar
+	get_tree().paused = pausar
+	_hud.visible = not pausar
+
+
+func _mostrar_personagem_no_hud() -> void:
+	_hud.mostrar_personagem(_jogador.ficha.nome, _jogador.ficha.classe.nome)
+	_hud.mostrar_vida(_jogador.vida_atual(), _jogador.vida_maxima())
 
 
 ## Primeira arma da mochila (para a prévia do dano na criação); null se não houver.

@@ -11,7 +11,7 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
-	cena.mostrar_criacao = false
+	cena.mostrar_inicio = false
 	root.add_child(cena)
 	var jogador: Jogador = cena.get_node("Jogador")
 	var tela: TelaInventario = cena.get_node("Interface/TelaInventario")

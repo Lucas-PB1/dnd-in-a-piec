@@ -15,7 +15,7 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
-	cena.mostrar_criacao = false  # joga direto com a sugestão da classe
+	cena.mostrar_inicio = false  # joga direto com a sugestão da classe
 	root.add_child(cena)
 	_jogador = cena.get_node("Jogador")
 	_boneco = cena.get_node("BonecoTreino")
