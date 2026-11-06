@@ -123,6 +123,7 @@ nome_original = "Whip"
 peso = "3 lb."
 preco = "2 GP"
 livro = "Player’s Handbook"
+efeito = &""
 poses = Array[ExtResource("2_0i0p7")]([SubResource("Resource_3xuko"), SubResource("Resource_udg4g"), SubResource("Resource_376d2"), SubResource("Resource_aluf4"), SubResource("Resource_1gmp4"), SubResource("Resource_8sd8s"), SubResource("Resource_o20fl"), SubResource("Resource_ojqbr"), SubResource("Resource_o4wum"), SubResource("Resource_ixjdo")])
 quadros = Array[Texture2D]([SubResource("AtlasTexture_p6bq1"), SubResource("AtlasTexture_ewqje"), SubResource("AtlasTexture_dao26"), SubResource("AtlasTexture_ykflv"), SubResource("AtlasTexture_01itq"), SubResource("AtlasTexture_54vcx"), SubResource("AtlasTexture_126t1"), SubResource("AtlasTexture_dlq6c"), SubResource("AtlasTexture_a1nld"), SubResource("AtlasTexture_a1a1u")])
 pegada_quadros = Vector2(88, 72)

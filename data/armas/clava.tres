@@ -42,6 +42,7 @@ nome_original = "Club"
 peso = "2 lb."
 preco = "1 SP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_vkguf")]([SubResource("Resource_64s0s"), SubResource("Resource_de3qm"), SubResource("Resource_shcxg"), SubResource("Resource_gsyi4")])
 passo = 13.0

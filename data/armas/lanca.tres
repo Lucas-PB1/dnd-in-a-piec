@@ -43,6 +43,7 @@ nome_original = "Spear"
 peso = "3 lb."
 preco = "1 GP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_4ccw3")]([SubResource("Resource_iums3"), SubResource("Resource_3xant"), SubResource("Resource_kfwai"), SubResource("Resource_22id4")])
 nome = "Lança"
 descricao = "Arma simples. Versátil (1d8), Arremesso (20/60). Maestria: Enfraquecer. (Spear, Player’s Handbook)"

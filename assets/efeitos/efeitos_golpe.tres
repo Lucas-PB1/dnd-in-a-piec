@@ -1,0 +1,107 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/efeitos/corte.png" id="1_corte"]
+[ext_resource type="Texture2D" path="res://assets/efeitos/rastro.png" id="2_rastro"]
+[ext_resource type="Texture2D" path="res://assets/efeitos/impacto.png" id="3_impacto"]
+
+[sub_resource type="AtlasTexture" id="c0"]
+atlas = ExtResource("1_corte")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="c1"]
+atlas = ExtResource("1_corte")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="c2"]
+atlas = ExtResource("1_corte")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="c3"]
+atlas = ExtResource("1_corte")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="r0"]
+atlas = ExtResource("2_rastro")
+region = Rect2(0, 0, 48, 12)
+
+[sub_resource type="AtlasTexture" id="r1"]
+atlas = ExtResource("2_rastro")
+region = Rect2(48, 0, 48, 12)
+
+[sub_resource type="AtlasTexture" id="r2"]
+atlas = ExtResource("2_rastro")
+region = Rect2(96, 0, 48, 12)
+
+[sub_resource type="AtlasTexture" id="r3"]
+atlas = ExtResource("2_rastro")
+region = Rect2(144, 0, 48, 12)
+
+[sub_resource type="AtlasTexture" id="i0"]
+atlas = ExtResource("3_impacto")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="i1"]
+atlas = ExtResource("3_impacto")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="i2"]
+atlas = ExtResource("3_impacto")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="i3"]
+atlas = ExtResource("3_impacto")
+region = Rect2(96, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("c0")
+}, {
+"duration": 1.0,
+"texture": SubResource("c1")
+}, {
+"duration": 1.0,
+"texture": SubResource("c2")
+}, {
+"duration": 1.0,
+"texture": SubResource("c3")
+}],
+"loop": false,
+"name": &"corte",
+"speed": 28.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("r0")
+}, {
+"duration": 1.0,
+"texture": SubResource("r1")
+}, {
+"duration": 1.0,
+"texture": SubResource("r2")
+}, {
+"duration": 1.0,
+"texture": SubResource("r3")
+}],
+"loop": false,
+"name": &"rastro",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("i0")
+}, {
+"duration": 1.0,
+"texture": SubResource("i1")
+}, {
+"duration": 1.0,
+"texture": SubResource("i2")
+}, {
+"duration": 1.0,
+"texture": SubResource("i3")
+}],
+"loop": false,
+"name": &"impacto",
+"speed": 24.0
+}]

@@ -44,6 +44,7 @@ nome_original = "Light Hammer"
 peso = "2 lb."
 preco = "2 GP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_vsuep")]([SubResource("Resource_eq0yi"), SubResource("Resource_xhc45"), SubResource("Resource_b7mbi"), SubResource("Resource_tlve0")])
 passo = 17.0

@@ -42,6 +42,7 @@ nome_original = "Javelin"
 peso = "2 lb."
 preco = "5 SP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_ffsv8")]([SubResource("Resource_ovm8l"), SubResource("Resource_hugvx"), SubResource("Resource_bo06d"), SubResource("Resource_jvpth")])
 nome = "Azagaia"
 descricao = "Arma simples. Arremesso (30/120). Maestria: Lentidão. (Javelin, Player’s Handbook)"

@@ -45,6 +45,7 @@ nome_original = "Dagger"
 peso = "1 lb."
 preco = "2 GP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_yw3yb")]([SubResource("Resource_o8qq5"), SubResource("Resource_hvbkm"), SubResource("Resource_ls52b"), SubResource("Resource_lxcuy")])
 passo = 13.0
 nome = "Adaga"

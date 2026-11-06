@@ -100,6 +100,9 @@ func _testar_alcance() -> void:
 	_checar(flexiveis_ok, "Mangual e Chicote têm quadros desenhados (um por pose)")
 	_checar(_arma("espada_longa").quadros.is_empty(), "armas rígidas giram a imagem (sem quadros)")
 	_checar(_arma("adaga").icone.get_width() == 16 and _arma("chicote").icone.get_height() == 16, "ícones dos menus em 16x16")
+	_checar(_arma("espada_longa").efeito == Arma.EFEITO_CORTE and _arma("rapieira").efeito == Arma.EFEITO_RASTRO
+		and _arma("malho").efeito == Arma.EFEITO_IMPACTO and _arma("maca_estrela").efeito == Arma.EFEITO_IMPACTO
+		and _arma("chicote").efeito == &"", "efeitos: arco no corte, rastro na estocada, impacto no contundente")
 	_checar(movimentos.size() == TOTAL_ARMAS, "cada uma das 29 armas tem um movimento diferente (%d)" % movimentos.size())
 
 

@@ -46,6 +46,7 @@ nome_original = "Quarterstaff"
 peso = "4 lb."
 preco = "2 SP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_vonje")]([SubResource("Resource_u4uk8"), SubResource("Resource_yld4w"), SubResource("Resource_lk10w"), SubResource("Resource_cm13a"), SubResource("Resource_l6wso")])
 nome = "Bordão"

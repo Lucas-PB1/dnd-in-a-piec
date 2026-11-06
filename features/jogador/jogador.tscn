@@ -20,7 +20,7 @@
 [ext_resource type="Script" path="res://features/jogador/estados/estado_arremessando.gd" id="28_arremesso"]
 [ext_resource type="Shader" path="res://assets/shaders/roupa_armadura.gdshader" id="26_roupa"]
 [ext_resource type="Script" path="res://features/jogador/ataque_jogador.gd" id="13_ataque"]
-[ext_resource type="SpriteFrames" path="res://assets/efeitos/corte_frames.tres" id="14_corte"]
+[ext_resource type="SpriteFrames" path="res://assets/efeitos/efeitos_golpe.tres" id="14_corte"]
 [ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="15_hitbox"]
 [ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="16_classe"]
 [ext_resource type="Script" path="res://core/componentes/health_component.gd" id="17_vida"]
@@ -102,7 +102,7 @@ visible = false
 centered = false
 
 
-[node name="Corte" type="AnimatedSprite2D" parent="Ataque"]
+[node name="Efeito" type="AnimatedSprite2D" parent="Ataque"]
 visible = false
 position = Vector2(10, 0)
 sprite_frames = ExtResource("14_corte")

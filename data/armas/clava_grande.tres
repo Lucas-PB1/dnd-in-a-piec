@@ -42,6 +42,7 @@ nome_original = "Greatclub"
 peso = "10 lb."
 preco = "2 SP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_vn1gs")]([SubResource("Resource_samb6"), SubResource("Resource_kewuh"), SubResource("Resource_ooa5i"), SubResource("Resource_5snm0")])
 nome = "Clava Grande"

@@ -43,6 +43,7 @@ nome_original = "Pike"
 peso = "18 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_gdygf")]([SubResource("Resource_6m52l"), SubResource("Resource_w24fw"), SubResource("Resource_clp7l"), SubResource("Resource_ih738")])
 nome = "Pique"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Empurrar. (Pike, Player’s Handbook)"

@@ -46,7 +46,10 @@ extends Item
 @export var peso: String = ""
 @export var preco: String = ""
 @export var livro: String = ""
-## Cor do arco de corte.
+## Efeito visual do golpe (EFEITO_*): arco nos cortes, rastro nas estocadas, impacto nos
+## contundentes. Vazio = nenhum (o chicote já desenha o estalo nos quadros).
+@export var efeito: StringName = EFEITO_CORTE
+## Cor do efeito do golpe.
 @export var cor_corte: Color = Color(0.85, 0.95, 1.0, 0.9)
 
 @export_group("Golpe")
@@ -106,6 +109,10 @@ func texto_propriedades() -> String:
 
 
 # --- Golpe (poses no tempo) -----------------------------------------------------------
+
+const EFEITO_CORTE := &"corte"
+const EFEITO_RASTRO := &"rastro"
+const EFEITO_IMPACTO := &"impacto"
 
 ## Curva do trecho que acerta (< 1 = rápido no começo e freia no fim, como um golpe de verdade).
 const CURVA_ACERTO := 0.4

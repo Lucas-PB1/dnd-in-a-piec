@@ -27,6 +27,7 @@ script = ExtResource("1_arma")
 dados_dano = "1d1"
 corroivel = false
 comprimento = 8.0
+efeito = &"impacto"
 cor_corte = Color(1, 0.9, 0.7, 0.5)
 poses = Array[ExtResource("1_js0le")]([SubResource("Resource_js0le"), SubResource("Resource_ho72m"), SubResource("Resource_ort7o"), SubResource("Resource_50crk")])
 passo = 26.0

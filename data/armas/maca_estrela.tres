@@ -42,6 +42,7 @@ nome_original = "Morningstar"
 peso = "4 lb."
 preco = "15 GP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 poses = Array[ExtResource("2_vkbdk")]([SubResource("Resource_7piro"), SubResource("Resource_om332"), SubResource("Resource_p0iia"), SubResource("Resource_ay5ah")])
 passo = 3.5
 nome = "Maça Estrela"

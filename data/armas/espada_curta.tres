@@ -42,6 +42,7 @@ nome_original = "Shortsword"
 peso = "2 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_0r335")]([SubResource("Resource_txu2f"), SubResource("Resource_1g71h"), SubResource("Resource_vp81l"), SubResource("Resource_lfvel")])
 passo = 3.0
 nome = "Espada Curta"

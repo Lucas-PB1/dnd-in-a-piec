@@ -172,6 +172,7 @@ func _criar(id: String, d: Array) -> Arma:
 	else:
 		a.poses = _poses(GOLPES[id])
 	a.passo = _passo(a, PONTA_ALCANCE if a.alcance_estendido else PONTA_NORMAL)
+	a.efeito = _efeito(a, id)
 	a.cor_corte = Color(1.0, 0.92, 0.7, 0.85) if a.tipo_dano == B else Color(0.85, 0.95, 1.0, 0.9)
 	a.descricao = _descricao(a)
 	return a
@@ -192,6 +193,7 @@ func _atualizar_soco() -> void:
 	soco.poses = _poses(GOLPE_SOCO)
 	soco.comprimento = COMPRIMENTO_SOCO
 	soco.passo = _passo(soco, PONTA_NORMAL)
+	soco.efeito = _efeito(soco, "")
 	ResourceSaver.save(soco, ARQ_DESARMADO)
 
 
@@ -202,6 +204,30 @@ func _poses(lista: Array) -> Array[PoseGolpe]:
 		poses.append(PoseGolpe.criar(p[0], p[1], Vector2(p[2], p[3]), p[5] if p.size() > 5 else 1.0, p[4]))
 	return poses
 
+
+## Armas perfurantes que batem como contundentes (cabeça pesada): mostram impacto.
+const EFEITO_POR_ARMA := {"maca_estrela": Arma.EFEITO_IMPACTO, "picareta_guerra": Arma.EFEITO_IMPACTO, "chicote": &""}
+## Abaixo deste giro (graus) no trecho que acerta, o golpe é estocada (rastro).
+const GIRO_ESTOCADA := 60.0
+
+
+## Efeito do golpe: impacto nos contundentes, rastro nas estocadas (quase sem giro), arco
+## nos cortes. EFEITO_POR_ARMA manda nas exceções.
+func _efeito(a: Arma, id: String) -> StringName:
+	if EFEITO_POR_ARMA.has(id):
+		return EFEITO_POR_ARMA[id]
+	if a.tipo_dano == B:
+		return Arma.EFEITO_IMPACTO
+	return Arma.EFEITO_RASTRO if _giro_no_acerto(a) < GIRO_ESTOCADA else Arma.EFEITO_CORTE
+
+
+## Quanto a lâmina gira (graus) nos trechos que acertam.
+static func _giro_no_acerto(a: Arma) -> float:
+	var giro := 0.0
+	for i in a.poses.size() - 1:
+		if a.poses[i].acerta:
+			giro += absf(a.poses[i + 1].angulo - a.poses[i].angulo)
+	return giro
 
 ## Passo à frente (px) para a ponta chegar a `ponta` px da mão nos trechos que acertam.
 static func _passo(a: Arma, ponta: float) -> float:

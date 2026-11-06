@@ -43,6 +43,7 @@ nome_original = "War Pick"
 peso = "2 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 poses = Array[ExtResource("2_2cs3t")]([SubResource("Resource_tgdb1"), SubResource("Resource_ibrlg"), SubResource("Resource_hdt6u"), SubResource("Resource_qn5ds")])
 passo = 6.5
 nome = "Picareta de Guerra"

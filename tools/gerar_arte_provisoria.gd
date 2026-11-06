@@ -1,5 +1,5 @@
 extends SceneTree
-## Gera a arte provisória (pixel art): ladrilhos, arco de corte e boneco de treino.
+## Gera a arte provisória (pixel art): ladrilhos, efeitos de golpe (arco, rastro, impacto) e boneco de treino.
 ## Rodar: godot --headless --path . --script res://tools/gerar_arte_provisoria.gd
 ## Depois rode "godot --headless --path . --import" (e gerar_fase_teste.gd se mudou ladrilhos).
 
@@ -12,6 +12,8 @@ const CONTORNO := Color8(34, 28, 40)
 
 const ARQ_LADRILHOS := "res://assets/tiles/ladrilhos.png"
 const ARQ_CORTE := "res://assets/efeitos/corte.png"
+const ARQ_RASTRO := "res://assets/efeitos/rastro.png"
+const ARQ_IMPACTO := "res://assets/efeitos/impacto.png"
 const ARQ_BONECO := "res://features/boneco_treino/boneco_treino.png"
 const ARQ_ESCUDO := "res://assets/armaduras/escudo.png"
 const ARQ_TAMPA := "res://assets/armaduras/tampa_panela.png"
@@ -20,11 +22,18 @@ const ARQ_BAU := "res://features/bau/bau.png"
 ## Arco de corte: quadros quadrados lado a lado.
 const TAM_CORTE := 48
 const QUADROS_CORTE := 4
+## Rastro da estocada: quadros compridos (da mão até a ponta).
+const TAM_RASTRO := Vector2i(48, 12)
+## Impacto dos contundentes: quadros quadrados.
+const TAM_IMPACTO := 32
+const QUADROS_EFEITO := 4
 
 
 func _initialize() -> void:
 	_gerar_ladrilhos()
 	_gerar_corte()
+	_gerar_rastro()
+	_gerar_impacto()
 	_gerar_boneco()
 	_gerar_bau()
 	_gerar_escudo(ARQ_ESCUDO, 18, Color8(150, 92, 48), Color8(180, 184, 196), true)
@@ -73,6 +82,47 @@ func _desenhar_arco(img: Image, ox: int, ang_ini: float, ang_fim: float, alfa: f
 			var espessura := 2.0 + 6.0 * sin(meio * PI)
 			if v.length() <= raio_fora and v.length() >= raio_fora - espessura:
 				img.set_pixel(ox + x, y, Color(1, 1, 1, alfa))
+
+
+## Rastro da estocada (branco; a cor vem da Arma): linhas paralelas que correm da mão até
+## a ponta, mais fortes perto da ponta, e somem.
+func _gerar_rastro() -> void:
+	var img := Image.create(TAM_RASTRO.x * QUADROS_EFEITO, TAM_RASTRO.y, false, Image.FORMAT_RGBA8)
+	# [onde a linha começa (fração), alfa] por quadro: estica, fica cheia, recua para a ponta e some.
+	var quadros := [[0.55, 1.0], [0.1, 1.0], [0.35, 0.65], [0.7, 0.3]]
+	var linhas := [[3, 0.5], [6, 1.0], [9, 0.5], [5, 0.35], [7, 0.35]]  # [y, força]
+	for q in QUADROS_EFEITO:
+		var inicio := int(TAM_RASTRO.x * quadros[q][0])
+		for linha: Array in linhas:
+			for x in range(inicio, TAM_RASTRO.x):
+				var perto_da_ponta := float(x - inicio) / maxf(TAM_RASTRO.x - inicio, 1.0)
+				var alfa: float = quadros[q][1] * linha[1] * (0.35 + 0.65 * perto_da_ponta)
+				img.set_pixel(q * TAM_RASTRO.x + x, linha[0], Color(1, 1, 1, alfa))
+	_salvar(img, ARQ_RASTRO)
+
+
+## Impacto dos contundentes (branco; a cor vem da Arma): clarão, anel que abre e faíscas.
+func _gerar_impacto() -> void:
+	var img := Image.create(TAM_IMPACTO * QUADROS_EFEITO, TAM_IMPACTO, false, Image.FORMAT_RGBA8)
+	# [raio do anel, grossura, comprimento das faíscas, alfa] por quadro.
+	var quadros := [[3.0, 3.0, 6.0, 1.0], [7.0, 2.0, 11.0, 1.0], [11.0, 1.5, 14.0, 0.7], [14.0, 1.0, 15.0, 0.35]]
+	var centro := Vector2(TAM_IMPACTO, TAM_IMPACTO) / 2.0
+	for q in QUADROS_EFEITO:
+		var raio: float = quadros[q][0]
+		var alfa: float = quadros[q][3]
+		for y in TAM_IMPACTO:
+			for x in TAM_IMPACTO:
+				var d := Vector2(x + 0.5, y + 0.5).distance_to(centro)
+				if absf(d - raio) <= quadros[q][1] * 0.5 or (q == 0 and d < raio):
+					img.set_pixel(q * TAM_IMPACTO + x, y, Color(1, 1, 1, alfa))
+		for k in 8:  # faíscas
+			var direcao := Vector2.from_angle(k * TAU / 8.0 + 0.2)
+			for s in range(int(raio) + 2, int(quadros[q][2])):
+				if s % 2 == 0 or q < 2:
+					var p := Vector2i(centro + direcao * s)
+					if Rect2i(0, 0, TAM_IMPACTO, TAM_IMPACTO).has_point(p):
+						img.set_pixel(q * TAM_IMPACTO + p.x, p.y, Color(1, 1, 1, alfa))
+	_salvar(img, ARQ_IMPACTO)
 
 
 ## Boneco de treino: poste de madeira com um saco de palha e um alvo vermelho.

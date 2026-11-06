@@ -11,16 +11,17 @@ const FOLGA_DO_CHAO := 2.0
 const ESPESSURA_ACERTO := 14.0
 ## A área passa um pouco da ponta (px): o golpe "pega" quem está encostando nela.
 const FOLGA_PONTA := 6.0
-## Abaixo deste giro (graus) no trecho que acerta, é estocada: sem o arco de corte.
-const GIRO_MINIMO_CORTE := 60.0
-## Tamanho do arco de corte para uma arma deste comprimento (px); escala com a arma.
-const COMPRIMENTO_DO_CORTE := 40.0
 ## Com a lâmina mais para trás que isto (graus; -90 = para cima), o golpe ainda está sendo
 ## armado atrás da cabeça e não acerta: só acerta quem está à frente.
 const ANGULO_ATRAS := -100.0
-## O arco de corte aparece a esta fração do comprimento da arma, e nunca menor que ESCALA_MINIMA_CORTE.
-const POSICAO_DO_CORTE := 0.6
-const ESCALA_MINIMA_CORTE := 0.6
+## Medidas da arte dos efeitos (tools/gerar_arte_provisoria.gd): raio do arco e onde fica o
+## centro dele no quadro; comprimento do rastro; tamanho do impacto.
+const RAIO_DO_ARCO := 22.0
+const CENTRO_DO_ARCO := Vector2(9.6, 0.0)
+const COMPRIMENTO_DO_RASTRO := 48.0
+const TAMANHO_DO_IMPACTO := 40.0
+## O impacto cresce com a arma, entre estes limites.
+const ESCALA_IMPACTO := Vector2(0.8, 1.4)
 
 var _arma: Arma
 var _golpe: Golpe
@@ -31,14 +32,15 @@ var _golpe_secundario: bool = false
 var _mao: Vector2 = Vector2.ZERO
 
 @onready var _espada: Sprite2D = $Espada
-@onready var _corte: AnimatedSprite2D = $Corte
+@onready var _efeito: AnimatedSprite2D = $Efeito
 @onready var _hitbox: HitboxComponent = $Hitbox
 @onready var _forma: CollisionShape2D = $Hitbox/Forma
 
 
 func _ready() -> void:
 	_espada.hide()
-	_corte.hide()
+	_efeito.hide()
+	_efeito.animation_finished.connect(_efeito.hide)
 
 
 ## Coloca a arma na `mao` (pixels, relativo aos pés, já espelhado) virada para `direcao`.
@@ -65,8 +67,8 @@ func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false) -> void:
 	_golpeando = true
 	_golpe_secundario = secundaria
 	DesenhoArma.preparar(_espada, arma)
-	_corte.modulate = arma.cor_corte
-	_corte.hide()
+	_efeito.modulate = arma.cor_corte
+	_efeito.hide()
 	_aplicar_pose()
 
 
@@ -95,6 +97,7 @@ func velocidade_do_passo() -> float:
 func cancelar() -> void:
 	if _golpeando:
 		_terminar()
+		_efeito.hide()
 
 
 func _physics_process(delta: float) -> void:
@@ -107,7 +110,7 @@ func _physics_process(delta: float) -> void:
 		_terminar()
 
 
-## Espelha a arma, o corte e a área do golpe. Ao trocar de lado, não deixa a
+## Espelha a arma, o efeito e a área do golpe. Ao trocar de lado, não deixa a
 ## interpolação "arrastar" a espada pelo meio do corpo.
 func _virar(direcao: int) -> void:
 	if direcao == _direcao:
@@ -152,23 +155,47 @@ func _atualizar_acerto() -> void:
 	var acertando := _arma.acertando(_tempo) and _arma.pose_em(_tempo).angulo > ANGULO_ATRAS
 	if acertando and not _hitbox.esta_ligada():
 		_hitbox.ligar(_golpe)
-		_mostrar_corte()
+		_mostrar_efeito_do_inicio()
 	elif not acertando and _hitbox.esta_ligada():
 		_hitbox.desligar()
+		if _arma.efeito == Arma.EFEITO_IMPACTO:
+			_mostrar_impacto()
 
 
-## Arco de corte no meio do giro do trecho que acerta, do tamanho da arma.
-## Estocada (quase sem giro) não mostra arco.
-func _mostrar_corte() -> void:
+## Começo do trecho que acerta: arco nos cortes (gira junto, com centro na mão e raio do
+## tamanho da arma), rastro nas estocadas (da mão até a ponta, na direção do golpe).
+func _mostrar_efeito_do_inicio() -> void:
 	var inicio := _arma.pose_em(_tempo)
 	var fim := _arma.pose_em(_arma.fim_do_acerto())
-	if absf(fim.angulo - inicio.angulo) < GIRO_MINIMO_CORTE:
-		return
-	var meio := deg_to_rad((inicio.angulo + fim.angulo) / 2.0)
-	_corte.position = Vector2.from_angle(meio) * _arma.comprimento * POSICAO_DO_CORTE
-	_corte.scale = Vector2.ONE * maxf(_arma.comprimento / COMPRIMENTO_DO_CORTE, ESCALA_MINIMA_CORTE)
-	_corte.show()
-	_corte.play(&"corte")
+	var alcance := _arma.comprimento * maxf(inicio.escala, fim.escala)
+	match _arma.efeito:
+		Arma.EFEITO_CORTE:
+			_tocar_efeito(Arma.EFEITO_CORTE, Vector2.ZERO, (inicio.angulo + fim.angulo) / 2.0,
+				Vector2.ONE * alcance / RAIO_DO_ARCO, CENTRO_DO_ARCO)
+		Arma.EFEITO_RASTRO:
+			_tocar_efeito(Arma.EFEITO_RASTRO, Vector2.ZERO, fim.angulo,
+				Vector2(alcance / COMPRIMENTO_DO_RASTRO, 1.0), Vector2(COMPRIMENTO_DO_RASTRO / 2.0, 0.0))
+
+
+## Fim do trecho que acerta de um contundente: impacto onde a cabeça da arma parou.
+func _mostrar_impacto() -> void:
+	var pose := _arma.pose_em(_tempo)
+	var ponta := Vector2.from_angle(deg_to_rad(pose.angulo)) * _arma.comprimento * pose.escala
+	var tamanho := clampf(_arma.comprimento / TAMANHO_DO_IMPACTO, ESCALA_IMPACTO.x, ESCALA_IMPACTO.y)
+	_tocar_efeito(Arma.EFEITO_IMPACTO, ponta, 0.0, Vector2.ONE * tamanho, Vector2.ZERO)
+
+
+## Toca a `animacao` do efeito em `posicao` (relativa à mão), girada `angulo` graus.
+## `deslocamento` põe o ponto certo da arte na origem (centro do arco, começo do rastro).
+## O efeito some sozinho quando a animação acaba (pode passar do fim do golpe).
+func _tocar_efeito(animacao: StringName, posicao: Vector2, angulo: float, escala: Vector2, deslocamento: Vector2) -> void:
+	_efeito.position = posicao
+	_efeito.rotation_degrees = angulo
+	_efeito.scale = escala
+	_efeito.offset = deslocamento
+	_efeito.reset_physics_interpolation()  # não "arrastar" da posição do efeito anterior
+	_efeito.show()
+	_efeito.play(animacao)
 
 
 ## Fim do golpe: a arma volta para o repouso no próximo seguir_mao().
@@ -176,4 +203,3 @@ func _terminar() -> void:
 	_golpeando = false
 	_golpe_secundario = false
 	_hitbox.desligar()
-	_corte.hide()

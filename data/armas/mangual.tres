@@ -110,6 +110,7 @@ nome_original = "Flail"
 peso = "2 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_pduhp")]([SubResource("Resource_ta5t0"), SubResource("Resource_xvns4"), SubResource("Resource_sxno0"), SubResource("Resource_ym341"), SubResource("Resource_l5l33"), SubResource("Resource_faytq"), SubResource("Resource_u0lg8"), SubResource("Resource_f2ryh"), SubResource("Resource_14hhi")])
 quadros = Array[Texture2D]([SubResource("AtlasTexture_3v4bd"), SubResource("AtlasTexture_romxm"), SubResource("AtlasTexture_tkpyr"), SubResource("AtlasTexture_xcxt7"), SubResource("AtlasTexture_njyp7"), SubResource("AtlasTexture_qbmci"), SubResource("AtlasTexture_sgkmr"), SubResource("AtlasTexture_hivoi"), SubResource("AtlasTexture_fjgqq")])

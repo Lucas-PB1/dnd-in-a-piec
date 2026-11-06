@@ -42,6 +42,7 @@ nome_original = "Warhammer"
 peso = "5 lb."
 preco = "15 GP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_0uak7")]([SubResource("Resource_ycjf5"), SubResource("Resource_qb0wi"), SubResource("Resource_trooa"), SubResource("Resource_jecda")])
 passo = 4.0

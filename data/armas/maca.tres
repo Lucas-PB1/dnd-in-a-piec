@@ -40,6 +40,7 @@ nome_original = "Mace"
 peso = "4 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_3g3eo")]([SubResource("Resource_ui3ud"), SubResource("Resource_3takj"), SubResource("Resource_1vcrv"), SubResource("Resource_n1dcs")])
 passo = 8.0

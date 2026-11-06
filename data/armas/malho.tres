@@ -44,6 +44,7 @@ nome_original = "Maul"
 peso = "10 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
+efeito = &"impacto"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
 poses = Array[ExtResource("2_runad")]([SubResource("Resource_k8gmm"), SubResource("Resource_xkr1r"), SubResource("Resource_4vcte"), SubResource("Resource_2rpos")])
 nome = "Malho"

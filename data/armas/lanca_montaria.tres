@@ -43,6 +43,7 @@ nome_original = "Lance"
 peso = "6 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_0jqih")]([SubResource("Resource_kawu8"), SubResource("Resource_i5728"), SubResource("Resource_bcr75"), SubResource("Resource_n3iab")])
 nome = "Lança de Montaria"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Derrubar. (Lance, Player’s Handbook)"

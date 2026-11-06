@@ -43,6 +43,7 @@ nome_original = "Rapier"
 peso = "2 lb."
 preco = "25 GP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_2r3um")]([SubResource("Resource_msngi"), SubResource("Resource_m08tj"), SubResource("Resource_i3yso"), SubResource("Resource_lann7")])
 nome = "Rapieira"
 descricao = "Arma marcial. Acuidade. Maestria: Atormentar. (Rapier, Player’s Handbook)"

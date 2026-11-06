@@ -45,6 +45,7 @@ nome_original = "Trident"
 peso = "4 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
+efeito = &"rastro"
 poses = Array[ExtResource("2_xhitb")]([SubResource("Resource_f4c2d"), SubResource("Resource_7g4gt"), SubResource("Resource_82sdp"), SubResource("Resource_gauul")])
 nome = "Tridente"
 descricao = "Arma marcial. Versátil (1d10), Arremesso (20/60). Maestria: Derrubar. (Trident, Player’s Handbook)"
