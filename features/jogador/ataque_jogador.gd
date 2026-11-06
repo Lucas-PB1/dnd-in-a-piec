@@ -7,6 +7,10 @@ extends Node2D
 
 ## Curva do giro da arma (< 1 = rápido no começo e freia no fim, como um golpe de verdade).
 const CURVA_GOLPE := 0.4
+## A mão segura o cabo a esta distância (px) da ponta de trás da arma.
+const PEGADA := 4.0
+## Em repouso, a ponta da arma fica pelo menos isto (px) acima do chão (os pés).
+const FOLGA_DO_CHAO := 2.0
 
 var _arma: Arma
 var _golpe: Golpe
@@ -26,15 +30,15 @@ func _ready() -> void:
 
 
 ## Coloca a arma na `mao` (pixels, relativo aos pés, já espelhado) virada para `direcao`.
-## Fora do golpe, mostra a `arma` em repouso no `angulo` (graus). Arma sem imagem (soco) some.
+## Fora do golpe, mostra a `arma` em repouso no `angulo` (graus), menos inclinada se for
+## comprida demais e a ponta fosse entrar no chão. Arma sem imagem (soco) some.
 func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
 	position = mao
 	_virar(direcao)
 	if _golpeando:
 		return
-	_espada.texture = arma.textura
-	_espada.rotation_degrees = angulo
-	_espada.visible = arma.textura != null
+	_mostrar_arma(arma.textura)
+	_espada.rotation_degrees = _angulo_sem_tocar_chao(angulo, mao.y, arma.textura)
 
 
 ## Começa um golpe com a `arma`; quem for atingido resolve o `golpe` contra a própria CA.
@@ -78,11 +82,29 @@ func _virar(direcao: int) -> void:
 
 
 func _preparar_visual() -> void:
-	_espada.texture = _arma.textura
+	_mostrar_arma(_arma.textura)
 	_espada.rotation_degrees = _arma.angulo_inicial
-	_espada.visible = _arma.textura != null
 	_corte.modulate = _arma.cor_corte
 	_corte.hide()
+
+
+## Põe a imagem da arma na mão, centrada na altura. Sem imagem (soco), esconde.
+func _mostrar_arma(textura: Texture2D) -> void:
+	_espada.visible = textura != null
+	if textura == null or textura == _espada.texture:
+		return
+	_espada.texture = textura
+	_espada.offset = Vector2(-PEGADA, -textura.get_height() / 2.0)
+
+
+## Limita o ângulo para baixo: a ponta (comprimento após a pegada) não passa dos pés.
+## `altura_mao` = y da mão (negativo = acima dos pés).
+func _angulo_sem_tocar_chao(angulo: float, altura_mao: float, textura: Texture2D) -> float:
+	if textura == null:
+		return angulo
+	var comprimento := textura.get_width() - PEGADA
+	var seno_maximo := clampf((-altura_mao - FOLGA_DO_CHAO) / comprimento, -1.0, 1.0)
+	return minf(angulo, rad_to_deg(asin(seno_maximo)))
 
 
 func _preparar_area() -> void:

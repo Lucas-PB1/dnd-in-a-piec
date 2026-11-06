@@ -12,6 +12,8 @@ const CA_BASE := 10
 const DESLOCAMENTO_PADRAO_PES := 30.0
 ## Armadura com Força mínima que o personagem não alcança: perde isto de deslocamento.
 const PERDA_DESLOCAMENTO_SEM_FORCA := 10.0
+## Arma Pesada com Força abaixo disto: desvantagem no ataque.
+const FORCA_MINIMA_ARMA_PESADA := 13
 ## Vida mínima no nível 1, mesmo com Constituição muito baixa.
 const VIDA_MINIMA := 1
 ## Nome usado quando nenhum foi escolhido.
@@ -61,18 +63,19 @@ func bonus_dano(arma: Arma) -> int:
 
 
 ## Dados de dano da arma já com o modificador (ex.: espada curta + 2 = "1d6+2").
-func dado_dano(arma: Arma) -> Dado:
-	return arma.dado().com_bonus(bonus_dano(arma))
+## `duas_maos` = empunhando com as duas mãos (arma Versátil usa o dado maior).
+func dado_dano(arma: Arma, duas_maos: bool = false) -> Dado:
+	return arma.dado(duas_maos).com_bonus(bonus_dano(arma))
 
 
 ## Rola o dano de um acerto com a arma (mínimo DANO_MINIMO). Crítico rola os dados em dobro.
-func rolar_dano(arma: Arma, rng: RandomNumberGenerator, critico: bool = false) -> int:
-	return maxi(dado_dano(arma).rolar(rng, critico), DANO_MINIMO)
+func rolar_dano(arma: Arma, rng: RandomNumberGenerator, critico: bool = false, duas_maos: bool = false) -> int:
+	return maxi(dado_dano(arma, duas_maos).rolar(rng, critico), DANO_MINIMO)
 
 
 ## Texto do dano para a ficha, ex.: "1d6+2". Dano fixo (dado de 1 face, como o soco) vira o total: "3".
-func texto_dano(arma: Arma) -> String:
-	var dado := dado_dano(arma)
+func texto_dano(arma: Arma, duas_maos: bool = false) -> String:
+	var dado := dado_dano(arma, duas_maos)
 	if dado.faces == 1:
 		return str(maxi(dado.minimo(), DANO_MINIMO))
 	return dado.texto()
@@ -93,10 +96,16 @@ func bonus_ataque(arma: Arma) -> int:
 ## O ataque com a arma, pronto para ser resolvido contra a CA do alvo.
 ## `penalidade` = desgaste da arma (ex.: Corrosão), subtraído do bônus de ataque.
 ## `armadura` vestida: sem treinamento nela, o ataque (teste de FOR/DES) tem desvantagem.
-func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null) -> Golpe:
-	var golpe := Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado_dano(arma), arma.tipo_dano, arma.corroivel)
-	golpe.desvantagem = desvantagem_por_armadura(armadura)
+## Arma Pesada com FOR < 13 também dá desvantagem. `duas_maos`: Versátil com as duas mãos.
+func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null, duas_maos: bool = false) -> Golpe:
+	var golpe := Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado_dano(arma, duas_maos), arma.tipo_dano, arma.corroivel)
+	golpe.desvantagem = desvantagem_por_armadura(armadura) or fraco_para(arma)
 	return golpe
+
+
+## Arma Pesada pede FOR 13: abaixo disso, o ataque tem desvantagem.
+func fraco_para(arma: Arma) -> bool:
+	return arma.pesada and atributos[Atributos.FORCA] < FORCA_MINIMA_ARMA_PESADA
 
 
 ## Iniciativa = modificador de Destreza. Define o ritmo dos ataques (EscalaDnd).

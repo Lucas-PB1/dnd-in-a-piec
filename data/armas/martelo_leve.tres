@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/martelo_leve.png" id="1_pm0e2"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_mgwtx"]
+
+[resource]
+script = ExtResource("2_mgwtx")
+dados_dano = "1d4"
+categoria = &"simples"
+textura = ExtResource("1_pm0e2")
+leve = true
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+maestria = &"corte_duplo"
+nome_original = "Light Hammer"
+peso = "2 lb."
+preco = "2 GP"
+livro = "Player’s Handbook"
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.13
+nome = "Martelo Leve"
+descricao = "Arma simples. Leve, Arremesso (20/60). Maestria: Corte Duplo. (Light Hammer, Player’s Handbook)"
+icone = ExtResource("1_pm0e2")
+espaco = &"mao"

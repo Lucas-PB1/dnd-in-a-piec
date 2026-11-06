@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ClasseRPG" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="ClasseRPG" format=3]
 
 [ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="1_classe"]
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_armadura"]
-[ext_resource type="Resource" path="res://data/armaduras/cota_malha.tres" id="3_cota_malha"]
-[ext_resource type="Resource" path="res://data/armaduras/couro_batido.tres" id="4_couro_batido"]
+[ext_resource type="Script" path="res://core/dados/pacote_inicial.gd" id="2_pacote"]
+[ext_resource type="Resource" path="res://data/pacotes/guerreiro_a.tres" id="3_pacote_a"]
+[ext_resource type="Resource" path="res://data/pacotes/guerreiro_b.tres" id="4_pacote_b"]
 
 [resource]
 script = ExtResource("1_classe")
@@ -20,4 +20,4 @@ atributos_sugeridos = Dictionary[StringName, int]({
 salvaguardas_proficientes = Array[StringName]([&"forca", &"constituicao"])
 proficiencias_armas = Array[StringName]([&"simples", &"marcial"])
 treinamento_armaduras = Array[StringName]([&"leve", &"media", &"pesada", &"escudo"])
-armaduras_iniciais = Array[ExtResource("2_armadura")]([ExtResource("3_cota_malha"), ExtResource("4_couro_batido")])
+pacotes_iniciais = Array[ExtResource("2_pacote")]([ExtResource("3_pacote_a"), ExtResource("4_pacote_b")])

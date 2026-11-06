@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/tridente.png" id="1_7homo"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_dvbvr"]
+
+[resource]
+script = ExtResource("2_dvbvr")
+dados_dano = "1d8"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("1_7homo")
+dados_versatil = "1d10"
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+maestria = &"derrubar"
+nome_original = "Trident"
+peso = "4 lb."
+preco = "5 GP"
+livro = "Player’s Handbook"
+nome = "Tridente"
+descricao = "Arma marcial. Versátil (1d10), Arremesso (20/60). Maestria: Derrubar. (Trident, Player’s Handbook)"
+icone = ExtResource("1_7homo")
+espaco = &"mao"

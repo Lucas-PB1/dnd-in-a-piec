@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/mangual.png" id="1_bl1jx"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_invu5"]
+
+[resource]
+script = ExtResource("2_invu5")
+dados_dano = "1d8"
+categoria = &"marcial"
+textura = ExtResource("1_bl1jx")
+maestria = &"enfraquecer"
+nome_original = "Flail"
+peso = "2 lb."
+preco = "10 GP"
+livro = "Player’s Handbook"
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+nome = "Mangual"
+descricao = "Arma marcial. Maestria: Enfraquecer. (Flail, Player’s Handbook)"
+icone = ExtResource("1_bl1jx")
+espaco = &"mao"

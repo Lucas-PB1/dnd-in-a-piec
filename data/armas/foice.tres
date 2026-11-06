@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/foice.png" id="1_hux41"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_tiuvw"]
+
+[resource]
+script = ExtResource("2_tiuvw")
+dados_dano = "1d4"
+tipo_dano = &"cortante"
+categoria = &"simples"
+textura = ExtResource("1_hux41")
+leve = true
+maestria = &"corte_duplo"
+nome_original = "Sickle"
+peso = "2 lb."
+preco = "1 GP"
+livro = "Player’s Handbook"
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.13
+nome = "Foice"
+descricao = "Arma simples. Leve. Maestria: Corte Duplo. (Sickle, Player’s Handbook)"
+icone = ExtResource("1_hux41")
+espaco = &"mao"

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/glaive.png" id="1_6bpf6"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_poxiv"]
+
+[resource]
+script = ExtResource("2_poxiv")
+dados_dano = "1d10"
+tipo_dano = &"cortante"
+categoria = &"marcial"
+textura = ExtResource("1_6bpf6")
+pesada = true
+duas_maos = true
+alcance_estendido = true
+maestria = &"raspao"
+nome_original = "Glaive"
+peso = "6 lb."
+preco = "20 GP"
+livro = "Player’s Handbook"
+alcance = 76.0
+duracao = 0.42
+inicio_acerto = 0.08
+fim_acerto = 0.21
+nome = "Glaive"
+descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Raspão. (Glaive, Player’s Handbook)"
+icone = ExtResource("1_6bpf6")
+espaco = &"mao"

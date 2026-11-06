@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/bau/bau.gd" id="1_bau"]
+[ext_resource type="Texture2D" path="res://features/bau/bau.png" id="2_arte"]
+
+[sub_resource type="RectangleShape2D" id="Forma_perto"]
+size = Vector2(64, 40)
+
+[node name="Bau" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_bau")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_arte")
+offset = Vector2(0, -11)
+
+[node name="Perto" type="CollisionShape2D" parent="."]
+position = Vector2(0, -20)
+shape = SubResource("Forma_perto")
+
+[node name="Aviso" type="Label" parent="."]
+offset_left = -60.0
+offset_top = -96.0
+offset_right = 60.0
+offset_bottom = -80.0
+theme_override_colors/font_color = Color(1, 0.9, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.08, 0.12, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 10
+text = "E: abrir arsenal"
+horizontal_alignment = 1

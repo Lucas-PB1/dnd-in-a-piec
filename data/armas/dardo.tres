@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/dardo.png" id="1_prkjb"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_splw1"]
+
+[resource]
+script = ExtResource("2_splw1")
+dados_dano = "1d4"
+tipo_dano = &"perfurante"
+categoria = &"simples"
+acuidade = true
+textura = ExtResource("1_prkjb")
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+maestria = &"atormentar"
+nome_original = "Dart"
+peso = "1/4 lb."
+preco = "5 CP"
+livro = "Player’s Handbook"
+nome = "Dardo"
+descricao = "Arma simples. Acuidade, Arremesso (20/60). Maestria: Atormentar. (Dart, Player’s Handbook)"
+icone = ExtResource("1_prkjb")
+espaco = &"mao"
+empilhavel = true

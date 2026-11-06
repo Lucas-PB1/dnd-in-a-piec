@@ -5,6 +5,9 @@ extends SceneTree
 const DISTANCIA_DO_BONECO := 30.0
 const CA_BONECO := 10
 
+## Em repouso a arma pode inclinar um pouco menos que o ângulo da animação (não entra no chão).
+const MARGEM_DESCANSO := 10.0
+
 var _falhas := 0
 var _jogador: Jogador
 var _boneco: BonecoTreino
@@ -66,8 +69,9 @@ func _testar_golpe_no_chao() -> void:
 		"acerta o boneco UMA vez por golpe (deu %d)" % (_boneco.golpes_recebidos - antes))
 	await _esperar(1)
 	var animacao: AnimacaoJogador = _jogador.get_node("Sprite")
-	_checar(espada.visible and is_equal_approx((espada as Sprite2D).rotation_degrees, animacao.angulo_descanso()),
-		"no fim do golpe a espada volta para a mão em repouso")
+	var angulo := (espada as Sprite2D).rotation_degrees
+	_checar(espada.visible and angulo <= animacao.angulo_descanso() + 0.01 and angulo > animacao.angulo_descanso() - MARGEM_DESCANSO,
+		"no fim do golpe a espada volta para a mão em repouso (%.1f°; sem a ponta entrar no chão)" % angulo)
 	_checar(absf(_jogador.velocity.x) < 1.0, "no chão o herói fica parado golpeando")
 	await _esperar(2)
 	_checar(_jogador.nome_estado() == &"Parado", "depois do golpe volta para Parado")

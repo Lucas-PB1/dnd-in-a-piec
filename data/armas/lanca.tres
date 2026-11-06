@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/lanca.png" id="1_ppo7n"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_hly1w"]
+
+[resource]
+script = ExtResource("2_hly1w")
+tipo_dano = &"perfurante"
+categoria = &"simples"
+textura = ExtResource("1_ppo7n")
+dados_versatil = "1d8"
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+maestria = &"enfraquecer"
+nome_original = "Spear"
+peso = "3 lb."
+preco = "1 GP"
+livro = "Player’s Handbook"
+nome = "Lança"
+descricao = "Arma simples. Versátil (1d8), Arremesso (20/60). Maestria: Enfraquecer. (Spear, Player’s Handbook)"
+icone = ExtResource("1_ppo7n")
+espaco = &"mao"

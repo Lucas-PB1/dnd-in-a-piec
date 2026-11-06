@@ -111,7 +111,7 @@ func _atualizar() -> void:
 	_lista.clear()
 	for item in _inventario.itens:
 		var marca := MARCA_EQUIPADO if _inventario.esta_equipado(item) else ""
-		_lista.add_item(marca + item.nome, item.icone)
+		_lista.add_item(marca + _nome_com_quantidade(item), item.icone)
 	if not anterior.is_empty() and _lista.item_count > 0:
 		_lista.select(mini(anterior[0], _lista.item_count - 1))
 	_titulo.text = "Inventário (%d/%d)" % [_inventario.itens.size(), _inventario.capacidade]
@@ -138,18 +138,29 @@ func _atualizar_ficha() -> void:
 	linhas.append("Inic. %s (%.1fs)   %d pés" % [Atributos.texto_bonus(_ficha.iniciativa()),
 		EscalaDnd.intervalo_ataque(_ficha.iniciativa()), Equipamento.deslocamento_pes(_ficha, _inventario)])
 	var arma := Equipamento.arma(_inventario, _desarmado)
-	linhas.append("Mão: %s" % arma.nome)
+	linhas.append("Mão: %s%s" % [arma.nome, " (duas mãos)" if _usa_duas_maos(arma) else ""])
 	linhas.append("Corpo: %s" % _nome_ou_nada(Equipamento.armadura(_inventario)))
 	var escudo := Equipamento.escudo(_inventario)
 	if escudo:
 		linhas.append("Escudo: %s" % escudo.nome)
 	var ataque := Equipamento.bonus_ataque(_ficha, _inventario, arma)
-	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(ataque), _ficha.texto_dano(arma)])
+	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(ataque), Equipamento.texto_dano(_ficha, _inventario, arma)])
 	_texto_ficha.text = "\n".join(linhas)
 
 
 func _nome_ou_nada(item: Item) -> String:
 	return item.nome if item else "(nada)"
+
+
+## "Azagaia ×8" para pilhas; só o nome para o resto.
+func _nome_com_quantidade(item: Item) -> String:
+	var quantidade := _inventario.quantidade_de(item)
+	return "%s ×%d" % [item.nome, quantidade] if quantidade > 1 else item.nome
+
+
+## Arma de Duas Mãos, ou Versátil com a mão secundária livre.
+func _usa_duas_maos(arma: Arma) -> bool:
+	return arma.duas_maos or Equipamento.duas_maos(_inventario, arma)
 
 
 ## Detalhes extras do item selecionado: dano da arma ou regras da armadura.
@@ -163,9 +174,13 @@ func _texto_do_item(item: Item) -> String:
 	return ""
 
 
-## "Dano: 1d6+2 perfurante" e, se a arma estiver gasta, "Corroída: -2 no ataque".
+## "Dano: 1d10+2 cortante (duas mãos)" e os avisos: proficiência, arma Pesada, Corrosão.
 func _texto_da_arma(arma: Arma) -> String:
-	var texto := "Dano: %s %s" % [_ficha.texto_dano(arma), TiposDano.nome(arma.tipo_dano)]
+	var texto := "Dano: %s %s%s" % [Equipamento.texto_dano(_ficha, _inventario, arma),
+		TiposDano.nome(arma.tipo_dano), " (duas mãos)" if _usa_duas_maos(arma) else ""]
+	if _ficha.fraco_para(arma):
+		texto += "
+Pesada: FOR abaixo de %d, ataca com desvantagem" % Ficha.FORCA_MINIMA_ARMA_PESADA
 	if not _ficha.proficiente_com(arma):
 		texto += "\nSem proficiência: -%d no ataque" % Ficha.BONUS_PROFICIENCIA
 	var penalidade := _inventario.penalidade(arma)

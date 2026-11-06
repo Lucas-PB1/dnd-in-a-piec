@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/machado_grande.png" id="1_ow5u1"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_t0dcy"]
+
+[resource]
+script = ExtResource("2_t0dcy")
+dados_dano = "1d12"
+tipo_dano = &"cortante"
+categoria = &"marcial"
+textura = ExtResource("1_ow5u1")
+pesada = true
+duas_maos = true
+maestria = &"trespassar"
+nome_original = "Greataxe"
+peso = "7 lb."
+preco = "30 GP"
+livro = "Player’s Handbook"
+duracao = 0.42
+inicio_acerto = 0.08
+fim_acerto = 0.21
+nome = "Machado Grande"
+descricao = "Arma marcial. Pesada, Duas Mãos. Maestria: Trespassar. (Greataxe, Player’s Handbook)"
+icone = ExtResource("1_ow5u1")
+espaco = &"mao"

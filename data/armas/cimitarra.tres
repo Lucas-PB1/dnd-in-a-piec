@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/cimitarra.png" id="1_lyy3l"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_8piag"]
+
+[resource]
+script = ExtResource("2_8piag")
+tipo_dano = &"cortante"
+categoria = &"marcial"
+acuidade = true
+textura = ExtResource("1_lyy3l")
+leve = true
+maestria = &"corte_duplo"
+nome_original = "Scimitar"
+peso = "3 lb."
+preco = "25 GP"
+livro = "Player’s Handbook"
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.13
+nome = "Cimitarra"
+descricao = "Arma marcial. Acuidade, Leve. Maestria: Corte Duplo. (Scimitar, Player’s Handbook)"
+icone = ExtResource("1_lyy3l")
+espaco = &"mao"

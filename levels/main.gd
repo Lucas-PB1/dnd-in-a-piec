@@ -23,6 +23,8 @@ var _monstros_iniciais: Array[Dictionary] = []
 @onready var _hud: Hud = $Hud
 @onready var _interface: CanvasLayer = $Interface
 @onready var _inventario: TelaInventario = $Interface/TelaInventario
+@onready var _bau: Bau = $Bau
+@onready var _tela_bau: TelaBau = $Interface/TelaBau
 
 
 func _ready() -> void:
@@ -33,6 +35,7 @@ func _ready() -> void:
 	_jogador.caiu.connect(_ao_cair)
 	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
+	_bau.abrir_pedido.connect(_abrir_bau)
 	_guardar_monstros_iniciais()
 	_apontar_monstros_para(_jogador)
 	if mostrar_inicio:
@@ -58,14 +61,14 @@ func _abrir_criacao() -> void:
 	var tela: TelaCriacao = CENA_CRIACAO.instantiate()
 	if not classes_disponiveis.is_empty():
 		tela.classes = classes_disponiveis
-	tela.arma_previa = _primeira_arma(_jogador.inventario)
+	tela.arma_previa = _jogador.ataque_desarmado
 	tela.confirmada.connect(_ao_criar_personagem.bind(tela))
 	_interface.add_child(tela)
 
 
-func _ao_criar_personagem(ficha: Ficha, armadura: Armadura, tela: TelaCriacao) -> void:
+func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao) -> void:
 	_jogador.configurar_ficha(ficha)
-	_jogador.vestir_armadura_inicial(armadura)
+	_jogador.receber_pacote(pacote)
 	_mostrar_personagem_no_hud()
 	tela.queue_free()
 	_pausar(false)
@@ -114,10 +117,16 @@ func _apontar_monstros_para(alvo: Node2D) -> void:
 # --- Interface --------------------------------------------------------------------
 
 func _abrir_inventario() -> void:
-	if _em_tela_de_pausa:
+	if _em_tela_de_pausa or _tela_bau.visible:
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
+
+
+func _abrir_bau(itens: Array[Item]) -> void:
+	if _em_tela_de_pausa or _inventario.visible:
+		return
+	_tela_bau.abrir(itens, _jogador.inventario)
 
 
 ## Telas de pausa (título, criação, derrota) param o jogo e escondem o HUD.
@@ -131,10 +140,3 @@ func _mostrar_personagem_no_hud() -> void:
 	_hud.mostrar_personagem(_jogador.ficha.nome, _jogador.ficha.classe.nome)
 	_hud.mostrar_vida(_jogador.vida_atual(), _jogador.vida_maxima())
 
-
-## Primeira arma da mochila (para a prévia do dano na criação); null se não houver.
-func _primeira_arma(inventario: Inventario) -> Arma:
-	for item in inventario.itens:
-		if item is Arma:
-			return item
-	return null

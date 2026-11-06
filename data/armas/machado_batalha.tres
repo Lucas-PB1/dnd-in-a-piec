@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/machado_batalha.png" id="1_wf5pi"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_m5tnk"]
+
+[resource]
+script = ExtResource("2_m5tnk")
+dados_dano = "1d8"
+tipo_dano = &"cortante"
+categoria = &"marcial"
+textura = ExtResource("1_wf5pi")
+dados_versatil = "1d10"
+maestria = &"derrubar"
+nome_original = "Battleaxe"
+peso = "4 lb."
+preco = "10 GP"
+livro = "Player’s Handbook"
+nome = "Machado de Batalha"
+descricao = "Arma marcial. Versátil (1d10). Maestria: Derrubar. (Battleaxe, Player’s Handbook)"
+icone = ExtResource("1_wf5pi")
+espaco = &"mao"

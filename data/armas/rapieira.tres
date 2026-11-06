@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/rapieira.png" id="1_yppp8"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_0l14a"]
+
+[resource]
+script = ExtResource("2_0l14a")
+dados_dano = "1d8"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+acuidade = true
+textura = ExtResource("1_yppp8")
+maestria = &"atormentar"
+nome_original = "Rapier"
+peso = "2 lb."
+preco = "25 GP"
+livro = "Player’s Handbook"
+nome = "Rapieira"
+descricao = "Arma marcial. Acuidade. Maestria: Atormentar. (Rapier, Player’s Handbook)"
+icone = ExtResource("1_yppp8")
+espaco = &"mao"

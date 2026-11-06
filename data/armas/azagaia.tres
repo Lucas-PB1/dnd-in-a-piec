@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/azagaia.png" id="1_wiftf"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_lgax4"]
+
+[resource]
+script = ExtResource("2_lgax4")
+tipo_dano = &"perfurante"
+categoria = &"simples"
+textura = ExtResource("1_wiftf")
+arremesso_normal_pes = 30.0
+arremesso_longo_pes = 120.0
+maestria = &"lentidao"
+nome_original = "Javelin"
+peso = "2 lb."
+preco = "5 SP"
+livro = "Player’s Handbook"
+nome = "Azagaia"
+descricao = "Arma simples. Arremesso (30/120). Maestria: Lentidão. (Javelin, Player’s Handbook)"
+icone = ExtResource("1_wiftf")
+espaco = &"mao"
+empilhavel = true

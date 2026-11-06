@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/clava.png" id="1_23o5l"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_f63n4"]
+
+[resource]
+script = ExtResource("2_f63n4")
+dados_dano = "1d4"
+categoria = &"simples"
+textura = ExtResource("1_23o5l")
+leve = true
+maestria = &"lentidao"
+nome_original = "Club"
+peso = "2 lb."
+preco = "1 SP"
+livro = "Player’s Handbook"
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.13
+nome = "Clava"
+descricao = "Arma simples. Leve. Maestria: Lentidão. (Club, Player’s Handbook)"
+icone = ExtResource("1_23o5l")
+espaco = &"mao"

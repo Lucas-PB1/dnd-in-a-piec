@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/picareta_guerra.png" id="1_53fpx"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_f084r"]
+
+[resource]
+script = ExtResource("2_f084r")
+dados_dano = "1d8"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("1_53fpx")
+dados_versatil = "1d10"
+maestria = &"enfraquecer"
+nome_original = "War Pick"
+peso = "2 lb."
+preco = "5 GP"
+livro = "Player’s Handbook"
+nome = "Picareta de Guerra"
+descricao = "Arma marcial. Versátil (1d10). Maestria: Enfraquecer. (War Pick, Player’s Handbook)"
+icone = ExtResource("1_53fpx")
+espaco = &"mao"

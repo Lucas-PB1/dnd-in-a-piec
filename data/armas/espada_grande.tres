@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/espada_grande.png" id="1_xymwu"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_18m40"]
+
+[resource]
+script = ExtResource("2_18m40")
+dados_dano = "2d6"
+tipo_dano = &"cortante"
+categoria = &"marcial"
+textura = ExtResource("1_xymwu")
+pesada = true
+duas_maos = true
+maestria = &"raspao"
+nome_original = "Greatsword"
+peso = "6 lb."
+preco = "50 GP"
+livro = "Player’s Handbook"
+duracao = 0.42
+inicio_acerto = 0.08
+fim_acerto = 0.21
+nome = "Espada Grande"
+descricao = "Arma marcial. Pesada, Duas Mãos. Maestria: Raspão. (Greatsword, Player’s Handbook)"
+icone = ExtResource("1_xymwu")
+espaco = &"mao"

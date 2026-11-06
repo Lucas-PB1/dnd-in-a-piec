@@ -12,6 +12,20 @@ const ARMADURA_MEDIA := &"media"
 const ARMADURA_PESADA := &"pesada"
 const ESCUDO := &"escudo"
 
+## Maestrias de arma (D&D 2024). O efeito de cada uma entra na fatia 11c.
+const TRESPASSAR := &"trespassar"   # Cleave
+const RASPAO := &"raspao"           # Graze
+const CORTE_DUPLO := &"corte_duplo" # Nick
+const EMPURRAR := &"empurrar"       # Push
+const ENFRAQUECER := &"enfraquecer" # Sap
+const LENTIDAO := &"lentidao"       # Slow
+const DERRUBAR := &"derrubar"       # Topple
+const ATORMENTAR := &"atormentar"   # Vex
+const NOMES_MAESTRIAS := {
+	TRESPASSAR: "Trespassar", RASPAO: "Raspão", CORTE_DUPLO: "Corte Duplo", EMPURRAR: "Empurrar",
+	ENFRAQUECER: "Enfraquecer", LENTIDAO: "Lentidão", DERRUBAR: "Derrubar", ATORMENTAR: "Atormentar",
+}
+
 const NOMES_ARMAS := {ARMA_SIMPLES: "simples", ARMA_MARCIAL: "marciais"}
 const NOMES_ARMADURAS := {ARMADURA_LEVE: "leves", ARMADURA_MEDIA: "médias", ARMADURA_PESADA: "pesadas", ESCUDO: "escudos"}
 const NOMES_CATEGORIA_ARMA := {ARMA_SIMPLES: "simples", ARMA_MARCIAL: "marcial"}

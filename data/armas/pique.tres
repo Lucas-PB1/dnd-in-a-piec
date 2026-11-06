@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/pique.png" id="1_fjymh"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_pe0vi"]
+
+[resource]
+script = ExtResource("2_pe0vi")
+dados_dano = "1d10"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("1_fjymh")
+pesada = true
+duas_maos = true
+alcance_estendido = true
+maestria = &"empurrar"
+nome_original = "Pike"
+peso = "18 lb."
+preco = "5 GP"
+livro = "Player’s Handbook"
+alcance = 76.0
+duracao = 0.42
+inicio_acerto = 0.08
+fim_acerto = 0.21
+nome = "Pique"
+descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Empurrar. (Pike, Player’s Handbook)"
+icone = ExtResource("1_fjymh")
+espaco = &"mao"

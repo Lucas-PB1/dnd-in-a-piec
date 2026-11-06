@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/espada_curta.png" id="1_htgky"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_lbhkc"]
+
+[resource]
+script = ExtResource("2_lbhkc")
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+acuidade = true
+textura = ExtResource("1_htgky")
+leve = true
+maestria = &"atormentar"
+nome_original = "Shortsword"
+peso = "2 lb."
+preco = "10 GP"
+livro = "Player’s Handbook"
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.13
+nome = "Espada Curta"
+descricao = "Arma marcial. Acuidade, Leve. Maestria: Atormentar. (Shortsword, Player’s Handbook)"
+icone = ExtResource("1_htgky")
+espaco = &"mao"

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://ui/criacao_personagem/tela_criacao.gd" id="1_script"]
 [ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="2_classe"]
-[ext_resource type="Resource" path="res://data/arma_espada_curta.tres" id="3_arma"]
+[ext_resource type="Resource" path="res://data/ataque_desarmado.tres" id="3_arma"]
 [ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="4_classe_rpg"]
 
 [sub_resource type="Theme" id="TemaCompacto"]
@@ -77,11 +77,11 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="RotuloArmadura" type="Label" parent="Centro/Painel/Margem/Coluna/Equipamento"]
+[node name="RotuloPacote" type="Label" parent="Centro/Painel/Margem/Coluna/Equipamento"]
 layout_mode = 2
-text = "Armadura:"
+text = "Pacote:"
 
-[node name="Armadura" type="OptionButton" parent="Centro/Painel/Margem/Coluna/Equipamento"]
+[node name="Pacote" type="OptionButton" parent="Centro/Painel/Margem/Coluna/Equipamento"]
 unique_name_in_owner = true
 layout_mode = 2
 

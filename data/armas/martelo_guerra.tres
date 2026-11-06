@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/martelo_guerra.png" id="1_54my2"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_y2ddq"]
+
+[resource]
+script = ExtResource("2_y2ddq")
+dados_dano = "1d8"
+categoria = &"marcial"
+textura = ExtResource("1_54my2")
+dados_versatil = "1d10"
+maestria = &"empurrar"
+nome_original = "Warhammer"
+peso = "5 lb."
+preco = "15 GP"
+livro = "Player’s Handbook"
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+nome = "Martelo de Guerra"
+descricao = "Arma marcial. Versátil (1d10). Maestria: Empurrar. (Warhammer, Player’s Handbook)"
+icone = ExtResource("1_54my2")
+espaco = &"mao"

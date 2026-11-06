@@ -36,7 +36,7 @@ func _testar_tela_sozinha() -> void:
 	root.add_child(tela)
 	await process_frame
 	var recebida: Array[Ficha] = []
-	tela.confirmada.connect(func(f: Ficha, _a: Armadura) -> void: recebida.append(f))
+	tela.confirmada.connect(func(f: Ficha, _p: PacoteInicial) -> void: recebida.append(f))
 	var escolha: OptionButton = tela.get_node("%Classe")
 	_checar(escolha.item_count == 1 and escolha.get_item_text(0) == "Guerreiro", "classe: só Guerreiro por enquanto")
 	tela.aplicar_sugestao()
@@ -76,14 +76,27 @@ func _testar_fluxo_da_main() -> void:
 	var compra := CompraDePontos.new()
 	compra.aplicar({Atributos.FORCA: 8, Atributos.DESTREZA: 15, Atributos.CONSTITUICAO: 15,
 		Atributos.INTELIGENCIA: 15})
-	tela.confirmada.emit(Ficha.new(jogador.classe, compra.valores, NOME_TESTE), jogador.classe.armaduras_iniciais[0])
+	tela.confirmada.emit(Ficha.new(jogador.classe, compra.valores, NOME_TESTE), jogador.classe.pacotes_iniciais[0])
 	await process_frame
 	_checar(not paused, "ao confirmar, o jogo despausa")
 	_checar(jogador.ficha.nome == NOME_TESTE and jogador.vida_maxima() == 12, "herói recebe a ficha (nome e CON 15 -> 12 PV)")
 	var hud_nome: String = (cena.get_node("Hud/%Personagem") as Label).text
 	var hud_vida: String = (cena.get_node("Hud/%Vida") as Label).text
 	_checar(hud_nome == "Aldric (Guerreiro)" and hud_vida == "PV 12/12", "HUD mostra nome, classe e vida (%s | %s)" % [hud_nome, hud_vida])
+	_checar_pacote_a(jogador)
 	cena.queue_free()
+
+
+## Pacote A: Cota de Malha + Espada Grande vestidas, Mangual e 8 Azagaias na mochila (4 lugares).
+func _checar_pacote_a(jogador: Jogador) -> void:
+	var inventario := jogador.inventario
+	var azagaias := inventario.itens.filter(func(i: Item) -> bool: return i.nome == "Azagaia")
+	_checar(inventario.itens.size() == 4 and azagaias.size() == 1 and inventario.quantidade_de(azagaias[0]) == 8,
+		"pacote A: 4 lugares na mochila, Azagaia empilhada ×8")
+	_checar(jogador.arma_atual().nome == "Espada Grande" and jogador.armadura_atual().nome == "Cota de Malha",
+		"pacote A: Espada Grande na mão e Cota de Malha vestida")
+	_checar(not inventario.livre(Item.ESPACO_MAO_SECUNDARIA), "Espada Grande (Duas Mãos) ocupa a mão secundária")
+	_checar(jogador.classe_armadura() == 16, "CA 16 com a Cota de Malha")
 
 
 func _achar(cena: Node, tipo: Variant) -> Node:

@@ -109,13 +109,17 @@ func configurar_ficha(nova: Ficha) -> void:
 	_atualizar_equipamento()
 
 
-## Coloca a armadura escolhida na criação na mochila (cópia própria) e veste.
-func vestir_armadura_inicial(armadura: Armadura) -> void:
-	if armadura == null:
+## Troca a mochila pelo pacote escolhido na criação (cópias próprias: cada uma com seu
+## desgaste) e equipa o que o pacote manda. null = mantém a mochila como está.
+func receber_pacote(pacote: PacoteInicial) -> void:
+	if pacote == null:
 		return
-	var minha := armadura.duplicate() as Armadura
-	inventario.adicionar(minha)
-	inventario.equipar(minha)
+	inventario.limpar()
+	for item in pacote.itens:
+		var meu := item.duplicate() as Item
+		inventario.adicionar(meu, pacote.itens[item])
+		if item in pacote.equipar:
+			inventario.equipar(meu)
 
 
 ## Armadura vestida (espaço corpo), ou null.

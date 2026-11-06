@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/espada_longa.png" id="1_p80jf"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_bag30"]
+
+[resource]
+script = ExtResource("2_bag30")
+dados_dano = "1d8"
+tipo_dano = &"cortante"
+categoria = &"marcial"
+textura = ExtResource("1_p80jf")
+dados_versatil = "1d10"
+maestria = &"enfraquecer"
+nome_original = "Longsword"
+peso = "3 lb."
+preco = "15 GP"
+livro = "Player’s Handbook"
+nome = "Espada Longa"
+descricao = "Arma marcial. Versátil (1d10). Maestria: Enfraquecer. (Longsword, Player’s Handbook)"
+icone = ExtResource("1_p80jf")
+espaco = &"mao"

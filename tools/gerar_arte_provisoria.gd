@@ -1,5 +1,5 @@
 extends SceneTree
-## Gera a arte provisória (pixel art): ladrilhos, espada, arco de corte e boneco de treino.
+## Gera a arte provisória (pixel art): ladrilhos, arco de corte e boneco de treino.
 ## Rodar: godot --headless --path . --script res://tools/gerar_arte_provisoria.gd
 ## Depois rode "godot --headless --path . --import" (e gerar_fase_teste.gd se mudou ladrilhos).
 
@@ -11,11 +11,11 @@ enum { GRAMA, TERRA, PLATAFORMA, PEDRA }
 const CONTORNO := Color8(34, 28, 40)
 
 const ARQ_LADRILHOS := "res://assets/tiles/ladrilhos.png"
-const ARQ_ESPADA := "res://assets/armas/espada_curta.png"
 const ARQ_CORTE := "res://assets/efeitos/corte.png"
 const ARQ_BONECO := "res://features/boneco_treino/boneco_treino.png"
 const ARQ_ESCUDO := "res://assets/armaduras/escudo.png"
 const ARQ_TAMPA := "res://assets/armaduras/tampa_panela.png"
+const ARQ_BAU := "res://features/bau/bau.png"
 
 ## Arco de corte: quadros quadrados lado a lado.
 const TAM_CORTE := 48
@@ -24,9 +24,9 @@ const QUADROS_CORTE := 4
 
 func _initialize() -> void:
 	_gerar_ladrilhos()
-	_gerar_espada()
 	_gerar_corte()
 	_gerar_boneco()
+	_gerar_bau()
 	_gerar_escudo(ARQ_ESCUDO, 18, Color8(150, 92, 48), Color8(180, 184, 196), true)
 	_gerar_escudo(ARQ_TAMPA, 14, Color8(120, 124, 134), Color8(170, 174, 186), false)
 	print("Arte provisória gerada.")
@@ -45,20 +45,7 @@ func _gerar_ladrilhos() -> void:
 	img.save_png(ARQ_LADRILHOS)
 
 
-# --- Espada, corte e boneco ----------------------------------------------------
-
-## Espada curta apontando para a direita; o cabo começa em x = 0.
-func _gerar_espada() -> void:
-	var img := Image.create(32, 7, false, Image.FORMAT_RGBA8)
-	img.fill_rect(Rect2i(0, 2, 6, 3), Color8(96, 60, 36))  # cabo de couro
-	img.fill_rect(Rect2i(0, 3, 6, 1), Color8(130, 84, 48))
-	img.fill_rect(Rect2i(6, 0, 2, 7), Color8(214, 170, 60))  # guarda dourada
-	img.fill_rect(Rect2i(8, 2, 21, 3), Color8(196, 204, 216))  # lâmina
-	img.fill_rect(Rect2i(8, 2, 21, 1), Color8(236, 242, 250))  # fio brilhante
-	img.fill_rect(Rect2i(29, 3, 2, 1), Color8(196, 204, 216))  # ponta
-	_contornar(img, Rect2i(0, 0, 32, 7))
-	_salvar(img, ARQ_ESPADA)
-
+# --- Corte e boneco ----------------------------------------------------
 
 ## Arco de corte branco (a cor vem da Arma via modulate), em QUADROS_CORTE quadros:
 ## o arco cresce, fica cheio e some.
@@ -101,6 +88,20 @@ func _gerar_boneco() -> void:
 	img.fill_rect(Rect2i(6, 52, 16, 4), Color8(80, 60, 40))  # base
 	_contornar(img, Rect2i(0, 0, 28, 56))
 	_salvar(img, ARQ_BONECO)
+
+
+## Baú de madeira com cintas e fechadura dourada, visto de lado (30x22).
+func _gerar_bau() -> void:
+	var img := Image.create(30, 22, false, Image.FORMAT_RGBA8)
+	img.fill_rect(Rect2i(1, 3, 28, 18), Color8(126, 82, 46))  # corpo
+	img.fill_rect(Rect2i(1, 3, 28, 7), Color8(150, 100, 58))  # tampa
+	img.fill_rect(Rect2i(1, 10, 28, 1), Color8(70, 44, 26))  # fresta da tampa
+	for x in [5, 23]:  # cintas de metal
+		img.fill_rect(Rect2i(x, 3, 2, 18), Color8(120, 124, 134))
+	img.fill_rect(Rect2i(13, 8, 4, 5), Color8(214, 170, 60))  # fechadura
+	img.fill_rect(Rect2i(14, 10, 2, 2), Color8(70, 44, 26))
+	_contornar(img, Rect2i(0, 0, 30, 22))
+	_salvar(img, ARQ_BAU)
 
 
 ## Escudo redondo visto de frente: madeira (ou metal) com aro e, se `com_bossa`, o centro de metal.

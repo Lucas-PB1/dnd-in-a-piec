@@ -35,6 +35,18 @@ static func bonus_ataque(ficha: Ficha, inventario: Inventario, com_arma: Arma) -
 	return ficha.bonus_ataque(com_arma) - inventario.penalidade(com_arma)
 
 
-## O golpe da arma: desgaste da arma e desvantagem por armadura sem treinamento.
+## O golpe da arma: desgaste da arma, desvantagem (armadura sem treinamento, arma Pesada
+## sem Força) e o dado Versátil se a mão secundária estiver livre.
 static func golpe(ficha: Ficha, inventario: Inventario, com_arma: Arma) -> Golpe:
-	return ficha.golpe_com(com_arma, inventario.penalidade(com_arma), armadura(inventario))
+	return ficha.golpe_com(com_arma, inventario.penalidade(com_arma), armadura(inventario),
+		duas_maos(inventario, com_arma))
+
+
+## Texto do dano como no golpe (ex.: Espada Longa sem escudo = "1d10+3").
+static func texto_dano(ficha: Ficha, inventario: Inventario, com_arma: Arma) -> String:
+	return ficha.texto_dano(com_arma, duas_maos(inventario, com_arma))
+
+
+## Arma Versátil empunhada com as duas mãos: a mão secundária está vazia.
+static func duas_maos(inventario: Inventario, com_arma: Arma) -> bool:
+	return com_arma.e_versatil() and inventario.livre(Item.ESPACO_MAO_SECUNDARIA)

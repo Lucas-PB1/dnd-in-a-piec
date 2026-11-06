@@ -1,20 +1,20 @@
 class_name TelaCriacao
 extends Control
-## Tela de criação do personagem: nome, classe, armadura inicial e compra de pontos (27) dos
+## Tela de criação do personagem: nome, classe, pacote de equipamento inicial e compra de pontos (27) dos
 ## seis atributos, com prévia de vida, CA, deslocamento e dano. Funciona com o jogo pausado.
 ## Ao confirmar, emite `confirmada`.
 
-## Emitido ao clicar em "Começar", com a ficha montada e a armadura inicial escolhida
-## (null se a classe não tiver armaduras iniciais).
-signal confirmada(ficha: Ficha, armadura: Armadura)
+## Emitido ao clicar em "Começar", com a ficha montada e o pacote inicial escolhido
+## (null se a classe não tiver pacotes).
+signal confirmada(ficha: Ficha, pacote: PacoteInicial)
 
 ## Classes que o jogador pode escolher (por enquanto só o Guerreiro).
 @export var classes: Array[ClasseRPG] = []
-## Arma usada só para mostrar a prévia do dano.
+## Arma da prévia do dano quando o pacote não põe nenhuma na mão (soco).
 @export var arma_previa: Arma
 
 var _classe: ClasseRPG
-var _armadura: Armadura
+var _pacote: PacoteInicial
 var _compra := CompraDePontos.new()
 var _rotulos_valor: Dictionary[StringName, Label] = {}
 var _rotulos_mod: Dictionary[StringName, Label] = {}
@@ -23,7 +23,7 @@ var _botoes_mais: Dictionary[StringName, Button] = {}
 
 @onready var _campo_nome: LineEdit = %Nome
 @onready var _escolha_classe: OptionButton = %Classe
-@onready var _escolha_armadura: OptionButton = %Armadura
+@onready var _escolha_pacote: OptionButton = %Pacote
 @onready var _pontos: Label = %Pontos
 @onready var _grade: GridContainer = %Grade
 @onready var _previa: Label = %Previa
@@ -53,13 +53,13 @@ func definir_nome(texto: String) -> void:
 func escolher_classe(indice: int) -> void:
 	_classe = classes[indice]
 	_escolha_classe.select(indice)
-	_preencher_armaduras()
+	_preencher_pacotes()
 	_atualizar()
 
 
-func escolher_armadura(indice: int) -> void:
-	_armadura = _classe.armaduras_iniciais[indice] if indice < _classe.armaduras_iniciais.size() else null
-	_escolha_armadura.select(indice)
+func escolher_pacote(indice: int) -> void:
+	_pacote = _classe.pacotes_iniciais[indice] if indice < _classe.pacotes_iniciais.size() else null
+	_escolha_pacote.select(indice)
 	_atualizar()
 
 
@@ -81,7 +81,7 @@ func mudar_atributo(atributo: StringName, quanto: int) -> void:
 func confirmar() -> void:
 	if _falta_algo() != "":
 		return
-	confirmada.emit(_ficha_atual(), _armadura)
+	confirmada.emit(_ficha_atual(), _pacote)
 
 
 func _preparar_campos() -> void:
@@ -91,19 +91,26 @@ func _preparar_campos() -> void:
 	for classe in classes:
 		_escolha_classe.add_item(classe.nome)
 	_escolha_classe.item_selected.connect(escolher_classe)
-	_escolha_armadura.item_selected.connect(escolher_armadura)
+	_escolha_pacote.item_selected.connect(escolher_pacote)
 	_escolha_classe.disabled = classes.size() == 1  # só uma classe por enquanto
 	_botao_sugestao.pressed.connect(aplicar_sugestao)
 	_botao_comecar.pressed.connect(confirmar)
 
 
-## Lista as armaduras iniciais da classe (com a CA de cada) e escolhe a primeira.
-func _preencher_armaduras() -> void:
-	_escolha_armadura.clear()
-	for armadura in _classe.armaduras_iniciais:
-		_escolha_armadura.add_item("%s (%s)" % [armadura.nome, armadura.texto_ca()])
-	_escolha_armadura.disabled = _classe.armaduras_iniciais.is_empty()
-	escolher_armadura(0)
+## Lista os pacotes iniciais da classe ("Pacote A: Cota de Malha + Espada Grande") e escolhe o primeiro.
+func _preencher_pacotes() -> void:
+	_escolha_pacote.clear()
+	for pacote in _classe.pacotes_iniciais:
+		_escolha_pacote.add_item(_nome_curto(pacote))
+	_escolha_pacote.disabled = _classe.pacotes_iniciais.is_empty()
+	escolher_pacote(0)
+
+
+func _nome_curto(pacote: PacoteInicial) -> String:
+	var vestidos: PackedStringArray = []
+	for item in pacote.equipar:
+		vestidos.append(item.nome)
+	return "%s: %s" % [pacote.nome, " + ".join(vestidos)]
 
 
 func _ficha_atual() -> Ficha:
@@ -149,14 +156,22 @@ func _atualizar() -> void:
 	_botao_comecar.text = "Começar" if falta == "" else falta
 
 
-## "Vida 11 PV · CA 16 · 30 pés · Dano 1d6+2", avisando se falta Força para a armadura.
+## "Vida 11 PV · CA 16 · 30 pés · Dano 2d6+2", os itens do pacote e os avisos de Força.
+## Os pacotes não têm escudo: arma Versátil aparece com o dado de duas mãos.
 func _texto_previa(ficha: Ficha) -> String:
+	var armadura := _pacote.armadura() if _pacote else null
+	var arma := _pacote.arma() if _pacote and _pacote.arma() else arma_previa
 	var texto := "Vida %d PV (d%d + CON) · CA %d · %d pés · Dano %s" % [
-		ficha.vida_maxima(), _classe.dado_vida, ficha.classe_armadura(_armadura),
-		ficha.deslocamento_pes(_armadura), ficha.texto_dano(arma_previa)]
-	if ficha.falta_forca_para(_armadura):
+		ficha.vida_maxima(), _classe.dado_vida, ficha.classe_armadura(armadura),
+		ficha.deslocamento_pes(armadura), ficha.texto_dano(arma, arma.e_versatil())]
+	if _pacote:
+		texto += "\nLeva: %s" % _pacote.texto_itens()
+	if ficha.falta_forca_para(armadura):
 		texto += "\nA %s pede FOR %d: -%d pés de deslocamento" % [
-			_armadura.nome, _armadura.forca_minima, Ficha.PERDA_DESLOCAMENTO_SEM_FORCA]
+			armadura.nome, armadura.forca_minima, Ficha.PERDA_DESLOCAMENTO_SEM_FORCA]
+	if ficha.fraco_para(arma):
+		texto += "\n%s é Pesada: com FOR abaixo de %d, ataca com desvantagem" % [
+			arma.nome, Ficha.FORCA_MINIMA_ARMA_PESADA]
 	return texto
 
 

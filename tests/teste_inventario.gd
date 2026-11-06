@@ -6,7 +6,7 @@ var _falhas := 0
 
 
 func _initialize() -> void:
-	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var espada: Arma = load("res://data/armas/espada_curta.tres")
 	var outra_espada := espada.duplicate() as Arma
 	outra_espada.nome = "Espada Velha"
 	var pedra := Item.new()

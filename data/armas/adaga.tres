@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/adaga.png" id="1_uw5t1"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_bf7xo"]
+
+[resource]
+script = ExtResource("2_bf7xo")
+dados_dano = "1d4"
+tipo_dano = &"perfurante"
+categoria = &"simples"
+acuidade = true
+textura = ExtResource("1_uw5t1")
+leve = true
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+maestria = &"corte_duplo"
+nome_original = "Dagger"
+peso = "1 lb."
+preco = "2 GP"
+livro = "Player’s Handbook"
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.13
+nome = "Adaga"
+descricao = "Arma simples. Acuidade, Leve, Arremesso (20/60). Maestria: Corte Duplo. (Dagger, Player’s Handbook)"
+icone = ExtResource("1_uw5t1")
+espaco = &"mao"

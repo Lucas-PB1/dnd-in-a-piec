@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/maca.png" id="1_jsrue"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_g5bew"]
+
+[resource]
+script = ExtResource("2_g5bew")
+categoria = &"simples"
+textura = ExtResource("1_jsrue")
+maestria = &"enfraquecer"
+nome_original = "Mace"
+peso = "4 lb."
+preco = "5 GP"
+livro = "Player’s Handbook"
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+nome = "Maça"
+descricao = "Arma simples. Maestria: Enfraquecer. (Mace, Player’s Handbook)"
+icone = ExtResource("1_jsrue")
+espaco = &"mao"

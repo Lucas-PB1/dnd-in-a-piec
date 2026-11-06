@@ -71,7 +71,7 @@ func _testar_compra_de_pontos() -> void:
 
 func _testar_ficha() -> void:
 	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
-	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var espada: Arma = load("res://data/armas/espada_curta.tres")
 	var forte := Ficha.new(guerreiro, {Atributos.FORCA: 15, Atributos.DESTREZA: 10, Atributos.CONSTITUICAO: 14})
 	_checar(forte.vida_maxima() == 12, "Guerreiro CON 14: vida = 10 + 2 = 12")
 	var fragil := Ficha.new(guerreiro, {Atributos.CONSTITUICAO: 8})

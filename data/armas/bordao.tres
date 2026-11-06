@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/bordao.png" id="1_41xvi"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_ntkds"]
+
+[resource]
+script = ExtResource("2_ntkds")
+categoria = &"simples"
+textura = ExtResource("1_41xvi")
+dados_versatil = "1d8"
+maestria = &"derrubar"
+nome_original = "Quarterstaff"
+peso = "4 lb."
+preco = "2 SP"
+livro = "Player’s Handbook"
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+nome = "Bordão"
+descricao = "Arma simples. Versátil (1d8). Maestria: Derrubar. (Quarterstaff, Player’s Handbook)"
+icone = ExtResource("1_41xvi")
+espaco = &"mao"

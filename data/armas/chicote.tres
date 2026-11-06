@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/chicote.png" id="1_ytuad"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_trmwu"]
+
+[resource]
+script = ExtResource("2_trmwu")
+dados_dano = "1d4"
+tipo_dano = &"cortante"
+categoria = &"marcial"
+acuidade = true
+textura = ExtResource("1_ytuad")
+alcance_estendido = true
+maestria = &"lentidao"
+nome_original = "Whip"
+peso = "3 lb."
+preco = "2 GP"
+livro = "Player’s Handbook"
+alcance = 76.0
+nome = "Chicote"
+descricao = "Arma marcial. Acuidade, Alcance. Maestria: Lentidão. (Whip, Player’s Handbook)"
+icone = ExtResource("1_ytuad")
+espaco = &"mao"

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/lanca_montaria.png" id="1_yqhkm"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_f2s1v"]
+
+[resource]
+script = ExtResource("2_f2s1v")
+dados_dano = "1d10"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("1_yqhkm")
+pesada = true
+duas_maos = true
+alcance_estendido = true
+maestria = &"derrubar"
+nome_original = "Lance"
+peso = "6 lb."
+preco = "10 GP"
+livro = "Player’s Handbook"
+alcance = 76.0
+duracao = 0.42
+inicio_acerto = 0.08
+fim_acerto = 0.21
+nome = "Lança de Montaria"
+descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Derrubar. (Lance, Player’s Handbook)"
+icone = ExtResource("1_yqhkm")
+espaco = &"mao"

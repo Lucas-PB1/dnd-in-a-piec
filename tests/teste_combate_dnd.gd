@@ -76,7 +76,7 @@ func _testar_salvaguarda() -> void:
 
 func _testar_ficha_de_combate() -> void:
 	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
-	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var espada: Arma = load("res://data/armas/espada_curta.tres")
 	var ficha := Ficha.new(guerreiro, guerreiro.atributos_sugeridos)  # FOR 15, DES 14, CON 13
 	_checar(ficha.classe_armadura() == 12, "CA sem armadura = 10 + DES (14 -> 12)")
 	_checar(ficha.bonus_ataque(espada) == 4, "ataque com espada curta = +2 proficiência +2 FOR = +4")
@@ -110,7 +110,7 @@ func _testar_gray_ooze() -> void:
 
 
 func _testar_tipos_e_resistencia() -> void:
-	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var espada: Arma = load("res://data/armas/espada_curta.tres")
 	var soco: Arma = load("res://data/ataque_desarmado.tres")
 	var ooze: CriaturaRPG = load("res://data/gray_ooze.tres")
 	_checar(espada.tipo_dano == TiposDano.PERFURANTE and soco.tipo_dano == TiposDano.CONTUNDENTE,
@@ -140,7 +140,7 @@ func _testar_tipos_e_resistencia() -> void:
 
 ## Corrosão no inventário: -1 por toque, destruída em -5; cópias da mesma arma são separadas.
 func _testar_desgaste() -> void:
-	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var espada: Arma = load("res://data/armas/espada_curta.tres")
 	var inv := Inventario.new()
 	var minha := espada.duplicate() as Arma
 	var outra := espada.duplicate() as Arma
@@ -160,7 +160,7 @@ func _testar_desgaste() -> void:
 ## Sem proficiência na arma, o ataque perde o +2 de proficiência.
 func _testar_proficiencias() -> void:
 	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
-	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var espada: Arma = load("res://data/armas/espada_curta.tres")
 	var soco: Arma = load("res://data/ataque_desarmado.tres")
 	_checar(espada.categoria == Proficiencias.ARMA_MARCIAL, "espada curta é arma marcial")
 	_checar(Proficiencias.ARMA_SIMPLES in guerreiro.proficiencias_armas and Proficiencias.ARMA_MARCIAL in guerreiro.proficiencias_armas,

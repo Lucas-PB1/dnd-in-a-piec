@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/machadinha.png" id="1_spyd8"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_wmaer"]
+
+[resource]
+script = ExtResource("2_wmaer")
+tipo_dano = &"cortante"
+categoria = &"simples"
+textura = ExtResource("1_spyd8")
+leve = true
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+maestria = &"atormentar"
+nome_original = "Handaxe"
+peso = "2 lb."
+preco = "5 GP"
+livro = "Player’s Handbook"
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.13
+nome = "Machadinha"
+descricao = "Arma simples. Leve, Arremesso (20/60). Maestria: Atormentar. (Handaxe, Player’s Handbook)"
+icone = ExtResource("1_spyd8")
+espaco = &"mao"

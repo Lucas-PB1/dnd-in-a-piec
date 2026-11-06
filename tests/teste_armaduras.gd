@@ -105,7 +105,9 @@ func _testar_heroi_vestido() -> void:
 	await physics_frame
 	var material := (jogador.get_node("Sprite") as CanvasItem).material as ShaderMaterial
 	_checar(jogador.classe_armadura() == 12 and not material.get_shader_parameter(&"vestida"), "sem armadura: CA 12, túnica normal")
-	jogador.vestir_armadura_inicial(_a("cota_malha"))
+	var cota := _a("cota_malha").duplicate() as Armadura
+	jogador.inventario.adicionar(cota)
+	jogador.inventario.equipar(cota)
 	await physics_frame
 	_checar(jogador.classe_armadura() == 16 and (jogador.get_node("Defesa") as DefesaComponent).classe_armadura == 16,
 		"vestiu Cota de Malha: CA 16 (e a Defesa usa 16)")

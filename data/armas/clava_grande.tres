@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/clava_grande.png" id="1_b30o7"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_g3yl5"]
+
+[resource]
+script = ExtResource("2_g3yl5")
+dados_dano = "1d8"
+categoria = &"simples"
+textura = ExtResource("1_b30o7")
+duas_maos = true
+maestria = &"empurrar"
+nome_original = "Greatclub"
+peso = "10 lb."
+preco = "2 SP"
+livro = "Player’s Handbook"
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+nome = "Clava Grande"
+descricao = "Arma simples. Duas Mãos. Maestria: Empurrar. (Greatclub, Player’s Handbook)"
+icone = ExtResource("1_b30o7")
+espaco = &"mao"

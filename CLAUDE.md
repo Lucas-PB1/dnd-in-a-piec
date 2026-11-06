@@ -53,17 +53,21 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Corrosão (armas) | Arma **não mágica** (`Arma.corroivel`) que causa dano no Ooze leva −1 no ataque (cumulativo) e é **destruída em −5**. O desgaste fica **no Inventario** (`penalidade`/`desgastar`), por item: o herói guarda **cópias** dos itens iniciais, e o `.tres` nunca muda. O alvo avisa pelo sinal `Golpe.arma_corroida`; quem decide o que acontece com a arma é o dono. O inventário mostra "Corroída: −X no ataque". | Regra da ficha do Ooze. |
 | Proficiências | `Proficiencias` (`core/regras/`): armas **simples/marcial** e armaduras **leve/média/pesada/escudo**. `ClasseRPG.proficiencias_armas` e `treinamento_armaduras` (Guerreiro: tudo). `Arma.categoria` (Espada Curta = marcial; vazio = desarmado, sempre proficiente). **Arma sem proficiência: não soma o +2 de proficiência no ataque** (`Ficha.proficiente_com`). Criação mostra as proficiências da classe; o inventário avisa "Sem proficiência". | Regra do livro. |
 | Armaduras | **21 armaduras** do Empório (PHB, Obojima, Northlands) em `data/armaduras/*.tres`, geradas por `tools/gerar_armaduras.gd` (**edite a TABELA, não os .tres**). `Armadura` (`core/dados/`): categoria, `ca_base`, `soma_destreza`, `max_destreza`, `forca_minima`, `desvantagem_furtividade`, cor e padrão visual. Espaços: **corpo** (armadura) e **mão secundária** (escudo). **CA** (`Ficha.classe_armadura`): sem armadura 10+DES; leve base+DES; média base+DES (máx.); pesada base; escudo +bônus (**só com treinamento**). **FOR abaixo do mínimo: −10 pés.** **Sem treinamento:** desvantagem nos testes de FOR/DES (= ataques; `Combate.rolar_d20` com desvantagem). **Furtividade:** só aparece (ainda não há testes de Furtividade). `Equipamento` (`core/regras/`) junta ficha + inventário (arma, armadura, escudo, CA, deslocamento, golpe) para herói e inventário calcularem igual. | Regras do livro; pedido do usuário. |
-| Armadura inicial | `ClasseRPG.armaduras_iniciais` (Guerreiro: **Cota de Malha** ou **Couro Batido**); escolhida na criação e já vestida. A prévia mostra CA, deslocamento e o aviso de Força. | Pedido do usuário. |
+| Pacote inicial | `PacoteInicial` (`core/dados/`, `data/pacotes/`): item -> quantidade + o que já vem equipado. `ClasseRPG.pacotes_iniciais` (Guerreiro **A**: Cota de Malha + Espada Grande + Mangual + 8 Azagaias; **B**: Couro Batido + Cimitarra + Espada Curta; o Arco Longo e as flechas do B entram com as armas à distância). Escolhido na criação (`confirmada(ficha, pacote)`); `Jogador.receber_pacote()` limpa a mochila e põe cópias. A prévia mostra CA, dano, itens e os avisos de Força. | Pacotes do livro; pedido do usuário. |
+| Armas do PHB | **29 armas** corpo a corpo e de arremesso em `data/armas/*.tres`, geradas por `tools/gerar_armas.gd` (**edite a TABELA**; sprites provisórios por formato em `assets/armas/`). Armas à distância (arcos, bestas, funda, zarabatana, armas de fogo) ficam **fora** até a fatia delas. `Arma`: `leve`, `pesada`, `duas_maos`, `dados_versatil`, `alcance_estendido`, arremesso (pés), `maestria`, `empilhavel`. | Pedido do usuário. |
+| Propriedades das armas | **Versátil:** dado maior com a mão secundária livre (`Equipamento.duas_maos`). **Duas Mãos:** ocupa também a mão secundária (`Item.espacos_ocupados`); equipar tira o escudo e vice-versa. **Pesada:** FOR < 13 = desvantagem (`Ficha.fraco_para`). **Alcance:** +5 pés (+32 px) na área do golpe. **Acuidade:** já existia. **Leve** (combo de duas armas, J J) e **Arremesso** (botão próprio; a arma cai no chão e se pega com E): fatia 11b. **Maestrias** (escolher 3 na criação): fatia 11c. | Decisões do usuário. |
+| Pilhas | `Item.empilhavel`: itens iguais (mesmo nome) ocupam 1 lugar com quantidade (`Inventario.adicionar(item, n)`, `quantidade_de`). Jogar fora apaga a pilha toda. | Azagaia ×8. |
+| Baú do arsenal | `features/bau/` (`Bau`, Area2D na máscara do jogador): perto dele aparece "E: abrir arsenal"; **E** (`interagir`) emite `abrir_pedido(itens)`. Conteúdo = todos os `.tres` de `data/armas/` e `data/armaduras/`. `ui/bau/` (`TelaBau`, pausa): **Pegar** põe uma **cópia** na mochila (baú nunca esvazia; avisa mochila cheia). | Como obter os outros itens (escolha do usuário). |
 | Armadura visível | Shader `assets/shaders/roupa_armadura.gdshader` no sprite do herói: troca a túnica azul pela cor da armadura mantendo luz e sombra, com padrão (malha, tachas, placas, acolchoado, escamas). Escudo: `EscudoJogador` na **mão de trás** (pontos de trás em `PontosMao`, marcados pela mesma ferramenta), desenhado atrás do corpo. Arte do escudo provisória por script. | Pedido do usuário. |
 | Corrosão (armadura) | Pseudópode (`ataque_corroi_armadura`) que acerta: armadura não mágica perde 1 de CA (desgaste no Inventario) e **se desfaz quando a CA dela chega a 10**. | Regra da ficha do Ooze. |
 | Desarmado | Mão vazia = `data/ataque_desarmado.tres` ("1d1" + FOR = soco de D&D, contundente, não sofre Corrosão, alcance curto, sem sprite de arma). | Regra do livro. |
 | Ataque | Tecla **J** -> estado `Atacando`. No chão freia e fica firme; no ar continua caindo; não vira durante o golpe. | Peso de Guerreiro. |
-| Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/arma_*.tres`: dano, alcance, tempos da janela de acerto, ângulos e **textura**. A espada é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. | Equipamento visível sem redesenhar o herói. |
+| Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/armas/*.tres`: dano, alcance, tempos da janela de acerto, ângulos e **textura**. A espada é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. | Equipamento visível sem redesenhar o herói. |
 | Componentes de combate | `core/componentes/`: `HitboxComponent` (entrega um `Golpe`, 1x por alvo por golpe), `HurtboxComponent` (só emite `golpe_recebido`), `DefesaComponent` (CA, resolve, tira vida, `invulneravel`), `HealthComponent`, `TextoFlutuanteComponent`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`, 4 `hurtbox_jogador`, 5 `inimigo`. | Reutilizável por herói, inimigos e boneco. |
 | Pacotes prontos de personagem | **Não usar** para o herói (decisão do usuário: o equipamento fica "pintado" no sprite). Talvez em outros casos. | Equipamento visível. |
-| Arte do golpe | Provisória por script: `assets/armas/espada_curta.png`, `assets/efeitos/corte.png` (+ `corte_frames.tres`). Pose do herói = quadros 2 e 3 do jump. | Grátis; trocar depois. |
+| Arte do golpe | Provisória por script: sprites das armas por `tools/gerar_armas.gd`, `assets/efeitos/corte.png` (+ `corte_frames.tres`). Pose do herói = quadros 2 e 3 do jump. | Grátis; trocar depois. |
 | Arma na mão | A arma equipada fica **sempre na mão da frente**. `features/jogador/sprites/pontos_mao.tres` (`PontosMao`) guarda o ponto da mão em cada quadro de cada animação + o ângulo de descanso por animação. Gerado por `tools/marcar_pontos_mao.gd` (acha a mancha cor de pele mais à frente; quadros em que a mão some usam a média dos vizinhos). **Rode de novo sempre que mudar a arte do herói.** `AnimacaoJogador.ponto_da_mao()` -> `AtaqueJogador.seguir_mao()` todo quadro; o golpe gira a partir da mão. | Pedido do usuário. |
-| Ângulo de descanso | ~35° (ponta para baixo e à frente). Mais que isso a lâmina (30 px) atravessa o chão. | |
+| Ângulo de descanso | ~35° (ponta para baixo e à frente). Arma comprida inclina menos: `AtaqueJogador` limita o ângulo para a ponta não passar dos pés. O sprite é posicionado pela altura da textura (pegada a 4 px do cabo). | |
 | Câmera | `Camera2D` filha do herói, com suavização, olha à frente na direção em que ele corre; limites calculados pelo tamanho da fase | Ver o que vem pela frente. |
 | Movimento suave | Interpolação de física ligada | Sem tremedeira em monitores de 144 Hz. |
 
@@ -89,7 +93,7 @@ Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
 core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante (componentes de combate)
-core/dados/              Item, Arma, Armadura, ClasseRPG, CriaturaRPG (Resources)
+core/dados/              Item, Arma, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial (Resources)
 core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd,
                          TiposDano, Proficiencias, Equipamento
 ui/titulo/               tela de título (DnD in a Piece)
@@ -97,16 +101,18 @@ ui/criacao_personagem/   tela de criação (nome, classe, compra de pontos)
 ui/inventario/           tela de inventário (tecla I)
 ui/hud/                  HUD (nome, vida)
 ui/derrota/              tela "Você caiu!"
+ui/bau/                  tela do baú do arsenal (Pegar)
 core/utilitarios/        ToqueDuplo
 features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
 						 camera_jogador.gd, ataque_jogador.gd, estados/, sprites/
 features/boneco_treino/  boneco de treino (CA 10, mostra dano/Errou!, pisca e balança)
 features/gray_ooze/      Gray Ooze (D&D): cena, estados/, sprites/
+features/bau/            baú do arsenal (E para abrir)
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-data/                    jogador_padrao, arma_espada_curta, ataque_desarmado, classe_guerreiro, gray_ooze (.tres), armaduras/
+data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze (.tres), armas/, armaduras/, pacotes/
 assets/tiles/            ladrilhos e TileSet (compartilhado)
 assets/armas/, efeitos/, armaduras/, shaders/  armas, efeitos, escudos, shader da roupa
-tools/                   gerar_arte_provisoria, gerar_fase_teste, gerar_armaduras, marcar_pontos_mao, gerar_gray_ooze, capturar_tela
+tools/                   gerar_arte_provisoria, gerar_fase_teste, gerar_armaduras, gerar_armas, marcar_pontos_mao, gerar_gray_ooze, capturar_tela
 tests/                   teste_*.gd, rodar_testes.ps1
 ```
 
@@ -116,7 +122,7 @@ tests/                   teste_*.gd, rodar_testes.ps1
 - **Classes e nós:** `PascalCase` (ex.: `class_name Jogador`, nó `Sprite`).
 - **Comentários e nomes do jogo em português.** Termos do Godot ficam em inglês.
 - Balanceamento em Resources (`data/`); ajustes só visuais podem ficar em `@export` do componente.
-- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J), `inventario` (I).
+- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J), `inventario` (I), `interagir` (E).
 - Edite `.tscn` à mão só em mudanças pequenas e seguras. Estruturas grandes: script gerador, MCP do Godot ou editor.
 - Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha 2 opções com prós e contras.
 
@@ -192,5 +198,6 @@ Um teste só:
 - Fatia 9: "Você caiu!" com Tentar de novo; tipos de dano (espada perfurante, soco contundente, Pseudópode ácido); resistências do Ooze; Corrosão da arma.
 - Proficiências de armas (efeito no ataque) e de armaduras (só na ficha da classe por enquanto).
 - Fatia 10: 21 armaduras + escudos com as regras do livro, escolha na criação, armadura visível no herói, corrosão de armadura.
-- Próximas ideias: como obter as outras armaduras (baú/loja); testes de Furtividade; usar salvaguarda em algum efeito; Cimitarra/Espada Longa (cortantes).
+- Fatia 11a: 29 armas do PHB (dados + sprites provisórios), Versátil/Duas Mãos/Pesada/Alcance, pilhas, pacotes A e B na criação, baú do arsenal (E).
+- Próximas: **11b** (duas armas leves com J J, arremesso com botão próprio + pegar do chão com E); **11c** (maestrias: escolher 3 na criação, condições). Depois: armas à distância (com o Arco Longo do pacote B), testes de Furtividade.
 - Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.
