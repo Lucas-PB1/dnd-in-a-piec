@@ -190,9 +190,13 @@ func _testar_ooze_caido() -> void:
 	(ooze.get_node("Defesa") as DefesaComponent).rng.seed = 5
 	(ooze.get_node("Hurtbox") as HurtboxComponent).golpe_recebido.emit(r.golpe, ooze.global_position + Vector2.LEFT * 10)
 	await _esperar(2)
+	var sprite: Node2D = ooze.get_node("Sprite")
+	var escala_normal := Vector2(2, 2)  # a da cena
 	_checar(ooze.esta_caido() and ooze.nome_estado() == &"Caido", "Ooze falhou na salvaguarda: estado Caído")
+	_checar(sprite.scale.x > escala_normal.x and sprite.scale.y < escala_normal.y, "Caído: achatado em relação ao tamanho normal")
 	await _esperar(int(CondicoesComponent.DURACAO_CAIDO * 60) + 5)
 	_checar(not ooze.esta_caido() and ooze.nome_estado() != &"Caido", "Ooze levanta depois de meia rodada")
+	_checar(sprite.scale == escala_normal, "ao levantar, volta ao tamanho de antes (não fica pequeno)")
 	ooze.queue_free()
 	await _esperar(2)
 

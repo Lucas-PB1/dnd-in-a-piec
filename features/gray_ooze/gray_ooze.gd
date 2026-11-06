@@ -15,7 +15,7 @@ signal morreu
 @export var meia_largura_corpo: float = 20.0
 ## Empurrar (maestria): velocidade com que o empurrão o desloca (px/s).
 @export var velocidade_empurrao: float = 320.0
-## Achatamento do sprite enquanto está Caído.
+## Achatamento do sprite enquanto está Caído (multiplica a escala da cena).
 @export var escala_caido: Vector2 = Vector2(1.25, 0.55)
 
 ## Alvo perseguido (ex.: o herói). Sem alvo, fica parado.
@@ -29,6 +29,8 @@ var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity"
 ## Quanto ainda falta do empurrão (px, com sinal).
 var _empurrao_restante: float = 0.0
 var _posicao_sprite: Vector2
+## Escala do sprite na cena (a arte do Ooze é ampliada 2x): Caído achata a partir dela.
+var _escala_sprite: Vector2
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _vida: HealthComponent = $Vida
@@ -50,6 +52,7 @@ func _ready() -> void:
 	_vida.morreu.connect(_ao_morrer)
 	_preparar_condicoes()
 	_posicao_sprite = _sprite.position
+	_escala_sprite = _sprite.scale
 	_preparar_pseudopode()
 	_maquina.iniciar(self)
 
@@ -149,7 +152,7 @@ func esta_caido() -> bool:
 
 ## Deitado (Caído) achata o sprite no chão; de pé, volta ao normal.
 func deitar(deitado: bool) -> void:
-	_sprite.scale = escala_caido if deitado else Vector2.ONE
+	_sprite.scale = _escala_sprite * escala_caido if deitado else _escala_sprite
 	_sprite.position = Vector2(_posicao_sprite.x, _posicao_sprite.y * escala_caido.y) if deitado else _posicao_sprite
 
 
