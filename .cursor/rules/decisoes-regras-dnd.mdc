@@ -1,0 +1,10 @@
+---
+description: Decisões das regras de D&D 5e no código: vida, dano, combate, vantagem, salvaguarda, escala, tipos de dano, proficiências, maestrias, condições, talentos, regras da casa.
+globs: core/regras/**,core/dados/classe_rpg.gd,core/componentes/condicoes_component.gd,core/componentes/defesa_component.gd
+alwaysApply: false
+---
+<!-- Gerado de docs/decisoes/regras_dnd.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+
+Antes de mudar algo deste tema, siga as decisões já tomadas (e atualize o documento se uma decisão mudar):
+
+@docs/decisoes/regras_dnd.md

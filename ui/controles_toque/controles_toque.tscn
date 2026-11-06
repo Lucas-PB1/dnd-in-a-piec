@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/controles_toque/controles_toque.gd" id="1_controles"]
+
+[node name="ControlesToque" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_controles")

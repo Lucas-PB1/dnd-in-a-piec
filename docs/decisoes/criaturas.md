@@ -1,0 +1,13 @@
+# Decisões: criaturas e a arena
+
+Parte da tabela de decisões do projeto (índice no `CLAUDE.md`). **Atualize aqui quando uma
+decisão deste tema mudar.** Passo a passo de criatura nova em `docs/receitas.md` (receita 1).
+
+| Decisão | Escolha | Por quê |
+|---|---|---|
+| Criaturas | Bloco de estatísticas do livro em `CriaturaRPG` (`core/dados/`): CA, dados de vida (vida = média, se não rolar), atributos, salvaguardas, iniciativa, deslocamento, percepção, resistências, Forma Corrosiva, ataque (nome, bônus, dano, tipo, alcance, corrói armadura), **arremesso** (quantidade, alcances, arma) e **Fuga Ágil**. | Usar as criaturas do D&D em vez de inventar números. |
+| Gray Ooze | `features/gray_ooze/`, ficha `data/gray_ooze.tres`: CA 9, PV 22 (3d8+9), iniciativa −2, 10 pés, Visão às Cegas 60 pés, Pseudópode +3 / 2d8+1 **ácido** / 5 pés que **corrói armadura**, **resistências** ácido/frio/fogo, **Forma Corrosiva** −1 por toque até −5. Estados Parado -> Perseguindo -> Atacando (janela 0,2-0,35 s) -> LevandoDano -> Morrendo; Caído achata. Arte: slime CC0 de **rvros**, recolorida por `tools/gerar_gray_ooze.gd`. **Fica no mapa** (x = 720). Ainda **não**: Amorfo. | Ficha do livro. |
+| Goblin Minion | `features/goblin/` (`Goblin`, ficha `data/goblin_minion.tres`): CA 12, 7 PV (2d6), iniciativa +2, 30 pés, Visão no Escuro 60 pés, Adaga +4 / 1d4+2 perfurante. Estados Parado -> Perseguindo -> Atacando (janela 0,1-0,3 s) / **Arremessando** (3 adagas, 20/60 pés: arremessa com o alvo fora do corpo a corpo e dentro dos 60; `AdagaGoblin` mira no peito na força do alcance longo, desvantagem além de 20, cai no longo) -> **Desengajando** (Fuga Ágil: depois de cada golpe recua 15 pés em Disparada, olhando para o alvo) -> LevandoDano (pisca 0,25 s) -> Morrendo; Caído deita girando. Arte CC0 de **thekingphoenix** (o goblin segura uma lança; o golpe é o da adaga da ficha), SpriteFrames por `tools/gerar_goblin.gd`. **Não fica no mapa** (atrapalharia os testes): vem pelo Trazer. | Pedido do usuário. |
+| Monstros no jogo | Grupo `monstros`; a `main` chama `definir_alvo(herói)` em todos. "Tentar de novo" recria os do mapa. Uma criatura nunca conhece o herói (recebe um `Node2D`). | Feature não importa feature. |
+| Criatura na arena | Tela de comandos (C), lista **Combate**: Gray Ooze e Goblin Minion. **Trazer** põe uma cópia à frente do herói (15 pés) e a `main` chama `definir_alvo`. **Tirar da arena** apaga o grupo `monstros`. Os trazidos não voltam no "Tentar de novo". | Pedido do usuário. |
+| Boneco de treino | `features/boneco_treino/`: CA 10, mostra dano/Errou!, pisca e balança, não perde vida. | Testar golpes. |

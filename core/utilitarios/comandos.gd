@@ -17,6 +17,7 @@ const ACOES: Array[StringName] = [
 	&"inventario",
 	&"interagir",
 	&"comandos",
+	&"correr",
 ]
 
 const NOMES: Dictionary[StringName, String] = {
@@ -30,6 +31,7 @@ const NOMES: Dictionary[StringName, String] = {
 	&"inventario": "Inventário",
 	&"interagir": "Interagir",
 	&"comandos": "Comandos",
+	&"correr": "Correr (segurar)",
 }
 
 

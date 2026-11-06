@@ -46,7 +46,7 @@ horizontal_alignment = 1
 [node name="Dica" type="Label" parent="Centro/Painel/Coluna"]
 layout_mode = 2
 theme_type_variation = &"Dica"
-text = "Clique numa ação e aperte a tecla nova. Esc cancela."
+text = "Clique numa ação e aperte a tecla nova. Esc cancela. No celular, escolha analógico ou setas."
 horizontal_alignment = 1
 
 [node name="Miolo" type="HBoxContainer" parent="Centro/Painel/Coluna"]

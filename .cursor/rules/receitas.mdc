@@ -1,0 +1,10 @@
+---
+description: Passo a passo das tarefas comuns - criatura nova do livro, arma/armadura/munição (gerador, não .tres à mão), regra de D&D nova, estado novo, ação de entrada (tecla + toque), tela nova, teste novo, print para conferir, armadilhas conhecidas do projeto. Use ao começar qualquer uma dessas tarefas.
+globs:
+alwaysApply: false
+---
+<!-- Escrita à mão: as receitas completas estão em docs/receitas.md. -->
+
+Siga a receita da tarefa (arquivos, ordem e como conferir):
+
+@docs/receitas.md

@@ -1,0 +1,10 @@
+---
+description: Decisões de telas, HUD, ações de input e celular: título, criação, inventário, comandos, controles de toque e ajuste do layout.
+globs: ui/**,core/utilitarios/comandos.gd,core/utilitarios/opcoes_toque.gd
+alwaysApply: false
+---
+<!-- Gerado de docs/decisoes/interface.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+
+Antes de mudar algo deste tema, siga as decisões já tomadas (e atualize o documento se uma decisão mudar):
+
+@docs/decisoes/interface.md

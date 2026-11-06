@@ -1,86 +1,47 @@
 # CLAUDE.md: Guia do projeto "rpg"
 
-Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste projeto.
-**Atualize-o sempre que uma decisão mudar.** O `AGENTS.md` aponta para cá.
+Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste projeto. Ele é
+**curto de propósito**: só o que vale para toda tarefa. Os detalhes estão em `docs/` (índice abaixo).
+**Atualize o documento do tema sempre que uma decisão mudar.** O `AGENTS.md` aponta para cá.
 
 ## Visão do jogo
-- **Estilo:** 2D de rolagem lateral (side-scroller). O herói corre para a frente e para trás pelo mapa, pula e (em breve) luta.
-- **Gênero:** ação e plataforma. Jogo **original**: inspirado na sensação de jogos de ação lateral (ritmo rápido, controle justo), sem copiar personagens, fases, nomes ou visual de nenhum jogo existente.
-- **Arte:** pixel art. Herói gerado no SpriteCook; cenário provisório gerado por script.
-- **Plataforma:** PC (Windows). Teclado primeiro; controle depois.
-- Histórico: o projeto começou em 2.5D (commits `60f2dda` e `0b1ca2b`) e mudou para 2D lateral na fatia 3.
+- **"DnD in a Piece"**: ação e plataforma 2D lateral (side-scroller) com regras de **D&D 5e (PHB 2024)**. Herói Guerreiro.
+- Jogo **original**: inspirado na sensação de jogos de ação lateral (ritmo rápido, controle justo), sem copiar personagens, fases, nomes ou visual de nenhum jogo existente.
+- **Arte:** pixel art. Herói gerado no SpriteCook; armas, armaduras e monstros de pacotes CC0; o resto provisório por script.
+- **Plataforma:** PC (Windows) e Android (celular deitado). Teclado no PC, toque no celular.
 
 ## Sobre o usuário
 - Já fez "um pouco" de jogo. Explique as decisões em linguagem simples, sem esconder o porquê.
 - Comunicação em **português**.
 - Toda resposta termina com: (1) o que foi feito, (2) como testar (passos exatos), (3) o que se sugere em seguida.
+- Decisões: pergunte com **3 opções**, a recomendada primeiro.
 
-## Decisões tomadas
-| Decisão | Escolha | Por quê |
-|---|---|---|
-| Motor | Godot 4.7.2, GDScript | Já instalado; sem C#. |
-| Renderizador | GL Compatibility | Leve e ótimo para pixel art 2D. |
-| Resolução interna | **640x360**, `stretch/mode = viewport`, `scale_mode = integer` | Pixel art ampliada sem borrar (2x = 1280x720, 3x = 1920x1080). |
-| Filtro de textura | Nearest (padrão do projeto) | Pixel art nítida. |
-| Unidade | Pixels. Ladrilhos de **32x32**. Herói com ~73 px de altura (~2,3 ladrilhos) | Proporção boa para ação lateral. |
-| Importação de PNG | Lossless, sem mipmaps | Não estragar a pixel art. |
-| Herói | `CharacterBody2D` + `AnimatedSprite2D`; origem nos pés; espelha com `flip_h` | Simples e padrão do Godot. |
-| Sensação do pulo | Altura variável (soltar corta o pulo), coyote time, buffer de pulo, gravidade maior na queda | Controle "justo", típico do gênero. |
-| Fase | `TileMapLayer` gerado por script a partir de um mapa em texto (`tools/gerar_fase_teste.gd`); plataformas finas são *one-way* (atravessa por baixo). Script raiz `levels/fase.gd` (`Fase`) expõe `posicao_inicio()`, `area_jogavel()` e `limite_queda()` | Fácil de mudar o layout; quem usa a fase não mexe nos nós internos. |
-| Fase atual | **Reta**, 120 ladrilhos, sem plataformas nem buracos (pedido do usuário). Os tipos `=` e `P` continuam disponíveis no gerador para depois. | Focar em andar, correr e pular. |
-| Correr | **Dois toques rápidos na direção** e segurar (`janela_toque_duplo` = 0,25 s) = **Disparada do D&D (2× o deslocamento)**. Soltar ou inverter volta a andar. Lógica reutilizável em `ToqueDuplo`. | Escolha do usuário. |
-| Animação de correr | **Provisória:** quadros do walk a 20 fps (animação `correr` em `heroi_frames.tres`). Trocar pela animação `run` do SpriteCook (~32 créditos) sem mexer no código. | Só sobraram 2 créditos. |
-| Arquitetura do herói | `jogador.gd` = ferramentas de física + API pública. Comportamento na **máquina de estados** (`core/estados/`): estados `Parado`, `Andando`, `Correndo`, `NoAr` em `features/jogador/estados/`. Números em `data/jogador_padrao.tres` (`StatsJogador`). `AnimacaoJogador` e `CameraJogador` não conhecem o Jogador: ele chama `atualizar()`/`olhar_para()` (call down). | Skills godot-*. |
-| Mudar balanceamento | `data/jogador_padrao.tres`: aceleração, pulo, toque duplo, buffer de ataque, dano sofrido. **Velocidade e ritmo de ataque NÃO ficam aqui:** vêm da ficha de D&D (deslocamento e iniciativa). | Dados separados do código. |
-| Classe do herói | **Guerreiro (estilo D&D)**: espada (e futuramente escudo/outras armas). | Pedido do usuário. |
-| Regras de D&D 5e | Classes puras em `core/regras/`: `Dado` ("1d6"), `Atributos` (mod = (valor-10)/2 p/ baixo), `CompraDePontos` (27 pts, 8 a 15, custos do livro), `Ficha` (vida e dano). Testes em `tests/teste_regras_dnd.gd`. | Testável sem abrir o jogo. |
-| Vida | Nível 1 = **dado de vida máximo da classe + mod. CON** (Guerreiro d10, `data/classe_guerreiro.tres`). Mínimo 1. `HealthComponent`: dano, `vida_mudou`, `morreu`. | Regra do livro; usuário escolheu d10. |
-| Dano | **Dados da arma + mod.** (`Dado` aceita "2d8+1"). Arma com `acuidade` usa o maior entre FOR e DES (espada curta: 1d6, acuidade). **Mínimo 1** por acerto. | Regra do livro; mínimo 1 é regra da casa. |
-| Combate (D&D) | **d20 + bônus de ataque >= CA do alvo** acerta (`Combate.resolver_ataque`). **20 natural** = crítico (acerta sempre, dados de dano em dobro, bônus não). **1 natural** erra sempre. Quem ataca monta um `Golpe` (nome, bônus, dado); quem é atingido resolve contra a própria CA no `DefesaComponent`. Herói: ataque = +2 proficiência + mod da arma; **CA = 10 + DES** (sem armadura). Textos flutuantes: dano, "Errou!", "Crítico X!" (`TextoFlutuanteComponent`). | Escolha do usuário (fiel ao D&D). |
-| Salvaguarda | `Combate.passou_salvaguarda(bonus, cd)`: d20 + bônus >= CD. Bônus = mod + proficiência se a classe/criatura for proficiente (Guerreiro: FOR e CON, em `ClasseRPG.salvaguardas_proficientes`). **Por enquanto só aparece na ficha** (nenhum efeito pede salvaguarda ainda). | Pedido do usuário. |
-| Criaturas | Bloco de estatísticas do livro em `CriaturaRPG` (`core/dados/`), ex.: `data/gray_ooze.tres` (CA 9, PV 22 = média de 3d8+9, atributos, iniciativa −2, Pseudópode +3 / 2d8+1 **ácido** / 5 pés, 10 pés, Visão às Cegas 60 pés, **resistências** ácido/frio/fogo, **Forma Corrosiva** −1 por toque até −5). Ainda **não**: Amorfo e a corrosão de **armadura** (não há armadura). | Usar as criaturas do D&D em vez de inventar números. |
-| Escala D&D | `EscalaDnd`: **5 pés = 1 ladrilho (32 px)**; **1 rodada = 1,5 s**. **Movimento = deslocamento da ficha**: herói 30 pés ≈ 128 px/s (correndo 256), Ooze 10 pés ≈ 43 px/s. **Ritmo de ataque = iniciativa em tiques**: intervalo = (10 − iniciativa) × 0,1 s, mínimo 3 tiques. Herói: iniciativa = mod. DES (+2 → 0,8 s); criatura: campo `iniciativa` da ficha (Ooze −2 → 1,2 s). O herói tem buffer de ataque (`tempo_buffer_ataque`). Ainda sem raças: deslocamento padrão 30 pés (`Ficha.DESLOCAMENTO_PADRAO_PES`). | Pedido do usuário. |
-| Gray Ooze | `features/gray_ooze/`: estados Parado -> Perseguindo -> Atacando (janela 0,2-0,35 s) -> LevandoDano -> Morrendo. Arte: slime CC0 de **rvros**, recolorida de cinza por `tools/gerar_gray_ooze.gd` (créditos em `assets/CREDITOS.md`). Fica no grupo `monstros`; a `main` chama `definir_alvo(herói)` em todo monstro do grupo. | |
-| Goblin Minion | `features/goblin/` (`Goblin`, ficha `data/goblin_minion.tres`): CA 12, 7 PV (2d6), iniciativa +2, 30 pés, Visão no Escuro 60 pés, Adaga +4 / 1d4+2 perfurante. Estados Parado -> Perseguindo -> Atacando (janela 0,1-0,3 s) / **Arremessando** (3 adagas, `CriaturaRPG.arremessos`, 20/60 pés: arremessa quando o alvo está fora do corpo a corpo e dentro dos 60; `AdagaGoblin` mira no peito do alvo na força do alcance longo, desvantagem além de 20, cai no longo) -> **Desengajando** (Fuga Ágil, `CriaturaRPG.fuga_agil`: depois de cada golpe recua 15 pés em Disparada, olhando para o alvo) -> LevandoDano (pisca 0,25 s) -> Morrendo; Caído deita girando. Arte CC0 de **thekingphoenix** (o goblin segura uma lança; o golpe é o da adaga da ficha), SpriteFrames por `tools/gerar_goblin.gd`. **Não fica no mapa**: vem pela tela de comandos (Trazer). | Pedido do usuário. |
-| Herói apanhando | Acerto -> estado `LevandoDano` (recuo `recuo_dano`, `tempo_recuo`) + **invencível piscando** por `tempo_invencibilidade` (dados em `StatsJogador`). Vida zerou -> sinal `caiu` -> a `main` mostra **"Você caiu!"** (`ui/derrota/`, pausa). **Tentar de novo**: `reviver()` (início, vida cheia, Fôlego cheio) e os monstros do mapa são **recriados**. Os trazidos pela tela de comandos não voltam. Sem ninguém escutando `caiu` (F6), revive sozinho. | Pedido do usuário. |
-| Second Wind | Tecla **F** (`folego`). Ação bônus, cura **1d10+1** (nível 1, de 2 a 11), sem passar da vida máxima. **2 usos por luta** (`ClasseRPG.usos_segundo_folego`; 0 = a classe não tem). Gasta o uso mesmo com a vida cheia. No mesmo instante não dá para usar o golpe extra sem Corte Duplo. `reviver()` devolve os 2. HUD «Fôlego 2/2» e texto flutuante com o quanto subiu. | Livro; recarga escolhida pelo usuário (sem descanso curto). |
-| Comandos | Tecla **C** abre `ui/comandos/` (pausa, no estilo do inventário): o que cada botão faz e a tecla atual. Clicar numa ação e apertar uma tecla troca o atalho; essa tecla sai da ação que já a usava. `Comandos` (`core/utilitarios/`) grava em `user://comandos.cfg` e a `main` carrega no começo. Não é autoload. | Pedido do usuário. |
-| Criatura na arena | Na mesma tela, lista **Combate**. Gray Ooze e Goblin Minion. **Trazer** põe uma cópia à frente do herói (15 pés) e a `main` chama `definir_alvo`. **Tirar da arena** apaga o grupo `monstros`. O Ooze que já está no mapa continua na cena. | Pedido do usuário. |
-| Nome do jogo | **"DnD in a Piece"**, em `project.godot` (`application/config/name`); a tela de título lê de lá. "D&D" é marca da Wizards of the Coast: trocar o nome se um dia for publicar. | Pedido do usuário. |
-| Início do jogo | `main`: **tela de título** (`ui/titulo/`: Novo Jogo, Sair) -> **criação** -> jogo. Título e criação pausam o jogo e escondem o HUD. `mostrar_inicio = false` pula tudo (testes). | Pedido do usuário. |
-| Criação | `ui/criacao_personagem/`: três passos. **Quem**: nome (até 16 letras), classe e pacote. **Atributos**: compra de pontos, sugestão da classe e uma linha de vida/CA/dano. **Maestrias**: clique marca e desmarca, até as 3 armas que domina (efeito de cada maestria explicado). INT, SAB e CAR ainda não fazem nada. | Pedido do usuário. |
-| Talentos | Anotações em `docs/talentos.md` (origem e geral do livro base). Cinco já têm conta (Resistente, Alerta, Atacante Selvagem, Brigão de Taverna, Veloz). **Atirador de Elite** e **Especialista em Besta** já valem no tiro (`Ficha.talentos`, lista vazia até o antecedente). Magia fica de lado: abrir esse bloco do doc na fatia dela. A escolha só quando existir antecedente. | Pedido do usuário. |
-| HUD | `ui/hud/`: "Nome (Classe)" e "PV atual/máximo". | |
-| Itens | `Item` (`core/dados/item.gd`: nome, descrição, ícone, `espaco`). `Arma` é um `Item` do espaço `mao`. | Base para qualquer item. |
-| Inventário | Regra pura `Inventario` (`core/regras/`): adicionar (capacidade 12), equipar (troca; o antigo fica na mochila), desequipar, **jogar fora = apaga** (desequipa antes). Item equipado continua na lista. O herói tem `inventario` e `itens_iniciais` (a espada começa na mochila, sem equipar). | Pedido do usuário. |
-| Ícones dos menus | **16x16** (`assets/armas/icones/`): armas e **armaduras** (`assets/armaduras/icones/`, do pacote CC0 Idylwild's Armory; `tools/gerar_armaduras.gd`, tabela `ICONES` com tinta para as repetidas). o ícone original do pacote reduzido pela metade (em cada bloco 2x2 fica o pixel de luz mediana, para as hastes finas não sumirem); o chicote tem ícone enrolado. Listas do inventário e do baú com `fixed_icon_size` 16x16. O sprite esticado é só para a mão. | Escolha do usuário. |
-| Tela de inventário | `ui/inventario/`, tecla **I** (Esc também fecha), **pausa o jogo**. Lista à esquerda; à direita a aba **Item** (resumo e Equipar/Jogar fora) ou **Ficha** compacta. Não conhece o herói: emite `abrir_pedido` e a `main` chama `abrir(...)`. Não abre durante a criação. | |
-| Tipos de dano | `TiposDano` (`core/regras/`): contundente, cortante, perfurante, ácido, frio, fogo. **Espada Curta = perfurante** (igual ao livro), **soco = contundente**, Pseudópode = ácido. `Arma.tipo_dano`; o `Golpe` leva o tipo. **Resistência** (`DefesaComponent.resistencias`): dano pela metade, arredondado para baixo (pode dar 0); o texto mostra "(resistiu)". | Pedido do usuário. |
-| Corrosão (armas) | Arma **não mágica** (`Arma.corroivel`) que causa dano no Ooze leva −1 no ataque (cumulativo) e é **destruída em −5**. O desgaste fica **no Inventario** (`penalidade`/`desgastar`), por item: o herói guarda **cópias** dos itens iniciais, e o `.tres` nunca muda. O alvo avisa pelo sinal `Golpe.arma_corroida`; quem decide o que acontece com a arma é o dono. O inventário mostra "Corroída: −X no ataque". | Regra da ficha do Ooze. |
-| Proficiências | `Proficiencias` (`core/regras/`): armas **simples/marcial** e armaduras **leve/média/pesada/escudo**. `ClasseRPG.proficiencias_armas` e `treinamento_armaduras` (Guerreiro: tudo). `Arma.categoria` (Espada Curta = marcial; vazio = desarmado, sempre proficiente). **Arma sem proficiência: não soma o +2 de proficiência no ataque** (`Ficha.proficiente_com`). Criação mostra as proficiências da classe; a ficha escreve "prof. +2" na conta do ataque (e "sem prof." quando não soma); o item avisa "Sem proficiência". | Regra do livro. |
-| Armaduras | **21 armaduras** do Empório (PHB, Obojima, Northlands) em `data/armaduras/*.tres`, geradas por `tools/gerar_armaduras.gd` (**edite a TABELA, não os .tres**). `Armadura` (`core/dados/`): categoria, `ca_base`, `soma_destreza`, `max_destreza`, `forca_minima`, `desvantagem_furtividade`, cor e padrão visual. Espaços: **corpo** (armadura) e **mão secundária** (escudo). **CA** (`Ficha.classe_armadura`): sem armadura 10+DES; leve base+DES; média base+DES (máx.); pesada base; escudo +bônus (**só com treinamento**). **FOR abaixo do mínimo: −10 pés.** **Sem treinamento:** desvantagem nos testes de FOR/DES (= ataques; `Combate.rolar_d20` com desvantagem). **Furtividade:** só aparece (ainda não há testes de Furtividade). `Equipamento` (`core/regras/`) junta ficha + inventário (arma, armadura, escudo, CA, deslocamento, golpe) para herói e inventário calcularem igual. | Regras do livro; pedido do usuário. |
-| Pacote inicial | `PacoteInicial` (`core/dados/`, `data/pacotes/`): item -> quantidade + o que já vem equipado. `ClasseRPG.pacotes_iniciais` (Guerreiro **A**: Cota de Malha + Espada Grande + Mangual + 8 Azagaias; **B**: Couro Batido + Cimitarra e Espada Curta já equipadas (uma em cada mão), Arco Longo e 20 Flechas na mochila). Escolhido na criação (`confirmada(ficha, pacote)`); `Jogador.receber_pacote()` limpa a mochila e põe cópias. A prévia mostra CA, dano, itens e os avisos de Força. | Pacotes do livro; pedido do usuário. |
-| Armas do PHB | **38 armas** em `data/armas/*.tres` (29 de perto/arremesso + 9 à distância), geradas por `tools/gerar_armas.gd` (**edite a TABELA**; arte do pacote CC0 **Idylwild's Arsenal** em `assets/armas/fonte_idylwild/`; chicote, arcos, bestas, funda, zarabatana e armas de fogo são desenhados por script). Munição em `data/municoes/` (flecha, virote, pedra de funda, agulha, bala); a flecha do pacote é o projétil. `Arma`: `leve`, `pesada`, `duas_maos`, `dados_versatil`, `alcance_estendido`, arremesso (pés), disparo (pés), `municao`, `recarga`, `besta`, `maestria`, `empilhavel`. Dano e ataque à distância usam Destreza. | Pedido do usuário. |
-| Propriedades das armas | **Versátil:** dado maior com a mão secundária livre (`Equipamento.duas_maos`). **Duas Mãos:** ocupa também a mão secundária (`Item.espacos_ocupados`); equipar tira o escudo e vice-versa. **Pesada:** FOR < 13 = desvantagem (`Ficha.fraco_para`). **Alcance:** +5 pés (+32 px) na área do golpe. **Acuidade:** já existia. **Leve:** 2ª arma leve vai para a outra mão (tira o escudo), desenhada **atrás do corpo** saindo da mão de trás (inclinada, sem entrar no chão); J de novo durante o golpe dá o ataque extra (d20 com bônus, dano sem mod. positivo) em **X** (`AtaqueJogador.POSES_CRUZADO`: a 2ª desce, a principal sobe; a área de acerto segue a 2ª). **Arremesso:** tecla **K** = estado `Arremessando` em 2 etapas: **segurando K carrega** (arma armada acima do ombro; 0,6 s = força máxima) e **soltando arremessa**. Força 0 = cai no **alcance normal**, 1 = no **longo** (desvantagem além do normal); o arco é calculado para cair lá (`ArmaArremessada`). Enquanto segura o K, **W** sobe a mira e **S** desce (o W não pula); sem isso, cai no chão como antes. **Disparo:** o mesmo K, com **8 quadros** do gesto (preparo, sobe, mira, puxa, puxa, cheio, soltura, volta; `tools/gerar_armas.gd`), o herói na **pose de mira** (`mirar`: braço esticado na altura do peito, montada por `tools/montar_pose_mira.gd` com o tronco de um quadro do pulo e as pernas do parado) e a **camada da mão por cima da empunhadura**. **Arte do pacote CC0 Idylwild's Aerial Arsenal** (`assets/armas/fonte_aereo/`, tabela `PACOTE_AEREO`) para arcos, bestas, funda, zarabatana e munição; os quadros de arco e besta são montados sobre o ícone do pacote e girados para a mão. **Arco inclinado para a frente** (`CANTO_ARCO`, 30°) para não cobrir o rosto; corda e flecha reta desenhadas na tela, puxão curto (`PUXAO_ARCO`). Bestas com estalo na soltura; zarabatana na boca; **pistola e mosquete de pederneira** desenhados em pixel art no estilo do pacote (`ARTE_PISTOLA`, `ARTE_MOSQUETE`), com faísca, clarão, coice e fumaça, e a outra mão sob o cano do mosquete. **9º quadro = descanso** (fora do tiro: arma relaxada, sem passar do chão; besta leve/pesada e mosquete em riste) (**velocidade por arma**: sai a raiz de g x alcance longo do livro, ou seja arco longo e besta pesada rápidos e retos, funda e zarabatana curvam na tela; a carga vai de 55% a 100% dessa velocidade, a Destreza limita o teto da carga e muda a velocidade em até ±25%; sem mira o tiro sai reto e W/S inclinam; a munição soma `impulso` e cai pelo `peso`: bala 2,2/0,25, virote 1,1/0,5, flecha 1/0,6, agulha 0,9/0,8, pedra 1/1; o alcance do livro vale para a desvantagem e, no longo, o tiro cai). A arma fica na mão, gasta 1 munição (sem munição avisa e não atira), J não corta, o projétil some ao acertar ou ao cair. Inimigo a até 5 pés: desvantagem no tiro (não empilha com a de longe). Azagaia/Lança/Tridente/Dardo voam **de ponta** e **fincam** (`Arma.arremesso_de_ponta`); as outras **giram** e caem **deitadas**. Acertou um alvo: **cai ali** (não atravessa). Volta com E (pilha perde 1). **Maestrias**: ver a linha Maestrias. | Decisões do usuário. |
-| Maestrias | **Maestria em Armas**: o Guerreiro domina **3 tipos de arma** (`ClasseRPG.quantidade_maestrias`), escolhidos no **3º passo da criação** (lista das armas proficientes; já vem com as do pacote). `Ficha.armas_dominadas`, `domina`, `maestria_de`, **CD = 8 + mod. do ataque + prof.** O `Golpe` leva `maestria`, `cd_maestria`, `dano_raspao`, `trespassar`, `autor_id`, `vantagem`. **Um golpe acerta UM alvo** (o mais perto; `HitboxComponent`). Efeitos: **Trespassar** (acertou: 2º alvo a até 5 pés do 1º leva outro ataque, dano sem mod. positivo); **Raspão** (errou: dano = mod.; `Combate`); **Corte Duplo** (golpe extra J J não gasta a ação bônus; sem ele, o extra é 1 por rodada); **Empurrar** (10 pés); **Enfraquecer** (próximo ataque do alvo com desvantagem); **Lentidão** (−10 pés por 1 rodada, se causou dano; não acumula); **Derrubar** (a criatura **sempre** rola salvaguarda de CON contra a CD; falhou = Caído); **Atormentar** (próximo ataque de quem marcou com vantagem). "Até o próximo turno" = 1 rodada (1,5 s). Ainda **não**: limite de tamanho (Grande ou menor) do Empurrar e do Derrubar. | Regras do livro (PHB 2024); escolhas do usuário. |
-| Condições | `CondicoesComponent` (`core/componentes/`, no Gray Ooze e no boneco): **Caído** (meia rodada deitado = levantar gasta metade do deslocamento; ataques contra ele com **vantagem**; Ooze vai para o estado `Caido`, achatado), **Lento**, **Enfraquecido**, **Atormentado**. **Vantagem/desvantagem**: 2d20 maior/menor, juntas se anulam (`Combate.rolar_d20`). Ícones 8x8 acima do alvo (`assets/efeitos/condicoes.png`) e avisos no texto flutuante (textos que saem juntos empilham). | Escolhas do usuário. |
-| Pilhas | `Item.empilhavel`: itens iguais (mesmo nome) ocupam 1 lugar com quantidade (`Inventario.adicionar(item, n)`, `quantidade_de`). Jogar fora apaga a pilha toda. | Azagaia ×8. |
-| Baú do arsenal | `features/bau/` (`Bau`, Area2D na máscara do jogador): perto dele aparece "E: abrir arsenal"; **E** (`interagir`) emite `abrir_pedido(itens)`. Conteúdo = todos os `.tres` de `data/armas/`, `data/armaduras/` e `data/municoes/`. `ui/bau/` (`TelaBau`, pausa): filtro Tudo/Armas/Armaduras (a munição aparece em Tudo e em Armas); **Pegar** põe uma **cópia** na mochila (baú nunca esvazia; avisa mochila cheia). | Como obter os outros itens (escolha do usuário). |
-| Armadura visível | Shader `assets/shaders/roupa_armadura.gdshader` no sprite do herói: troca a túnica azul por um **ladrilho 8x8** (`Armadura.detalhe`: couro, anéis, placas, tachas, acolchoado, escamas, peles), mantendo a luz e a sombra da arte. **Sem peças por cima** do corpo (sem ombro, peitoral, saia nem elmo): a armadura é essa pintura. Escudo: `EscudoJogador` **redondo, seguro pela mão de trás pela alça do meio** (arte: broquel de madeira e de ferro do pacote Armory, 16 px): na frente do corpo (lado das costas), **centrado na mão e cobrindo-a** (a mão fica atrás do escudo, como na vida real), acompanhando o balanço do braço. Escolhido entre 3 alternativas renderizadas; atrás do corpo parecia "atrás da mochila". **Camada da mão** (`Sprite/MaoFrente`, z acima): a mão da frente recortada de cada quadro (`tools/marcar_pontos_mao.gd` gera `*_mao.png` + `maos_frente_frames.tres`) é desenhada **por cima** da arma e do escudo (dedos no cabo); some no golpe e na carga, quando a mão sai do lugar. Arte do escudo provisória por script. | Pedido do usuário. |
-| Corrosão (armadura) | Pseudópode (`ataque_corroi_armadura`) que acerta: armadura não mágica perde 1 de CA (desgaste no Inventario) e **se desfaz quando a CA dela chega a 10**. | Regra da ficha do Ooze. |
-| Desarmado | Mão vazia = `data/ataque_desarmado.tres` ("1d1" + FOR = soco de D&D, contundente, não sofre Corrosão, alcance curto, sem sprite de arma). | Regra do livro. |
-| Ataque | Tecla **J** -> estado `Atacando`. No chão freia e fica firme; no ar continua caindo; não vira durante o golpe. | Peso de Guerreiro. |
-| Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/armas/*.tres`: dano, propriedades, **textura** (pode ser diagonal: `angulo_arte`, `pegada`, `comprimento`) e o **golpe**. A arma é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. `DesenhoArma` (`core/utilitarios/`) põe qualquer arma num Sprite2D (mão, mão de trás, arremessada). | Equipamento visível sem redesenhar o herói. |
-| Golpe por arma | **Cada uma das 29 armas tem o seu movimento** (tabela `GOLPES` em `tools/gerar_armas.gd`): poses-chave `PoseGolpe` (`core/dados/`: tempo, ângulo, deslocamento da mão, escala, acerta) interpoladas; trecho que acerta é rápido e freia no fim. Estocadas (lanças, rapieira, adaga), cortes de cima (espadas, machados, martelos), giro do bordão, varrida da glaive. **Armas flexíveis (Mangual, Chicote): quadros desenhados** por script (`QUADROS_MANGUAL`, `QUADROS_CHICOTE`; folha em `assets/armas/quadros/`): cada pose mostra um quadro (bola atrasada na corrente; correia que faz laço e estala); a ponta de cada quadro vira a pose e a área de acerto. Soco também (`GOLPE_SOCO`). | Pedido do usuário (golpe próprio por arma). |
-| Área de acerto | **Segue a arma**: retângulo da pegada até a ponta (+6 px), girando com a lâmina, ligado só nos trechos que acertam e **só à frente** (lâmina atrás da cabeça não acerta). **Alcance pela regra**: a ponta tem de chegar a 5 pés (44 px da mão) ou 10 pés com Alcance (76 px). Arma curta dá um **passo de estocada** (`Arma.passo`, calculado pelo gerador): avança no acerto e **volta** na recuperação. | Escolha do usuário (fiel ao livro). |
-| Tamanho das armas | Escala de jogo: leves ~24-32 px da pegada à ponta, comuns ~36-44, pesadas ~48-56, com Alcance ~75-80. O gerador **estica ou encurta só a haste** na diagonal (não redimensiona os pixels). Ícones repetidos ganham cor própria (Clava Grande escura, Lança de Montaria listrada, Martelo de Guerra aço azul). | Escolha do usuário. |
-| Componentes de combate | `core/componentes/`: `HitboxComponent` (entrega um `Golpe`, 1x por alvo por golpe), `HurtboxComponent` (só emite `golpe_recebido`), `DefesaComponent` (CA, resolve, tira vida, `invulneravel`), `HealthComponent`, `TextoFlutuanteComponent`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`, 4 `hurtbox_jogador`, 5 `inimigo`. | Reutilizável por herói, inimigos e boneco. |
-| Pacotes prontos de personagem | **Não usar** para o herói (decisão do usuário: o equipamento fica "pintado" no sprite). Talvez em outros casos. | Equipamento visível. |
-| Arte do golpe | Armas do pacote Idylwild (CC0). **Efeito por tipo de golpe** (`Arma.efeito`, escolhido pelo gerador): **arco** nos cortes (gira com o golpe, centro na mão, raio da arma), **rastro** nas estocadas (giro < 60°: linhas da mão até a ponta), **impacto** nos contundentes (anel e faíscas onde a cabeça para; também Maça Estrela e Picareta). Chicote sem efeito (o estalo está nos quadros). Arte provisória por script (`corte.png`, `rastro.png`, `impacto.png` em `assets/efeitos/`, juntas em `efeitos_golpe.tres`) (+ `corte_frames.tres`). Pose do herói = quadros 2 e 3 do jump. | Grátis; trocar depois. |
-| Arma na mão | A arma equipada fica **sempre na mão da frente**. `features/jogador/sprites/pontos_mao.tres` (`PontosMao`) guarda o ponto da mão em cada quadro de cada animação + o ângulo de descanso por animação. Gerado por `tools/marcar_pontos_mao.gd` (acha a mancha cor de pele mais à frente; quadros em que a mão some usam a média dos vizinhos). A mesma ferramenta recorta a **camada da mão**. **Rode de novo sempre que mudar a arte do herói.** `AnimacaoJogador.ponto_da_mao()` -> `AtaqueJogador.seguir_mao()` todo quadro; o golpe gira a partir da mão. | Pedido do usuário. |
-| Ângulo de descanso | ~35° (ponta para baixo e à frente). Arma comprida inclina menos: `AtaqueJogador` limita o ângulo para a ponta não passar dos pés. O sprite gira em volta da pegada (`Arma.pegada`). | |
-| Câmera | `Camera2D` filha do herói, com suavização, olha à frente na direção em que ele corre; limites calculados pelo tamanho da fase | Ver o que vem pela frente. |
-| Movimento suave | Interpolação de física ligada | Sem tremedeira em monitores de 144 Hz. |
+## Onde está cada coisa (leia o que servir para a tarefa)
+| Documento | Conteúdo |
+|---|---|
+| `docs/decisoes/base.md` | Motor, resolução, pixel art, fase, câmera, camadas de física, nome do jogo. |
+| `docs/decisoes/heroi.md` | Herói: estados, pulo, corrida, ataque, apanhar, Second Wind, arma na mão, escudo, armadura visível. |
+| `docs/decisoes/regras_dnd.md` | Regras de D&D no código: vida, dano, combate, vantagem, salvaguarda, escala, tipos de dano, proficiências, maestrias, condições, talentos. |
+| `docs/decisoes/armas_e_itens.md` | Itens, inventário, pacotes, baú, corrosão, armaduras, armas, golpes, arremesso, disparo. |
+| `docs/decisoes/criaturas.md` | Ficha de criatura, Gray Ooze, Goblin Minion, monstros no jogo, arena. |
+| `docs/decisoes/interface.md` | Título, criação, HUD, inventário, comandos, ações de input, celular e controles de toque. |
+| `docs/arquitetura.md` | Como as peças se ligam (camadas, cena principal, caminho de um golpe, entrada). |
+| `docs/receitas.md` | Passo a passo: criatura, arma, regra, estado, ação, tela, teste, print; armadilhas conhecidas. |
+| `docs/pendencias.md` | **O que falta**, com tamanho e prioridade. Escolha a próxima fatia daqui. |
+| `docs/historico.md` | O que já foi feito, fatia por fatia. |
+| `docs/artes_prontas.md` | Arte de terceiros: onde buscar, licença, como usar. |
+| `docs/talentos.md` | Talentos do livro anotados. |
+
+## Decisões que valem para tudo
+| Decisão | Escolha |
+|---|---|
+| Motor | Godot 4.7.2, GDScript, GL Compatibility. |
+| Tela | 640x360, `viewport` + escala inteira + `aspect = expand`; filtro Nearest; ladrilho 32x32; herói ~73 px. |
+| Regras | D&D 5e **PHB 2024**, números do livro. Regras da casa só com ok do usuário (lista em `docs/decisoes/regras_dnd.md`). |
+| Escala | 5 pés = 32 px; 1 rodada = 1,5 s; velocidade e ritmo de ataque vêm da ficha (`EscalaDnd`). |
+| Dados | Números em Resources (`data/`). Armas, armaduras e munição são **gerados**: edite a TABELA do gerador, não os `.tres`. |
+| Entrada | O código de jogo só lê ações do InputMap; teclado e toque apertam as mesmas ações. |
+| Arquitetura | Componentes + máquina de estados; feature não importa feature; UI não conhece o herói; `levels/main.gd` monta tudo. |
 
 ## Skills do projeto (`.claude/skills/`)
 **Carregue as skills de godot-* relevantes antes de qualquer mudança de código.**
@@ -98,141 +59,90 @@ Regras de uso:
 - Ao terminar cada tarefa, faça a checagem contra as skills usadas e diga em **1 linha**: `Conforme as skills` ou quais regras foram violadas e por quê.
 - Se o usuário pedir algo que quebre uma regra, **avise e explique o impacto antes**; só quebre se ele confirmar.
 - Se uma regra precisar mudar, **proponha a alteração na skill e espere o ok**. Nunca desvie da skill em silêncio.
-- **Cursor:** as mesmas skills viram regras em `.cursor/rules/*.mdc`, geradas por `tools/gerar_regras_cursor.ps1` (fonte da verdade = `.claude/skills/`; **depois de mudar uma skill, rode o script**). Escritas à mão: `projeto.mdc` (sempre ativa, aponta para este arquivo) e `artes-prontas.mdc`.
-- **Arte pronta de terceiros:** siga `docs/artes_prontas.md` (onde buscar, licença, estilo, conversão, SpriteFrames, créditos).
+
+## Comandos e agentes
+- **Comandos** (`.claude/commands/`; no Cursor, `.cursor/commands/`, gerados pelo mesmo script):
+  `/testar` (roda tudo e resume), `/proxima-fatia` (3 opções a partir de `docs/pendencias.md`),
+  `/fechar-fatia` (checklist de fim de fatia), `/nova-criatura` (receita 1 com a ficha do livro).
+- **Agentes** (`.claude/agents/`): `testador` (roda os testes e devolve só o que falhou),
+  `revisor-godot` (revisão só de leitura contra as skills).
+- **Cursor:** as skills, os comandos e as regras por tema ficam em `.cursor/` e são **gerados** por
+  `tools/gerar_regras_cursor.ps1` (fonte da verdade = `.claude/` e `docs/`). **Mudou uma skill ou um
+  comando? Rode o script.** Escritas à mão: `projeto`, `arquitetura`, `receitas`, `testes`,
+  `ferramentas-e-dados`, `artes-prontas`. MCP do Godot: `.mcp.json` e a cópia
+  `.cursor/mcp.json` (mude os dois juntos).
 
 ## Estrutura de pastas
 Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
-core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante, Condicoes (componentes de combate)
-core/dados/              Item, Arma, PoseGolpe, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial (Resources)
+core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante, Condicoes
+core/dados/              Item, Arma, Municao, PoseGolpe, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial
 core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd,
                          TiposDano, Proficiencias, Equipamento
-ui/tema_menu.tres       visual compartilhado dos menus
-ui/resumo_item.gd        texto curto de arma/armadura nas telas
-ui/titulo/               tela de título (DnD in a Piece)
-ui/criacao_personagem/   tela de criação (nome, classe, compra de pontos)
-ui/inventario/           tela de inventário (tecla I)
-ui/hud/                  HUD (nome, vida)
-ui/derrota/              tela "Você caiu!"
-ui/comandos/             tela de comandos (tecla C): atalhos e trazer criatura
-ui/bau/                  tela do baú do arsenal (Pegar)
-core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos (atalhos em user://)
-features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
-						 camera_jogador.gd, ataque_jogador.gd, estados/, sprites/
-features/boneco_treino/  boneco de treino (CA 10, mostra dano/Errou!, pisca e balança)
-features/gray_ooze/      Gray Ooze (D&D): cena, estados/, sprites/
-features/goblin/         Goblin Minion (D&D): cena, adaga arremessada, estados/, sprites/
-features/bau/            baú do arsenal (E para abrir)
-features/arremesso/      arma arremessada (voa, cai, E para pegar)
+core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
+features/jogador/        herói: jogador, stats, animação, câmera, ataque, escudo, arma de trás, estados/, sprites/
+features/gray_ooze/      Gray Ooze: cena, estados/, sprites/
+features/goblin/         Goblin Minion: cena, adaga arremessada, estados/, sprites/
+features/boneco_treino/  boneco de treino
+features/bau/            baú do arsenal (E)
+features/arremesso/      arma arremessada / projétil do herói
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze (.tres), armas/, armaduras/, municoes/, pacotes/
-assets/tiles/            ladrilhos e TileSet (compartilhado)
-assets/armas/, efeitos/, armaduras/, shaders/  armas, efeitos, escudos, shader da roupa
-tools/                   gerar_arte_provisoria, gerar_fase_teste, gerar_armaduras, gerar_armas, marcar_pontos_mao, montar_pose_mira, gerar_gray_ooze, gerar_goblin, capturar_tela, gerar_regras_cursor.ps1
+ui/                      titulo, criacao_personagem, hud, inventario, bau, comandos, derrota,
+                         controles_toque; tema_menu.tres; resumo_item.gd
+data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze, goblin_minion,
+                         armas/, armaduras/, municoes/, pacotes/
+assets/                  tiles/, armas/, armaduras/, efeitos/, shaders/; CREDITOS.md
+tools/                   geradores (armas, armaduras, criaturas, fase, pose, mão), capturar_tela,
+                         ferramentas_pixel, gerar_regras_cursor.ps1
 tests/                   teste_*.gd, rodar_testes.ps1
-docs/                    talentos.md, artes_prontas.md (guia de arte pronta)
-.cursor/rules/           regras do Cursor (godot-* geradas das skills; projeto.mdc, artes-prontas.mdc)
+docs/                    decisoes/, arquitetura, receitas, pendencias, historico, artes_prontas, talentos
+.claude/                 skills/, commands/, agents/
+.cursor/                 rules/, commands/ (gerados do .claude e docs), mcp.json
 ```
 
 ## Convenções
 - Os detalhes de estilo estão na skill `godot-estilo-gdscript`; abaixo ficam só os específicos do projeto.
-- **Arquivos e funções:** `snake_case` (ex.: `jogador.gd`, `_atualizar_animacao()`).
-- **Classes e nós:** `PascalCase` (ex.: `class_name Jogador`, nó `Sprite`).
+- **Arquivos e funções:** `snake_case`. **Classes e nós:** `PascalCase`.
 - **Comentários e nomes do jogo em português.** Termos do Godot ficam em inglês.
 - Balanceamento em Resources (`data/`); ajustes só visuais podem ficar em `@export` do componente.
-- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J), `arremessar` (K), `folego` (F), `inventario` (I), `interagir` (E), `comandos` (C).
 - Edite `.tscn` à mão só em mudanças pequenas e seguras. Estruturas grandes: script gerador, MCP do Godot ou editor.
-- Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha 2 opções com prós e contras.
+- Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha opções com prós e contras.
 
 ## Como trabalhar
-- Uma fatia pequena por vez. Ao terminar: o que mudou, como testar, próxima fatia sugerida. Não começar a próxima sem "ok".
-- Teste você mesmo (rodar headless, ler log, testes, prints com `capturar_tela.gd`). Pergunte ao usuário só o que é de sensação (pulo, corrida, câmera, visual), com perguntas específicas.
-- Um commit por fatia concluída, mensagem clara em português.
+- Uma fatia pequena por vez, escolhida em `docs/pendencias.md`. Ao terminar: o que mudou, como testar, próxima fatia sugerida. Não começar a próxima sem "ok".
+- Teste você mesmo (rodar headless, ler log, testes, prints). Pergunte ao usuário só o que é de sensação (pulo, corrida, câmera, visual), com perguntas específicas.
+- Ao fechar uma fatia (`/fechar-fatia`): testes passando, doc do tema atualizado, `docs/historico.md` e `docs/pendencias.md` atualizados, checagem das skills.
+- Um commit por fatia concluída, mensagem clara em português, só com o ok do usuário.
 - **Nunca** apagar arquivos do usuário nem fazer force-push. Se der muito errado, voltar ao último commit.
 
 ## Ferramentas disponíveis para a IA
-- **MCP do Godot** (`godot`, em `.mcp.json`): rodar o projeto, ler o output de debug, criar cenas e nós.
-- **Plugin GDScript LSP** (`gdscript@claude-code-gdscript`): diagnósticos em `.gd`. Usa `GODOT_EDITOR_PATH`. (Na fatia 1 estourou o tempo ao iniciar; com o editor aberto deve funcionar.)
-- **SpriteCook** (plugin): gera sprites, animações e tilesets. **Gasta créditos**: avise o custo antes de gerar.
+- **MCP do Godot** (`godot`): rodar o projeto, ler o output de debug, criar cenas e nós.
+- **Plugin GDScript LSP** (`gdscript@claude-code-gdscript`): diagnósticos em `.gd`. Usa `GODOT_EDITOR_PATH`.
+- **SpriteCook** (plugin): gera sprites e animações. **Gasta créditos**: avise o custo antes.
   - Preços: personagem base = 12; 1ª animação da rodada = 20, cada extra na mesma rodada = 14; preparo de pose (walk/run) = 12.
-  - O herói é o asset `b484dd94-...` (perspectiva *platformer*). Gere novas animações **a partir dele**, não um personagem novo.
+  - O herói é o asset `b484dd94-...` (perspectiva *platformer*). Gere novas animações **a partir dele**.
   - Todo asset gerado vai para o `spritecook-assets.json` (asset_id + sha12).
-  - Chamadas com espera longa podem estourar o tempo mesmo dando certo: use `wait_seconds = 0` e acompanhe pelo `run_id`, ou confira com `list_animation_outputs` antes de repetir (para não pagar duas vezes).
+  - Chamadas longas podem estourar o tempo mesmo dando certo: use `wait_seconds = 0` e acompanhe pelo `run_id`, ou confira com `list_animation_outputs` antes de repetir.
 
-## Como rodar
-O executável do Godot está na variável de ambiente `GODOT_EDITOR_PATH`:
-`C:\Users\lucas\Downloads\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe`
-
-PowerShell:
+## Como rodar e testar
+O Godot está em `GODOT_EDITOR_PATH`
+(`C:\Users\lucas\Downloads\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe`).
 ```powershell
-# Abrir o editor
-& $env:GODOT_EDITOR_PATH --editor --path C:\Jogos\rpg
-# Rodar o jogo
-& $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg
-# Importar assets novos (depois de adicionar ou gerar PNGs)
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --import
-# Rodar headless por ~3 s só para ver erros no log.
-# --debug é OBRIGATÓRIO: sem ele, os avisos de GDScript (ex.: UNUSED_SIGNAL) não aparecem,
-# mas o editor mostra. O tests/rodar_testes.ps1 já usa --debug.
-& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --quit-after 180
-# Regerar a arte provisória (ladrilhos) e depois a fase de teste
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_arte_provisoria.gd
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --import
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_fase_teste.gd
-# Remarcar o ponto da mão (depois de mudar a arte do herói); o argumento salva uma folha de revisão
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/marcar_pontos_mao.gd -- C:/caminho/revisao.png
-# Tirar um print segurando teclas (precisa de janela; sem --headless). Opções: inicio, equipar
-& $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg --script res://tools/capturar_tela.gd -- mover_direita 40 C:/caminho/print.png equipar
-```
-**Atenção:** depois de criar um `class_name` novo, rode `--import` antes de qualquer script de `tools/`.
-Se um script de ferramenta tiver erro e for rodado com `--debug`, o Godot fica parado no depurador (não termina):
-rode as ferramentas sem `--debug`.
-```powershell
-```
-
-## Como rodar os testes
-Cada teste é um script `tests/teste_*.gd` que estende `SceneTree`, imprime `PASSOU`/`FALHOU` e sai com código 0 ou 1.
-Rodar **tudo** (importa, roda o jogo procurando erros/avisos e roda todos os testes):
-```powershell
+& $env:GODOT_EDITOR_PATH --editor --path C:\Jogos\rpg          # abrir o editor
+& $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg                   # jogar
+& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --import   # depois de PNG ou class_name novo
+# Todos os testes + o jogo 3 s procurando erros E avisos (aviso reprova):
 powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tests\rodar_testes.ps1
+# Um teste (com --debug para ver avisos):
+& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/teste_jogador.gd
 ```
-Um teste só:
-```powershell
-& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tests/teste_jogador.gd
-```
+Ferramentas de `tools/` rodam **sem `--debug`** (com erro, o `--debug` trava no depurador). Mais
+comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
 
 ## Estado atual
-- Fatias 1 e 2 (2.5D): boneco na relva e herói do SpriteCook. Substituídas pela fatia 3.
-- Fatia 3: herói andando e pulando numa fase de teste em 2D lateral.
-- Fatia 4: skills de código limpo, corrida com dois toques (animação provisória), fase reta, herói refatorado em física + componente visual.
-- Skills godot-* criadas e código migrado: novas pastas, máquina de estados do herói, `StatsJogador` em `data/`, sem `get_parent()`, fase com API própria.
-- Fatia 5: golpe de espada (J) no chão e no ar, arma como dado e sprite separado, Hitbox/Hurtbox, boneco de treino. Tentativa de usar pacote pronto (Hero Knight) foi cancelada e limpa.
-- Fatia 6a: ficha de D&D (compra de pontos, vida d10 + CON, dano 1d6 + FOR/DES), tela de criação, HUD de vida.
-- Fatia 6b: inventário (Item, Inventario, tela com I), espada começa na mochila, soco desarmado.
-- Fatia 6c: espada equipada sempre na mão (ponto da mão por quadro), golpe girando a partir da mão.
-- Fatia 7: tela de título "DnD in a Piece", criação com nome e classe, nome no HUD e no inventário.
-- Fatia 8: combate de D&D (d20 contra CA, crítico, salvaguardas na ficha), Gray Ooze com a ficha do livro, herói leva dano/recua/pisca/reaparece.
-- Ajuste: movimento pelo deslocamento de D&D e ritmo de ataque pela iniciativa (tiques).
-- Fatia 9: "Você caiu!" com Tentar de novo; tipos de dano (espada perfurante, soco contundente, Pseudópode ácido); resistências do Ooze; Corrosão da arma.
-- Proficiências de armas (efeito no ataque) e de armaduras (só na ficha da classe por enquanto).
-- Fatia 10: 21 armaduras + escudos com as regras do livro, escolha na criação, armadura visível no herói, corrosão de armadura.
-- Fatia 11a: 29 armas do PHB (dados + sprites provisórios), Versátil/Duas Mãos/Pesada/Alcance, pilhas, pacotes A e B na criação, baú do arsenal (E).
-- Fatia 11b: duas armas leves (J J; a 2ª na outra mão), arremesso com K (cai no chão, E pega), escudo na frente do corpo. Pacote B já equipa Cimitarra e Espada Curta.
-- Golpes das armas: arte do pacote CC0 Idylwild, golpe próprio para cada uma das 29 armas, área de acerto seguindo a arma, alcance de 5/10 pés com passo de estocada.
-- Menus com ícones 16x16; Mangual e Chicote com quadros desenhados.
-- Efeitos de golpe por tipo: arco, rastro e impacto.
-- Fatia 11c: maestrias de arma (3 na criação), condições com ícones, vantagem/desvantagem, um alvo por golpe + Trespassar, Raspão, Corte Duplo.
-- Revisão: duas armas (2ª atrás do corpo, extra em X), escudo seguro pela mão de trás, camada da mão por cima da arma, arremesso com carga (normal/longo), voo por tipo e queda no alvo.
-- Armadura visível só na túnica (ladrilho do material). Sem ombro, peitoral, saia nem elmo por cima do corpo.
-- Second Wind do Guerreiro (F): cura 1d10+1, 2 usos por luta, ação bônus, HUD «Fôlego 2/2». «Tentar de novo» devolve os usos.
-- Tela de comandos (C): ver e trocar teclas (salvo em `user://comandos.cfg`) e trazer ou tirar o Gray Ooze. O trazido não volta no «Tentar de novo».
-- Armas à distância do livro base: 9 armas, munição, K com mira (W/S), pacote B com Arco Longo e 20 flechas. Atirador de Elite e Especialista em Besta no tiro (`docs/talentos.md`); a ficha começa sem talento.
-- Disparo: cada arma tem 4 quadros (preparo, meio, cheio, soltura). A munição escolhe a curva (bala quase reta, pedra no arco mais alto). A Destreza (referência 14) limita o teto da carga, o tempo para encher e a velocidade do tiro. Azagaia e dardo continuam no arremesso de Força.
-- Disparo revisto: pose de mira no peito (montada das artes do herói), mão por cima da empunhadura e 8 quadros por arma (arcos, bestas, funda, zarabatana, pistola, mosquete).
-- Armas à distância com a arte do Aerial Arsenal (CC0): arcos inclinados para a frente, bestas do pacote, pistola e mosquete de pederneira em pixel art e quadro de descanso.
-- Força do tiro por arma: velocidade de saída pelo alcance longo do livro, impulso e peso por munição (antes todas as armas pareciam iguais na tela).
-- Goblin Minion (ficha do livro): arremessa 3 adagas, golpeia de perto e Desengaja com a Fuga Ágil. Na tela de comandos (C -> Trazer).
-- Próximas ideias: testes de Furtividade. Magia, quando existir, abre o bloco de talentos de magia em `docs/talentos.md`.
-- Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.
+Últimas fatias (lista completa em `docs/historico.md`; o que falta em `docs/pendencias.md`):
+- Armas à distância com a arte do Aerial Arsenal e força do tiro por arma.
+- Goblin Minion (arremessa adagas, golpeia, Fuga Ágil), na tela de comandos (Trazer).
+- Celular: tela larga, controles de toque (analógico ou setas + botões) e ajuste do layout.
+- Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.

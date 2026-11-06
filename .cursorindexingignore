@@ -1,0 +1,9 @@
+# Fora da indexação do Cursor (o agente ainda pode abrir se precisar).
+# Gerados pelo Godot ou binários: só poluem a busca por código.
+.godot/
+*.uid
+*.import
+assets/**/fonte_*/
+assets/**/*.png
+features/**/*.png
+spritecook-assets.json

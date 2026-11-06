@@ -1,0 +1,16 @@
+---
+description: Geradores em tools/ e dados gerados em data/ (armas, armaduras, munição, sprites de criaturas, pose de mira, ponto da mão, regras do Cursor). Use ao mexer em tools/ ou nos .tres de data/armas, data/armaduras e data/municoes.
+globs: tools/**,data/armas/**,data/armaduras/**,data/municoes/**
+alwaysApply: false
+---
+<!-- Escrita à mão. -->
+
+# Ferramentas e dados gerados
+
+- **Não edite à mão** `data/armas/*.tres`, `data/armaduras/*.tres`, `data/municoes/*.tres`: edite a `TABELA` (e `GOLPES`) em `tools/gerar_armas.gd` / `tools/gerar_armaduras.gd` e rode o gerador.
+- Dois passos quando há PNG novo: rode o gerador, `--import`, rode de novo (o 2º cria os `.tres` com a arte importada).
+- Rode ferramentas **sem `--debug`** (com erro, o `--debug` trava no depurador): `& $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/<gerador>.gd`.
+- `class_name` novo: `--import` antes de rodar a ferramenta.
+- Outras ferramentas: `gerar_goblin.gd` / `gerar_gray_ooze.gd` (SpriteFrames das criaturas), `marcar_pontos_mao.gd` (rode de novo se a arte do herói mudar), `montar_pose_mira.gd`, `gerar_fase_teste.gd`, `capturar_tela.gd`, `gerar_regras_cursor.ps1` (regras do Cursor a partir das skills).
+- Skill mudou (`.claude/skills/*/SKILL.md`)? Rode `tools/gerar_regras_cursor.ps1`; nunca edite os `.mdc` gerados.
+- Balanceamento do herói em `data/jogador_padrao.tres`; criaturas em `data/<criatura>.tres` (`CriaturaRPG`, números do livro).

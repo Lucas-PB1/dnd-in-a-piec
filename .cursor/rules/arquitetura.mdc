@@ -1,0 +1,15 @@
+---
+description: Mapa do sistema - camadas (data, core, features, ui, levels), cena principal, caminho de um golpe (Hitbox -> Hurtbox -> Defesa -> Combate), herói e máquina de estados, criaturas, itens gerados, entrada teclado/toque, escala D&D e persistência. Use para entender onde mexer antes de qualquer mudança que cruze mais de um arquivo.
+globs:
+alwaysApply: false
+---
+<!-- Escrita à mão: o mapa completo está em docs/arquitetura.md. -->
+
+Leia o mapa antes de mudar algo que cruza sistemas:
+
+@docs/arquitetura.md
+
+Resumo que não pode esquecer:
+- `levels/main.gd` é a única peça que conhece todas as outras. Feature não importa feature; UI não conhece o herói (sinal "pedido" + `abrir(dados)`).
+- Golpe: `Golpe` -> `HitboxComponent` (um alvo, o mais perto) -> `HurtboxComponent` -> `DefesaComponent` -> `Combate.resolver_ataque` -> `HealthComponent`.
+- O código de jogo só lê ações do InputMap; teclado e toque apertam as mesmas ações.

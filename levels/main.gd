@@ -32,10 +32,12 @@ var _monstros_iniciais: Array[Dictionary] = []
 @onready var _bau: Bau = $Bau
 @onready var _tela_bau: TelaBau = $Interface/TelaBau
 @onready var _comandos: TelaComandos = $Interface/TelaComandos
+@onready var _controles_toque: ControlesToque = $ControlesToque
 
 
 func _ready() -> void:
 	Comandos.carregar()
+	OpcoesToque.carregar()
 	_jogador.posicionar_no_inicio(_fase.posicao_inicio())
 	_jogador.definir_limites_camera(_fase.area_jogavel())
 	_jogador.limite_queda = _fase.limite_queda()
@@ -48,6 +50,9 @@ func _ready() -> void:
 	_comandos.abrir_pedido.connect(_abrir_comandos)
 	_comandos.trazer_pedido.connect(trazer_criatura)
 	_comandos.tirar_pedido.connect(tirar_criaturas)
+	_comandos.opcoes_toque_mudaram.connect(_controles_toque.atualizar)
+	_comandos.editar_toque_pedido.connect(_editar_toque)
+	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
 	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_guardar_monstros_iniciais()
@@ -137,7 +142,7 @@ func _cenas_criaturas() -> Array[PackedScene]:
 # --- Interface --------------------------------------------------------------------
 
 func _abrir_inventario() -> void:
-	if _em_tela_de_pausa or _tela_bau.visible or _comandos.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _tela_bau.visible or _comandos.visible:
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
@@ -161,15 +166,21 @@ func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> voi
 
 
 func _abrir_bau(itens: Array[Item]) -> void:
-	if _em_tela_de_pausa or _inventario.visible or _comandos.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible:
 		return
 	_tela_bau.abrir(itens, _jogador.inventario)
 
 
 func _abrir_comandos() -> void:
-	if _em_tela_de_pausa or _inventario.visible or _tela_bau.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible:
 		return
 	_comandos.abrir()
+
+
+## Ajustar os controles de toque: o jogo fica pausado até o Pronto.
+func _editar_toque() -> void:
+	get_tree().paused = true
+	_controles_toque.editar()
 
 
 ## Põe uma cópia da criatura à frente do herói. Não entra na lista do "Tentar de novo".
@@ -197,6 +208,7 @@ func _pausar(pausar: bool) -> void:
 	_em_tela_de_pausa = pausar
 	get_tree().paused = pausar
 	_hud.visible = not pausar
+	_controles_toque.atualizar(pausar)
 
 
 func _mostrar_personagem_no_hud() -> void:

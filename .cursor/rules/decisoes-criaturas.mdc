@@ -1,0 +1,10 @@
+---
+description: Decisões das criaturas: ficha do livro (CriaturaRPG), Gray Ooze, Goblin Minion, monstros no jogo, arena (Trazer).
+globs: features/gray_ooze/**,features/goblin/**,features/boneco_treino/**,core/dados/criatura_rpg.gd,data/gray_ooze.tres,data/goblin_minion.tres
+alwaysApply: false
+---
+<!-- Gerado de docs/decisoes/criaturas.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+
+Antes de mudar algo deste tema, siga as decisões já tomadas (e atualize o documento se uma decisão mudar):
+
+@docs/decisoes/criaturas.md

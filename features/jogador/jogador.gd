@@ -199,9 +199,14 @@ func direcao() -> float:
 	return Input.get_axis("mover_esquerda", "mover_direita")
 
 
-## Direção do toque duplo neste quadro (-1 ou 1), ou 0 se não houve.
+## Direção do pedido de corrida neste quadro (-1 ou 1), ou 0: toque duplo ou "correr" segurado.
 func pediu_corrida() -> int:
 	return _pedido_corrida
+
+
+## "correr" segurado (Shift no teclado; no celular, o analógico empurrado até a borda).
+func correr_segurado() -> bool:
+	return Input.is_action_pressed("correr")
 
 
 ## Velocidade andando (px/s): o deslocamento de D&D da ficha (30 pés -> ~128 px/s).
@@ -487,10 +492,12 @@ func _atualizar_contadores(delta: float) -> void:
 		_contador_buffer_arremesso -= delta
 	if Input.is_action_just_pressed("folego"):
 		usar_folego()
-	# Toque duplo para correr.
+	# Toque duplo para correr, ou segurar "correr" (Shift; o analógico na borda).
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()
 	_pedido_corrida = apertada if _toque_duplo.registrar(apertada, delta) else 0
+	if _pedido_corrida == 0 and correr_segurado() and direcao() != 0.0:
+		_pedido_corrida = int(signf(direcao()))
 
 
 func _direcao_apertada_agora() -> int:

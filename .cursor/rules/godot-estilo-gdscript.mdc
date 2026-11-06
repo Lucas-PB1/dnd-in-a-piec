@@ -3,7 +3,7 @@ description: Estilo de GDScript do projeto - tipagem estática, class_name, snak
 globs: **/*.gd
 alwaysApply: false
 ---
-<!-- Gerado de .claude/skills/godot-estilo-gdscript/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a skill, não este arquivo. -->
+<!-- Gerado de .claude/skills/godot-estilo-gdscript/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
 
 # Estilo de GDScript
 

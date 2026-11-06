@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://features/bau/bau.tscn" id="10_bau"]
 [ext_resource type="PackedScene" path="res://ui/bau/tela_bau.tscn" id="11_tela_bau"]
 [ext_resource type="PackedScene" path="res://ui/comandos/tela_comandos.tscn" id="12_comandos"]
+[ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -31,6 +32,8 @@ position = Vector2(720, 288)
 [node name="Jogador" parent="." instance=ExtResource("3_jogador")]
 
 [node name="Hud" parent="." instance=ExtResource("5_hud")]
+
+[node name="ControlesToque" parent="." instance=ExtResource("13_toque")]
 
 [node name="Interface" type="CanvasLayer" parent="."]
 layer = 10

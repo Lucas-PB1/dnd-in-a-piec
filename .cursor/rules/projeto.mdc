@@ -8,18 +8,27 @@ alwaysApply: true
 # DnD in a Piece
 
 Jogo original de ação e plataforma 2D lateral em **Godot 4.7.2 / GDScript**, com regras de D&D 5e (2024).
-**A fonte da verdade é o `CLAUDE.md`**: leia-o antes de mudar qualquer coisa (decisões, convenções, como rodar e testar).
+**A fonte da verdade é o `CLAUDE.md`** (curto: visão, índice dos documentos, convenções, como rodar e testar). As decisões por tema estão em `docs/decisoes/`.
 
 @CLAUDE.md
+
+## Guias (leia o que servir para a tarefa)
+- `docs/decisoes/*.md`: as decisões por tema (base, herói, regras de D&D, armas e itens, criaturas, interface). As regras `decisoes-*` desta pasta trazem o tema certo sozinhas, pelos arquivos abertos.
+- `docs/pendencias.md`: o que falta, com tamanho e prioridade. **A próxima fatia sai daqui** (comando `/proxima-fatia`).
+- `docs/historico.md`: o que já foi feito.
+- `docs/arquitetura.md`: como as peças se ligam. `docs/receitas.md`: passo a passo das tarefas comuns e armadilhas.
+- `docs/artes_prontas.md`: arte de terceiros. `docs/talentos.md`: talentos do livro.
+- Comandos (`.cursor/commands/`): `/testar`, `/proxima-fatia`, `/fechar-fatia`, `/nova-criatura`.
 
 ## Regras que não podem ser quebradas
 - Responda em **português**. Termine toda resposta com (1) o que foi feito, (2) como testar (passos exatos), (3) próxima sugestão.
 - Decisões para o usuário: **3 opções**, a recomendada primeiro.
 - **Uma fatia pequena por vez**; não comece a próxima sem o "ok".
+- **Antes de codar, diga o plano em poucas linhas** (arquivos e passos da receita) e confirme decisões de jogo com o usuário (3 opções, a recomendada primeiro).
 - Antes de mudar código, siga as regras `godot-*` desta pasta (as mesmas skills de `.claude/skills/`). Ao terminar, diga em 1 linha `Conforme as skills` ou quais regras foram violadas e por quê.
 - Pedido que quebra uma regra: avise e explique o impacto antes; só quebre com confirmação. Regra que precisa mudar: proponha a mudança na skill (`.claude/skills/<nome>/SKILL.md`) e rode `tools/gerar_regras_cursor.ps1`.
 - Rode os testes antes de entregar: `powershell -NoProfile -ExecutionPolicy Bypass -File tests\rodar_testes.ps1`. Corrija erros **e avisos**.
 - Um commit por fatia, em português, só com o ok do usuário. Nunca apague arquivos do usuário nem faça force-push.
 - Sem addons ou arquitetura nova sem aprovação. SpriteCook gasta créditos: avise o custo antes.
 - Arte de terceiros: siga `docs/artes_prontas.md` (licença CC0 ou CC-BY, permissão para baixar, crédito em `assets/CREDITOS.md`).
-- Se uma decisão mudar, atualize o `CLAUDE.md`.
+- Se uma decisão mudar, atualize o doc do tema em `docs/decisoes/`; ao fechar a fatia, `docs/historico.md` e `docs/pendencias.md` (`/fechar-fatia`).

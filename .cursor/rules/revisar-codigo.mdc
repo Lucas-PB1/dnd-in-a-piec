@@ -3,7 +3,7 @@ description: Revisa scripts GDScript e cenas do projeto (ou só os arquivos muda
 globs: 
 alwaysApply: false
 ---
-<!-- Gerado de .claude/skills/revisar-codigo/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a skill, não este arquivo. -->
+<!-- Gerado de .claude/skills/revisar-codigo/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
 
 # Revisar código contra as skills godot-*
 

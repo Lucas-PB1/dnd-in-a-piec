@@ -3,7 +3,7 @@ description: Composição com nós-componentes (HealthComponent, HitboxComponent
 globs: core/**,data/**,features/**
 alwaysApply: false
 ---
-<!-- Gerado de .claude/skills/godot-componentes-e-dados/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a skill, não este arquivo. -->
+<!-- Gerado de .claude/skills/godot-componentes-e-dados/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
 
 # Componentes e dados
 
