@@ -1,8 +1,9 @@
 class_name AtaqueJogador
 extends Node2D
-## Componente do golpe corpo a corpo: gira a arma, mostra o arco de corte e liga a
-## Hitbox só na janela de acerto da Arma. O dono chama golpear() (call down) e
-## pergunta esta_golpeando().
+## Arma na mão do herói. Fora do golpe, a arma equipada fica na mão, no ângulo de
+## descanso da animação. No golpe, gira a partir da mão, mostra o arco de corte e liga a
+## Hitbox só na janela de acerto da Arma. O dono chama seguir_mao() todo quadro e
+## golpear() para golpear (call down).
 
 ## Curva do giro da arma (< 1 = rápido no começo e freia no fim, como um golpe de verdade).
 const CURVA_GOLPE := 0.4
@@ -11,7 +12,7 @@ var _arma: Arma
 var _dano: int = 0
 var _tempo: float = 0.0
 var _golpeando: bool = false
-var _distancia_mao: float  # distância da mão ao centro do herói (px), espelhada ao virar
+var _direcao: int = 1
 
 @onready var _espada: Sprite2D = $Espada
 @onready var _corte: AnimatedSprite2D = $Corte
@@ -20,20 +21,28 @@ var _distancia_mao: float  # distância da mão ao centro do herói (px), espelh
 
 
 func _ready() -> void:
-	_distancia_mao = absf(position.x)
-	_esconder()
+	_espada.hide()
+	_corte.hide()
 
 
-## Começa um golpe com a `arma`, virado para `direcao` (1 = direita, -1 = esquerda),
-## causando `dano` em quem acertar.
-func golpear(arma: Arma, direcao: int, dano: int) -> void:
+## Coloca a arma na `mao` (pixels, relativo aos pés, já espelhado) virada para `direcao`.
+## Fora do golpe, mostra a `arma` em repouso no `angulo` (graus). Arma sem imagem (soco) some.
+func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
+	position = mao
+	_virar(direcao)
+	if _golpeando:
+		return
+	_espada.texture = arma.textura
+	_espada.rotation_degrees = angulo
+	_espada.visible = arma.textura != null
+
+
+## Começa um golpe com a `arma`, causando `dano` em quem acertar.
+func golpear(arma: Arma, dano: int) -> void:
 	_arma = arma
 	_dano = dano
 	_tempo = 0.0
 	_golpeando = true
-	position.x = _distancia_mao * direcao
-	scale.x = direcao
-	reset_physics_interpolation()
 	_preparar_visual()
 	_preparar_area()
 
@@ -52,10 +61,20 @@ func _physics_process(delta: float) -> void:
 		_terminar()
 
 
+## Espelha a arma, o corte e a área do golpe. Ao trocar de lado, não deixa a
+## interpolação "arrastar" a espada pelo meio do corpo.
+func _virar(direcao: int) -> void:
+	if direcao == _direcao:
+		return
+	_direcao = direcao
+	scale.x = direcao
+	reset_physics_interpolation()
+
+
 func _preparar_visual() -> void:
 	_espada.texture = _arma.textura
 	_espada.rotation_degrees = _arma.angulo_inicial
-	_espada.show()
+	_espada.visible = _arma.textura != null
 	_corte.modulate = _arma.cor_corte
 	_corte.hide()
 
@@ -83,12 +102,8 @@ func _atualizar_acerto() -> void:
 		_hitbox.desligar()
 
 
+## Fim do golpe: a arma volta para o repouso no próximo seguir_mao().
 func _terminar() -> void:
 	_golpeando = false
 	_hitbox.desligar()
-	_esconder()
-
-
-func _esconder() -> void:
-	_espada.hide()
 	_corte.hide()

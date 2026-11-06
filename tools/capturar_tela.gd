@@ -1,10 +1,11 @@
 extends SceneTree
 ## Tira prints do jogo segurando teclas, para conferir o visual sem precisar jogar.
 ## Uso (precisa de janela, NÃO use --headless):
-##   godot --path . --script res://tools/capturar_tela.gd -- <acoes> <quadros> <arquivo.png> [criacao]
-## Ex.: ... -- mover_direita,pular 40 C:/tmp/print.png
+##   godot --path . --script res://tools/capturar_tela.gd -- <acoes> <quadros> <arquivo.png> [opcoes]
+## Ex.: ... -- mover_direita,pular 40 C:/tmp/print.png equipar
 ## <acoes> separadas por vírgula, ou "nenhuma". <quadros> = passos de física (60 por segundo)
-## contados DEPOIS de apertar as teclas.
+## contados DEPOIS de apertar as teclas. [opcoes] separadas por vírgula:
+##   criacao = mostra a tela de criação;  equipar = começa com a 1ª arma da mochila na mão.
 
 ## Passos de física de espera antes de apertar as teclas (a fase estabiliza depois de carregar).
 const ESPERA_INICIAL := 30
@@ -20,10 +21,14 @@ func _rodar() -> void:
 	var quadros: int = int(args[1]) if args.size() > 1 else 30
 	var arquivo: String = args[2] if args.size() > 2 else "user://print.png"
 
+	var opcoes: PackedStringArray = args[3].split(",") if args.size() > 3 else PackedStringArray()
+
 	var cena: Node = load("res://levels/main.tscn").instantiate()
-	# 4º argumento "criacao" mostra a tela de criação; sem ele, joga direto.
-	cena.mostrar_criacao = args.size() > 3 and args[3] == "criacao"
+	cena.mostrar_criacao = "criacao" in opcoes
 	root.add_child(cena)
+	if "equipar" in opcoes:
+		var jogador: Jogador = cena.get_node("Jogador")
+		jogador.inventario.equipar(jogador.inventario.itens[0])
 	for i in ESPERA_INICIAL:
 		await physics_frame
 	for acao in acoes:

@@ -23,6 +23,7 @@ func _rodar() -> void:
 
 	await _testar_soco_desarmado()
 	_checar(_jogador.inventario.equipar(_jogador.inventario.itens[0]), "equipa a espada da mochila")
+	await _testar_espada_na_mao()
 	await _testar_golpe_no_chao()
 	await _testar_golpe_de_costas()
 	await _testar_golpe_no_ar()
@@ -66,13 +67,41 @@ func _testar_golpe_no_chao() -> void:
 	await _esperar_golpe_acabar()
 	_checar(_boneco.golpes_recebidos == antes + 1,
 		"acerta o boneco UMA vez por golpe (deu %d)" % (_boneco.golpes_recebidos - antes))
-	_checar(not espada.visible, "espada some no fim do golpe")
+	await _esperar(1)
+	var animacao: AnimacaoJogador = _jogador.get_node("Sprite")
+	_checar(espada.visible and is_equal_approx((espada as Sprite2D).rotation_degrees, animacao.angulo_descanso()),
+		"no fim do golpe a espada volta para a mão em repouso")
 	_checar(absf(_jogador.velocity.x) < 1.0, "no chão o herói fica parado golpeando")
 	await _esperar(2)
 	_checar(_jogador.nome_estado() == &"Parado", "depois do golpe volta para Parado")
 	await _apertar("atacar")
 	await _esperar_golpe_acabar()
 	_checar(_boneco.golpes_recebidos == antes + 2, "segundo golpe acerta de novo")
+
+
+## Equipada, a espada fica na mão da frente (ponto do quadro atual), dos dois lados.
+func _testar_espada_na_mao() -> void:
+	var ataque: Node2D = _jogador.get_node("Ataque")
+	var espada: Sprite2D = _jogador.get_node("Ataque/Espada")
+	var animacao: AnimacaoJogador = _jogador.get_node("Sprite")
+	await _esperar(3)
+	_checar(espada.visible and espada.texture != null, "espada equipada aparece na mão, parado")
+	_checar(ataque.position.distance_to(animacao.ponto_da_mao()) < 0.5, "arma está no ponto da mão do quadro atual")
+	_checar(ataque.position.x > 0.0, "olhando para a direita, a mão está à frente (x > 0)")
+	await _apertar("mover_esquerda")
+	await _esperar(3)
+	_checar(ataque.position.x < 0.0 and ataque.scale.x < 0.0, "virado para a esquerda, mão e espada espelham")
+	Input.action_press("mover_direita")
+	await _esperar(20)
+	_checar(espada.visible and ataque.position.distance_to(animacao.ponto_da_mao()) < 0.5,
+		"andando, a espada acompanha a mão")
+	Input.action_release("mover_direita")
+	await _esperar(30)
+	_jogador.inventario.desequipar(Item.ESPACO_MAO)
+	await _esperar(2)
+	_checar(not espada.visible, "desequipada, a espada some da mão")
+	_jogador.inventario.equipar(_jogador.inventario.itens[0])
+	await _esperar(2)
 
 
 func _testar_golpe_de_costas() -> void:

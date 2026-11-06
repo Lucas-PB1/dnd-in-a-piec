@@ -70,6 +70,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	_checar_aterrissagem()
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, stats)
+	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
 	_camera.olhar_para(direcao_olhar)
 	if global_position.y > limite_queda:
 		reaparecer()
@@ -145,7 +146,7 @@ func arma_atual() -> Arma:
 ## O dano é rolado no início de cada golpe (dados da arma + modificador da ficha).
 func iniciar_golpe() -> void:
 	var arma := arma_atual()
-	_ataque.golpear(arma, direcao_olhar, ficha.rolar_dano(arma, _rng))
+	_ataque.golpear(arma, ficha.rolar_dano(arma, _rng))
 
 
 func esta_golpeando() -> bool:

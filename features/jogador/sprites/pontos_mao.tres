@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="PontosMao" format=3]
+
+[ext_resource type="Script" path="res://features/jogador/pontos_mao.gd" id="1_ubihd"]
+
+[resource]
+script = ExtResource("1_ubihd")
+pontos = Dictionary[StringName, PackedVector2Array]({
+&"ataque": PackedVector2Array(18, -24, 16, -23),
+&"aterrissar": PackedVector2Array(18, -24, 18, -24),
+&"correr": PackedVector2Array(12, -18, 11, -19, 11, -20, 11, -21, 15, -20, 11, -20, 11, -22, 10, -23),
+&"idle": PackedVector2Array(12, -18, 13, -19, 13, -20, 15, -21, 15, -20, 13, -19, 12, -17, 12, -18),
+&"pulo_caindo": PackedVector2Array(21, -28),
+&"pulo_subindo": PackedVector2Array(18, -32),
+&"pulo_topo": PackedVector2Array(18, -32),
+&"walk": PackedVector2Array(12, -18, 11, -19, 11, -20, 11, -21, 15, -20, 11, -20, 11, -22, 10, -23)
+})
+angulos = Dictionary[StringName, float]({
+&"ataque": 35.0,
+&"aterrissar": 35.0,
+&"correr": 25.0,
+&"idle": 35.0,
+&"pulo_caindo": 40.0,
+&"pulo_subindo": 20.0,
+&"pulo_topo": 30.0,
+&"walk": 35.0
+})

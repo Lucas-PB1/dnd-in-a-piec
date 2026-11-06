@@ -47,6 +47,8 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Dano | `HitboxComponent` (quem bate, acerta cada alvo 1x por golpe) e `HurtboxComponent` (quem apanha, só emite `golpe_recebido`) em `core/componentes/`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`. `HealthComponent` só quando houver o primeiro inimigo que morre. | Reutilizável por herói e inimigos. |
 | Pacotes prontos de personagem | **Não usar** para o herói (decisão do usuário: o equipamento fica "pintado" no sprite). Talvez em outros casos. | Equipamento visível. |
 | Arte do golpe | Provisória por script: `assets/armas/espada_curta.png`, `assets/efeitos/corte.png` (+ `corte_frames.tres`). Pose do herói = quadros 2 e 3 do jump. | Grátis; trocar depois. |
+| Arma na mão | A arma equipada fica **sempre na mão da frente**. `features/jogador/sprites/pontos_mao.tres` (`PontosMao`) guarda o ponto da mão em cada quadro de cada animação + o ângulo de descanso por animação. Gerado por `tools/marcar_pontos_mao.gd` (acha a mancha cor de pele mais à frente; quadros em que a mão some usam a média dos vizinhos). **Rode de novo sempre que mudar a arte do herói.** `AnimacaoJogador.ponto_da_mao()` -> `AtaqueJogador.seguir_mao()` todo quadro; o golpe gira a partir da mão. | Pedido do usuário. |
+| Ângulo de descanso | ~35° (ponta para baixo e à frente). Mais que isso a lâmina (30 px) atravessa o chão. | |
 | Câmera | `Camera2D` filha do herói, com suavização, olha à frente na direção em que ele corre; limites calculados pelo tamanho da fase | Ver o que vem pela frente. |
 | Movimento suave | Interpolação de física ligada | Sem tremedeira em monitores de 144 Hz. |
 
@@ -85,7 +87,7 @@ levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tsc
 data/                    jogador_padrao.tres, arma_espada_curta.tres, ataque_desarmado.tres, classe_guerreiro.tres
 assets/tiles/            ladrilhos e TileSet (compartilhado)
 assets/armas/, efeitos/  sprites de armas e efeitos (compartilhados)
-tools/                   gerar_arte_provisoria.gd, gerar_fase_teste.gd, capturar_tela.gd
+tools/                   gerar_arte_provisoria.gd, gerar_fase_teste.gd, marcar_pontos_mao.gd, capturar_tela.gd
 tests/                   teste_*.gd, rodar_testes.ps1
 ```
 
@@ -134,8 +136,15 @@ PowerShell:
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_arte_provisoria.gd
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --import
 & $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/gerar_fase_teste.gd
-# Tirar um print segurando teclas (precisa de janela; sem --headless)
-& $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg --script res://tools/capturar_tela.gd -- mover_direita 40 C:/caminho/print.png
+# Remarcar o ponto da mão (depois de mudar a arte do herói); o argumento salva uma folha de revisão
+& $env:GODOT_EDITOR_PATH --headless --path C:\Jogos\rpg --script res://tools/marcar_pontos_mao.gd -- C:/caminho/revisao.png
+# Tirar um print segurando teclas (precisa de janela; sem --headless). Opções: criacao, equipar
+& $env:GODOT_EDITOR_PATH --path C:\Jogos\rpg --script res://tools/capturar_tela.gd -- mover_direita 40 C:/caminho/print.png equipar
+```
+**Atenção:** depois de criar um `class_name` novo, rode `--import` antes de qualquer script de `tools/`.
+Se um script de ferramenta tiver erro e for rodado com `--debug`, o Godot fica parado no depurador (não termina):
+rode as ferramentas sem `--debug`.
+```powershell
 ```
 
 ## Como rodar os testes
@@ -157,5 +166,5 @@ Um teste só:
 - Fatia 5: golpe de espada (J) no chão e no ar, arma como dado e sprite separado, Hitbox/Hurtbox, boneco de treino. Tentativa de usar pacote pronto (Hero Knight) foi cancelada e limpa.
 - Fatia 6a: ficha de D&D (compra de pontos, vida d10 + CON, dano 1d6 + FOR/DES), tela de criação, HUD de vida.
 - Fatia 6b: inventário (Item, Inventario, tela com I), espada começa na mochila, soco desarmado.
-- Próxima: 6c espada sempre na mão (ponto da mão por quadro, golpe na altura certa).
+- Fatia 6c: espada equipada sempre na mão (ponto da mão por quadro), golpe girando a partir da mão.
 - Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.

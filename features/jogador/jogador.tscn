@@ -14,6 +14,7 @@
 [ext_resource type="Resource" path="res://data/arma_espada_curta.tres" id="12_arma"]
 [ext_resource type="Resource" path="res://data/ataque_desarmado.tres" id="18_desarmado"]
 [ext_resource type="Script" path="res://core/dados/item.gd" id="19_item"]
+[ext_resource type="Resource" path="res://features/jogador/sprites/pontos_mao.tres" id="20_pontos_mao"]
 [ext_resource type="Script" path="res://features/jogador/ataque_jogador.gd" id="13_ataque"]
 [ext_resource type="SpriteFrames" path="res://assets/efeitos/corte_frames.tres" id="14_corte"]
 [ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="15_hitbox"]
@@ -49,16 +50,15 @@ sprite_frames = ExtResource("3_frames")
 animation = &"idle"
 autoplay = "idle"
 script = ExtResource("4_animacao")
+pontos_mao = ExtResource("20_pontos_mao")
 
 [node name="Ataque" type="Node2D" parent="."]
-position = Vector2(8, -34)
 script = ExtResource("13_ataque")
 
 [node name="Espada" type="Sprite2D" parent="Ataque"]
 visible = false
-position = Vector2(4, 0)
 centered = false
-offset = Vector2(0, -3.5)
+offset = Vector2(-4, -3.5)
 
 [node name="Corte" type="AnimatedSprite2D" parent="Ataque"]
 visible = false

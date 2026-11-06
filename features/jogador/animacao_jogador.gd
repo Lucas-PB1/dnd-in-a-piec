@@ -7,6 +7,8 @@ extends AnimatedSprite2D
 @export var limite_topo_pulo: float = 80.0
 ## Velocidade mínima da animação de passos, para não ficar em câmera lenta ao acelerar.
 @export var escala_minima_passos: float = 0.5
+## Onde fica a mão em cada quadro (gerado por tools/marcar_pontos_mao.gd).
+@export var pontos_mao: PontosMao
 
 
 ## Escolhe a animação para o `estado` atual da máquina do herói.
@@ -24,6 +26,19 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, stat
 			play(&"ataque")
 		_:
 			_animar_parado()
+
+
+## Ponto da mão da frente no quadro atual, relativo aos pés e já espelhado se virado.
+func ponto_da_mao() -> Vector2:
+	if pontos_mao == null:
+		return Vector2.ZERO
+	var ponto := pontos_mao.ponto(animation, frame)
+	return Vector2(-ponto.x, ponto.y) if flip_h else ponto
+
+
+## Ângulo em que o herói segura a arma na animação atual (graus, olhando para a direita).
+func angulo_descanso() -> float:
+	return pontos_mao.angulo(animation) if pontos_mao else PontosMao.ANGULO_PADRAO
 
 
 ## Toca a agachadinha de aterrissagem (ligado ao sinal `aterrissou` do dono).
