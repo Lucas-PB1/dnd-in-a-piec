@@ -58,16 +58,21 @@ func limpar() -> void:
 	mudou.emit()
 
 
-## Equipa no espaço do item. Tudo que ocupava algum dos espaços dele é desequipado
-## (continua na lista): ex.: Espada Grande tira o escudo; escudo tira a Espada Grande.
+## Equipa no espaço do item. A 2ª arma leve vai para a mão secundária (tira o escudo).
+## Tudo que ocupava algum dos espaços dele é desequipado (continua na lista):
+## ex.: Espada Grande tira o escudo; escudo tira a Espada Grande.
 func equipar(item: Item) -> bool:
 	if item not in itens or not item.equipavel():
 		return false
-	for espaco in item.espacos_ocupados():
+	var destino := _destino_ao_equipar(item)
+	for espaco in _espacos_do_destino(item, destino):
 		var ocupante := _ocupante(espaco)
-		if ocupante:
-			_equipados.erase(ocupante.espaco)
-	_equipados[item.espaco] = item
+		if ocupante and ocupante != item:
+			_equipados.erase(espaco_de(ocupante))
+	var atual := espaco_de(item)
+	if atual != &"" and atual != destino:
+		_equipados.erase(atual)
+	_equipados[destino] = item
 	mudou.emit()
 	return true
 
@@ -84,12 +89,38 @@ func desequipar(espaco: StringName) -> bool:
 func descartar(item: Item) -> bool:
 	if item not in itens:
 		return false
-	if esta_equipado(item):
-		_equipados.erase(item.espaco)
+	var espaco := espaco_de(item)
+	if espaco != &"":
+		_equipados.erase(espaco)
 	itens.erase(item)
 	_penalidades.erase(item)
 	_quantidades.erase(item)
 	mudou.emit()
+	return true
+
+
+## Tira 1 unidade (arremesso). Pilha com mais de 1 devolve uma cópia; a última sai do inventário.
+func extrair_uma(item: Item) -> Item:
+	if item not in itens:
+		return null
+	if quantidade_de(item) > 1:
+		_quantidades[item] = quantidade_de(item) - 1
+		if quantidade_de(item) == 1:
+			_quantidades.erase(item)
+		mudou.emit()
+		return item.duplicate() as Item
+	descartar(item)
+	return item
+
+
+## Guarda o item e, se o desgaste trazido for maior, fica com ele (ex.: arma recolhida do chão).
+func adicionar_com_desgaste(item: Item, penalidade_item: int, quantidade: int = 1) -> bool:
+	if not adicionar(item, quantidade):
+		return false
+	var guardado := item if item in itens else _pilha_de(item)
+	if guardado and penalidade_item > penalidade(guardado):
+		_penalidades[guardado] = penalidade_item
+		mudou.emit()
 	return true
 
 
@@ -117,7 +148,17 @@ func equipado(espaco: StringName) -> Item:
 
 
 func esta_equipado(item: Item) -> bool:
-	return item != null and _equipados.get(item.espaco) == item
+	return espaco_de(item) != &""
+
+
+## Espaço em que o item está equipado, ou vazio. A 2ª arma não usa o espaço do próprio item.
+func espaco_de(item: Item) -> StringName:
+	if item == null:
+		return &""
+	for espaco in _equipados:
+		if _equipados[espaco] == item:
+			return espaco
+	return &""
 
 
 ## Nenhum item equipado ocupa o `espaco` (nem uma arma de Duas Mãos).
@@ -126,10 +167,38 @@ func livre(espaco: StringName) -> bool:
 
 
 func _ocupante(espaco: StringName) -> Item:
+	if _equipados.has(espaco):
+		return _equipados[espaco]
 	for item: Item in _equipados.values():
-		if espaco in item.espacos_ocupados():
+		if espaco in item.espacos_extras():
 			return item
 	return null
+
+
+## 2ª arma leve: a principal já é leve e a outra mão está livre ou com escudo.
+func _destino_ao_equipar(item: Item) -> StringName:
+	var arma := item as Arma
+	if arma and _cabe_na_outra_mao(arma):
+		return Item.ESPACO_MAO_SECUNDARIA
+	return item.espaco
+
+
+func _cabe_na_outra_mao(arma: Arma) -> bool:
+	if not arma.leve or arma.duas_maos or espaco_de(arma) == Item.ESPACO_MAO:
+		return false
+	var principal := _equipados.get(Item.ESPACO_MAO) as Arma
+	if principal == null or not principal.leve or principal.duas_maos:
+		return false
+	var secundaria: Item = _equipados.get(Item.ESPACO_MAO_SECUNDARIA)
+	return secundaria == null or secundaria is Armadura
+
+
+## Espaços que ficam ocupados ao equipar em `destino`. Na mão secundária, só ela.
+func _espacos_do_destino(item: Item, destino: StringName) -> Array[StringName]:
+	var espacos: Array[StringName] = [destino]
+	if destino == item.espaco:
+		espacos.append_array(item.espacos_extras())
+	return espacos
 
 
 ## A pilha já guardada onde o `item` entra, ou null.

@@ -18,7 +18,7 @@ extends Item
 @export var textura: Texture2D
 
 @export_group("Propriedades (D&D)")
-## Leve: dá para usar uma 2ª arma leve na outra mão (combo de duas armas, fatia 11b).
+## Leve: dá para usar uma 2ª arma leve na outra mão (combo com J de novo durante o golpe).
 @export var leve: bool = false
 ## Pesada: atacar com FOR < 13 tem desvantagem.
 @export var pesada: bool = false
@@ -28,7 +28,7 @@ extends Item
 @export var dados_versatil: String = ""
 ## Alcance (Reach): +5 pés no golpe (a área do golpe já inclui isso).
 @export var alcance_estendido: bool = false
-## Arremesso: distância normal e longa (pés). 0 = não arremessa. (Arremesso: fatia 11b.)
+## Arremesso: distância normal e longa (pés). 0 = não arremessa. Tecla K; a arma cai e se pega com E.
 @export var arremesso_normal_pes: float = 0.0
 @export var arremesso_longo_pes: float = 0.0
 ## Maestria (Proficiencias.MAESTRIAS): só vale se a classe dominar a arma (fatia 11c).

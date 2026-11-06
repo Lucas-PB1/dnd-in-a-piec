@@ -19,6 +19,11 @@ static func escudo(inventario: Inventario) -> Armadura:
 	return inventario.equipado(Item.ESPACO_MAO_SECUNDARIA) as Armadura
 
 
+## Arma leve na outra mão, ou null (escudo não conta).
+static func arma_secundaria(inventario: Inventario) -> Arma:
+	return inventario.equipado(Item.ESPACO_MAO_SECUNDARIA) as Arma
+
+
 ## CA com a armadura e o escudo vestidos, já com o desgaste da armadura.
 static func classe_armadura(ficha: Ficha, inventario: Inventario) -> int:
 	var vestida := armadura(inventario)
@@ -37,14 +42,19 @@ static func bonus_ataque(ficha: Ficha, inventario: Inventario, com_arma: Arma) -
 
 ## O golpe da arma: desgaste da arma, desvantagem (armadura sem treinamento, arma Pesada
 ## sem Força) e o dado Versátil se a mão secundária estiver livre.
-static func golpe(ficha: Ficha, inventario: Inventario, com_arma: Arma) -> Golpe:
+static func golpe(ficha: Ficha, inventario: Inventario, com_arma: Arma, ataque_extra: bool = false) -> Golpe:
 	return ficha.golpe_com(com_arma, inventario.penalidade(com_arma), armadura(inventario),
-		duas_maos(inventario, com_arma))
+		duas_maos(inventario, com_arma), ataque_extra)
 
 
 ## Texto do dano como no golpe (ex.: Espada Longa sem escudo = "1d10+3").
 static func texto_dano(ficha: Ficha, inventario: Inventario, com_arma: Arma) -> String:
 	return ficha.texto_dano(com_arma, duas_maos(inventario, com_arma))
+
+
+## Dano do golpe extra (2ª arma leve): sem modificador positivo.
+static func texto_dano_extra(ficha: Ficha, com_arma: Arma) -> String:
+	return ficha.texto_dano(com_arma, false, true)
 
 
 ## Arma Versátil empunhada com as duas mãos: a mão secundária está vazia.

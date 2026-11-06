@@ -14,4 +14,4 @@ ExtResource("2_couro"): 1,
 ExtResource("3_cimitarra"): 1,
 ExtResource("4_espada"): 1
 })
-equipar = Array[ExtResource("6_item")]([ExtResource("2_couro"), ExtResource("3_cimitarra")])
+equipar = Array[ExtResource("6_item")]([ExtResource("2_couro"), ExtResource("3_cimitarra"), ExtResource("4_espada")])

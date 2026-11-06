@@ -15,6 +15,9 @@ func processar_fisica(delta: float) -> void:
 		jogador.cortar_pulo_se_soltou()
 		jogador.mover_horizontal(jogador.direcao(), jogador.velocidade_andar(), delta, false)
 	if not jogador.esta_golpeando():
+		if jogador.quer_golpe_extra():
+			jogador.iniciar_golpe_extra()
+			return
 		trocar_para.emit(_proximo_estado())
 
 

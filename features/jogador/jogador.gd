@@ -15,6 +15,9 @@ signal vida_mudou(atual: int, maxima: int)
 ## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
 ## depois reviver()). Se ninguém escutar (cena aberta sozinha), o herói revive sozinho.
 signal caiu
+## Emitido ao arremessar a arma da mão. Quem monta o jogo cria o projétil.
+## Sem ninguém escutando (cena aberta sozinha), a arma continua na mão.
+signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int)
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
@@ -41,6 +44,11 @@ var origem_ultimo_golpe: Vector2
 var _contador_invencivel: float = 0.0
 var _tempo_desde_golpe: float = INF
 var _contador_buffer_ataque: float = 0.0
+var _contador_buffer_arremesso: float = 0.0
+## Segundo J durante o golpe: pede o ataque extra da outra mão.
+var _combo_pedido: bool = false
+## O golpe atual já é o extra (não encadeia um terceiro).
+var _golpe_extra: bool = false
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -55,6 +63,7 @@ var _toque_duplo: ToqueDuplo
 @onready var _defesa: DefesaComponent = $Defesa
 @onready var _texto: TextoFlutuanteComponent = $Texto
 @onready var _escudo: EscudoJogador = $Escudo
+@onready var _arma_tras: ArmaTras = $ArmaTras
 
 
 func _ready() -> void:
@@ -86,6 +95,8 @@ func _physics_process(delta: float) -> void:
 	_checar_aterrissagem()
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
+	var na_tras: Arma = null if _ataque.golpe_da_secundaria() else arma_secundaria()
+	_arma_tras.mostrar(na_tras, _animacao.ponto_da_mao_de_tras(), direcao_olhar)
 	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar)
 	_camera.olhar_para(direcao_olhar)
 	if global_position.y > limite_queda:
@@ -213,25 +224,71 @@ func pediu_ataque() -> bool:
 	return _contador_buffer_ataque > 0.0 and pode_golpear()
 
 
+## Apertou arremessar há pouco, já pode agir e a arma da mão arremessa.
+func pediu_arremesso() -> bool:
+	return _contador_buffer_arremesso > 0.0 and pode_golpear() and _arma_arremessavel() != null
+
+
 ## Arma na mão, ou o ataque desarmado se a mão estiver vazia.
 func arma_atual() -> Arma:
 	return Equipamento.arma(inventario, ataque_desarmado)
 
 
+## Arma leve na outra mão, ou null.
+func arma_secundaria() -> Arma:
+	return Equipamento.arma_secundaria(inventario)
+
+
+## O 2º J durante o golpe pede o ataque extra, e as duas armas são leves.
+func quer_golpe_extra() -> bool:
+	if not _combo_pedido or _golpe_extra:
+		return false
+	var principal := inventario.equipado(Item.ESPACO_MAO) as Arma
+	var segunda := arma_secundaria()
+	return principal != null and principal.leve and segunda != null and segunda.leve
+
+
 ## Começa um golpe com a arma atual, para o lado em que o herói olha.
 ## Quem for atingido rola o ataque (d20 + bônus da ficha) contra a própria CA.
 func iniciar_golpe() -> void:
+	_comecar_golpe(false)
+
+
+## 2º golpe do combo: a arma da outra mão, sem esperar a iniciativa de novo.
+func iniciar_golpe_extra() -> void:
+	_comecar_golpe(true)
+
+
+## Solta a arma da mão. Sem ninguém escutando o sinal, ela continua equipada.
+func lancar_arma() -> void:
+	var arma := _arma_arremessavel()
+	if arma == null or arma_arremessada.get_connections().is_empty():
+		return
+	var pen := inventario.penalidade(arma)
+	var golpe := Equipamento.golpe(ficha, inventario, arma)
+	var extraida := inventario.extrair_uma(arma)
 	_tempo_desde_golpe = 0.0
-	_contador_buffer_ataque = 0.0
-	_ataque.golpear(arma_atual(), criar_golpe())
+	_contador_buffer_arremesso = 0.0
+	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar)
+
+
+## Arma caída volta para a mochila (e para a mão, se ela estiver vazia). false = mochila cheia.
+func recolher_arma(arma: Arma, penalidade_arma: int) -> bool:
+	if not inventario.adicionar_com_desgaste(arma, penalidade_arma):
+		return false
+	if arma in inventario.itens and inventario.equipado(Item.ESPACO_MAO) == null:
+		inventario.equipar(arma)
+	return true
+
+
+## Texto flutuante (ex.: arma que derreteu no ar).
+func avisar(texto: String) -> void:
+	_texto.mostrar(texto, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
 
 
 ## O golpe da arma atual (com o desgaste dela). Se um alvo corrosivo avisar, a arma se desgasta.
 func criar_golpe() -> Golpe:
-	var arma := arma_atual()
-	var golpe := Equipamento.golpe(ficha, inventario, arma)
-	golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
-	return golpe
+	return _criar_golpe_de(arma_atual(), false)
 
 
 ## Volta para o início com a vida cheia (ex.: "Tentar de novo" depois de cair).
@@ -287,8 +344,14 @@ func _atualizar_contadores(delta: float) -> void:
 	_tempo_desde_golpe += delta
 	if Input.is_action_just_pressed("atacar"):
 		_contador_buffer_ataque = stats.tempo_buffer_ataque
+		if nome_estado() == &"Atacando" and not _golpe_extra:
+			_combo_pedido = true
 	else:
 		_contador_buffer_ataque -= delta
+	if Input.is_action_just_pressed("arremessar"):
+		_contador_buffer_arremesso = stats.tempo_buffer_ataque
+	else:
+		_contador_buffer_arremesso -= delta
 	# Toque duplo para correr.
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()
@@ -372,6 +435,30 @@ func _corroer_armadura() -> void:
 
 ## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão
 ## e é destruída no limite.
+func _comecar_golpe(extra: bool) -> void:
+	if not extra:
+		_tempo_desde_golpe = 0.0
+	_contador_buffer_ataque = 0.0
+	_combo_pedido = false
+	_golpe_extra = extra
+	var arma := arma_secundaria() if extra else arma_atual()
+	_ataque.golpear(arma, _criar_golpe_de(arma, extra), extra)
+
+
+func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
+	var golpe := Equipamento.golpe(ficha, inventario, arma, extra)
+	if inventario.esta_equipado(arma):
+		golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
+	return golpe
+
+
+func _arma_arremessavel() -> Arma:
+	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
+	if arma and arma.arremessavel():
+		return arma
+	return null
+
+
 func _ao_corroer_arma(penalidade: int, limite: int, arma: Arma) -> void:
 	if inventario.desgastar(arma, penalidade, limite):
 		_texto.mostrar("%s derreteu!" % arma.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)

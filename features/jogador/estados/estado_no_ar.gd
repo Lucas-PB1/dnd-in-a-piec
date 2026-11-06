@@ -16,7 +16,7 @@ func processar_fisica(delta: float) -> void:
 	jogador.tentar_pular()  # coyote time: ainda dá para pular logo depois da beirada
 	jogador.cortar_pulo_se_soltou()
 	jogador.mover_horizontal(dir, _velocidade_maxima, delta)
-	if _foi_atacar():
+	if _foi_atacar() or _foi_arremessar():
 		return
 	if jogador.is_on_floor() and jogador.velocity.y >= 0.0:
 		trocar_para.emit(_estado_ao_aterrissar(dir))

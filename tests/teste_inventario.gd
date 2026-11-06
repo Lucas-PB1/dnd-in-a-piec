@@ -36,8 +36,16 @@ func _initialize() -> void:
 	troca.adicionar(outra_espada)
 	troca.equipar(espada)
 	troca.equipar(outra_espada)
-	_checar(troca.equipado(Item.ESPACO_MAO) == outra_espada and troca.itens.size() == 2,
-		"equipar outra arma troca e a antiga fica na mochila")
+	_checar(troca.equipado(Item.ESPACO_MAO) == espada
+		and troca.equipado(Item.ESPACO_MAO_SECUNDARIA) == outra_espada and troca.itens.size() == 2,
+		"segunda arma leve vai para a outra mão")
+	var terceira := espada.duplicate() as Arma
+	terceira.nome = "Espada Nova"
+	troca.adicionar(terceira)
+	troca.equipar(terceira)
+	_checar(troca.equipado(Item.ESPACO_MAO) == terceira
+		and troca.equipado(Item.ESPACO_MAO_SECUNDARIA) == outra_espada,
+		"com as duas mãos ocupadas, equipar troca a mão principal")
 
 	if _falhas == 0:
 		print("PASSOU: todos os testes do inventário")

@@ -82,7 +82,7 @@ func equipar_selecionado() -> void:
 func desequipar_selecionado() -> void:
 	var item := _item_selecionado()
 	if item and _inventario.esta_equipado(item):
-		_inventario.desequipar(item.espaco)
+		_inventario.desequipar(_inventario.espaco_de(item))
 
 
 ## Joga fora sem perguntar (a pergunta fica no botão; os testes chamam direto).
@@ -143,6 +143,9 @@ func _atualizar_ficha() -> void:
 	var escudo := Equipamento.escudo(_inventario)
 	if escudo:
 		linhas.append("Escudo: %s" % escudo.nome)
+	var segunda := Equipamento.arma_secundaria(_inventario)
+	if segunda:
+		linhas.append("Outra mão: %s (extra %s)" % [segunda.nome, Equipamento.texto_dano_extra(_ficha, segunda)])
 	var ataque := Equipamento.bonus_ataque(_ficha, _inventario, arma)
 	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(ataque), Equipamento.texto_dano(_ficha, _inventario, arma)])
 	_texto_ficha.text = "\n".join(linhas)

@@ -6,7 +6,7 @@ extends Resource
 const ESPACO_MAO := &"mao"
 ## Espaço "corpo" (armaduras).
 const ESPACO_CORPO := &"corpo"
-## Espaço "mão secundária" (escudos).
+## Espaço "mão secundária" (escudo ou 2ª arma leve).
 const ESPACO_MAO_SECUNDARIA := &"mao_secundaria"
 
 @export var nome: String = "Item"

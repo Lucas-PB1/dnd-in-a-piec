@@ -33,7 +33,7 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 			_animar_passos(&"walk", absf(velocidade.x) / vel_andar)
 		&"Correndo":
 			_animar_passos(&"correr", absf(velocidade.x) / vel_corrida)
-		&"Atacando":
+		&"Atacando", &"Arremessando":
 			play(&"ataque")
 		_:
 			_animar_parado()

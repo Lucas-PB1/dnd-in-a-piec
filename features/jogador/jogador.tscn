@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="Script" path="res://features/jogador/jogador.gd" id="1_script"]
 [ext_resource type="Resource" path="res://data/jogador_padrao.tres" id="2_stats"]
@@ -16,6 +16,8 @@
 [ext_resource type="Script" path="res://core/dados/item.gd" id="19_item"]
 [ext_resource type="Resource" path="res://features/jogador/sprites/pontos_mao.tres" id="20_pontos_mao"]
 [ext_resource type="Script" path="res://features/jogador/escudo_jogador.gd" id="25_escudo"]
+[ext_resource type="Script" path="res://features/jogador/arma_tras.gd" id="27_tras"]
+[ext_resource type="Script" path="res://features/jogador/estados/estado_arremessando.gd" id="28_arremesso"]
 [ext_resource type="Shader" path="res://assets/shaders/roupa_armadura.gdshader" id="26_roupa"]
 [ext_resource type="Script" path="res://features/jogador/ataque_jogador.gd" id="13_ataque"]
 [ext_resource type="SpriteFrames" path="res://assets/efeitos/corte_frames.tres" id="14_corte"]
@@ -76,8 +78,9 @@ script = ExtResource("17_vida")
 position = Vector2(0, -28)
 shape = SubResource("Forma")
 
-[node name="Escudo" type="Sprite2D" parent="."]
-script = ExtResource("25_escudo")
+[node name="ArmaTras" type="Sprite2D" parent="."]
+centered = false
+script = ExtResource("27_tras")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 material = SubResource("MaterialRoupa")
@@ -87,6 +90,9 @@ animation = &"idle"
 autoplay = "idle"
 script = ExtResource("4_animacao")
 pontos_mao = ExtResource("20_pontos_mao")
+
+[node name="Escudo" type="Sprite2D" parent="."]
+script = ExtResource("25_escudo")
 
 [node name="Ataque" type="Node2D" parent="."]
 script = ExtResource("13_ataque")
@@ -136,6 +142,9 @@ script = ExtResource("10_no_ar")
 
 [node name="Atacando" type="Node" parent="MaquinaEstados"]
 script = ExtResource("11_atacando")
+
+[node name="Arremessando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("28_arremesso")
 
 [node name="LevandoDano" type="Node" parent="MaquinaEstados"]
 script = ExtResource("24_levando_dano")

@@ -64,8 +64,9 @@ func bonus_dano(arma: Arma) -> int:
 
 ## Dados de dano da arma já com o modificador (ex.: espada curta + 2 = "1d6+2").
 ## `duas_maos` = empunhando com as duas mãos (arma Versátil usa o dado maior).
-func dado_dano(arma: Arma, duas_maos: bool = false) -> Dado:
-	return arma.dado(duas_maos).com_bonus(bonus_dano(arma))
+## `ataque_extra` = 2º golpe de arma leve: não soma modificador positivo.
+func dado_dano(arma: Arma, duas_maos: bool = false, ataque_extra: bool = false) -> Dado:
+	return arma.dado(duas_maos).com_bonus(_bonus_no_dano(arma, ataque_extra))
 
 
 ## Rola o dano de um acerto com a arma (mínimo DANO_MINIMO). Crítico rola os dados em dobro.
@@ -74,8 +75,8 @@ func rolar_dano(arma: Arma, rng: RandomNumberGenerator, critico: bool = false, d
 
 
 ## Texto do dano para a ficha, ex.: "1d6+2". Dano fixo (dado de 1 face, como o soco) vira o total: "3".
-func texto_dano(arma: Arma, duas_maos: bool = false) -> String:
-	var dado := dado_dano(arma, duas_maos)
+func texto_dano(arma: Arma, duas_maos: bool = false, ataque_extra: bool = false) -> String:
+	var dado := dado_dano(arma, duas_maos, ataque_extra)
 	if dado.faces == 1:
 		return str(maxi(dado.minimo(), DANO_MINIMO))
 	return dado.texto()
@@ -97,8 +98,11 @@ func bonus_ataque(arma: Arma) -> int:
 ## `penalidade` = desgaste da arma (ex.: Corrosão), subtraído do bônus de ataque.
 ## `armadura` vestida: sem treinamento nela, o ataque (teste de FOR/DES) tem desvantagem.
 ## Arma Pesada com FOR < 13 também dá desvantagem. `duas_maos`: Versátil com as duas mãos.
-func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null, duas_maos: bool = false) -> Golpe:
-	var golpe := Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado_dano(arma, duas_maos), arma.tipo_dano, arma.corroivel)
+## `ataque_extra`: 2º golpe de arma leve (o d20 soma o modificador; o dano, não).
+func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null, duas_maos: bool = false,
+		ataque_extra: bool = false) -> Golpe:
+	var dado := dado_dano(arma, duas_maos, ataque_extra)
+	var golpe := Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado, arma.tipo_dano, arma.corroivel)
 	golpe.desvantagem = desvantagem_por_armadura(armadura) or fraco_para(arma)
 	return golpe
 
@@ -148,6 +152,12 @@ func desvantagem_por_armadura(armadura: Armadura) -> bool:
 ## A armadura pede mais Força do que o personagem tem?
 func falta_forca_para(armadura: Armadura) -> bool:
 	return armadura != null and atributos[Atributos.FORCA] < armadura.forca_minima
+
+
+## Ataque extra de arma leve: modificador positivo não entra no dano.
+func _bonus_no_dano(arma: Arma, ataque_extra: bool) -> int:
+	var bonus := bonus_dano(arma)
+	return mini(bonus, 0) if ataque_extra else bonus
 
 
 func _destreza_na_armadura(armadura: Armadura) -> int:

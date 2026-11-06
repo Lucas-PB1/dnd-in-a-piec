@@ -17,6 +17,7 @@ var _golpe: Golpe
 var _tempo: float = 0.0
 var _golpeando: bool = false
 var _direcao: int = 1
+var _golpe_secundario: bool = false
 
 @onready var _espada: Sprite2D = $Espada
 @onready var _corte: AnimatedSprite2D = $Corte
@@ -41,18 +42,25 @@ func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
 	_espada.rotation_degrees = _angulo_sem_tocar_chao(angulo, mao.y, arma.textura)
 
 
-## Começa um golpe com a `arma`; quem for atingido resolve o `golpe` contra a própria CA.
-func golpear(arma: Arma, golpe: Golpe) -> void:
+## Começa um golpe com a `arma`. `secundaria` = o 2º golpe, da arma da outra mão.
+## Quem for atingido resolve o `golpe` contra a própria CA.
+func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false) -> void:
 	_arma = arma
 	_golpe = golpe
 	_tempo = 0.0
 	_golpeando = true
+	_golpe_secundario = secundaria
 	_preparar_visual()
 	_preparar_area()
 
 
 func esta_golpeando() -> bool:
 	return _golpeando
+
+
+## O golpe atual é o da arma da outra mão (o sprite de trás deve sumir para não duplicar).
+func golpe_da_secundaria() -> bool:
+	return _golpeando and _golpe_secundario
 
 
 ## Interrompe o golpe no meio (ex.: o herói apanhou).
@@ -133,5 +141,6 @@ func _atualizar_acerto() -> void:
 ## Fim do golpe: a arma volta para o repouso no próximo seguir_mao().
 func _terminar() -> void:
 	_golpeando = false
+	_golpe_secundario = false
 	_hitbox.desligar()
 	_corte.hide()

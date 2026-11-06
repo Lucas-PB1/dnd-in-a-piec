@@ -21,6 +21,14 @@ func _foi_atacar() -> bool:
 	return false
 
 
+## Se apertou arremessar com uma arma que arremessa, troca para Arremessando.
+func _foi_arremessar() -> bool:
+	if jogador.pediu_arremesso():
+		trocar_para.emit(&"Arremessando")
+		return true
+	return false
+
+
 ## Para estados no chão: se pulou ou perdeu o chão, troca para NoAr e retorna true.
 func _foi_para_o_ar() -> bool:
 	if jogador.tentar_pular() or not jogador.is_on_floor():

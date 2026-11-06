@@ -6,6 +6,7 @@ extends Node2D
 const CENA_TITULO := preload("res://ui/titulo/tela_titulo.tscn")
 const CENA_CRIACAO := preload("res://ui/criacao_personagem/tela_criacao.tscn")
 const CENA_DERROTA := preload("res://ui/derrota/tela_derrota.tscn")
+const CENA_ARREMESSO := preload("res://features/arremesso/arma_arremessada.tscn")
 const GRUPO_MONSTROS := &"monstros"
 
 ## Começa pelo título e pela criação. Os testes desligam para jogar direto com a sugestão.
@@ -36,6 +37,7 @@ func _ready() -> void:
 	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
 	_bau.abrir_pedido.connect(_abrir_bau)
+	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_guardar_monstros_iniciais()
 	_apontar_monstros_para(_jogador)
 	if mostrar_inicio:
@@ -121,6 +123,22 @@ func _abrir_inventario() -> void:
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
+
+
+func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int) -> void:
+	var voo: ArmaArremessada = CENA_ARREMESSO.instantiate()
+	voo.recolhida.connect(_ao_recolher_arma.bind(voo))
+	voo.derreteu.connect(_jogador.avisar)
+	add_child(voo)
+	voo.global_position = origem
+	voo.lancar(arma, golpe, penalidade, direcao)
+
+
+func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> void:
+	if _jogador.recolher_arma(arma, penalidade):
+		voo.queue_free()
+	else:
+		voo.avisar_cheia()
 
 
 func _abrir_bau(itens: Array[Item]) -> void:
