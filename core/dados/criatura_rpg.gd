@@ -53,6 +53,19 @@ extends Resource
 ## Arma que voa (só a arte; o golpe é o do ataque da ficha). Ex.: data/armas/adaga.tres.
 @export var arma_arremesso: Arma
 
+@export_group("Disparo")
+## Quantas flechas carrega. 0 = não dispara. Menor que 0 = não acaba (Goblin Warrior).
+@export var disparos: int = 0
+## Nome do tiro (ex.: "Arco Curto"). Vazio usa o nome do ataque corpo a corpo.
+@export var disparo_nome: String = ""
+## Alcance do tiro (pés): além do normal, desvantagem; o longo é o limite.
+@export var disparo_normal_pes: float = 0.0
+@export var disparo_longo_pes: float = 0.0
+## Dano do tiro (ex.: "1d6+2"). Vazio usa o dano do ataque corpo a corpo.
+@export var disparo_dano: String = ""
+## Tipo de dano do tiro (TiposDano).
+@export var disparo_tipo_dano: StringName = TiposDano.PERFURANTE
+
 @export_group("Ações bônus")
 ## Fuga Ágil (Goblin): Desengajar depois de atacar (salta para longe do alvo).
 @export var fuga_agil: bool = false
@@ -81,6 +94,13 @@ func golpe() -> Golpe:
 	var ataque := Golpe.new(ataque_nome, ataque_bonus, _dado_ou_padrao(ataque_dano), ataque_tipo_dano)
 	ataque.corroi_armadura = ataque_corroi_armadura
 	return ataque
+
+
+## O tiro (arco). O bônus para acertar é o do ataque corpo a corpo.
+func golpe_disparo() -> Golpe:
+	var nome_tiro := disparo_nome if not disparo_nome.is_empty() else ataque_nome
+	var notacao := disparo_dano if not disparo_dano.is_empty() else ataque_dano
+	return Golpe.new(nome_tiro, ataque_bonus, _dado_ou_padrao(notacao), disparo_tipo_dano)
 
 
 func _dado_ou_padrao(notacao: String) -> Dado:

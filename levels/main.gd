@@ -10,6 +10,7 @@ const CENA_DERROTA := preload("res://ui/derrota/tela_derrota.tscn")
 const CENA_ARREMESSO := preload("res://features/arremesso/arma_arremessada.tscn")
 const CENA_OOZE := preload("res://features/gray_ooze/gray_ooze.tscn")
 const CENA_GOBLIN := preload("res://features/goblin/goblin.tscn")
+const CENA_GOBLIN_GUERREIRO := preload("res://features/goblin/goblin_guerreiro.tscn")
 const GRUPO_MONSTROS := &"monstros"
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
 const DISTANCIA_CRIATURA_PES := 15.0
@@ -53,7 +54,7 @@ func _ready() -> void:
 	_comandos.opcoes_toque_mudaram.connect(_controles_toque.atualizar)
 	_comandos.editar_toque_pedido.connect(_editar_toque)
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
-	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion"]), _cenas_criaturas())
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_guardar_monstros_iniciais()
 	_apontar_monstros_para(_jogador)
@@ -135,7 +136,7 @@ func _apontar_monstros_para(alvo: Node2D) -> void:
 
 ## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
 func _cenas_criaturas() -> Array[PackedScene]:
-	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN]
+	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO]
 	return cenas
 
 

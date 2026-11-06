@@ -23,7 +23,7 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | `docs/decisoes/heroi.md` | Herói: estados, pulo, corrida, ataque, apanhar, Second Wind, arma na mão, escudo, armadura visível. |
 | `docs/decisoes/regras_dnd.md` | Regras de D&D no código: vida, dano, combate, vantagem, salvaguarda, escala, tipos de dano, proficiências, maestrias, condições, talentos. |
 | `docs/decisoes/armas_e_itens.md` | Itens, inventário, pacotes, baú, corrosão, armaduras, armas, golpes, arremesso, disparo. |
-| `docs/decisoes/criaturas.md` | Ficha de criatura, Gray Ooze, Goblin Minion, monstros no jogo, arena. |
+| `docs/decisoes/criaturas.md` | Ficha de criatura, Gray Ooze, Goblin Minion, Goblin Warrior, monstros no jogo, arena. |
 | `docs/decisoes/interface.md` | Título, criação, HUD, inventário, comandos, ações de input, celular e controles de toque. |
 | `docs/arquitetura.md` | Como as peças se ligam (camadas, cena principal, caminho de um golpe, entrada). |
 | `docs/receitas.md` | Passo a passo: criatura, arma, regra, estado, ação, tela, teste, print; armadilhas conhecidas. |
@@ -83,14 +83,14 @@ core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Gol
 core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
 features/jogador/        herói: jogador, stats, animação, câmera, ataque, escudo, arma de trás, estados/, sprites/
 features/gray_ooze/      Gray Ooze: cena, estados/, sprites/
-features/goblin/         Goblin Minion: cena, adaga arremessada, estados/, sprites/
+features/goblin/         Goblin Minion e Goblin Warrior: cenas, adaga, flecha, estados/, sprites/
 features/boneco_treino/  boneco de treino
 features/bau/            baú do arsenal (E)
 features/arremesso/      arma arremessada / projétil do herói
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
 ui/                      titulo, criacao_personagem, hud, inventario, bau, comandos, derrota,
                          controles_toque; tema_menu.tres; resumo_item.gd
-data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze, goblin_minion,
+data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze, goblin_minion, goblin_warrior,
                          armas/, armaduras/, municoes/, pacotes/
 assets/                  tiles/, armas/, armaduras/, efeitos/, shaders/; CREDITOS.md
 tools/                   geradores (armas, armaduras, criaturas, fase, pose, mão), capturar_tela,
@@ -143,6 +143,6 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
 ## Estado atual
 Últimas fatias (lista completa em `docs/historico.md`; o que falta em `docs/pendencias.md`):
 - Armas à distância com a arte do Aerial Arsenal e força do tiro por arma.
-- Goblin Minion (arremessa adagas, golpeia, Fuga Ágil), na tela de comandos (Trazer).
+- Goblin Minion (arremessa adagas, golpeia, Fuga Ágil) e Goblin Warrior (cimitarra, arco curto), na tela de comandos (Trazer) e fixos na fase depois do Ooze.
 - Celular: tela larga, controles de toque (analógico ou setas + botões) e ajuste do layout.
 - Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.

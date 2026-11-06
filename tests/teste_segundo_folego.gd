@@ -116,8 +116,9 @@ func _testar_teclas() -> void:
 	var tela: TelaComandos = _principal.get_node("Interface/TelaComandos")
 	var lista := tela.find_child("ListaCriaturas", true, false) as ItemList
 	_checar(not tela.visible, "comandos começa fechado")
-	_checar(lista.item_count == 2 and lista.get_item_text(0) == "Gray Ooze" and lista.get_item_text(1) == "Goblin Minion",
-		"a lista de combate tem o Gray Ooze e o Goblin Minion")
+	_checar(lista.item_count == 3 and lista.get_item_text(0) == "Gray Ooze"
+		and lista.get_item_text(1) == "Goblin Minion" and lista.get_item_text(2) == "Goblin Warrior",
+		"a lista de combate tem o Gray Ooze, o Goblin Minion e o Goblin Warrior")
 	tela.abrir()
 	_checar(tela.visible and _principal.get_tree().paused, "abrir a tela pausa o jogo")
 	tela.fechar()
@@ -151,15 +152,18 @@ func _testar_criatura() -> void:
 	derrota.get_node("Centro/Painel/Coluna/TentarDeNovo").pressed.emit()
 	await process_frame
 	var voltaram := _principal.get_tree().get_nodes_in_group(&"monstros")
-	_checar(voltaram.size() == 1, "tentar de novo recria só o Ooze do mapa")
-	_checar(voltaram.size() == 1 and is_equal_approx((voltaram[0] as Node2D).position.x, posicao_mapa.x),
-		"o recriado volta na posição do mapa")
+	var ooze_no_lugar := false
+	for monstro in voltaram:
+		if monstro is GrayOoze and is_equal_approx((monstro as Node2D).position.x, posicao_mapa.x):
+			ooze_no_lugar = true
+	_checar(voltaram.size() == 3, "tentar de novo recria Ooze, Minion e Warrior, sem o trazido")
+	_checar(ooze_no_lugar, "o Ooze recriado volta na posição do mapa")
 
 
 func _trazido(mapa: Node) -> GrayOoze:
 	for monstro in _principal.get_tree().get_nodes_in_group(&"monstros"):
-		if monstro != mapa:
-			return monstro as GrayOoze
+		if monstro != mapa and monstro is GrayOoze:
+			return monstro
 	return null
 
 

@@ -1,6 +1,6 @@
 extends EstadoGoblin
-## Ao alcance da adaga: espera a rodada e golpeia. Longe, com adaga sobrando e dentro do
-## alcance longo: para e arremessa. Senão corre até o alvo. Perdeu o alvo, para.
+## Ao alcance do golpe: espera a rodada e ataca. Longe, se ainda dá para arremessar ou
+## atirar dentro do alcance longo: para e solta. Senão corre até o alvo. Perdeu o alvo, para.
 
 
 func processar_fisica(_delta: float) -> void:
@@ -9,7 +9,7 @@ func processar_fisica(_delta: float) -> void:
 		return
 	if goblin.alvo_ao_alcance():
 		_esperar_vez(&"Atacando")
-	elif goblin.pode_arremessar():
+	elif goblin.pode_arremessar() or goblin.pode_atirar():
 		_esperar_vez(&"Arremessando")
 	else:
 		goblin.andar_para_alvo()

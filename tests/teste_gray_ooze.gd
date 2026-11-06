@@ -27,6 +27,7 @@ func _rodar() -> void:
 	_jogador = cena.get_node("Jogador")
 	_ooze = cena.get_node("GrayOoze")
 	await _esperar(10)
+	_testar_goblins_no_mapa(cena)
 
 	await _testar_percepcao_e_perseguicao()
 	await _testar_ataques_contra_o_heroi()
@@ -163,9 +164,30 @@ func _testar_voce_caiu(cena: Node) -> void:
 	tela.tentar_de_novo_escolhido.emit()
 	await process_frame
 	await physics_frame
-	var oozes := cena.get_tree().get_nodes_in_group(&"monstros")
+	var monstros := cena.get_tree().get_nodes_in_group(&"monstros")
+	var ooze := _ooze_do_grupo(cena)
 	_checar(not paused and _jogador.vida_atual() == _jogador.vida_maxima(), "Tentar de novo: despausa com a vida cheia")
-	_checar(oozes.size() == 1 and (oozes[0] as GrayOoze).vida_atual() == 22, "o Gray Ooze volta à vida para a luta recomeçar")
+	_checar(monstros.size() == 3 and ooze != null and ooze.vida_atual() == 22,
+		"o Gray Ooze volta à vida; Minion e Warrior do mapa também")
+
+
+## Minion e Warrior ficam no chão, cada um além dos 60 pés de visão de quem está antes.
+func _testar_goblins_no_mapa(cena: Node) -> void:
+	var minion := cena.get_node("GoblinMinion") as Goblin
+	var guerreiro := cena.get_node("GoblinWarrior") as Goblin
+	var visao := EscalaDnd.pes_para_pixels(60.0)
+	_checar(minion != null and guerreiro != null, "o mapa tem um Goblin Minion e um Goblin Warrior")
+	_checar(minion.position.x > _ooze.position.x + visao, "o Minion fica além da visão do Ooze")
+	_checar(guerreiro.position.x > minion.position.x + visao, "o Warrior fica além da visão do Minion")
+	_checar(minion.nome_estado() == &"Parado" and guerreiro.nome_estado() == &"Parado",
+		"longe do herói, os dois ficam parados")
+
+
+func _ooze_do_grupo(cena: Node) -> GrayOoze:
+	for monstro in cena.get_tree().get_nodes_in_group(&"monstros"):
+		if monstro is GrayOoze:
+			return monstro
+	return null
 
 
 func _colocar_heroi_a(distancia: float) -> void:

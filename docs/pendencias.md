@@ -11,10 +11,8 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 | # | Fatia | Tam. | Onde mexe | Observação |
 |---|---|---|---|---|
 | 1 | **Exportar o APK (Android)** | M | `export_presets.cfg`, guia em `docs/` | Precisa do JDK, Android SDK e modelos de exportação do Godot (o usuário instala; a IA guia). Testar os controles de toque com o dedo. |
-| 2 | **Goblins no mapa** | P | `levels/main.tscn`, testes | Pôr goblins fixos mais adiante na fase, longe de onde os testes usam o herói. |
-| 3 | **Terceira criatura do livro** | M | `features/<nova>/`, `data/` | Seguir a receita 1. **Antes**, extrair a base comum de Ooze + Goblin (ver Dívidas). |
-| 4 | **Fase com plataformas e buracos** | M | `tools/gerar_fase_teste.gd` | Os tipos `=` (plataforma) e `P` já existem no gerador; a fase está reta por pedido antigo. |
-| 5 | **Testes de Furtividade** | M | `core/regras/`, criaturas | Primeira perícia. A desvantagem de armadura em Furtividade hoje só aparece na ficha. |
+| 2 | **Fase com plataformas e buracos** | M | `tools/gerar_fase_teste.gd` | Os tipos `=` (plataforma) e `P` já existem no gerador; a fase está reta por pedido antigo. |
+| 3 | **Testes de Furtividade** | M | `core/regras/`, criaturas | Primeira perícia. Também libera o Esconder do Goblin Warrior e o +1d4 quando o ataque já tem vantagem. |
 
 ## 2. Regras do livro que ainda não existem
 
@@ -45,7 +43,7 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 
 | O quê | Quando resolver |
 |---|---|
-| Base comum das criaturas (perseguir, ritmo, condições, empurrão repetidos em Ooze e Goblin) | **Antes da 3ª criatura** (regra de três). |
+| Base comum das criaturas (perseguir, ritmo, condições, empurrão repetidos em Ooze e Goblin) | Antes de uma criatura que não reuse o Goblin (o Warrior usa a máquina dele). |
 | `BotaoToque` e `AnalogicoToque` repetem "editando/destacado" | Ao criar o 3º tipo de controle de toque. |
 | "Arma na mão ou desarmado" em 2 lugares (Jogador e TelaInventario) | Se aparecer um 3º lugar. |
 | Sinais `pulou`/`reapareceu` do herói sem ouvinte | Quando houver som/efeito para eles, ou remover. |

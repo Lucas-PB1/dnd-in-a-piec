@@ -33,6 +33,8 @@ O que já foi feito, em ordem. **Acrescente uma linha ao fechar cada fatia.** O 
 - Armas à distância com a arte do Aerial Arsenal (CC0): arcos inclinados para a frente, bestas do pacote, pistola e mosquete de pederneira em pixel art e quadro de descanso.
 - Força do tiro por arma: velocidade de saída pelo alcance longo do livro, impulso e peso por munição (antes todas as armas pareciam iguais na tela).
 - Goblin Minion (ficha do livro): arremessa 3 adagas, golpeia de perto e Desengaja com a Fuga Ágil. Na tela de comandos (C -> Trazer).
+- Goblin Warrior (ficha do livro): cimitarra de perto, arco curto de longe (flechas não acabam) e a mesma Fuga Ágil. Arte CC0 do Goblin Corps. Esconder e o +1d4 com vantagem ficam para a Furtividade.
+- Goblins no mapa: Minion em x = 2176 e Warrior em x = 2752, cada um além dos 60 pés de visão de quem está antes, e fora dos tiros de teste. "Tentar de novo" recria os dois junto com o Ooze.
 - Guias para IA: `docs/artes_prontas.md`, `docs/arquitetura.md`, `docs/receitas.md`; regras do Cursor geradas das skills (`tools/gerar_regras_cursor.ps1`).
 - Celular (fatia 1): tela larga (aspect expand), celular deitado, controles de toque (analógico ou setas + botões), correr segurando (Shift / borda do analógico).
 - Celular (fatia 2): ajustar os controles de toque (arrastar, tamanho, transparência, Padrão, salvo).

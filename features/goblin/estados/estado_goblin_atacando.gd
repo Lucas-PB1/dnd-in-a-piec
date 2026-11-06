@@ -1,10 +1,6 @@
 extends EstadoGoblin
-## Golpe de adaga: só acerta enquanto o braço está esticado (quadros 2 e 3 da animação de 3
-## quadros a 10 fps). Com Fuga Ágil, Desengaja logo depois.
-
-## Quando o golpe começa e para de acertar (s desde o início do ataque).
-const INICIO_ACERTO := 0.1
-const FIM_ACERTO := 0.3
+## Golpe corpo a corpo: só acerta na janela da ficha da cena (o Minion, 0,1–0,3 s, é o
+## braço esticado). Com Fuga Ágil, Desengaja logo depois.
 
 var _tempo: float = 0.0
 var _ligado: bool = false
@@ -22,7 +18,7 @@ func sair() -> void:
 
 func processar_fisica(delta: float) -> void:
 	_tempo += delta
-	var na_janela := _tempo >= INICIO_ACERTO and _tempo < FIM_ACERTO
+	var na_janela := _tempo >= goblin.inicio_acerto and _tempo < goblin.fim_acerto
 	if na_janela and not _ligado:
 		goblin.ligar_golpe()
 		_ligado = true

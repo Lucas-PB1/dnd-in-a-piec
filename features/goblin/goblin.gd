@@ -1,15 +1,17 @@
 class_name Goblin
 extends CharacterBody2D
-## Goblin Minion (D&D 2024): pequeno e ligeiro. Longe do alvo arremessa as adagas (3; além
-## do alcance normal com desvantagem); perto golpeia com a adaga. Fuga Ágil: depois de cada
-## golpe Desengaja (salta para longe do alvo). Números em data/goblin_minion.tres
-## (CriaturaRPG). Comportamento nos estados (estados/). Não conhece o herói: recebe um alvo
-## qualquer por definir_alvo().
+## Goblin (D&D 2024). O Minion arremessa adagas; o Warrior atira com o arco curto (as flechas
+## não acabam). Longe do corpo a corpo usa o ataque à distância (desvantagem além do alcance
+## normal; cai no longo). Perto golpeia. Fuga Ágil: depois do golpe corpo a corpo Desengaja.
+## Números na ficha (CriaturaRPG). Comportamento nos estados (estados/). Não conhece o herói:
+## recebe um alvo qualquer por definir_alvo().
 
 ## Emitido quando termina de morrer (antes de sumir).
 signal morreu
 
 const CENA_ADAGA := preload("res://features/goblin/adaga_goblin.tscn")
+const CENA_FLECHA := preload("res://features/goblin/flecha_goblin.tscn")
+const FLECHA := preload("res://data/municoes/flecha.tres")
 
 ## Bloco de estatísticas. Padrão: data/goblin_minion.tres.
 @export var criatura: CriaturaRPG
@@ -24,6 +26,11 @@ const CENA_ADAGA := preload("res://features/goblin/adaga_goblin.tscn")
 @export var altura_alvo: float = 36.0
 ## Fuga Ágil: quanto se afasta ao Desengajar (pés), correndo (Disparada).
 @export var recuo_fuga_pes: float = 15.0
+## Janela em que o golpe corpo a corpo acerta (s desde o início da animação).
+@export var inicio_acerto: float = 0.1
+@export var fim_acerto: float = 0.3
+## Quando a adaga ou a flecha sai da mão (s desde o início da animação).
+@export var momento_soltura: float = 0.15
 ## Empurrar (maestria): velocidade com que o empurrão o desloca (px/s).
 @export var velocidade_empurrao: float = 320.0
 ## Pisca ao levar dano: cor do clarão.
@@ -39,6 +46,8 @@ var _tempo_desde_ataque: float = INF
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _empurrao_restante: float = 0.0
 var _adagas: int = 0
+## Cópias do disparo da ficha. Menor que 0 = não acaba.
+var _flechas: int = 0
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _vida: HealthComponent = $Vida
@@ -59,6 +68,7 @@ func _ready() -> void:
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
 	_adagas = criatura.arremessos
+	_flechas = criatura.disparos
 	_preparar_condicoes()
 	_preparar_golpe()
 	_maquina.iniciar(self)
@@ -93,6 +103,11 @@ func adagas_restantes() -> int:
 	return _adagas
 
 
+## Menor que 0: as flechas não acabam.
+func flechas_restantes() -> int:
+	return _flechas
+
+
 # --- Ferramentas dos estados ----------------------------------------------------
 
 ## Visão no Escuro 60 pés: percebe o alvo até essa distância.
@@ -109,6 +124,12 @@ func alvo_ao_alcance() -> bool:
 func pode_arremessar() -> bool:
 	return _adagas > 0 and alvo != null and not alvo_ao_alcance() \
 		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.arremesso_longo_pes)
+
+
+## Tem flecha, o alvo está fora do corpo a corpo e dentro do alcance longo do arco.
+func pode_atirar() -> bool:
+	return _tem_flecha() and alvo != null and not alvo_ao_alcance() \
+		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes)
 
 
 ## Ritmo pela iniciativa da ficha (Goblin: +2 -> um ataque a cada 0,8 s).
@@ -188,6 +209,29 @@ func arremessar_adaga() -> void:
 		EscalaDnd.pes_para_pixels(criatura.arremesso_longo_pes), _gravidade)
 
 
+## Solta o que a ficha tiver à distância: adaga, ou flecha se as adagas acabaram.
+func soltar_distancia() -> void:
+	if _adagas > 0:
+		arremessar_adaga()
+	elif _tem_flecha():
+		atirar()
+
+
+## Dispara uma flecha na direção do alvo (mira no peito dele).
+func atirar() -> void:
+	if not _tem_flecha() or alvo == null:
+		return
+	if _flechas > 0:
+		_flechas -= 1
+	var flecha: FlechaGoblin = CENA_FLECHA.instantiate()
+	add_child(flecha)
+	var mao := global_position + Vector2(direcao_olhar * meia_largura_corpo, -altura_mao)
+	var destino := alvo.global_position + Vector2(0.0, -altura_alvo)
+	flecha.lancar(_golpe_do_disparo(), FLECHA, mao, destino,
+		EscalaDnd.pes_para_pixels(criatura.disparo_normal_pes),
+		EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes), _gravidade)
+
+
 ## Levou dano: pisca na cor do dano.
 func piscar(ligado: bool) -> void:
 	_sprite.modulate = cor_dano if ligado else Color.WHITE
@@ -211,10 +255,21 @@ func terminar_de_morrer() -> void:
 # --- Interno --------------------------------------------------------------------
 
 func _golpe_da_ficha() -> Golpe:
-	var golpe := criatura.golpe()
+	return _com_autor(criatura.golpe())
+
+
+func _golpe_do_disparo() -> Golpe:
+	return _com_autor(criatura.golpe_disparo())
+
+
+func _com_autor(golpe: Golpe) -> Golpe:
 	golpe.autor_id = get_instance_id()
 	golpe.desvantagem = _condicoes.consumir_desvantagem()
 	return golpe
+
+
+func _tem_flecha() -> bool:
+	return _flechas < 0 or _flechas > 0
 
 
 func _deslocamento_pes() -> float:
