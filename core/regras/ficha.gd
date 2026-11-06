@@ -39,9 +39,11 @@ func rolar_dano(arma: Arma, rng: RandomNumberGenerator) -> int:
 	return maxi(arma.dado().rolar(rng) + bonus_dano(arma), DANO_MINIMO)
 
 
-## Texto do dano para a ficha, ex.: "1d6+2".
+## Texto do dano para a ficha, ex.: "1d6+2". Dano fixo (dado de 1 face, como o soco) vira o total: "3".
 func texto_dano(arma: Arma) -> String:
 	var bonus := bonus_dano(arma)
+	if arma.dado().faces == 1:
+		return str(maxi(arma.dado().quantidade + bonus, DANO_MINIMO))
 	if bonus == 0:
 		return arma.dado().texto()
 	var sinal := "+" if bonus > 0 else ""  # negativo já vem com "-"

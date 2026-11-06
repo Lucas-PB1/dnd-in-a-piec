@@ -1,0 +1,54 @@
+extends SceneTree
+## Teste da regra pura do Inventario.
+## godot --headless --debug --path . --script res://tests/teste_inventario.gd
+
+var _falhas := 0
+
+
+func _initialize() -> void:
+	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var outra_espada := espada.duplicate() as Arma
+	outra_espada.nome = "Espada Velha"
+	var pedra := Item.new()
+	pedra.nome = "Pedra"
+
+	var inv := Inventario.new(2)
+	var mudancas := [0]
+	inv.mudou.connect(func() -> void: mudancas[0] += 1)
+
+	_checar(inv.adicionar(espada) and inv.adicionar(pedra), "adiciona itens")
+	_checar(inv.esta_cheio() and not inv.adicionar(outra_espada), "não passa da capacidade")
+	_checar(inv.equipado(Item.ESPACO_MAO) == null, "começa sem nada na mão")
+	_checar(not inv.equipar(pedra), "item não equipável não equipa")
+	_checar(inv.equipar(espada) and inv.equipado(Item.ESPACO_MAO) == espada, "equipa a espada na mão")
+	_checar(inv.esta_equipado(espada) and espada in inv.itens, "equipado continua na lista")
+	_checar(not inv.equipar(outra_espada), "não equipa item que não está no inventário")
+	_checar(inv.desequipar(Item.ESPACO_MAO) and inv.equipado(Item.ESPACO_MAO) == null, "desequipa")
+	_checar(not inv.desequipar(Item.ESPACO_MAO), "desequipar espaço vazio não faz nada")
+	inv.equipar(espada)
+	_checar(inv.descartar(espada), "joga fora a espada")
+	_checar(espada not in inv.itens and inv.equipado(Item.ESPACO_MAO) == null, "jogar fora item equipado desequipa antes")
+	_checar(not inv.descartar(espada), "não joga fora o que não tem")
+	_checar(mudancas[0] == 6, "avisa cada mudança (deu %d)" % mudancas[0])
+
+	var troca := Inventario.new()
+	troca.adicionar(espada)
+	troca.adicionar(outra_espada)
+	troca.equipar(espada)
+	troca.equipar(outra_espada)
+	_checar(troca.equipado(Item.ESPACO_MAO) == outra_espada and troca.itens.size() == 2,
+		"equipar outra arma troca e a antiga fica na mochila")
+
+	if _falhas == 0:
+		print("PASSOU: todos os testes do inventário")
+	else:
+		print("FALHOU: %d teste(s)" % _falhas)
+	quit(1 if _falhas > 0 else 0)
+
+
+func _checar(condicao: bool, descricao: String) -> void:
+	if condicao:
+		print("  ok   - ", descricao)
+	else:
+		_falhas += 1
+		print("  ERRO - ", descricao)

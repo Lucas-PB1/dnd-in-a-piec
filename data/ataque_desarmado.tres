@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Arma" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="1_arma"]
+
+[resource]
+script = ExtResource("1_arma")
+nome = "Desarmado"
+descricao = "Soco (D&D): 1 + modificador de Força."
+espaco = &"mao"
+dados_dano = "1d1"
+acuidade = false
+cor_corte = Color(1, 0.9, 0.7, 0.5)
+alcance = 24.0
+altura = 28.0
+duracao = 0.26
+inicio_acerto = 0.05
+fim_acerto = 0.12
+angulo_inicial = 0.0
+angulo_final = 0.0

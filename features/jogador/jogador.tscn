@@ -12,6 +12,8 @@
 [ext_resource type="Script" path="res://features/jogador/estados/estado_no_ar.gd" id="10_no_ar"]
 [ext_resource type="Script" path="res://features/jogador/estados/estado_atacando.gd" id="11_atacando"]
 [ext_resource type="Resource" path="res://data/arma_espada_curta.tres" id="12_arma"]
+[ext_resource type="Resource" path="res://data/ataque_desarmado.tres" id="18_desarmado"]
+[ext_resource type="Script" path="res://core/dados/item.gd" id="19_item"]
 [ext_resource type="Script" path="res://features/jogador/ataque_jogador.gd" id="13_ataque"]
 [ext_resource type="SpriteFrames" path="res://assets/efeitos/corte_frames.tres" id="14_corte"]
 [ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="15_hitbox"]
@@ -30,7 +32,8 @@ collision_layer = 2
 floor_snap_length = 4.0
 script = ExtResource("1_script")
 stats = ExtResource("2_stats")
-arma = ExtResource("12_arma")
+itens_iniciais = Array[ExtResource("19_item")]([ExtResource("12_arma")])
+ataque_desarmado = ExtResource("18_desarmado")
 classe = ExtResource("16_classe")
 
 [node name="Vida" type="Node" parent="."]

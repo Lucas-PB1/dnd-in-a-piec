@@ -38,6 +38,10 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Dano | **Dados da arma + mod.** a cada golpe. Arma com `acuidade` usa o maior entre FOR e DES (espada curta: 1d6, acuidade). **Mínimo 1** por acerto. | Regra do livro; mínimo 1 é regra da casa. |
 | Atributos | Escolhidos na **tela de criação** (`ui/criacao_personagem/`) por **compra de pontos**, no início do jogo (pausado). Botão com a sugestão da classe. INT, SAB e CAR ainda não fazem nada. | Pedido do usuário. |
 | HUD | `ui/hud/`: "PV atual/máximo". | |
+| Itens | `Item` (`core/dados/item.gd`: nome, descrição, ícone, `espaco`). `Arma` é um `Item` do espaço `mao`. | Base para qualquer item. |
+| Inventário | Regra pura `Inventario` (`core/regras/`): adicionar (capacidade 12), equipar (troca; o antigo fica na mochila), desequipar, **jogar fora = apaga** (desequipa antes). Item equipado continua na lista. O herói tem `inventario` e `itens_iniciais` (a espada começa na mochila, sem equipar). | Pedido do usuário. |
+| Tela de inventário | `ui/inventario/`, tecla **I** (Esc também fecha), **pausa o jogo**. Lista, detalhes, Equipar/Desequipar/Jogar fora (com confirmação) e a ficha. Não conhece o herói: emite `abrir_pedido` e a `main` chama `abrir(...)`. Não abre durante a criação. | |
+| Desarmado | Mão vazia = `data/ataque_desarmado.tres` ("1d1" + FOR = soco de D&D, alcance curto, sem sprite de arma). | Regra do livro. |
 | Ataque | Tecla **J** -> estado `Atacando`. No chão freia e fica firme; no ar continua caindo; não vira durante o golpe. | Peso de Guerreiro. |
 | Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/arma_*.tres`: dano, alcance, tempos da janela de acerto, ângulos e **textura**. A espada é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. | Equipamento visível sem redesenhar o herói. |
 | Dano | `HitboxComponent` (quem bate, acerta cada alvo 1x por golpe) e `HurtboxComponent` (quem apanha, só emite `golpe_recebido`) em `core/componentes/`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`. `HealthComponent` só quando houver o primeiro inimigo que morre. | Reutilizável por herói e inimigos. |
@@ -68,16 +72,17 @@ Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
 core/componentes/        HitboxComponent, HurtboxComponent, HealthComponent
-core/dados/              Arma, ClasseRPG (Resources)
-core/regras/             Dado, Atributos, CompraDePontos, Ficha (regras puras de D&D)
+core/dados/              Item, Arma, ClasseRPG (Resources)
+core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario (regras puras)
 ui/criacao_personagem/   tela de criação (compra de pontos)
+ui/inventario/           tela de inventário (tecla I)
 ui/hud/                  HUD (vida)
 core/utilitarios/        ToqueDuplo
 features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
 						 camera_jogador.gd, ataque_jogador.gd, estados/, sprites/
 features/boneco_treino/  boneco de treino (leva golpe, pisca, balança, mostra dano)
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-data/                    jogador_padrao.tres, arma_espada_curta.tres, classe_guerreiro.tres
+data/                    jogador_padrao.tres, arma_espada_curta.tres, ataque_desarmado.tres, classe_guerreiro.tres
 assets/tiles/            ladrilhos e TileSet (compartilhado)
 assets/armas/, efeitos/  sprites de armas e efeitos (compartilhados)
 tools/                   gerar_arte_provisoria.gd, gerar_fase_teste.gd, capturar_tela.gd
@@ -90,7 +95,7 @@ tests/                   teste_*.gd, rodar_testes.ps1
 - **Classes e nós:** `PascalCase` (ex.: `class_name Jogador`, nó `Sprite`).
 - **Comentários e nomes do jogo em português.** Termos do Godot ficam em inglês.
 - Balanceamento em Resources (`data/`); ajustes só visuais podem ficar em `@export` do componente.
-- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J).
+- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J), `inventario` (I).
 - Edite `.tscn` à mão só em mudanças pequenas e seguras. Estruturas grandes: script gerador, MCP do Godot ou editor.
 - Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha 2 opções com prós e contras.
 
@@ -151,4 +156,6 @@ Um teste só:
 - Skills godot-* criadas e código migrado: novas pastas, máquina de estados do herói, `StatsJogador` em `data/`, sem `get_parent()`, fase com API própria.
 - Fatia 5: golpe de espada (J) no chão e no ar, arma como dado e sprite separado, Hitbox/Hurtbox, boneco de treino. Tentativa de usar pacote pronto (Hero Knight) foi cancelada e limpa.
 - Fatia 6a: ficha de D&D (compra de pontos, vida d10 + CON, dano 1d6 + FOR/DES), tela de criação, HUD de vida.
-- Próximas: 6b inventário (tecla I, pausa; equipar/desequipar/jogar fora; espada começa no inventário; sem arma = soco 1 + FOR) e 6c espada sempre na mão (ponto da mão por quadro, golpe na altura certa).
+- Fatia 6b: inventário (Item, Inventario, tela com I), espada começa na mochila, soco desarmado.
+- Próxima: 6c espada sempre na mão (ponto da mão por quadro, golpe na altura certa).
+- Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.

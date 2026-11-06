@@ -21,6 +21,8 @@ func _rodar() -> void:
 	_boneco = cena.get_node("BonecoTreino")
 	await _esperar(20)
 
+	await _testar_soco_desarmado()
+	_checar(_jogador.inventario.equipar(_jogador.inventario.itens[0]), "equipa a espada da mochila")
 	await _testar_golpe_no_chao()
 	await _testar_golpe_de_costas()
 	await _testar_golpe_no_ar()
@@ -35,22 +37,42 @@ func _rodar() -> void:
 	quit(1 if _falhas > 0 else 0)
 
 
+## Sem arma na mão: soco de D&D = 1 + mod. de Força (FOR 15 da sugestão -> 3), sem espada visível.
+func _testar_soco_desarmado() -> void:
+	_checar(_jogador.inventario.equipado(Item.ESPACO_MAO) == null, "começa com a espada na mochila, mão vazia")
+	_checar(_jogador.arma_atual() == _jogador.ataque_desarmado, "mão vazia = ataque desarmado")
+	var danos: Array[int] = []
+	var registrar := func(dano: int) -> void: danos.append(dano)
+	_boneco.atingido.connect(registrar)
+	await _colocar_ao_lado_do_boneco()
+	await _apertar("atacar")
+	_checar(not (_jogador.get_node("Ataque/Espada") as Node2D).visible or \
+		(_jogador.get_node("Ataque/Espada") as Sprite2D).texture == null, "soco não mostra espada")
+	await _esperar_golpe_acabar()
+	var esperado := 1 + _jogador.ficha.modificador(Atributos.FORCA)
+	_checar(danos == [esperado], "soco acerta com dano %d (deu %s)" % [esperado, str(danos)])
+	_boneco.atingido.disconnect(registrar)
+	await _esperar(2)
+
+
 func _testar_golpe_no_chao() -> void:
 	await _colocar_ao_lado_do_boneco()
 	var espada: Node2D = _jogador.get_node("Ataque/Espada")
+	var antes := _boneco.golpes_recebidos
 	await _apertar("atacar")
 	_checar(_jogador.nome_estado() == &"Atacando", "J = estado Atacando")
 	_checar(espada.visible, "espada aparece no golpe")
-	_checar(_boneco.golpes_recebidos == 0, "não acerta antes da janela de acerto")
+	_checar(_boneco.golpes_recebidos == antes, "não acerta antes da janela de acerto")
 	await _esperar_golpe_acabar()
-	_checar(_boneco.golpes_recebidos == 1, "acerta o boneco UMA vez por golpe (deu %d)" % _boneco.golpes_recebidos)
+	_checar(_boneco.golpes_recebidos == antes + 1,
+		"acerta o boneco UMA vez por golpe (deu %d)" % (_boneco.golpes_recebidos - antes))
 	_checar(not espada.visible, "espada some no fim do golpe")
 	_checar(absf(_jogador.velocity.x) < 1.0, "no chão o herói fica parado golpeando")
 	await _esperar(2)
 	_checar(_jogador.nome_estado() == &"Parado", "depois do golpe volta para Parado")
 	await _apertar("atacar")
 	await _esperar_golpe_acabar()
-	_checar(_boneco.golpes_recebidos == 2, "segundo golpe acerta de novo")
+	_checar(_boneco.golpes_recebidos == antes + 2, "segundo golpe acerta de novo")
 
 
 func _testar_golpe_de_costas() -> void:
@@ -83,7 +105,7 @@ func _testar_golpe_no_ar() -> void:
 ## Cada golpe rola 1d6 + modificador (FOR ou DES, o maior, porque a espada curta tem acuidade).
 func _testar_dano_rolado() -> void:
 	const GOLPES := 12
-	var arma := _jogador.arma
+	var arma := _jogador.arma_atual()
 	var bonus := _jogador.ficha.bonus_dano(arma)
 	var minimo := arma.dado().minimo() + bonus
 	var maximo := arma.dado().maximo() + bonus

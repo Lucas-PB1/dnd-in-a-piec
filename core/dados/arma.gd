@@ -1,9 +1,8 @@
 class_name Arma
-extends Resource
-## Dados de uma arma corpo a corpo (equipamento). Uma arma nova = um .tres novo em data/.
+extends Item
+## Dados de uma arma corpo a corpo (item equipável na mão). Uma arma nova = um .tres novo em data/.
 ## Os tempos contam a partir do início do golpe.
 
-@export var nome: String = "Espada"
 ## Dados de dano no formato de D&D (ex.: "1d6" para espada curta, "1d8" para espada longa).
 @export var dados_dano: String = "1d6"
 ## Acuidade (D&D): o dano usa o maior entre Força e Destreza. Sem ela, usa só Força.
@@ -32,6 +31,10 @@ extends Resource
 @export var angulo_inicial: float = -110.0
 ## Ângulo da arma no fim do golpe (positivo = abaixada à frente).
 @export var angulo_final: float = 35.0
+
+
+func _init() -> void:
+	espaco = Item.ESPACO_MAO
 
 
 ## Os dados de dano já interpretados. Se o texto estiver errado, avisa e usa 1d4.

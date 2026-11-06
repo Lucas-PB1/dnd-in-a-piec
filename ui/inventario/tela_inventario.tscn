@@ -1,0 +1,117 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/inventario/tela_inventario.gd" id="1_script"]
+
+[node name="TelaInventario" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.05, 0.1, 0.7)
+
+[node name="Centro" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Painel" type="PanelContainer" parent="Centro"]
+layout_mode = 2
+
+[node name="Margem" type="MarginContainer" parent="Centro/Painel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel/Margem"]
+layout_mode = 2
+
+[node name="Colunas" type="HBoxContainer" parent="Centro/Painel/Margem/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Itens" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
+layout_mode = 2
+
+[node name="Titulo" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Itens"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Inventário"
+
+[node name="Lista" type="ItemList" parent="Centro/Painel/Margem/Coluna/Colunas/Itens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 210)
+layout_mode = 2
+
+[node name="Detalhes" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+
+[node name="Nome" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.55, 1)
+
+[node name="Descricao" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="DanoItem" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Equipar" type="Button" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Equipar"
+
+[node name="Desequipar" type="Button" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Desequipar"
+
+[node name="JogarFora" type="Button" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Jogar fora"
+
+[node name="Ficha" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+
+[node name="TituloFicha" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Ficha"]
+layout_mode = 2
+text = "Ficha"
+
+[node name="TextoFicha" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Ficha"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Dica" type="Label" parent="Centro/Painel/Margem/Coluna"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+text = "I ou Esc: fechar"
+horizontal_alignment = 1
+
+[node name="Confirmacao" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Jogar fora"
+ok_button_text = "Jogar fora"
+cancel_button_text = "Cancelar"

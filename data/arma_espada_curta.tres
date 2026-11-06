@@ -6,6 +6,9 @@
 [resource]
 script = ExtResource("1_arma")
 nome = "Espada Curta"
+descricao = "Lâmina leve e rápida. Acuidade: usa Força ou Destreza, a maior."
+icone = ExtResource("2_textura")
+espaco = &"mao"
 dados_dano = "1d6"
 acuidade = true
 textura = ExtResource("2_textura")

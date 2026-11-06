@@ -28,7 +28,11 @@ func _rodar() -> void:
 		await physics_frame
 	for acao in acoes:
 		if InputMap.has_action(acao):
-			Input.action_press(acao)
+			# Evento de verdade: segura a ação E chega em _unhandled_input (ex.: abrir inventário).
+			var evento := InputEventAction.new()
+			evento.action = acao
+			evento.pressed = true
+			Input.parse_input_event(evento)
 	for i in quadros:
 		await physics_frame
 	await RenderingServer.frame_post_draw

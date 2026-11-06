@@ -18,7 +18,7 @@ static func de_texto(notacao: String) -> Dado:
 		return null
 	var qtd := int(partes[0])
 	var num_faces := int(partes[1])
-	if qtd < 1 or num_faces < 2:
+	if qtd < 1 or num_faces < 1:  # "1d1" vale: dano fixo de 1 (ex.: soco desarmado)
 		return null
 	return Dado.new(qtd, num_faces)
 

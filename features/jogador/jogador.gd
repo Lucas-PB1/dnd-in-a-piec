@@ -15,8 +15,10 @@ signal vida_mudou(atual: int, maxima: int)
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
-## Arma equipada (equipamento). Trocar de arma = trocar este .tres (ex.: data/arma_*.tres).
-@export var arma: Arma
+## Itens com que o herói começa (ficam no inventário, sem equipar).
+@export var itens_iniciais: Array[Item] = []
+## Golpe usado quando não há arma na mão (soco de D&D). Padrão: data/ataque_desarmado.tres.
+@export var ataque_desarmado: Arma
 ## Classe de D&D (dado de vida, atributos sugeridos). Padrão: data/classe_guerreiro.tres.
 @export var classe: ClasseRPG
 ## Se cair abaixo desta altura (Y), volta para o início.
@@ -27,6 +29,8 @@ var direcao_olhar: int = 1
 var posicao_inicial: Vector2
 ## Ficha de D&D (atributos). Começa com a sugestão da classe; a tela de criação troca.
 var ficha: Ficha
+## Itens carregados e equipados.
+var inventario := Inventario.new()
 
 var _rng := RandomNumberGenerator.new()
 var _contador_coyote: float = 0.0
@@ -46,8 +50,10 @@ func _ready() -> void:
 	# Valores padrão seguros: a cena aberta sozinha (F6) continua funcionando.
 	if stats == null:
 		stats = StatsJogador.new()
-	if arma == null:
-		arma = Arma.new()
+	if ataque_desarmado == null:
+		ataque_desarmado = Arma.new()
+	for item in itens_iniciais:
+		inventario.adicionar(item)
 	if classe == null:
 		classe = ClasseRPG.new()
 	posicao_inicial = global_position
@@ -129,9 +135,16 @@ func pediu_ataque() -> bool:
 	return Input.is_action_just_pressed("atacar")
 
 
-## Começa um golpe com a arma equipada, para o lado em que o herói olha.
+## Arma na mão, ou o ataque desarmado se a mão estiver vazia.
+func arma_atual() -> Arma:
+	var na_mao := inventario.equipado(Item.ESPACO_MAO) as Arma
+	return na_mao if na_mao else ataque_desarmado
+
+
+## Começa um golpe com a arma atual, para o lado em que o herói olha.
 ## O dano é rolado no início de cada golpe (dados da arma + modificador da ficha).
 func iniciar_golpe() -> void:
+	var arma := arma_atual()
 	_ataque.golpear(arma, direcao_olhar, ficha.rolar_dano(arma, _rng))
 
 

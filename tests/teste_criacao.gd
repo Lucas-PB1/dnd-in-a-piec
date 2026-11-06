@@ -41,7 +41,11 @@ func _testar_fluxo_da_main() -> void:
 	root.add_child(cena)
 	await process_frame
 	_checar(paused, "jogo começa pausado na tela de criação")
-	var tela: TelaCriacao = cena.get_node("Interface").get_child(0)
+	var tela: TelaCriacao = null
+	for filho in cena.get_node("Interface").get_children():
+		if filho is TelaCriacao:
+			tela = filho
+	_checar(tela != null, "a main abre a tela de criação")
 	var jogador: Jogador = cena.get_node("Jogador")
 	var x_inicial := jogador.global_position.x
 	Input.action_press("mover_direita")

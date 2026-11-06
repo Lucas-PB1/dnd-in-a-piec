@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://features/jogador/jogador.tscn" id="3_jogador"]
 [ext_resource type="PackedScene" path="res://features/boneco_treino/boneco_treino.tscn" id="4_boneco"]
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://ui/inventario/tela_inventario.tscn" id="6_inventario"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -20,3 +21,5 @@ position = Vector2(240, 288)
 
 [node name="Interface" type="CanvasLayer" parent="."]
 layer = 10
+
+[node name="TelaInventario" parent="Interface" instance=ExtResource("6_inventario")]
