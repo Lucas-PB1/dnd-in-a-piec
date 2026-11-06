@@ -1,0 +1,36 @@
+---
+description: Máquina de estados para jogador e inimigos em Godot 4 (um estado por comportamento, sem cadeia gigante de if em _physics_process). Use ao criar ou mudar o comportamento do jogador, de inimigos ou de qualquer entidade com modos diferentes (parado, andando, pulando, atacando, levando dano).
+globs: **/estados/**
+alwaysApply: false
+---
+<!-- Gerado de .claude/skills/godot-maquina-de-estados/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a skill, não este arquivo. -->
+
+# Máquina de estados
+
+## Estrutura
+```
+features/jogador/
+  jogador.tscn
+  jogador.gd
+  estados/
+    estado_parado.gd
+    estado_andando.gd
+    estado_correndo.gd
+    estado_no_ar.gd
+```
+- Nó `MaquinaEstados` (script genérico em `core/estados/maquina_estados.gd`) com um nó-filho por estado.
+- Cada estado estende `Estado` (`core/estados/estado.gd`) e implementa só o que precisa:
+  `entrar()`, `sair()`, `processar_fisica(delta)`, `processar_entrada(evento)`.
+- Troca de estado: o estado **pede** a troca (`trocar_para.emit("EstadoNoAr")` ou `maquina.trocar(...)`); a máquina chama `sair()` do atual e `entrar()` do novo.
+- A máquina emite `estado_mudou(anterior, novo)`; animação e som escutam esse sinal em vez de adivinhar pelo estado da física.
+
+## Regras
+1. **Um estado = um comportamento.** Cada arquivo decide só "o que faço neste estado" e "para qual estado vou".
+2. **Proibido** cadeia gigante de `if/elif` em `_physics_process` escolhendo comportamento. O `_physics_process` da entidade, se existir, só repassa para a máquina.
+3. Física compartilhada (gravidade, movimento horizontal) fica em funções da entidade ou num componente; os estados chamam, não copiam.
+4. Estados não guardam referência a nós de fora da entidade.
+5. O nome do estado atual deve ser consultável (`maquina.estado_atual.name`) para testes e debug.
+6. Teste: cada transição importante tem um teste em `tests/` (ex.: parado → pular → no ar → aterrissar → parado).
+
+## Quando NÃO usar
+- Objetos com um comportamento só (projétil que voa reto, plataforma que sobe e desce) não precisam de máquina de estados.

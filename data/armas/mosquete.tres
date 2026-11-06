@@ -1,18 +1,55 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/mosquete.png" id="1_h2t7n"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_grx17"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_ufs75"]
-[ext_resource type="Texture2D" path="res://assets/armas/mosquete.png" id="4_yso3n"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/mosquete.png" id="1_grx17"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_ufs75"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/mosquete.png" id="3_yso3n"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_e0hhb"]
+[ext_resource type="Texture2D" path="res://assets/armas/mosquete.png" id="5_7tosg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3dmfj"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_embh3"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lawsq"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vyswb"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4samr"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ljdi4"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o5v5s"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s7ibm"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k6o1f"]
+atlas = ExtResource("3_yso3n")
+region = Rect2(896, 0, 112, 96)
 
 [resource]
-script = ExtResource("3_ufs75")
+script = ExtResource("4_e0hhb")
 dados_dano = "1d12"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("4_yso3n")
-pegada = Vector2(6.1, 18)
-comprimento = 51.400000000000006
+textura = ExtResource("5_7tosg")
+pegada = Vector2(5, 7.5)
+comprimento = 50.5
 pesada = true
 duas_maos = true
 disparo_normal_pes = 40.0
@@ -25,7 +62,9 @@ peso = "10 lb."
 preco = "500 GP"
 livro = "Player’s Handbook"
 efeito = &""
+quadros_disparo = Array[Texture2D]([SubResource("AtlasTexture_3dmfj"), SubResource("AtlasTexture_embh3"), SubResource("AtlasTexture_lawsq"), SubResource("AtlasTexture_vyswb"), SubResource("AtlasTexture_4samr"), SubResource("AtlasTexture_ljdi4"), SubResource("AtlasTexture_o5v5s"), SubResource("AtlasTexture_s7ibm"), SubResource("AtlasTexture_k6o1f")])
+pegada_quadros = Vector2(46, 50)
 nome = "Mosquete"
 descricao = "Arma marcial. Pesada, Duas Mãos, Disparo (40/120), Recarga, Munição. Maestria: Lentidão. (Musket, Player’s Handbook)"
-icone = ExtResource("1_h2t7n")
+icone = ExtResource("1_grx17")
 espaco = &"mao"

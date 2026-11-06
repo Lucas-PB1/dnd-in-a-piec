@@ -1,18 +1,56 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/arco_longo.png" id="1_p85hn"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_cttmo"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_7epwb"]
-[ext_resource type="Texture2D" path="res://assets/armas/arco_longo.png" id="4_smkqg"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/arco_longo.png" id="1_cttmo"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_7epwb"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/arco_longo.png" id="3_smkqg"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_mesmq"]
+[ext_resource type="Texture2D" path="res://assets/armas/arco_longo.png" id="5_liige"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8c882"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1xxdq"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6od0b"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aevc2"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3cchs"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ij2xh"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sd05d"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q8mgu"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y04a2"]
+atlas = ExtResource("3_smkqg")
+region = Rect2(896, 0, 112, 96)
 
 [resource]
-script = ExtResource("3_7epwb")
+script = ExtResource("4_mesmq")
 dados_dano = "1d8"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("4_smkqg")
-pegada = Vector2(6.1, 16)
-comprimento = 51.400000000000006
+textura = ExtResource("5_liige")
+angulo_arte = 45.0
+pegada = Vector2(19.43934, 17.43934)
+comprimento = 5.9
 pesada = true
 duas_maos = true
 disparo_normal_pes = 150.0
@@ -24,7 +62,9 @@ peso = "2 lb."
 preco = "50 GP"
 livro = "Player’s Handbook"
 efeito = &""
+quadros_disparo = Array[Texture2D]([SubResource("AtlasTexture_8c882"), SubResource("AtlasTexture_1xxdq"), SubResource("AtlasTexture_6od0b"), SubResource("AtlasTexture_aevc2"), SubResource("AtlasTexture_3cchs"), SubResource("AtlasTexture_ij2xh"), SubResource("AtlasTexture_sd05d"), SubResource("AtlasTexture_q8mgu"), SubResource("AtlasTexture_y04a2")])
+pegada_quadros = Vector2(46, 50)
 nome = "Arco Longo"
 descricao = "Arma marcial. Pesada, Duas Mãos, Disparo (150/600), Munição. Maestria: Lentidão. (Longbow, Player’s Handbook)"
-icone = ExtResource("1_p85hn")
+icone = ExtResource("1_cttmo")
 espaco = &"mao"

@@ -29,7 +29,11 @@ func _rodar() -> void:
 	tela.equipar_selecionado()
 	_checar(jogador.arma_atual().nome == "Espada Curta", "Equipar coloca a espada na mão do herói")
 	_checar(lista.get_item_text(0).begins_with(TelaInventario.MARCA_EQUIPADO), "lista marca o item equipado")
-	_checar("Ataque +4   Dano 1d6+2" in texto_ficha.text, "ficha mostra ataque +4 e dano 1d6+2 da espada")
+	_checar("Ataque +4 (FOR +2, prof. +2)   Dano 1d6+2" in texto_ficha.text,
+		"ficha mostra ataque +4, a proficiência e o dano 1d6+2 da espada")
+	jogador.inventario.desgastar(jogador.arma_atual(), 3, 5)
+	_checar("Ataque +1 (FOR +2, prof. +2, corroída -3)   Dano 1d6+2" in texto_ficha.text,
+		"com desgaste a proficiência continua na conta e o ataque cai")
 	_checar("CA 12" in texto_ficha.text and "FOR 15 +2*" in texto_ficha.text and "DES 14 +2 " in texto_ficha.text,
 		"ficha mostra CA e salvaguardas (FOR proficiente, DES não)")
 

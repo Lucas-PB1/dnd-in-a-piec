@@ -30,6 +30,14 @@ const POSES_CRUZADO := [[0.0, -70, -2, -4, false], [0.06, -100, -4, -6, true],
 ## de quase deitada a apontando para cima. Tudo à vista, para o jogador ver a força subir.
 const ANGULOS_CARGA := Vector2(-15.0, -60.0)
 const RECUO_CARGA := Vector2(-13.0, -7.0)
+## Disparo: quadros da carga (preparo, sobe, mira, puxa, puxa, cheio), depois soltura e volta.
+const PASSOS_DA_CARGA := 6
+const QUADRO_SOLTURA := 6
+const QUADRO_VOLTA := 7
+## Fora do tiro: a arma de disparo fica baixa e relaxada na mão (no lugar do ícone).
+const QUADRO_DESCANSO := 8
+## Fração do gesto depois de soltar em que a soltura vira a volta.
+const FIM_DA_SOLTURA := 0.45
 
 var _arma: Arma
 var _golpe: Golpe
@@ -41,10 +49,17 @@ var _mao: Vector2 = Vector2.ZERO
 ## Arma principal no golpe cruzado (null fora dele) e a soma dos ângulos do espelho.
 var _cruzada: Arma
 var _soma_cruzado: float = 0.0
-## Carga do arremesso (0 a 1); negativo = não está carregando.
+## Carga (0 a 1 no arremesso; no disparo, a força, que pode parar antes de 1).
+## Negativo = não está carregando.
 var _carga: float = -1.0
 ## Mira da carga (graus; positivo = para cima, além do ângulo da força).
 var _mira: float = 0.0
+## Soltura do disparo: mostra o último quadro em vez de inclinar a arma.
+var _soltando: bool = false
+## Quanto do gesto depois da soltura já passou (0 a 1).
+var _progresso_soltura: float = 0.0
+## A arma na mão é de disparo (quadros próprios; a empunhadura fica na mão).
+var _disparando: bool = false
 ## A arma carregada não aponta para trás do corpo nem para dentro do chão.
 const LIMITE_MIRA_VISUAL := Vector2(-100.0, 45.0)
 
@@ -73,6 +88,13 @@ func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
 	_espada.position = Vector2.ZERO
 	_espada.scale = Vector2.ONE
 	DesenhoArma.preparar(_espada, arma)
+	_disparando = not arma.quadros_disparo.is_empty()
+	if _carga >= 0.0 and _disparando:
+		_mostrar_disparo(arma)
+		return
+	if _disparando and arma.quadros_disparo.size() > QUADRO_DESCANSO:
+		_mostrar_descanso(arma)
+		return
 	if _carga >= 0.0:
 		position = mao + RECUO_CARGA * _carga
 		var angulo_carga := clampf(lerpf(ANGULOS_CARGA.x, ANGULOS_CARGA.y, _carga) - _mira, LIMITE_MIRA_VISUAL.x, LIMITE_MIRA_VISUAL.y)
@@ -98,15 +120,20 @@ func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false, principal: Arma
 	_aplicar_pose()
 
 
-## Pose de carregar (`fracao` 0 a 1; negativo = volta ao repouso). `mira` levanta a arma.
-func carregar_arremesso(fracao: float, mira: float = 0.0) -> void:
+## Pose de carregar. `fracao` 0 a 1 (no disparo, a força); negativo = volta ao repouso.
+## `mira` gira o quadro (graus, positivo = para cima). `soltando` mostra a soltura e depois a
+## volta, conforme o `progresso` do gesto depois de soltar (0 a 1).
+func carregar_arremesso(fracao: float, mira: float = 0.0, soltando: bool = false, progresso: float = 0.0) -> void:
 	_carga = fracao
 	_mira = mira
+	_soltando = soltando and fracao >= 0.0
+	_progresso_soltura = progresso
 
 
-## A mão saiu do lugar da animação (golpe ou carga): a camada da mão não deve cobrir a arma.
+## A mão saiu do lugar da animação (golpe ou carga do arremesso): a camada da mão não deve
+## cobrir a arma. No disparo a mão segura a empunhadura parada: a camada fica por cima.
 func mao_fora_do_lugar() -> bool:
-	return _golpeando or _carga >= 0.0
+	return _golpeando or (_carga >= 0.0 and not _disparando)
 
 
 func esta_golpeando() -> bool:
@@ -186,6 +213,24 @@ func _versao_cruzada(arma: Arma) -> Arma:
 	var acerto := versao.poses.filter(func(pose: PoseGolpe) -> bool: return pose.acerta)[0] as PoseGolpe
 	_soma_cruzado = acerto.angulo + versao.poses[versao.poses.find(acerto) + 1].angulo
 	return versao
+
+
+## A força escolhe o quadro (cheio só se a carga chega lá). A mira gira em volta da mão.
+func _mostrar_disparo(arma: Arma) -> void:
+	var indice := mini(int(_carga * PASSOS_DA_CARGA), PASSOS_DA_CARGA - 1)
+	if _soltando:
+		indice = QUADRO_SOLTURA if _progresso_soltura < FIM_DA_SOLTURA else QUADRO_VOLTA
+	indice = mini(indice, arma.quadros_disparo.size() - 1)
+	_espada.texture = arma.quadros_disparo[indice]
+	_espada.offset = -arma.pegada_quadros
+	_espada.rotation_degrees = -_mira
+
+
+## Arma de disparo parada: o quadro de descanso (já desenhado baixo e sem tocar o chão).
+func _mostrar_descanso(arma: Arma) -> void:
+	_espada.texture = arma.quadros_disparo[QUADRO_DESCANSO]
+	_espada.offset = -arma.pegada_quadros
+	_espada.rotation = 0.0
 
 
 ## Arma flexível (mangual, chicote): mostra o quadro desenhado da pose, sem girar.

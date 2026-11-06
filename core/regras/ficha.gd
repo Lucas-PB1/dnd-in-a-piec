@@ -32,6 +32,14 @@ var armas_dominadas: Array[String] = []
 ## Talentos (origem e geral). Começa vazia: o antecedente é que vai marcar o de origem.
 var talentos: Array[String] = []
 
+## Destreza da ficha sugerida: o teto da carga e o tempo de voo do disparo são os dela.
+const DESTREZA_REFERENCIA := 14
+## Segundos para essa Destreza encher a carga até o teto dela.
+const TEMPO_CARGA_DISPARO := 0.6
+## Força da carga (0 = mínima, 1 = cheia) com modificador de Destreza −1.
+const FORCA_MINIMA_DA_CARGA := 0.2
+## Modificador a partir do qual segurar o K chega na força cheia.
+const MOD_CARGA_CHEIA := 2
 ## Tiro longo sem a desvantagem de distância.
 const TALENTO_ATIRADOR_DE_ELITE := "Atirador de Elite"
 ## Besta: sem a desvantagem de atirar colado no inimigo; a Besta de Mão dispara de novo
@@ -67,15 +75,19 @@ func vida_maxima() -> int:
 	return maxi(classe.dado_vida + modificador(Atributos.CONSTITUICAO), VIDA_MINIMA)
 
 
-## Modificador somado ao ataque e ao dano. Arma à distância usa Destreza. Acuidade usa o
-## maior entre Força e Destreza. As outras usam Força.
-func bonus_dano(arma: Arma) -> int:
+## Atributo do ataque e do dano. À distância usa Destreza. Acuidade usa o maior entre
+## Força e Destreza. As outras usam Força.
+func atributo_do_ataque(arma: Arma) -> StringName:
 	if arma.disparavel():
-		return modificador(Atributos.DESTREZA)
-	var mod_forca := modificador(Atributos.FORCA)
-	if arma.acuidade:
-		return maxi(mod_forca, modificador(Atributos.DESTREZA))
-	return mod_forca
+		return Atributos.DESTREZA
+	if arma.acuidade and modificador(Atributos.DESTREZA) > modificador(Atributos.FORCA):
+		return Atributos.DESTREZA
+	return Atributos.FORCA
+
+
+## Modificador somado ao ataque e ao dano.
+func bonus_dano(arma: Arma) -> int:
+	return modificador(atributo_do_ataque(arma))
 
 
 func tem_talento(talento: String) -> bool:
@@ -157,6 +169,19 @@ func fraco_para(arma: Arma) -> bool:
 ## Iniciativa = modificador de Destreza. Define o ritmo dos ataques (EscalaDnd).
 func iniciativa() -> int:
 	return modificador(Atributos.DESTREZA)
+
+
+## Até onde o disparo enche (0 = toque, velocidade mínima; 1 = velocidade cheia da arma).
+## Destreza 14 ou mais chega em 1.
+func teto_da_carga() -> float:
+	var fracao := clampf(float(modificador(Atributos.DESTREZA) + 1) / float(MOD_CARGA_CHEIA + 1), 0.0, 1.0)
+	return lerpf(FORCA_MINIMA_DA_CARGA, 1.0, fracao)
+
+
+## Segundos para chegar nesse teto. Destreza alta enche a dela mais rápido.
+func tempo_ate_teto_da_carga() -> float:
+	var des := maxi(atributos[Atributos.DESTREZA], 1)
+	return TEMPO_CARGA_DISPARO * float(DESTREZA_REFERENCIA) / float(des)
 
 
 ## Deslocamento (pés). Armadura com Força mínima que o personagem não tem: -10 pés.

@@ -1,0 +1,31 @@
+---
+description: Estrutura de pastas do jogo em Godot 4 (core/, features/, levels/, ui/, data/, assets/, tests/) e a regra de que uma feature nunca importa outra. Use ao criar, mover ou referenciar qualquer arquivo do projeto.
+globs: 
+alwaysApply: true
+---
+<!-- Gerado de .claude/skills/godot-estrutura-pastas/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a skill, não este arquivo. -->
+
+# Estrutura de pastas
+
+```
+core/                 autoloads, event bus, utilitários genéricos (RefCounted)
+                      NÃO depende de nenhuma feature
+features/<nome>/      tudo de uma funcionalidade junto: cena(s) .tscn, scripts,
+                      sprites/SpriteFrames próprios e estados/
+                      ex.: features/jogador/, features/inimigo_andarilho/, features/tiro/
+levels/               fases (.tscn) e o que é só delas
+ui/                   menus, HUD, telas
+data/                 Resources (.tres) de balanceamento e configuração
+assets/               só o genérico e compartilhado (tiles, sons, fontes, shaders)
+tests/                testes headless (teste_*.gd) e rodar_testes.ps1
+tools/                scripts de linha de comando (geradores, prints); não fazem parte do jogo
+main.tscn             cena principal (na raiz ou em levels/)
+```
+
+## Regras
+1. **Feature não importa feature.** Um script em `features/a/` nunca faz `preload`/`load`, `class_name` tipado ou `get_node` de algo em `features/b/`. A comunicação entre features é por **signals** ligados por quem está acima (a fase ou a `main`) ou pelo **event bus** em `core/`.
+2. **Exceções permitidas:** `levels/` e `main` podem instanciar cenas de várias features (é o papel deles montar o jogo). Qualquer pasta pode usar `core/`, `data/` e `assets/`.
+3. **`core/` não conhece features.** Se algo de `core/` precisa saber de uma feature, a regra está no lugar errado.
+4. **Arquivo novo vai para a feature que o usa.** Só sobe para `assets/` ou `core/` quando **duas ou mais** features precisarem dele.
+5. Nomes de pastas e arquivos em `snake_case`; uma cena por "coisa".
+6. Mover arquivos: mova pelo editor do Godot ou atualize todos os caminhos `res://` e os `.uid`/`.import`, e rode os testes em seguida.

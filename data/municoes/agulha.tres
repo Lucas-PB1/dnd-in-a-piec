@@ -7,6 +7,9 @@
 [resource]
 script = ExtResource("2_0f2ot")
 textura = ExtResource("3_w81d5")
+angulo_arte = -45.0
+impulso = 0.9
+peso = 0.8
 nome = "Agulha"
 descricao = "Munição. Empilha na mochila. (Needle)"
 icone = ExtResource("1_eqtvt")

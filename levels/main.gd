@@ -9,6 +9,7 @@ const CENA_CRIACAO := preload("res://ui/criacao_personagem/tela_criacao.tscn")
 const CENA_DERROTA := preload("res://ui/derrota/tela_derrota.tscn")
 const CENA_ARREMESSO := preload("res://features/arremesso/arma_arremessada.tscn")
 const CENA_OOZE := preload("res://features/gray_ooze/gray_ooze.tscn")
+const CENA_GOBLIN := preload("res://features/goblin/goblin.tscn")
 const GRUPO_MONSTROS := &"monstros"
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
 const DISTANCIA_CRIATURA_PES := 15.0
@@ -47,7 +48,7 @@ func _ready() -> void:
 	_comandos.abrir_pedido.connect(_abrir_comandos)
 	_comandos.trazer_pedido.connect(trazer_criatura)
 	_comandos.tirar_pedido.connect(tirar_criaturas)
-	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze"]), _cena_ooze())
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_guardar_monstros_iniciais()
 	_apontar_monstros_para(_jogador)
@@ -127,9 +128,9 @@ func _apontar_monstros_para(alvo: Node2D) -> void:
 		monstro.definir_alvo(alvo)
 
 
-func _cena_ooze() -> Array[PackedScene]:
-	var cenas: Array[PackedScene] = []
-	cenas.append(CENA_OOZE)
+## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
+func _cenas_criaturas() -> Array[PackedScene]:
+	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN]
 	return cenas
 
 
@@ -142,14 +143,14 @@ func _abrir_inventario() -> void:
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
 
 
-func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool) -> void:
+func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool, destreza: int) -> void:
 	var voo: ArmaArremessada = CENA_ARREMESSO.instantiate()
 	if municao == null:
 		voo.recolhida.connect(_ao_recolher_arma.bind(voo))
 		voo.derreteu.connect(_jogador.avisar)
 	add_child(voo)
 	voo.global_position = origem
-	voo.lancar(arma, golpe, penalidade, direcao, forca, mira, municao, ignora_alcance_longo)
+	voo.lancar(arma, golpe, penalidade, direcao, forca, mira, municao, ignora_alcance_longo, destreza)
 
 
 func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> void:

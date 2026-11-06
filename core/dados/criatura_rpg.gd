@@ -44,6 +44,19 @@ extends Resource
 ## O acerto corrói a armadura não mágica do alvo (-1 na CA dela; Pseudópode do Gray Ooze).
 @export var ataque_corroi_armadura: bool = false
 
+@export_group("Arremesso")
+## Quantas armas de arremesso carrega (Goblin Minion: 3 adagas). 0 = não arremessa.
+@export var arremessos: int = 0
+## Alcance do arremesso (pés): além do normal, desvantagem; o longo é o limite.
+@export var arremesso_normal_pes: float = 0.0
+@export var arremesso_longo_pes: float = 0.0
+## Arma que voa (só a arte; o golpe é o do ataque da ficha). Ex.: data/armas/adaga.tres.
+@export var arma_arremesso: Arma
+
+@export_group("Ações bônus")
+## Fuga Ágil (Goblin): Desengajar depois de atacar (salta para longe do alvo).
+@export var fuga_agil: bool = false
+
 
 func dado_vida() -> Dado:
 	return _dado_ou_padrao(dados_vida)

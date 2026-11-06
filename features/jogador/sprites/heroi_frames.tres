@@ -1,8 +1,9 @@
-[gd_resource type="SpriteFrames" load_steps=23 format=3]
+[gd_resource type="SpriteFrames" format=3]
 
 [ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_idle.png" id="1_idle"]
 [ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_walk.png" id="2_walk"]
 [ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_jump.png" id="3_jump"]
+[ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_mirar.png" id="4_mirar"]
 
 [sub_resource type="AtlasTexture" id="i0"]
 atlas = ExtResource("1_idle")
@@ -91,6 +92,10 @@ region = Rect2(480, 0, 80, 80)
 [sub_resource type="AtlasTexture" id="j7"]
 atlas = ExtResource("3_jump")
 region = Rect2(560, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="m0"]
+atlas = ExtResource("4_mirar")
+region = Rect2(0, 0, 80, 80)
 
 [resource]
 animations = [{
@@ -226,4 +231,12 @@ animations = [{
 "loop": false,
 "name": &"ataque",
 "speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("m0")
+}],
+"loop": false,
+"name": &"mirar",
+"speed": 5.0
 }]

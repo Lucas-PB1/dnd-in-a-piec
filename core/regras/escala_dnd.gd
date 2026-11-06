@@ -37,6 +37,12 @@ static func tiques_entre_ataques(iniciativa: int) -> int:
 	return maxi(TIQUES_BASE_ATAQUE - iniciativa, TIQUES_MINIMOS_ATAQUE)
 
 
+## Velocidade de saída (px/s) que, num lançamento a 45° com a `gravidade` dada, alcança
+## `alcance_px`. Serve de "força" do tiro ou do arremesso: alcance maior, saída mais rápida.
+static func velocidade_para_alcance(alcance_px: float, gravidade: float) -> float:
+	return sqrt(gravidade * alcance_px)
+
+
 ## Segundos entre um ataque e o próximo. Ex.: +2 -> 0,8 s; -2 -> 1,2 s.
 static func intervalo_ataque(iniciativa: int) -> float:
 	return tiques_entre_ataques(iniciativa) * SEGUNDOS_POR_TIQUE

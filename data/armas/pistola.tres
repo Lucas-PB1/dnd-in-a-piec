@@ -1,18 +1,55 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/pistola.png" id="1_nx8ht"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_6x82u"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_paa1a"]
-[ext_resource type="Texture2D" path="res://assets/armas/pistola.png" id="4_4qtj0"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/pistola.png" id="1_6x82u"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_paa1a"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/pistola.png" id="3_4qtj0"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_r5gwm"]
+[ext_resource type="Texture2D" path="res://assets/armas/pistola.png" id="5_33r4g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7rk2x"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1sia"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26o0a"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ourb4"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_srvnn"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ebte"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u1qy0"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l2j0d"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e2pgc"]
+atlas = ExtResource("3_4qtj0")
+region = Rect2(896, 0, 112, 96)
 
 [resource]
-script = ExtResource("3_paa1a")
+script = ExtResource("4_r5gwm")
 dados_dano = "1d10"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("4_4qtj0")
-pegada = Vector2(6.1, 14)
-comprimento = 23.400000000000002
+textura = ExtResource("5_33r4g")
+pegada = Vector2(5.3, 10.1)
+comprimento = 22.200000000000003
 disparo_normal_pes = 30.0
 disparo_longo_pes = 90.0
 municao = "Bala"
@@ -23,7 +60,9 @@ peso = "3 lb."
 preco = "250 GP"
 livro = "Player’s Handbook"
 efeito = &""
+quadros_disparo = Array[Texture2D]([SubResource("AtlasTexture_7rk2x"), SubResource("AtlasTexture_d1sia"), SubResource("AtlasTexture_26o0a"), SubResource("AtlasTexture_ourb4"), SubResource("AtlasTexture_srvnn"), SubResource("AtlasTexture_1ebte"), SubResource("AtlasTexture_u1qy0"), SubResource("AtlasTexture_l2j0d"), SubResource("AtlasTexture_e2pgc")])
+pegada_quadros = Vector2(46, 50)
 nome = "Pistola"
 descricao = "Arma marcial. Disparo (30/90), Recarga, Munição. Maestria: Atormentar. (Pistol, Player’s Handbook)"
-icone = ExtResource("1_nx8ht")
+icone = ExtResource("1_6x82u")
 espaco = &"mao"

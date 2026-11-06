@@ -164,8 +164,7 @@ func _atualizar_ficha() -> void:
 		_atributos_entre(3, 6),
 		_linha_equipamento(arma),
 	]
-	var ataque := Equipamento.bonus_ataque(_ficha, _inventario, arma)
-	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(ataque), Equipamento.texto_dano(_ficha, _inventario, arma)])
+	linhas.append("Ataque %s   Dano %s" % [_texto_ataque(arma), Equipamento.texto_dano(_ficha, _inventario, arma)])
 	if not _ficha.armas_dominadas.is_empty():
 		linhas.append("Maestrias: %s" % ", ".join(_ficha.armas_dominadas))
 	_texto_ficha.text = "\n".join(linhas)
@@ -176,6 +175,22 @@ func _atributos_entre(inicio: int, fim: int) -> String:
 	for i in range(inicio, fim):
 		partes.append(_atributo_curto(Atributos.TODOS[i]))
 	return "   ".join(partes)
+
+
+## "DES +2, prof. +2" ou, se a arma gastou na Corrosão, "DES +2, prof. +2, corroída -3".
+## O número do ataque já soma isso; a conta fica escrita para a proficiência não sumir.
+func _texto_ataque(arma: Arma) -> String:
+	var ataque := Equipamento.bonus_ataque(_ficha, _inventario, arma)
+	var atributo := _ficha.atributo_do_ataque(arma)
+	var partes: PackedStringArray = ["%s %s" % [Atributos.SIGLAS[atributo], Atributos.texto_modificador(_ficha.atributos[atributo])]]
+	if _ficha.proficiente_com(arma):
+		partes.append("prof. +%d" % Ficha.BONUS_PROFICIENCIA)
+	else:
+		partes.append("sem prof.")
+	var desgaste := _inventario.penalidade(arma)
+	if desgaste > 0:
+		partes.append("corroída -%d" % desgaste)
+	return "%s (%s)" % [Atributos.texto_bonus(ataque), ", ".join(partes)]
 
 
 ## "FOR 15 +2*" — o * marca salvaguarda em que a classe é proficiente.

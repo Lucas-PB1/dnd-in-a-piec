@@ -1,0 +1,16 @@
+---
+description: Como buscar, baixar e usar arte pronta de terceiros (sprites, ícones, monstros) - licença, estilo, tamanho, conversão de GIF, SpriteFrames por script, offset nos pés e créditos. Use ao adicionar ou trocar qualquer arte.
+globs: assets/**,**/sprites/**
+alwaysApply: false
+---
+<!-- Escrita à mão: o guia completo está em docs/artes_prontas.md. -->
+
+Siga o guia `docs/artes_prontas.md` antes de buscar ou usar qualquer arte.
+
+@docs/artes_prontas.md
+
+Resumo:
+- Licença **CC0** (preferida) ou **CC-BY** (com crédito). Nada de NC, SA ou "free" sem licença escrita.
+- Visão de lado, pixel art com contorno, tamanho compatível (herói ~73 px; criatura Pequena ~50-56 px; ícones 16x16).
+- **Peça permissão** para baixar (arquivos, fonte, tamanho). Original em `fonte_<pacote>/`, crédito em `assets/CREDITOS.md`.
+- GIF vira tira PNG; SpriteFrames gerado por script em `tools/`; origem do nó nos pés.

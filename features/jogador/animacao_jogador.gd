@@ -19,6 +19,8 @@ var piscando: bool = false
 ## Mão da frente desenhada por cima da arma e do escudo (os dedos ficam sobre o cabo).
 ## O dono desliga quando a mão sai do lugar (golpe, carga do arremesso).
 var mao_por_cima: bool = true
+## Atirando com arma de disparo: usa a pose de mira (braço esticado na altura do peito).
+var mirando: bool = false
 
 @onready var _mao_frente: AnimatedSprite2D = get_node_or_null("MaoFrente")
 
@@ -44,7 +46,7 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 		&"Correndo":
 			_animar_passos(&"correr", absf(velocidade.x) / vel_corrida)
 		&"Atacando", &"Arremessando":
-			play(&"ataque")
+			play(&"mirar" if mirando else &"ataque")
 		_:
 			_animar_parado()
 	_sincronizar_mao()

@@ -1,18 +1,56 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/zarabatana.png" id="1_0q0ob"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_ui2x8"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_hxwuk"]
-[ext_resource type="Texture2D" path="res://assets/armas/zarabatana.png" id="4_hnm52"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/zarabatana.png" id="1_ui2x8"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_hxwuk"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/zarabatana.png" id="3_hnm52"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_g4t08"]
+[ext_resource type="Texture2D" path="res://assets/armas/zarabatana.png" id="5_vvjeb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rn8d3"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7kabx"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_go1n0"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqha0"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i4fd2"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5u8b4"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3qex8"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nucho"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kdjvu"]
+atlas = ExtResource("3_hnm52")
+region = Rect2(896, 0, 112, 96)
 
 [resource]
-script = ExtResource("3_hxwuk")
+script = ExtResource("4_g4t08")
 dados_dano = "1d1"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("4_hnm52")
-pegada = Vector2(6.166667, 12)
-comprimento = 32.300000000000004
+textura = ExtResource("5_vvjeb")
+angulo_arte = -45.0
+pegada = Vector2(6.8284273, 25.171574)
+comprimento = 30.6
 disparo_normal_pes = 25.0
 disparo_longo_pes = 100.0
 municao = "Agulha"
@@ -23,7 +61,9 @@ peso = "1 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
 efeito = &""
+quadros_disparo = Array[Texture2D]([SubResource("AtlasTexture_rn8d3"), SubResource("AtlasTexture_7kabx"), SubResource("AtlasTexture_go1n0"), SubResource("AtlasTexture_wqha0"), SubResource("AtlasTexture_i4fd2"), SubResource("AtlasTexture_5u8b4"), SubResource("AtlasTexture_3qex8"), SubResource("AtlasTexture_nucho"), SubResource("AtlasTexture_kdjvu")])
+pegada_quadros = Vector2(46, 50)
 nome = "Zarabatana"
 descricao = "Arma marcial. Disparo (25/100), Recarga, Munição. Maestria: Atormentar. (Blowgun, Player’s Handbook)"
-icone = ExtResource("1_0q0ob")
+icone = ExtResource("1_ui2x8")
 espaco = &"mao"

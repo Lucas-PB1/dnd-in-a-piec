@@ -5,6 +5,8 @@
 | Slime animado (base do Gray Ooze, recolorido de cinza por `tools/gerar_gray_ooze.gd`) | **rvros** | https://rvros.itch.io/pixel-art-animated-slime | CC0 1.0 (domínio público; crédito não obrigatório) | `features/gray_ooze/sprites/` |
 | Ícones das armas (28 armas; ajustados por `tools/gerar_armas.gd`: haste esticada ou encurtada) | **Idylwild** | https://opengameart.org/content/idylwilds-arsenal | CC0 1.0 (domínio público; crédito não obrigatório) | `assets/armas/fonte_idylwild/` (originais), `assets/armas/` |
 | Ícones das armaduras e escudos (21; tinta própria nas que dividem o ícone) | **Idylwild** | https://opengameart.org/node/171011 (Idylwild's Armory) | CC0 1.0 (domínio público; crédito não obrigatório) | `assets/armaduras/fonte_idylwild/` (originais), `assets/armaduras/icones/` |
+| Armas à distância e munição (arcos, bestas, funda, zarabatana; flecha, virote, agulha, pedra, bala). Pistola e mosquete desenhados por script no mesmo estilo | **Idylwild** | https://opengameart.org/node/172926 (Idylwild's Aerial Arsenal) | CC0 1.0 (domínio público; crédito não obrigatório) | `assets/armas/fonte_aereo/` (originais), `assets/armas/`, `assets/armas/quadros/` |
+| Goblin Minion (parado, corrida, ataque e morte; GIFs convertidos em tiras PNG 48x32) | **thekingphoenix** | https://opengameart.org/content/goblin-free-pixelart (Goblin Free Pixelart) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/goblin/sprites/` |
 | Herói | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/jogador/sprites/` |
 
 Estatísticas do Gray Ooze: ficha de criatura do D&D 5e (Wizards of the Coast), usada como referência de regras.

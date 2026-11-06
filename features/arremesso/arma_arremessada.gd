@@ -1,8 +1,9 @@
 class_name ArmaArremessada
 extends CharacterBody2D
-## Arma arremessada ou munição disparada. Voa num arco até a distância da força (0 = alcance
-## normal, 1 = longo; além do normal o ataque tem desvantagem). `mira` soma graus para cima:
-## 0 cai no chão na distância da força; para cima alcança quem está no ar.
+## Arma arremessada ou munição disparada. Arremesso: voa num arco até a distância da força
+## (0 = alcance normal, 1 = longo); `mira` soma graus para cima. Disparo: sai na velocidade
+## da arma (pelo alcance longo do livro), na direção da mira, e cai pelo peso da munição.
+## Além do alcance normal o ataque tem desvantagem; no longo o voo perde o acerto e cai.
 ## Arremesso: acerta UM alvo e cai ali (ponta finca; o resto gira e deita). E recolhe.
 ## Disparo (`municao`): a imagem da munição voa de ponta, acerta um alvo e some. Não se pega.
 ## Não conhece o herói: emite sinais e quem monta o jogo guarda a arma de volta.
@@ -12,9 +13,14 @@ signal recolhida(arma: Arma, penalidade: int)
 ## A arma não mágica chegou no limite de corrosão no voo e se desfez.
 signal derreteu(texto: String)
 
-## Gravidade do arco (px/s²).
+## Gravidade do arco (px/s²). A munição multiplica pelo peso dela.
 const GRAVIDADE := 980.0
-## Tempo de voo até o alcance normal e até o longo (s): longe sobe mais alto.
+## Disparo: carga mínima (toque) sai com esta fração da velocidade da arma.
+const FRACAO_MINIMA_DISPARO := 0.55
+## Destreza muda a velocidade do tiro em até ±25%.
+const DESTREZA_VELOCIDADE_MINIMA := 0.75
+const DESTREZA_VELOCIDADE_MAXIMA := 1.25
+## Tempo de voo do arremesso até o alcance normal e até o longo (s): longe sobe mais alto.
 const TEMPO_NORMAL := 0.35
 const TEMPO_LONGO := 0.8
 ## Altura da mão acima do chão no lançamento (px), para o arco cair na distância certa.
@@ -38,6 +44,10 @@ var _voando: bool = false
 var _perto: bool = false
 var _direcao: int = 1
 var _municao: Municao
+## Destreza de quem disparou. 14 é o tempo escrito na munição; maior deixa o tiro mais reto.
+var _destreza: int = Ficha.DESTREZA_REFERENCIA
+## Multiplica a gravidade (o peso da munição; arremesso = 1).
+var _peso: float = 1.0
 var _ignora_longo: bool = false
 ## Ângulo absoluto do voo (graus a partir da horizontal; positivo = para cima).
 const MIRA_MINIMA := -50.0
@@ -60,11 +70,12 @@ func _ready() -> void:
 ## Começa o voo. Chamar depois de entrar na árvore (a posição já é a da mão). `forca` de 0
 ## (alcance normal) a 1 (alcance longo). `mira` soma graus para cima (0 = cai no chão).
 ## `municao` preenchida = disparo que some ao acertar ou ao cair.
-func lancar(arma: Arma, golpe: Golpe, penalidade: int, direcao: int, forca: float = 0.0, mira: float = 0.0, municao: Municao = null, ignora_alcance_longo: bool = false) -> void:
+func lancar(arma: Arma, golpe: Golpe, penalidade: int, direcao: int, forca: float = 0.0, mira: float = 0.0, municao: Municao = null, ignora_alcance_longo: bool = false, destreza: int = Ficha.DESTREZA_REFERENCIA) -> void:
 	_arma = arma
 	_golpe = golpe
 	_penalidade = penalidade
 	_municao = municao
+	_destreza = maxi(destreza, 1)
 	_ignora_longo = ignora_alcance_longo
 	_origem_x = global_position.x
 	var normal_pes := arma.disparo_normal_pes if municao else arma.arremesso_normal_pes
@@ -73,6 +84,7 @@ func lancar(arma: Arma, golpe: Golpe, penalidade: int, direcao: int, forca: floa
 	_longo_px = EscalaDnd.pes_para_pixels(longo_pes)
 	_direcao = direcao
 	if municao:
+		_peso = municao.peso
 		_preparar_municao(municao)
 	else:
 		_preparar_sprite(arma, direcao)
@@ -94,7 +106,7 @@ func em_desvantagem() -> bool:
 func _physics_process(delta: float) -> void:
 	if not _voando:
 		return
-	velocity.y += GRAVIDADE * delta
+	velocity.y += GRAVIDADE * _peso * delta
 	_aplicar_alcance()
 	# Aponta ANTES de mover: ao bater no chão a velocidade para baixo zera, e a lança
 	# deitaria em vez de fincar.
@@ -163,17 +175,37 @@ func _apontar_municao(rumo: Vector2) -> void:
 	_sprite.rotation_degrees = rad_to_deg(rumo.angle()) - _municao.angulo_arte
 
 
-## Força escolhe a distância no chão. `mira` (graus, positivo = cima) gira esse arco.
-## Mira 0 devolve exatamente o arco antigo, que cai na distância da força.
+## Arremesso: a força escolhe a distância no chão e `mira` (graus, positivo = cima) gira
+## esse arco (mira 0 cai na distância da força). Disparo: ver _velocidade_disparo.
 func _velocidade_inicial(forca: float, mira: float) -> Vector2:
+	if _municao:
+		return _velocidade_disparo(forca, mira)
 	var distancia := lerpf(_normal_px, _longo_px, forca)
-	var tempo := lerpf(TEMPO_NORMAL, TEMPO_LONGO, forca)
-	var base := _velocidade_para(distancia, tempo)
+	var base := _velocidade_para(distancia, _tempo_de_voo(forca))
 	if is_zero_approx(mira):
 		return base
 	var angulo := atan2(-base.y, absf(base.x)) + deg_to_rad(mira)
 	angulo = clampf(angulo, deg_to_rad(MIRA_MINIMA), deg_to_rad(MIRA_MAXIMA))
 	return Vector2(cos(angulo) * _direcao, -sin(angulo)) * base.length()
+
+
+## Disparo: cada arma tem a sua velocidade de saída, a que alcançaria o alcance LONGO do
+## livro num tiro a 45° (v = raiz de g x longo). Arco longo sai mais rápido e reto que a
+## funda. A carga vai de FRACAO_MINIMA_DISPARO a 1, a Destreza muda um pouco, a munição
+## soma o impulso dela e cai pelo peso dela. `mira` = graus acima da horizontal (0 = reto).
+## O alcance do livro continua valendo: além do normal desvantagem, no longo o tiro cai.
+func _velocidade_disparo(forca: float, mira: float) -> Vector2:
+	var saida := EscalaDnd.velocidade_para_alcance(_longo_px, GRAVIDADE) * _municao.impulso
+	saida *= lerpf(FRACAO_MINIMA_DISPARO, 1.0, clampf(forca, 0.0, 1.0))
+	var destreza := float(_destreza) / float(Ficha.DESTREZA_REFERENCIA)
+	saida *= clampf(destreza, DESTREZA_VELOCIDADE_MINIMA, DESTREZA_VELOCIDADE_MAXIMA)
+	var angulo := deg_to_rad(clampf(mira, MIRA_MINIMA, MIRA_MAXIMA))
+	return Vector2(cos(angulo) * _direcao, -sin(angulo)) * saida
+
+
+## Arremesso: tempo de voo pela força (longe sobe mais alto).
+func _tempo_de_voo(forca: float) -> float:
+	return lerpf(TEMPO_NORMAL, TEMPO_LONGO, clampf(forca, 0.0, 1.0))
 
 
 ## Velocidade inicial para cair a `distancia` (px) à frente em `tempo` (s), saindo da mão.

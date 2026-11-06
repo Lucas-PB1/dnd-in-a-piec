@@ -1,0 +1,31 @@
+---
+description: Como montar cenas e fazer nós conversarem em Godot 4 - cena como unidade que roda sozinha (F6), script principal no nó raiz, "call down, signal up" e proibição de get_parent() para mexer no pai. Use ao criar ou mudar cenas, scripts de nós e ligações entre eles.
+globs: **/*.tscn,**/*.gd
+alwaysApply: false
+---
+<!-- Gerado de .claude/skills/godot-cenas-e-sinais/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a skill, não este arquivo. -->
+
+# Cenas e sinais
+
+## A cena é a unidade
+- Cada cena tem **um script principal no nó raiz**; é ele que expõe a API pública da cena (funções e sinais).
+- A cena **roda sozinha com F6**: não pode quebrar se for aberta fora da fase. Dependências de fora entram por `@export` ou por uma função `configurar(...)` chamada pelo pai, com valor padrão seguro quando não vierem.
+- Nós internos são detalhe de implementação: quem está fora fala só com o nó raiz, nunca com `$Cena/NoInterno`.
+
+## Call down, signal up
+- **Pai → filho:** o pai chama funções do filho direto (`$Vida.receber_dano(1)`).
+- **Filho → pai:** o filho **emite um signal** (`morreu.emit()`); o pai conecta e decide o que fazer.
+- **Irmãos/features diferentes:** quem está acima liga um no outro (`inimigo.morreu.connect(hud.somar_ponto)`) ou usam o event bus de `core/`.
+
+## Proibido
+- `get_parent()` (ou `owner`, `../`, `get_node("../..")`) para o filho **mexer** no pai ou chamar funções dele.
+- Caminhos absolutos para nós (`/root/Main/...`) dentro de features.
+- Conectar sinais por string mágica espalhada; prefira `sinal.connect(funcao)` no `_ready()` do dono.
+
+## Permitido com cuidado
+- Um componente pode receber a referência do dono por `@export var dono: Node` (definida no editor) para **ler** estado. Mudar o dono, só via sinal.
+
+## Sinais
+- Nome no passado ou como evento: `morreu`, `vida_mudou(atual, maxima)`, `pulou`.
+- Declare os parâmetros tipados: `signal vida_mudou(atual: int, maxima: int)`.
+- Documente com `##` em cima do `signal`.

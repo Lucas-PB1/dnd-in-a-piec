@@ -20,7 +20,7 @@ signal caiu
 ## Emitido ao arremessar ou disparar. Quem monta o jogo cria o projétil.
 ## `municao` preenchida = disparo: a arma fica na mão e essa munição é o que voa.
 ## Sem ninguém escutando (cena aberta sozinha), nada é gasto.
-signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool)
+signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool, destreza: int)
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
@@ -102,6 +102,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	_checar_aterrissagem()
 	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
+	_animacao.mirando = nome_estado() == &"Arremessando" and disparo_na_mao()
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
 	var na_tras: Arma = null if _ataque.golpe_da_secundaria() else arma_secundaria()
@@ -351,10 +352,30 @@ func segurando_arremesso() -> bool:
 	return Input.is_action_pressed("arremessar")
 
 
-## Pose de carregar: `fracao` de 0 a 1 (quanto mais, mais para trás). `mira` em graus,
-## positivo = para cima. -1 na fração = sai da pose.
-func carregar_arremesso(fracao: float, mira: float = 0.0) -> void:
-	_ataque.carregar_arremesso(fracao, mira)
+## Pose de carregar. No arremesso, `fracao` de 0 a 1 inclina a arma. No disparo, é a força
+## (pode parar antes de 1) e escolhe o quadro. `soltando` mostra a soltura. -1 sai da pose.
+func carregar_arremesso(fracao: float, mira: float = 0.0, soltando: bool = false, progresso: float = 0.0) -> void:
+	_ataque.carregar_arremesso(fracao, mira, soltando, progresso)
+
+
+## Teto da força (0 a 1). No disparo, a Destreza limita; no arremesso, chega em 1.
+func teto_da_carga() -> float:
+	if not disparo_na_mao():
+		return 1.0
+	return ficha.teto_da_carga()
+
+
+## Segundos para chegar nesse teto. No disparo encolhe com Destreza alta.
+func tempo_ate_teto() -> float:
+	if not disparo_na_mao():
+		return Ficha.TEMPO_CARGA_DISPARO
+	return ficha.tempo_ate_teto_da_carga()
+
+
+## A arma da mão principal é de disparo (os quadros e a Destreza valem).
+func disparo_na_mao() -> bool:
+	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
+	return arma != null and arma.disparavel() and ficha != null
 
 
 ## Enquanto carrega o K, W mira e não vira pulo.
@@ -605,8 +626,8 @@ func _arremessar(arma: Arma, forca: float, mira: float) -> void:
 	var golpe := Equipamento.golpe(ficha, inventario, arma)
 	_assinar(golpe)
 	var extraida := inventario.extrair_uma(arma) as Arma
-	_marcar_ataque(false)
-	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar, forca, mira, null, false)
+	_marcar_ataque(false, false)
+	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar, forca, mira, null, false, _destreza())
 
 
 func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
@@ -618,18 +639,25 @@ func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
 	var golpe := _criar_golpe_de(arma, false)
 	if _inimigo_em_5_pes() and not _besta_ignora_perto(arma):
 		golpe.desvantagem = true
-	_marcar_ataque(extra)
+	_marcar_ataque(extra, true)
 	arma_arremessada.emit(arma, golpe, 0, _ataque.global_position, direcao_olhar, forca, mira, pilha,
-		ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE))
+		ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE), _destreza())
 
 
-func _marcar_ataque(extra: bool) -> void:
+func _marcar_ataque(extra: bool, manter_pose: bool) -> void:
 	if extra:
 		_tempo_desde_acao_bonus = 0.0
 	else:
 		_tempo_desde_golpe = 0.0
 	_contador_buffer_arremesso = 0.0
-	_ataque.carregar_arremesso(-1.0)
+	if not manter_pose:
+		_ataque.carregar_arremesso(-1.0)
+
+
+func _destreza() -> int:
+	if ficha == null:
+		return Ficha.DESTREZA_REFERENCIA
+	return ficha.atributos[Atributos.DESTREZA]
 
 
 func _gastar_municao(arma: Arma) -> Municao:

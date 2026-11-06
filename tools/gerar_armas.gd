@@ -76,16 +76,15 @@ const TABELA := {
 	"pistola": ["Pistola", "Pistol", M, "1d10", P, "GD", "", "30/90", Proficiencias.ATORMENTAR, "3 lb.", "250 GP", "", 28, "Bala"],
 }
 
-## Munição: id do arquivo -> [nome, nome original, usa a flecha do pacote?].
+## Munição: id do arquivo -> [nome, nome original, impulso (x velocidade da arma), peso (x
+## gravidade: menor = mais reto)]. A arte vem do pacote (MUNICAO_AEREO).
 const MUNICOES := {
-	"flecha": ["Flecha", "Arrow", true],
-	"virote": ["Virote", "Bolt", false],
-	"pedra_funda": ["Pedra de Funda", "Sling Bullet", false],
-	"agulha": ["Agulha", "Needle", false],
-	"bala": ["Bala", "Firearm Bullet", false],
+	"flecha": ["Flecha", "Arrow", 1.0, 0.6],
+	"virote": ["Virote", "Bolt", 1.1, 0.5],
+	"pedra_funda": ["Pedra de Funda", "Sling Bullet", 1.0, 1.0],
+	"agulha": ["Agulha", "Needle", 0.9, 0.8],
+	"bala": ["Bala", "Firearm Bullet", 2.2, 0.25],
 }
-## A flecha do pacote aponta para cima e à direita, como os outros ícones.
-const ANGULO_FLECHA := -45.0
 
 ## Armas de arremesso que voam de ponta (as outras giram no ar).
 const DE_PONTA := ["azagaia", "lanca", "tridente", "dardo"]
@@ -146,8 +145,8 @@ func _initialize() -> void:
 	for id in TABELA:
 		_desenhar(id, TABELA[id]).save_png(PASTA_ARTE + id + ".png")
 		_icone(id, TABELA[id]).save_png(PASTA_ICONES + id + ".png")
-		if QUADROS.has(id):
-			_folha_de_quadros(id).save_png(PASTA_QUADROS + id + ".png")
+		if QUADROS.has(id) or _e_disparo(id):
+			(_folha_de_quadros(id) if QUADROS.has(id) else _folha_disparo(id)).save_png(PASTA_QUADROS + id + ".png")
 	for id in MUNICOES:
 		_desenhar_municao(id).save_png(PASTA_MUNICAO_ARTE + id + ".png")
 		_icone_municao(id).save_png(PASTA_ICONES + id + ".png")
@@ -167,7 +166,7 @@ func _initialize() -> void:
 
 ## Alguma imagem da arma ainda não foi importada (sprite, ícone ou quadros)?
 func _falta_arte(id: String) -> bool:
-	var falta_quadros := QUADROS.has(id) and not ResourceLoader.exists(PASTA_QUADROS + id + ".png")
+	var falta_quadros := (QUADROS.has(id) or _e_disparo(id)) and not ResourceLoader.exists(PASTA_QUADROS + id + ".png")
 	var falta_municao := false
 	for mid in MUNICOES:
 		if not ResourceLoader.exists(PASTA_MUNICAO_ARTE + mid + ".png") or not ResourceLoader.exists(PASTA_ICONES + mid + ".png"):
@@ -210,14 +209,15 @@ func _criar(id: String, d: Array) -> Arma:
 	a.livro = LIVRO
 	a.textura = load(PASTA_ARTE + id + ".png")
 	a.icone = load(PASTA_ICONES + id + ".png")
-	a.angulo_arte = _angulo_da_arte(d[11])
+	a.angulo_arte = _angulo_aereo(id) if _e_do_pacote(id) else _angulo_da_arte(d[11])
 	var medidas := geometria(a.textura.get_image(), a.angulo_arte)
-	a.pegada = medidas[0]
+	a.pegada = _pegada_aerea(id, a.textura.get_image()) if _e_do_pacote(id) else medidas[0]
 	a.comprimento = snappedf(medidas[1], 0.1)
 	if a.disparavel():
 		a.poses = []
 		a.passo = 0.0
 		a.efeito = &""
+		_aplicar_disparo(a, id)
 	elif QUADROS.has(id):
 		_aplicar_quadros(a, id)
 		a.passo = _passo(a, PONTA_ALCANCE if a.alcance_estendido else PONTA_NORMAL)
@@ -334,8 +334,10 @@ const LUZ_CONTORNO := 0.18
 func _desenhar(id: String, d: Array) -> Image:
 	var fonte: String = d[11]
 	var alvo: float = d[12]
-	if "D" in (d[5] as String):
-		return _desenhar_distancia(id, roundi(alvo))
+	if _e_do_pacote(id):
+		return _icone_aereo(PACOTE_AEREO[id])
+	if _e_fogo(id):
+		return _arte_fogo(id)
 	if fonte == "":
 		return _chicote(roundi(alvo + PEGADA_ARTE))
 	var img := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + fonte + ".png"))
@@ -478,165 +480,25 @@ func _criar_municao(id: String) -> Municao:
 	m.empilhavel = true
 	m.textura = load(PASTA_MUNICAO_ARTE + id + ".png")
 	m.icone = load(PASTA_ICONES + id + ".png")
-	m.angulo_arte = ANGULO_FLECHA if d[2] else 0.0
+	m.angulo_arte = MUNICAO_AEREO[id][1]
+	m.impulso = d[2]
+	m.peso = d[3]
 	return m
 
 
 func _desenhar_municao(id: String) -> Image:
-	if MUNICOES[id][2]:
-		var flecha := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + "arrow1.png"))
-		flecha.convert(Image.FORMAT_RGBA8)
-		return flecha
-	match id:
-		"virote":
-			return _haste_municao(18, 5, COR_MADEIRA, COR_FERRO)
-		"agulha":
-			return _haste_municao(14, 3, COR_FERRO, COR_FERRO_CLARO)
-		"pedra_funda":
-			return _pedra_municao()
-		_:
-			return _bala_municao()
+	return _municao_aerea(id)
 
 
 func _icone_municao(id: String) -> Image:
-	var img := Image.create(TAMANHO_ICONE, TAMANHO_ICONE, false, Image.FORMAT_RGBA8)
-	match id:
-		"flecha":
-			_linha(img, Vector2(2, 13), Vector2(12, 3), COR_MADEIRA_CLARA, 1)
-			img.set_pixel(12, 3, COR_FERRO_CLARO)
-			img.set_pixel(3, 12, COR_COURO)
-		"virote":
-			_linha(img, Vector2(3, 12), Vector2(12, 4), COR_MADEIRA, 1)
-			img.set_pixel(12, 4, COR_FERRO)
-		"agulha":
-			_linha(img, Vector2(4, 11), Vector2(11, 4), COR_FERRO_CLARO, 1)
-		"pedra_funda":
-			_disco(img, Vector2(8, 8), 3.0, COR_PEDRA)
-		_:
-			_disco(img, Vector2(8, 8), 2.2, COR_FERRO_ESCURO)
-	_contornar(img)
-	return img
+	return FerramentasPixel.reduzir(_icone_aereo(MUNICAO_AEREO[id][0]), TAMANHO_ICONE)
 
 
-# --- Armas à distância (desenhadas, na horizontal, cabo à esquerda) -------------
+# --- Cores dos quadros desenhados (funda e zarabatana) -------------------------
 
 const COR_MADEIRA := Color8(120, 72, 40)
 const COR_MADEIRA_CLARA := Color8(176, 122, 70)
-const COR_FERRO := Color8(140, 146, 160)
-const COR_FERRO_CLARO := Color8(196, 202, 214)
-const COR_FERRO_ESCURO := Color8(62, 66, 78)
-const COR_CORDA := Color8(210, 196, 150)
 const COR_PEDRA := Color8(110, 108, 100)
-
-
-func _desenhar_distancia(id: String, comprimento: int) -> Image:
-	var altura := 28 if id in ["arco_longo", "besta_pesada", "mosquete"] else 20
-	var img := Image.create(comprimento + 4, altura + 4, false, Image.FORMAT_RGBA8)
-	match id:
-		"arco_curto", "arco_longo":
-			_arco(img, id == "arco_longo")
-		"besta_leve", "besta_mao", "besta_pesada":
-			_besta(img, id == "besta_mao")
-		"funda":
-			_funda(img)
-		"zarabatana":
-			_tubo(img, COR_MADEIRA)
-		"mosquete", "pistola":
-			_arma_de_fogo(img, id == "pistola")
-	_contornar(img)
-	return img
-
-
-func _icone_distancia(id: String) -> Image:
-	var img := Image.create(TAMANHO_ICONE, TAMANHO_ICONE, false, Image.FORMAT_RGBA8)
-	match id:
-		"arco_curto", "arco_longo":
-			_linha(img, Vector2(3, 8), Vector2(12, 2), COR_MADEIRA, 1)
-			_linha(img, Vector2(3, 8), Vector2(12, 13), COR_MADEIRA, 1)
-			_linha(img, Vector2(12, 2), Vector2(12, 13), COR_CORDA, 1)
-		"besta_leve", "besta_mao", "besta_pesada":
-			img.fill_rect(Rect2i(2, 7, 10, 3), COR_MADEIRA)
-			_linha(img, Vector2(11, 3), Vector2(11, 12), COR_MADEIRA_CLARA, 1)
-		"funda":
-			_linha(img, Vector2(4, 3), Vector2(8, 12), COR_COURO, 1)
-			_linha(img, Vector2(12, 3), Vector2(8, 12), COR_COURO, 1)
-		"zarabatana":
-			_linha(img, Vector2(2, 8), Vector2(13, 7), COR_MADEIRA, 1)
-		_:
-			img.fill_rect(Rect2i(2, 8, 7, 4), COR_MADEIRA)
-			img.fill_rect(Rect2i(8, 6, 5, 2), COR_FERRO)
-	_contornar(img)
-	return img
-
-
-func _arco(img: Image, longo: bool) -> void:
-	var h := img.get_height()
-	var w := img.get_width()
-	var meio := h / 2
-	var curva := 2 if longo else 1
-	img.fill_rect(Rect2i(2, meio - 2, 5, 4), COR_MADEIRA_CLARA)
-	_linha(img, Vector2(6, meio), Vector2(w - 4, curva), COR_MADEIRA, 2)
-	_linha(img, Vector2(6, meio), Vector2(w - 4, h - curva - 1), COR_MADEIRA, 2)
-	_linha(img, Vector2(w - 4, curva), Vector2(w - 4, h - curva - 1), COR_CORDA, 1)
-
-
-func _besta(img: Image, de_mao: bool) -> void:
-	var h := img.get_height()
-	var w := img.get_width()
-	var meio := h / 2
-	var corpo := 4 if de_mao else 6
-	img.fill_rect(Rect2i(2, meio - 1, w - 8, 3), COR_MADEIRA)
-	img.fill_rect(Rect2i(2, meio + 1, corpo, 3), COR_MADEIRA_CLARA)
-	_linha(img, Vector2(w - 6, 3), Vector2(w - 6, h - 4), COR_MADEIRA_CLARA, 2)
-	_linha(img, Vector2(w - 4, 4), Vector2(w - 4, h - 5), COR_CORDA, 1)
-
-
-func _funda(img: Image) -> void:
-	var h := img.get_height()
-	var w := img.get_width()
-	var meio := h / 2
-	_linha(img, Vector2(2, meio), Vector2(w - 6, 3), COR_COURO, 1)
-	_linha(img, Vector2(2, meio), Vector2(w - 6, h - 4), COR_COURO, 1)
-	_disco(img, Vector2(w - 5, meio), 2.5, COR_PEDRA)
-
-
-func _tubo(img: Image, cor: Color) -> void:
-	var meio := img.get_height() / 2
-	img.fill_rect(Rect2i(2, meio - 1, img.get_width() - 4, 2), cor)
-	img.set_pixel(3, meio - 1, COR_MADEIRA_CLARA)
-
-
-func _arma_de_fogo(img: Image, pistola: bool) -> void:
-	var meio := img.get_height() / 2
-	var coronha := 8 if pistola else 14
-	img.fill_rect(Rect2i(2, meio, coronha, 4), COR_MADEIRA)
-	img.fill_rect(Rect2i(coronha, meio - 1, img.get_width() - coronha - 3, 2), COR_FERRO)
-	img.set_pixel(coronha, meio - 2, COR_FERRO_ESCURO)
-
-
-func _haste_municao(comprimento: int, altura: int, corpo: Color, ponta: Color) -> Image:
-	var img := Image.create(comprimento, altura, false, Image.FORMAT_RGBA8)
-	var meio := altura / 2
-	img.fill_rect(Rect2i(1, meio, comprimento - 4, 1), corpo)
-	img.set_pixel(comprimento - 3, meio, ponta)
-	img.set_pixel(2, meio, COR_COURO)
-	_contornar(img)
-	return img
-
-
-func _pedra_municao() -> Image:
-	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
-	_disco(img, Vector2(3.5, 3.5), 2.4, COR_PEDRA)
-	_contornar(img)
-	return img
-
-
-func _bala_municao() -> Image:
-	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
-	_disco(img, Vector2(3.5, 3.5), 2.0, COR_FERRO_ESCURO)
-	img.set_pixel(3, 2, COR_FERRO_CLARO)
-	_contornar(img)
-	return img
 
 
 # --- Ícones dos menus (16x16) ---------------------------------------------------
@@ -645,8 +507,10 @@ func _bala_municao() -> Image:
 ## O chicote, desenhado por script, ganha um ícone enrolado.
 func _icone(id: String, d: Array) -> Image:
 	var fonte: String = d[11]
-	if "D" in (d[5] as String):
-		return _icone_distancia(id)
+	if _e_do_pacote(id):
+		return FerramentasPixel.reduzir(_icone_aereo(PACOTE_AEREO[id]), TAMANHO_ICONE)
+	if _e_fogo(id):
+		return _icone_fogo(id)
 	if fonte == "":
 		return _icone_chicote()
 	var img := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + fonte + ".png"))
@@ -680,6 +544,11 @@ const PASTA_QUADROS := "res://assets/armas/quadros/"
 ## Tamanho de cada quadro e onde fica a mão nele.
 const TAMANHO_QUADRO := Vector2i(176, 144)
 const MAO_QUADRO := Vector2(88, 72)
+## Disparo: 8 quadros (preparo, sobe, mira, puxa, puxa, cheio, soltura, volta). A mão (a
+## empunhadura) fica no mesmo ponto em todos.
+const QUADROS_DO_DISPARO := 9
+const TAMANHO_DISPARO := Vector2i(112, 96)
+const MAO_DISPARO := Vector2(46, 50)
 
 ## Mangual: [tempo, ângulo do cabo, ângulo da corrente, acerta]. A bola fica para trás no
 ## giro (a corrente atrasa em relação ao cabo), passa por cima e desce à frente.
@@ -817,3 +686,442 @@ func _disco(img: Image, centro: Vector2, raio: float, cor: Color) -> void:
 		for x in range(int(centro.x - raio) - 1, int(centro.x + raio) + 2):
 			if Vector2(x + 0.5, y + 0.5).distance_to(centro) <= raio and Rect2i(Vector2i.ZERO, img.get_size()).has_point(Vector2i(x, y)):
 				img.set_pixel(x, y, cor)
+
+
+func _e_disparo(id: String) -> bool:
+	return "D" in str(TABELA[id][5])
+
+
+## Folha dos 8 quadros do disparo.
+func _folha_disparo(id: String) -> Image:
+	var folha := Image.create(TAMANHO_DISPARO.x * QUADROS_DO_DISPARO, TAMANHO_DISPARO.y, false, Image.FORMAT_RGBA8)
+	for i in QUADROS_DO_DISPARO:
+		var quadro := Image.create(TAMANHO_DISPARO.x, TAMANHO_DISPARO.y, false, Image.FORMAT_RGBA8)
+		if i == DESCANSO:
+			quadro = _quadro_descanso(id)
+		else:
+			_quadro_disparo(quadro, id, i)
+		if not (_e_do_pacote(id) or _e_fogo(id)) or id in ["funda", "zarabatana"]:
+			_contornar(quadro)  # a arte do pacote e a das armas de fogo já têm contorno
+		folha.blit_rect(quadro, Rect2i(Vector2i.ZERO, TAMANHO_DISPARO), Vector2i(i * TAMANHO_DISPARO.x, 0))
+	return folha
+
+
+func _aplicar_disparo(a: Arma, id: String) -> void:
+	var folha: Texture2D = load(PASTA_QUADROS + id + ".png")
+	a.pegada_quadros = MAO_DISPARO
+	a.quadros_disparo = []
+	for i in QUADROS_DO_DISPARO:
+		var quadro := AtlasTexture.new()
+		quadro.atlas = folha
+		quadro.region = Rect2(i * TAMANHO_DISPARO.x, 0, TAMANHO_DISPARO.x, TAMANHO_DISPARO.y)
+		a.quadros_disparo.append(quadro)
+
+
+func _quadro_disparo(img: Image, id: String, passo: int) -> void:
+	if _e_do_pacote(id) and (_e_arco(id) or id.begins_with("besta")):
+		_quadro_pacote(img, id, passo)
+		return
+	match id:
+		"funda":
+			_quadro_funda(img, passo)
+		"zarabatana":
+			_quadro_sopro(img, passo)
+		"mosquete", "pistola":
+			_quadro_fogo(img, passo, id)
+
+
+# --- Quadros do disparo ---------------------------------------------------------
+# 8 quadros com o herói na pose de mira (braço esticado na altura do peito). A empunhadura
+# fica sempre na mão (MAO_DISPARO), e a camada da mão do herói é desenhada por cima dela.
+# 0 preparo (arma baixa), 1 sobe, 2 mira, 3 e 4 puxa/arma, 5 cheio, 6 soltura, 7 volta,
+# 8 descanso (fora do tiro: arma baixa e relaxada na mão, sem munição, sem fumaça).
+
+## Inclinação da arma (graus; + = ponta para baixo) em cada quadro, comum a todas.
+const INCLINACAO_DISPARO: Array[float] = [32.0, 16.0, 2.0, 0.0, 0.0, 0.0, -8.0, 10.0, 40.0]
+## Quadro de descanso e quanto abaixo da mão (px) a arma pode ir parada: a mão do herói
+## parado fica 18 px acima dos pés, então a ponta para 2 px acima do chão.
+const DESCANSO := 8
+const ABAIXO_DA_MAO_PARADO := 16
+## No descanso, a inclinação desce em passos até a arma não passar do chão.
+const PASSO_INCLINACAO := 4.0
+## Armas compridas descansam em riste (ponta para cima, graus negativos): não encostam no
+## chão nem cruzam o corpo. As outras começam apontando para baixo (INCLINACAO_DISPARO).
+const DESCANSO_EM_RISTE := {"besta_leve": -55.0, "besta_pesada": -60.0, "mosquete": -62.0}
+## Coice (px para trás) na soltura e na volta.
+const COICE: Array[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 1.0, 0.0]
+const COR_PELE := Color8(236, 180, 140)
+const COR_FUMACA := Color(0.78, 0.8, 0.84, 0.85)
+const COR_CLARAO := Color8(255, 214, 110)
+
+## Inclinação usada no quadro de descanso (ajustada por arma em _quadro_descanso).
+var _inclinacao_descanso := 40.0
+
+
+
+## Descanso: começa inclinada (ponta para baixo e à frente) e endireita até nada passar
+## de ABAIXO_DA_MAO_PARADO px abaixo da mão (as compridas não entram no chão).
+func _quadro_descanso(id: String) -> Image:
+	_inclinacao_descanso = DESCANSO_EM_RISTE.get(id, INCLINACAO_DISPARO[DESCANSO])
+	while true:
+		var img := Image.create(TAMANHO_DISPARO.x, TAMANHO_DISPARO.y, false, Image.FORMAT_RGBA8)
+		_quadro_disparo(img, id, DESCANSO)
+		var usado := img.get_used_rect()
+		if usado.end.y <= MAO_DISPARO.y + ABAIXO_DA_MAO_PARADO or _inclinacao_descanso <= DESCANSO_EM_RISTE.get(id, 0.0):
+			return img
+		_inclinacao_descanso -= PASSO_INCLINACAO
+	return null
+
+## Dedos da mão de trás (a que puxa a corda ou segura o cano), quando aparece.
+func _dedos(img: Image, p: Vector2) -> void:
+	_disco(img, p, 1.6, COR_PELE)
+
+
+## Funda: o bolso gira em volta da mão, cada vez mais rápido, e abre para a frente.
+func _quadro_funda(img: Image, passo: int) -> void:
+	var angulos: Array[float] = [80.0, 150.0, 220.0, 290.0, 360.0, 430.0, -25.0, 95.0, 92.0]
+	var raios: Array[float] = [10.0, 12.0, 14.0, 15.0, 16.0, 16.0, 18.0, 11.0, 9.0]
+	var bolso := MAO_DISPARO + Vector2.from_angle(deg_to_rad(angulos[passo])) * raios[passo]
+	_linha(img, MAO_DISPARO, bolso, COR_COURO, 1)
+	_linha(img, MAO_DISPARO + Vector2(0, 1), bolso + Vector2(0, 1), COR_COURO_CLARO, 1)
+	if passo == 6:
+		_disco(img, bolso, 1.6, COR_COURO)  # o bolso aberto, vazio
+		return
+	_disco(img, bolso, 2.6, COR_COURO)
+	if passo < 7:
+		_disco(img, bolso, 1.6, COR_PEDRA)
+	if passo >= 3 and passo <= 5:  # rastro do giro
+		var antes := MAO_DISPARO + Vector2.from_angle(deg_to_rad(angulos[passo] - 40.0)) * raios[passo]
+		_linha(img, antes, bolso, Color(1, 1, 1, 0.35), 1)
+
+
+## Zarabatana: o tubo sobe até a boca (acima e atrás da mão); na soltura, sopro de ar.
+func _quadro_sopro(img: Image, passo: int) -> void:
+	if passo == DESCANSO:  # em pé na mão, a ponta para cima
+		_linha(img, MAO_DISPARO + Vector2(-5, 8), MAO_DISPARO + Vector2(9, -28), COR_MADEIRA, 3)
+		_linha(img, MAO_DISPARO + Vector2(-6, 7), MAO_DISPARO + Vector2(8, -29), COR_MADEIRA_CLARA, 1)
+		return
+	var boca := Vector2(-9.0, -19.0)
+	var subidas: Array[float] = [0.0, 0.45, 0.85, 1.0, 1.0, 1.0, 1.0, 0.6, 0.0]
+	var tras := Vector2(-2.0, 2.0).lerp(boca, subidas[passo])
+	var frente := tras + Vector2(38.0, 6.0 * (1.0 - subidas[passo]) + 1.0)
+	_linha(img, MAO_DISPARO + tras, MAO_DISPARO + frente, COR_MADEIRA, 3)
+	_linha(img, MAO_DISPARO + tras + Vector2(0, -1), MAO_DISPARO + frente + Vector2(0, -1), COR_MADEIRA_CLARA, 1)
+	if passo >= 3 and passo <= 5:  # bochecha cheia de ar
+		_disco(img, MAO_DISPARO + boca + Vector2(-2.0, 0.0), 2.0 + (passo - 3) * 0.5, Color(1, 1, 1, 0.5))
+	if passo == 6:
+		_disco(img, MAO_DISPARO + frente + Vector2(3, 0), 2.5, Color(0.9, 0.95, 1.0, 0.85))
+		_disco(img, MAO_DISPARO + frente + Vector2(7, -1), 1.5, Color(0.9, 0.95, 1.0, 0.6))
+
+
+## Armas de fogo (pederneira) em pixel art no estilo do pacote: contorno escuro, madeira,
+## aço e latão. Uma letra por pixel (PALETA_FOGO); "." = vazio. O cano aponta para a direita.
+const PALETA_FOGO := {
+	"o": Color8(43, 34, 32), "W": Color8(124, 74, 42), "w": Color8(168, 108, 60), "d": Color8(86, 50, 30),
+	"S": Color8(112, 116, 128), "s": Color8(178, 184, 196), "K": Color8(64, 66, 76),
+	"B": Color8(196, 150, 60), "b": Color8(236, 200, 110),
+}
+const ARTE_PISTOLA: Array[String] = [
+	"......oo",
+	".....oKKo",
+	"......oKooooooooooooooooooo",
+	".....oosssssssssssssssssssbo",
+	"....oWwoSSSSSSSSSSSSSSSSSSBo",
+	"...oWwWWoKKKKKKKKKKKKKKKKKoo",
+	"..oWwWWdwwwwwwwwwwwwwBwdoo",
+	"..oWWWdoooKooooooooooooo",
+	".oWwWdo..oKKo",
+	".oWWdo....ooo",
+	"oBbBo",
+	".ooo",
+]
+const ARTE_MOSQUETE: Array[String] = [
+	"............oo",
+	"...........oKKo",
+	"............oKoooooooooooooooooooooooooooooooooooooooooo",
+	"...........oosssssssssssssssssssssssssssssssssssssssssbo",
+	"ooo.......oWwoSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSBo",
+	"obwooooooooWwWoKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKoo",
+	"oBwwwwwwwwwwWWWwwwwwwwwwBwwwwwwwwwwwwwwBwwwwwwwwwwdoo",
+	"oBWWWWWWWWWWWdooKooWWWWWBWWWWWWWWWWWWWWBWWWWWWWWdoo",
+	"oBWWWWWWWWWdoo.oKKooddddBddddddddddddddBddddddoo",
+	"oBdddddddoo.....ooo.oooooooooooooooooooooooooo",
+	"oooooooo",
+]
+## Pontos na arte: a mão (empunhadura), a boca do cano, a pederneira e a mão de baixo.
+const PONTOS_FOGO := {
+	"pistola": {"mao": Vector2(5.5, 7.5), "boca": Vector2(27.5, 3.5), "pederneira": Vector2(7.5, 2.5)},
+	"mosquete": {"mao": Vector2(14.5, 7.5), "boca": Vector2(55.5, 3.5), "pederneira": Vector2(13.5, 2.5), "apoio": Vector2(31.5, 8.5)},
+}
+
+
+func _e_fogo(id: String) -> bool:
+	return PONTOS_FOGO.has(id)
+
+
+func _arte_fogo(id: String) -> Image:
+	var linhas: Array[String] = ARTE_PISTOLA if id == "pistola" else ARTE_MOSQUETE
+	var largura := 0
+	for linha in linhas:
+		largura = maxi(largura, linha.length())
+	var img := Image.create(largura, linhas.size(), false, Image.FORMAT_RGBA8)
+	for y in linhas.size():
+		for x in linhas[y].length():
+			var letra := linhas[y][x]
+			if PALETA_FOGO.has(letra):
+				img.set_pixel(x, y, PALETA_FOGO[letra])
+	return img
+
+
+## Ícone da arma de fogo: a arte na diagonal (como os ícones do pacote) num quadrado de
+## 2x (pistola) ou 4x (mosquete) o ícone, reduzido para 16x16.
+func _icone_fogo(id: String) -> Image:
+	var arte := _arte_fogo(id)
+	var lado := TAMANHO_ICONE * (2 if id == "pistola" else 4)
+	var quadrado := Image.create(lado, lado, false, Image.FORMAT_RGBA8)
+	var centro_arte := Vector2(arte.get_size()) / 2.0
+	var volta := deg_to_rad(ANGULO_PONTA_PACOTE)
+	for y in lado:
+		for x in lado:
+			var rel := Vector2(x, y) + Vector2(0.5, 0.5) - Vector2(lado, lado) / 2.0
+			var src := Vector2i((rel.rotated(-volta) + centro_arte).floor())
+			if Rect2i(Vector2i.ZERO, arte.get_size()).has_point(src):
+				quadrado.set_pixel(x, y, arte.get_pixelv(src))
+	return FerramentasPixel.reduzir(quadrado, TAMANHO_ICONE)
+
+
+## Armas de fogo: sobe e mira firme; na soltura faísca na pederneira, clarão, coice para
+## cima e fumaça que sobe e se espalha na volta. O mosquete tem a outra mão sob o cano.
+func _quadro_fogo(img: Image, passo: int, id: String) -> void:
+	var arte := _arte_fogo(id)
+	var pontos: Dictionary = PONTOS_FOGO[id]
+	var margem := Vector2(MARGEM_ICONE, MARGEM_ICONE)
+	var tela := _tela_do_icone(arte)
+	tela.blit_rect(arte, Rect2i(Vector2i.ZERO, arte.get_size()), Vector2i(margem))
+	var inclinacao := _inclinacao_descanso if passo == DESCANSO else INCLINACAO_DISPARO[passo]
+	var coice := Vector2(-COICE[passo], 0.0)
+	var pivo: Vector2 = pontos["mao"] + margem
+	_girar_para(img, tela, pivo, inclinacao, coice)
+	var na_tela := func(p: Vector2) -> Vector2:
+		return MAO_DISPARO + coice + (p + margem - pivo).rotated(deg_to_rad(inclinacao))
+	if pontos.has("apoio") and passo >= 1 and passo < DESCANSO:
+		_dedos(img, na_tela.call(pontos["apoio"]))
+	var ponta: Vector2 = na_tela.call(pontos["boca"])
+	if passo == 6:
+		_disco(img, na_tela.call(pontos["pederneira"]), 1.5, COR_CLARAO)
+		_disco(img, ponta + Vector2(4, 0), 4.0 if id == "pistola" else 5.0, COR_CLARAO)
+		_disco(img, ponta + Vector2(4, 0), 2.5, COR_ESTALO)
+		_disco(img, ponta + Vector2(10, -2), 3.0, COR_FUMACA)
+	elif passo == 7:
+		for i in 3:
+			_disco(img, ponta + Vector2(6 + i * 4, -3 - i * 3), 3.0 + i, Color(COR_FUMACA, 0.7 - i * 0.18))
+
+
+# --- Armas à distância do pacote CC0 Idylwild's Aerial Arsenal -------------------
+# Arcos, bestas, funda e zarabatana usam a arte do pacote (32x32, na diagonal). Os quadros
+# do disparo dos arcos e bestas são montados em cima dela, no espaço do ÍCONE (tira-se a
+# corda original e desenha-se a puxada; a flecha do pacote vai encaixada) e depois girados
+# para o espaço do herói, com a empunhadura na mão (MAO_DISPARO).
+
+const PASTA_AEREO := "res://assets/armas/fonte_aereo/"
+## id da arma -> ícone do pacote.
+const PACOTE_AEREO := {
+	"arco_curto": "bow1", "arco_longo": "bow2", "besta_mao": "crossbow3", "besta_leve": "crossbow2",
+	"besta_pesada": "crossbow4", "funda": "sling", "zarabatana": "blowgun",
+}
+## Para onde a arma aponta NO ÍCONE (graus). Arco: a barriga (para baixo e à direita);
+## besta, funda e zarabatana: a ponta (para cima e à direita).
+const ANGULO_ARCO_PACOTE := 45.0
+const ANGULO_PONTA_PACOTE := -45.0
+## Munição: id -> [ícone do pacote, ângulo da ponta no ícone, tamanho do projétil (0 = 32)].
+const MUNICAO_AEREO := {
+	"flecha": ["arrow1", -45.0, 0], "virote": ["bolt1", -45.0, 0], "agulha": ["blowgundart", -45.0, 0],
+	"pedra_funda": ["stone", 0.0, 8], "bala": ["metalball", 0.0, 8],
+}
+## Corda puxada: cor e quanto recua (px no ícone) em cada quadro (0 = parada).
+const COR_CORDA_PACOTE := Color8(43, 34, 32)
+const PUXAO_ARCO: Array[float] = [1.0, 1.0, 2.0, 4.0, 6.0, 8.0, 0.0, 0.0, 0.0]
+## Margem em volta do ícone para a corda puxada caber (px).
+const MARGEM_ICONE := 20
+## Arco inclinado para a frente no disparo (graus): o braço de cima não cobre o rosto.
+const CANTO_ARCO := 30.0
+## O pacote tem os dois arcos do mesmo tamanho: o longo é desenhado maior (na mesma passada do giro).
+const ESCALA_ARCO := {"arco_longo": 1.3}
+## Besta: a mão fica nesta fração do comprimento, a partir da coronha (no gatilho).
+const GATILHO := 0.35
+const COR_ESTALO_BESTA := Color(1.0, 0.97, 0.85, 0.9)
+
+
+func _e_do_pacote(id: String) -> bool:
+	return PACOTE_AEREO.has(id)
+
+
+func _e_arco(id: String) -> bool:
+	return id in ["arco_curto", "arco_longo"]
+
+
+func _icone_aereo(nome: String) -> Image:
+	var img := Image.load_from_file(ProjectSettings.globalize_path(PASTA_AEREO + nome + ".png"))
+	img.convert(Image.FORMAT_RGBA8)
+	return img
+
+
+func _angulo_aereo(id: String) -> float:
+	return ANGULO_ARCO_PACOTE if _e_arco(id) else ANGULO_PONTA_PACOTE
+
+
+## Pixels da corda do arco: pretos, com os dois vizinhos na direção da barriga vazios
+## (o contorno dos braços tem madeira de um dos lados).
+func _corda_do_arco(img: Image) -> Array[Vector2i]:
+	var corda: Array[Vector2i] = []
+	for y in img.get_height():
+		for x in img.get_width():
+			var c := img.get_pixel(x, y)
+			if c.a < 0.5 or c.get_luminance() > 0.08:
+				continue
+			if _vazio(img, Vector2i(x + 1, y + 1)) and _vazio(img, Vector2i(x - 1, y - 1)):
+				corda.append(Vector2i(x, y))
+	return corda
+
+
+func _vazio(img: Image, p: Vector2i) -> bool:
+	return not Rect2i(Vector2i.ZERO, img.get_size()).has_point(p) or img.get_pixelv(p).a < 0.5
+
+
+## Pegada do arco: o ponto da barriga mais longe da corda, no meio (a empunhadura de couro).
+func _pegada_do_arco(img: Image) -> Vector2:
+	var corda := _corda_do_arco(img)
+	var meio := Vector2.ZERO
+	for p in corda:
+		meio += Vector2(p)
+	meio /= maxf(corda.size(), 1.0)
+	var barriga := Vector2.from_angle(deg_to_rad(ANGULO_ARCO_PACOTE))
+	var melhor := meio
+	for y in img.get_height():
+		for x in img.get_width():
+			var p := Vector2(x, y) + Vector2(0.5, 0.5)
+			if img.get_pixel(x, y).a > 0.5 and absf((p - meio).dot(barriga.orthogonal())) < 1.5 \
+					and (p - meio).dot(barriga) > (melhor - meio).dot(barriga):
+				melhor = p
+	return melhor - barriga * 1.5
+
+
+## Pegada da besta: no gatilho, um pouco à frente da coronha.
+func _pegada_da_besta(img: Image) -> Vector2:
+	var medidas := geometria(img, ANGULO_PONTA_PACOTE)
+	var frente := Vector2.from_angle(deg_to_rad(ANGULO_PONTA_PACOTE))
+	return medidas[0] - frente * PEGADA_ARTE + frente * (medidas[1] + PEGADA_ARTE) * GATILHO
+
+
+func _pegada_aerea(id: String, img: Image) -> Vector2:
+	if _e_arco(id):
+		return _pegada_do_arco(img)
+	if id.begins_with("besta"):
+		return _pegada_da_besta(img)
+	return geometria(img, ANGULO_PONTA_PACOTE)[0]
+
+
+## Quadro do disparo de arco ou besta: monta no ícone e gira para a mão do herói.
+func _quadro_pacote(img: Image, id: String, passo: int) -> void:
+	var icone := _icone_aereo(PACOTE_AEREO[id])
+	var pegada := _pegada_aerea(id, icone)
+	var inclinacao := _inclinacao_descanso if passo == DESCANSO else INCLINACAO_DISPARO[passo]
+	var giro := inclinacao - _angulo_aereo(id)
+	var coice := Vector2(-COICE[passo], 0.0)
+	var deslocar := Vector2i(MARGEM_ICONE, MARGEM_ICONE)
+	if _e_arco(id):
+		if passo == 6 or passo == 7:  # o arco fica firme; só a corda vibra
+			inclinacao = 0.0
+			giro = -_angulo_aereo(id)
+		_quadro_arco_pacote(img, icone, pegada + Vector2(deslocar), passo, inclinacao, giro, coice, ESCALA_ARCO.get(id, 1.0))
+		return
+	var tela := _tela_do_icone(icone)
+	tela.blit_rect(icone, Rect2i(Vector2i.ZERO, icone.get_size()), deslocar)
+	if passo == 6:  # soltura: estalo na frente do arco da besta
+		var frente := Vector2.from_angle(deg_to_rad(ANGULO_PONTA_PACOTE))
+		var alcance: float = geometria(icone, ANGULO_PONTA_PACOTE)[1]
+		_disco(tela, pegada + frente * alcance + Vector2(deslocar), 2.5, COR_ESTALO_BESTA)
+	_girar_para(img, tela, pegada + Vector2(deslocar), giro, coice)
+
+
+## Tela com margem em volta do ícone (para girar sem cortar).
+func _tela_do_icone(icone: Image) -> Image:
+	return Image.create(icone.get_width() + MARGEM_ICONE * 2, icone.get_height() + MARGEM_ICONE * 2, false, Image.FORMAT_RGBA8)
+
+
+## Arco: o arco (sem a corda) vai inclinado para a frente (CANTO_ARCO), longe do rosto; a
+## corda e a flecha são desenhadas já na tela do herói, com a flecha reta na linha da mão.
+func _quadro_arco_pacote(img: Image, icone: Image, pivo: Vector2, passo: int, inclinacao: float, giro: float, coice: Vector2, escala: float) -> void:
+	var corda := _corda_do_arco(icone)
+	var limpo := _tela_do_icone(icone)
+	limpo.blit_rect(icone, Rect2i(Vector2i.ZERO, icone.get_size()), Vector2i(MARGEM_ICONE, MARGEM_ICONE))
+	var meio := Vector2.ZERO
+	for p in corda:
+		limpo.set_pixelv(p + Vector2i(MARGEM_ICONE, MARGEM_ICONE), Color(0, 0, 0, 0))
+		meio += Vector2(p) + Vector2(MARGEM_ICONE, MARGEM_ICONE) + Vector2(0.5, 0.5)
+	meio /= maxf(corda.size(), 1.0)
+	var giro_arco := giro + (0.0 if passo == DESCANSO else CANTO_ARCO)
+	_girar_para(img, limpo, pivo, giro_arco, coice, escala)
+	var ao_longo := Vector2(1, -1).normalized()
+	var pontas: Array[Vector2i] = corda.duplicate()
+	pontas.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return Vector2(a).dot(ao_longo) < Vector2(b).dot(ao_longo))
+	var na_tela := func(p: Vector2i) -> Vector2:
+		var no_icone := Vector2(p) + Vector2(MARGEM_ICONE, MARGEM_ICONE) + Vector2(0.5, 0.5)
+		return MAO_DISPARO + coice + (no_icone - pivo).rotated(deg_to_rad(giro_arco)) * escala
+	var baixo: Vector2 = na_tela.call(pontas.front())
+	var cima: Vector2 = na_tela.call(pontas.back())
+	if passo == 6:  # soltura: a corda vibra
+		var lado := Vector2(1.2, 0.0)
+		for i in 4:
+			var sinal := 1.0 if i % 2 == 0 else -1.0
+			_linha(img, baixo.lerp(cima, i / 4.0) + lado * sinal, baixo.lerp(cima, (i + 1) / 4.0) - lado * sinal, COR_CORDA_PACOTE, 1)
+		return
+	if passo >= 7:
+		_linha(img, baixo, cima, COR_CORDA_PACOTE, 1)
+		return
+	var recuo := (meio - pivo).length() * escala + PUXAO_ARCO[passo]
+	var encaixe := MAO_DISPARO + coice + Vector2(-recuo, 0.0).rotated(deg_to_rad(inclinacao))
+	_linha(img, baixo, encaixe, COR_CORDA_PACOTE, 1)
+	_linha(img, cima, encaixe, COR_CORDA_PACOTE, 1)
+	var tela_flecha := _tela_do_icone(icone)
+	_por_flecha(tela_flecha, pivo + (encaixe - MAO_DISPARO - coice).rotated(-deg_to_rad(giro)))
+	_girar_para(img, tela_flecha, pivo, giro, coice)
+	if passo >= 2:
+		_disco(img, encaixe, 1.4, COR_PELE)
+
+
+## A flecha do pacote, girada 90° (lossless) para apontar para a barriga, com a cauda no encaixe.
+func _por_flecha(tela: Image, encaixe: Vector2) -> void:
+	var flecha := _icone_aereo("arrow1")
+	flecha.rotate_90(CLOCKWISE)
+	var direcao := Vector2.from_angle(deg_to_rad(ANGULO_ARCO_PACOTE))
+	var cauda := Vector2.ZERO
+	var menor := INF
+	for p in _opacos(flecha):
+		var proj := (Vector2(p) + Vector2(0.5, 0.5)).dot(direcao)
+		if proj < menor:
+			menor = proj
+			cauda = Vector2(p)
+	tela.blend_rect(flecha, Rect2i(Vector2i.ZERO, flecha.get_size()), Vector2i(encaixe - cauda))
+
+
+## Copia `fonte` girada `graus` em volta de `pivo` para `destino`, com o pivô em MAO_DISPARO
+## (mais `deslocar`). Vizinho mais próximo, como o Godot gira um sprite em pixel art.
+func _girar_para(destino: Image, fonte: Image, pivo: Vector2, graus: float, deslocar: Vector2, escala: float = 1.0) -> void:
+	var volta := -deg_to_rad(graus)
+	for y in destino.get_height():
+		for x in destino.get_width():
+			var rel := Vector2(x, y) + Vector2(0.5, 0.5) - MAO_DISPARO - deslocar
+			var src := (rel.rotated(volta) / escala + pivo).floor()
+			if Rect2i(Vector2i.ZERO, fonte.get_size()).has_point(Vector2i(src)):
+				var cor := fonte.get_pixelv(Vector2i(src))
+				if cor.a > 0.0:
+					destino.set_pixel(x, y, cor)
+
+
+# Munição -------------------------------------------------------------------------
+
+func _municao_aerea(id: String) -> Image:
+	var d: Array = MUNICAO_AEREO[id]
+	var img := _icone_aereo(d[0])
+	return FerramentasPixel.reduzir(img, d[2]) if d[2] > 0 else img

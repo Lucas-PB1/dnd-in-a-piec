@@ -1,17 +1,55 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/arco_curto.png" id="1_eo4yo"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_uh57n"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_0ul0p"]
-[ext_resource type="Texture2D" path="res://assets/armas/arco_curto.png" id="4_v8yby"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/arco_curto.png" id="1_uh57n"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_0ul0p"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/arco_curto.png" id="3_v8yby"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_l1wbe"]
+[ext_resource type="Texture2D" path="res://assets/armas/arco_curto.png" id="5_4nc34"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_52gku"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0nt2"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_guetk"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymopo"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_71b37"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ougph"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5s8rx"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nps42"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ycfk"]
+atlas = ExtResource("3_v8yby")
+region = Rect2(896, 0, 112, 96)
 
 [resource]
-script = ExtResource("3_0ul0p")
+script = ExtResource("4_l1wbe")
 tipo_dano = &"perfurante"
 categoria = &"simples"
-textura = ExtResource("4_v8yby")
-pegada = Vector2(6.1, 12)
-comprimento = 35.4
+textura = ExtResource("5_4nc34")
+angulo_arte = 45.0
+pegada = Vector2(21.43934, 19.43934)
+comprimento = 5.9
 duas_maos = true
 disparo_normal_pes = 80.0
 disparo_longo_pes = 320.0
@@ -22,7 +60,9 @@ peso = "2 lb."
 preco = "25 GP"
 livro = "Player’s Handbook"
 efeito = &""
+quadros_disparo = Array[Texture2D]([SubResource("AtlasTexture_52gku"), SubResource("AtlasTexture_b0nt2"), SubResource("AtlasTexture_guetk"), SubResource("AtlasTexture_ymopo"), SubResource("AtlasTexture_71b37"), SubResource("AtlasTexture_ougph"), SubResource("AtlasTexture_5s8rx"), SubResource("AtlasTexture_nps42"), SubResource("AtlasTexture_4ycfk")])
+pegada_quadros = Vector2(46, 50)
 nome = "Arco Curto"
 descricao = "Arma simples. Duas Mãos, Disparo (80/320), Munição. Maestria: Atormentar. (Shortbow, Player’s Handbook)"
-icone = ExtResource("1_eo4yo")
+icone = ExtResource("1_uh57n")
 espaco = &"mao"

@@ -7,6 +7,8 @@
 [resource]
 script = ExtResource("2_xn770")
 textura = ExtResource("3_it4dn")
+impulso = 2.2
+peso = 0.25
 nome = "Bala"
 descricao = "Munição. Empilha na mochila. (Firearm Bullet)"
 icone = ExtResource("1_43eb5")

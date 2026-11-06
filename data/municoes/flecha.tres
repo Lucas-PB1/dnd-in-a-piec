@@ -8,6 +8,7 @@
 script = ExtResource("2_n8qut")
 textura = ExtResource("3_2wbpn")
 angulo_arte = -45.0
+peso = 0.6
 nome = "Flecha"
 descricao = "Munição. Empilha na mochila. (Arrow)"
 icone = ExtResource("1_c0ead")

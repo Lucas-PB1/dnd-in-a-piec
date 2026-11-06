@@ -4,6 +4,8 @@ extends SceneTree
 ## godot --headless --debug --path . --script res://tests/teste_tiro.gd
 
 const CENA_VOO := "res://features/arremesso/arma_arremessada.tscn"
+## Mira para cima (graus) que leva a pedra da funda além do alcance normal antes de cair.
+const MIRA_LONGE := 20.0
 
 var _falhas := 0
 
@@ -28,6 +30,8 @@ func _rodar() -> void:
 	await _testar_alcance(cena)
 	await _testar_perto_e_talentos(cena, jogador)
 	await _testar_tiro_extra(jogador)
+	_testar_curva(cena)
+	await _testar_gesto(cena, jogador)
 	cena.queue_free()
 	if _falhas == 0:
 		print("PASSOU: todos os testes do tiro")
@@ -101,11 +105,11 @@ func _testar_alcance(cena: Node) -> void:
 	var pedra: Municao = load("res://data/municoes/pedra_funda.tres")
 	var normal := EscalaDnd.pes_para_pixels(funda.disparo_normal_pes)
 	var golpe := Golpe.new(funda.nome, 0, Dado.new(1, 4))
-	var voo := _lancar(cena, funda, pedra, 1.0, 0.0, golpe, false, Vector2(2400, 200))
+	var voo := _lancar(cena, funda, pedra, 1.0, MIRA_LONGE, golpe, false, Vector2(2400, 200))
 	await _passar_do_normal(voo, 2400.0, normal)
 	_checar(is_instance_valid(voo) and voo.em_desvantagem(), "passou do alcance normal: desvantagem")
 	var elite := Golpe.new(funda.nome, 0, Dado.new(1, 4))
-	var longo := _lancar(cena, funda, pedra, 1.0, 0.0, elite, true, Vector2(2400, 180))
+	var longo := _lancar(cena, funda, pedra, 1.0, MIRA_LONGE, elite, true, Vector2(2400, 180))
 	await _passar_do_normal(longo, 2400.0, normal)
 	_checar(is_instance_valid(longo) and not longo.em_desvantagem(), "Atirador de Elite: o longo não dá desvantagem")
 	if is_instance_valid(voo):
@@ -120,7 +124,7 @@ func _testar_perto_e_talentos(cena: Node, jogador: Jogador) -> void:
 	jogador.global_position = ooze.global_position
 	jogador.ficha.talentos.clear()
 	var golpes: Array[Golpe] = []
-	jogador.arma_arremessada.connect(func(_a: Arma, g: Golpe, _p: int, _o: Vector2, _d: int, _f: float, _m: float, _mu: Municao, _i: bool) -> void: golpes.append(g))
+	jogador.arma_arremessada.connect(func(_a: Arma, g: Golpe, _p: int, _o: Vector2, _d: int, _f: float, _m: float, _mu: Municao, _i: bool, _des: int) -> void: golpes.append(g))
 	_equipar(jogador, "funda", "pedra_funda", 2)
 	await _no_chao(jogador)
 	while not jogador.pode_golpear():
@@ -182,11 +186,112 @@ func _voar(cena: Node, arma: Arma, municao: Municao, mira: float, chao_y: float)
 		Vector2(3000, chao_y - ArmaArremessada.ALTURA_DA_MAO))
 
 
-func _lancar(cena: Node, arma: Arma, municao: Municao, forca: float, mira: float, golpe: Golpe, ignora: bool, origem: Vector2) -> ArmaArremessada:
+func _testar_curva(cena: Node) -> void:
+	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
+	var referencia := Ficha.new(guerreiro, {Atributos.DESTREZA: 14})
+	var media := Ficha.new(guerreiro, {Atributos.DESTREZA: 10})
+	var baixa := Ficha.new(guerreiro, {Atributos.DESTREZA: 8})
+	var alta := Ficha.new(guerreiro, {Atributos.DESTREZA: 18})
+	_checar(is_equal_approx(referencia.teto_da_carga(), 1.0) and is_equal_approx(alta.teto_da_carga(), 1.0),
+		"Destreza 14 ou mais enche até o alcance longo")
+	_checar(media.teto_da_carga() > 0.4 and media.teto_da_carga() < 0.55, "Destreza 10 para perto do meio")
+	_checar(baixa.teto_da_carga() > 0.0 and baixa.teto_da_carga() <= 0.25, "Destreza 8 quase não passa do normal")
+	_checar(media.tempo_ate_teto_da_carga() > referencia.tempo_ate_teto_da_carga()
+		and alta.tempo_ate_teto_da_carga() < referencia.tempo_ate_teto_da_carga(),
+		"Destreza alta enche o teto dela mais rápido")
+	var bala: Municao = load("res://data/municoes/bala.tres")
+	var virote: Municao = load("res://data/municoes/virote.tres")
+	var flecha: Municao = load("res://data/municoes/flecha.tres")
+	var agulha: Municao = load("res://data/municoes/agulha.tres")
+	var pedra: Municao = load("res://data/municoes/pedra_funda.tres")
+	_checar(bala.peso < virote.peso and virote.peso < flecha.peso and flecha.peso < agulha.peso and agulha.peso < pedra.peso,
+		"bala, virote, flecha, agulha e pedra, da mais reta para a mais curva (peso)")
+	var funda: Arma = load("res://data/armas/funda.tres")
+	var pedra_voo := _soltar(cena, funda, pedra, 1.0, 14)
+	var bala_voo := _soltar(cena, funda, bala, 1.0, 14)
+	_checar(bala_voo.velocity.length() > pedra_voo.velocity.length(), "na mesma arma, a bala sai mais rápida que a pedra")
+	var lenta := _soltar(cena, funda, pedra, 1.0, 8)
+	var rapida := _soltar(cena, funda, pedra, 1.0, 18)
+	_checar(absf(rapida.velocity.x) > absf(lenta.velocity.x), "Destreza maior atira mais rápido")
+	var flecha_longo := _soltar(cena, load("res://data/armas/arco_longo.tres"), flecha, 1.0, 14)
+	var flecha_curto := _soltar(cena, load("res://data/armas/arco_curto.tres"), flecha, 1.0, 14)
+	_checar(flecha_longo.velocity.length() > flecha_curto.velocity.length()
+		and flecha_curto.velocity.length() > pedra_voo.velocity.length(),
+		"pelo alcance longo do livro: arco longo mais rápido que o curto, e o curto mais que a funda")
+	var toque := _soltar(cena, funda, pedra, 0.0, 14)
+	_checar(toque.velocity.length() < pedra_voo.velocity.length(), "toque no K sai mais fraco que a carga cheia")
+	for voo in [pedra_voo, bala_voo, lenta, rapida, flecha_longo, flecha_curto, toque]:
+		voo.free()
+
+
+func _soltar(cena: Node, arma: Arma, municao: Municao, forca: float, destreza: int) -> ArmaArremessada:
+	return _lancar(cena, arma, municao, forca, 0.0, Golpe.new(arma.nome, 0, Dado.new(1, 4)), false,
+		Vector2(3200, 200), destreza)
+
+
+func _testar_gesto(cena: Node, jogador: Jogador) -> void:
+	jogador.ficha.atributos[Atributos.DESTREZA] = 14
+	var arco := _equipar(jogador, "arco_curto", "flecha", 4)
+	jogador.global_position = Vector2(200, jogador.global_position.y)
+	await _no_chao(jogador)
+	await _olhar_esquerda(jogador)
+	while not jogador.pode_golpear():
+		await physics_frame
+	Input.action_press("arremessar")
+	for i in 5:
+		await physics_frame
+		if jogador.nome_estado() == &"Arremessando":
+			break
+	_checar(_indice_do_quadro(jogador) == 0, "toque curto mostra o preparo")
+	for i in 50:
+		await physics_frame
+	_checar(_indice_do_quadro(jogador) == AtaqueJogador.PASSOS_DA_CARGA - 1, "segurar até o fim, com Destreza 14, mostra o quadro cheio")
+	Input.action_release("arremessar")
+	await physics_frame
+	_checar(_indice_do_quadro(jogador) == AtaqueJogador.QUADRO_SOLTURA, "soltar mostra a soltura antes de voltar ao descanso")
+	for i in 30:
+		if jogador.nome_estado() != &"Arremessando":
+			break
+		await physics_frame
+	_limpar_voos(cena)
+	jogador.ficha.atributos[Atributos.DESTREZA] = 8
+	while not jogador.pode_golpear():
+		await physics_frame
+	Input.action_press("arremessar")
+	for i in 100:
+		await physics_frame
+	_checar(_indice_do_quadro(jogador) < AtaqueJogador.PASSOS_DA_CARGA - 1, "Destreza 8 não chega no quadro cheio")
+	Input.action_release("arremessar")
+	await physics_frame
+	var tiro := _achar_voo(cena)
+	var referencia := _soltar(cena, arco, load("res://data/municoes/flecha.tres"), jogador.teto_da_carga(), 8)
+	_checar(tiro != null and absf(absf(tiro.velocity.x) - absf(referencia.velocity.x)) < 8.0,
+		"segurar o K com Destreza 8 para no teto, antes do alcance longo")
+	referencia.free()
+	if tiro:
+		tiro.free()
+	jogador.ficha.atributos[Atributos.DESTREZA] = 14
+
+
+func _limpar_voos(cena: Node) -> void:
+	for filho in cena.get_children():
+		if filho is ArmaArremessada:
+			filho.free()
+
+
+func _indice_do_quadro(jogador: Jogador) -> int:
+	var sprite := jogador.get_node("Ataque/Espada") as Sprite2D
+	var atlas := sprite.texture as AtlasTexture
+	if atlas == null or atlas.region.size.x == 0.0:
+		return -1
+	return int(atlas.region.position.x / atlas.region.size.x)
+
+
+func _lancar(cena: Node, arma: Arma, municao: Municao, forca: float, mira: float, golpe: Golpe, ignora: bool, origem: Vector2, destreza: int = 14) -> ArmaArremessada:
 	var voo: ArmaArremessada = load(CENA_VOO).instantiate()
 	cena.add_child(voo)
 	voo.global_position = origem
-	voo.lancar(arma, golpe, 0, 1, forca, mira, municao, ignora)
+	voo.lancar(arma, golpe, 0, 1, forca, mira, municao, ignora, destreza)
 	return voo
 
 

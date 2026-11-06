@@ -59,6 +59,39 @@ func _testar_distancia() -> void:
 	_checar(flecha.empilhavel and flecha.textura != null and flecha.icone.get_width() == 16,
 		"Flecha empilha e tem sprite de projétil e ícone 16x16")
 	_checar(longo.icone.get_width() == 16, "ícone da arma à distância em 16x16")
+	_testar_quadros_disparo()
+
+
+func _testar_quadros_disparo() -> void:
+	var distancia := 0
+	for arquivo: String in ResourceLoader.list_directory(PASTA):
+		if not arquivo.ends_with(".tres"):
+			continue
+		var arma := load(PASTA + arquivo) as Arma
+		if not arma.disparavel():
+			_checar(arma.quadros_disparo.is_empty(), "%s não tem quadros de disparo" % arma.nome)
+			continue
+		distancia += 1
+		_checar(arma.quadros_disparo.size() == 9 and arma.quadros.is_empty(),
+			"%s tem 9 quadros de disparo (8 do gesto + descanso) e o golpe corpo a corpo continua vazio" % arma.nome)
+	_checar(distancia == TOTAL_DISTANCIA, "as 9 armas à distância têm quadros")
+	var arco := _quadro(_arma("arco_curto"), 2)
+	var besta := _quadro(_arma("besta_leve"), 2)
+	_checar(arco.get_data() != besta.get_data(), "o desenho do arco não é o da besta")
+	_checar(_primeira_linha(_quadro(_arma("arco_longo"), 2)) < _primeira_linha(arco),
+		"o Arco Longo é mais alto que o Curto")
+
+
+func _quadro(arma: Arma, indice: int) -> Image:
+	return arma.quadros_disparo[indice].get_image()
+
+
+func _primeira_linha(img: Image) -> int:
+	for y in img.get_height():
+		for x in img.get_width():
+			if img.get_pixel(x, y).a > 0.0:
+				return y
+	return img.get_height()
 
 
 func _testar_dados() -> void:

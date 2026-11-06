@@ -7,6 +7,9 @@
 [resource]
 script = ExtResource("2_dg582")
 textura = ExtResource("3_fdllv")
+angulo_arte = -45.0
+impulso = 1.1
+peso = 0.5
 nome = "Virote"
 descricao = "Munição. Empilha na mochila. (Bolt)"
 icone = ExtResource("1_bff6s")

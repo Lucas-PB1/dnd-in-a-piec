@@ -72,6 +72,9 @@ extends Item
 ## gira com as poses. Com quadros, a pose i mostra o quadro i, sem girar (já desenhado
 ## com o herói olhando para a direita) e com a mão em `pegada_quadros`.
 @export var quadros: Array[Texture2D] = []
+## Quatro quadros do disparo (preparo, meio, cheio, soltura). Vazio no corpo a corpo e no
+## arremesso, para o J não cortar. A mão fica em `pegada_quadros`.
+@export var quadros_disparo: Array[Texture2D] = []
 @export var pegada_quadros: Vector2 = Vector2.ZERO
 ## Passo à frente (px) que o herói dá no golpe para a ponta chegar ao alcance da regra
 ## (5 pés; 10 com Alcance). Armas curtas dão um passo maior.

@@ -1,18 +1,56 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/besta_leve.png" id="1_kke2q"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_fpbl3"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_3soqi"]
-[ext_resource type="Texture2D" path="res://assets/armas/besta_leve.png" id="4_8jmqn"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/besta_leve.png" id="1_fpbl3"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_3soqi"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/besta_leve.png" id="3_8jmqn"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_83j1e"]
+[ext_resource type="Texture2D" path="res://assets/armas/besta_leve.png" id="5_1py6s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1h6fs"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ic8fj"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_of13c"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xx8j8"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqphu"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7fl68"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mbhvp"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sp4e5"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slp4e"]
+atlas = ExtResource("3_8jmqn")
+region = Rect2(896, 0, 112, 96)
 
 [resource]
-script = ExtResource("3_3soqi")
+script = ExtResource("4_83j1e")
 dados_dano = "1d8"
 tipo_dano = &"perfurante"
 categoria = &"simples"
-textura = ExtResource("4_8jmqn")
-pegada = Vector2(6.083333, 13.5)
-comprimento = 39.400000000000006
+textura = ExtResource("5_1py6s")
+angulo_arte = -45.0
+pegada = Vector2(12.25, 19.75)
+comprimento = 31.400000000000002
 duas_maos = true
 disparo_normal_pes = 80.0
 disparo_longo_pes = 320.0
@@ -25,7 +63,9 @@ peso = "5 lb."
 preco = "25 GP"
 livro = "Player’s Handbook"
 efeito = &""
+quadros_disparo = Array[Texture2D]([SubResource("AtlasTexture_1h6fs"), SubResource("AtlasTexture_ic8fj"), SubResource("AtlasTexture_of13c"), SubResource("AtlasTexture_xx8j8"), SubResource("AtlasTexture_gqphu"), SubResource("AtlasTexture_7fl68"), SubResource("AtlasTexture_mbhvp"), SubResource("AtlasTexture_sp4e5"), SubResource("AtlasTexture_slp4e")])
+pegada_quadros = Vector2(46, 50)
 nome = "Besta Leve"
 descricao = "Arma simples. Duas Mãos, Disparo (80/320), Recarga, Munição. Maestria: Lentidão. (Light Crossbow, Player’s Handbook)"
-icone = ExtResource("1_kke2q")
+icone = ExtResource("1_fpbl3")
 espaco = &"mao"
