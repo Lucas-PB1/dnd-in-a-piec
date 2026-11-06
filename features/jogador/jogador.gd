@@ -100,7 +100,7 @@ func _physics_process(delta: float) -> void:
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
 	var na_tras: Arma = null if _ataque.golpe_da_secundaria() else arma_secundaria()
 	_arma_tras.mostrar(na_tras, _animacao.ponto_da_mao_de_tras(), direcao_olhar)
-	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar, esta_golpeando(), delta)
+	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar)
 	_camera.olhar_para(direcao_olhar)
 	if global_position.y > limite_queda:
 		reaparecer()

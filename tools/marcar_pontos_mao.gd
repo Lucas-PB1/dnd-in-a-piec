@@ -1,8 +1,8 @@
 extends SceneTree
 ## Marca a MÃO DA FRENTE do herói em cada quadro de cada animação do heroi_frames.tres e
 ## salva em features/jogador/sprites/pontos_mao.tres. Também recorta essa mão numa camada
-## própria (folhas *_mao.png + maos_frente_frames.tres), desenhada por cima da arma e do
-## escudo: os dedos ficam sobre o cabo e a arma parece segurada de verdade. Rodar depois de trocar a arte do herói:
+## própria (folhas *_mao.png + maos_frente_frames.tres), desenhada por cima da arma: os dedos
+## ficam sobre o cabo e a arma parece segurada. (O escudo, ao contrário, cobre a mão de trás.) Rodar depois de trocar a arte do herói:
 ##   godot --headless --path . --script res://tools/marcar_pontos_mao.gd -- [revisao.png]
 ## Com o argumento, salva também uma folha ampliada com os pontos marcados, para conferir.
 ##

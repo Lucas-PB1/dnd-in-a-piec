@@ -118,8 +118,12 @@ func _testar_heroi_vestido() -> void:
 	jogador.inventario.equipar(escudo)
 	await physics_frame
 	var sprite_escudo := jogador.get_node("Escudo") as Sprite2D
-	_checar(jogador.classe_armadura() == 18 and sprite_escudo.visible and sprite_escudo.position.x > 0.0,
-		"escudo: CA 18 e aparece na frente do corpo (x %.0f)" % sprite_escudo.position.x)
+	var mao_tras := (jogador.get_node("Sprite") as AnimacaoJogador).ponto_da_mao_de_tras()
+	_checar(jogador.classe_armadura() == 18 and sprite_escudo.visible and sprite_escudo.position.distance_to(mao_tras) < 1.0,
+		"escudo: CA 18, seguro pela mão de trás (centro na mão)")
+	var sprite_heroi := jogador.get_node("Sprite") as CanvasItem
+	_checar(sprite_escudo.z_index >= sprite_heroi.z_index and sprite_escudo.get_index() > sprite_heroi.get_index(),
+		"o escudo é desenhado por cima do corpo e cobre a mão de trás (a mão fica atrás da alça)")
 	var pseudopode := (load("res://data/gray_ooze.tres") as CriaturaRPG).golpe()
 	pseudopode.bonus_ataque = 100  # só erra com 1 natural
 	var hurtbox: HurtboxComponent = jogador.get_node("Hurtbox")
