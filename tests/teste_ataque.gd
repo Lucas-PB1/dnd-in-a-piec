@@ -15,6 +15,7 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
+	cena.mostrar_criacao = false  # joga direto com a sugestão da classe
 	root.add_child(cena)
 	_jogador = cena.get_node("Jogador")
 	_boneco = cena.get_node("BonecoTreino")
@@ -23,6 +24,7 @@ func _rodar() -> void:
 	await _testar_golpe_no_chao()
 	await _testar_golpe_de_costas()
 	await _testar_golpe_no_ar()
+	await _testar_dano_rolado()
 	cena.queue_free()
 	await _testar_boneco_sozinho()
 
@@ -76,6 +78,28 @@ func _testar_golpe_no_ar() -> void:
 			break
 		await physics_frame
 	_checar(_jogador.nome_estado() == &"Parado", "pousa depois do golpe no ar")
+
+
+## Cada golpe rola 1d6 + modificador (FOR ou DES, o maior, porque a espada curta tem acuidade).
+func _testar_dano_rolado() -> void:
+	const GOLPES := 12
+	var arma := _jogador.arma
+	var bonus := _jogador.ficha.bonus_dano(arma)
+	var minimo := arma.dado().minimo() + bonus
+	var maximo := arma.dado().maximo() + bonus
+	var danos: Array[int] = []
+	_boneco.atingido.connect(func(dano: int) -> void: danos.append(dano))
+	await _colocar_ao_lado_do_boneco()
+	for i in GOLPES:
+		await _apertar("atacar")
+		await _esperar_golpe_acabar()
+		await _esperar(2)
+	var dentro := danos.all(func(d: int) -> bool: return d >= minimo and d <= maximo)
+	var diferentes := {}
+	for d in danos:
+		diferentes[d] = true
+	_checar(danos.size() == GOLPES and dentro, "dano de cada golpe entre %d e %d (%s)" % [minimo, maximo, str(danos)])
+	_checar(diferentes.size() > 1, "o dano varia de um golpe para outro")
 
 
 ## A cena do boneco roda sozinha (como no F6) e reage a um golpe.

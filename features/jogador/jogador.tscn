@@ -15,6 +15,8 @@
 [ext_resource type="Script" path="res://features/jogador/ataque_jogador.gd" id="13_ataque"]
 [ext_resource type="SpriteFrames" path="res://assets/efeitos/corte_frames.tres" id="14_corte"]
 [ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="15_hitbox"]
+[ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="16_classe"]
+[ext_resource type="Script" path="res://core/componentes/health_component.gd" id="17_vida"]
 
 [sub_resource type="RectangleShape2D" id="Forma"]
 size = Vector2(22, 56)
@@ -29,6 +31,10 @@ floor_snap_length = 4.0
 script = ExtResource("1_script")
 stats = ExtResource("2_stats")
 arma = ExtResource("12_arma")
+classe = ExtResource("16_classe")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("17_vida")
 
 [node name="Colisao" type="CollisionShape2D" parent="."]
 position = Vector2(0, -28)

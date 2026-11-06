@@ -8,6 +8,7 @@ extends Node2D
 const CURVA_GOLPE := 0.4
 
 var _arma: Arma
+var _dano: int = 0
 var _tempo: float = 0.0
 var _golpeando: bool = false
 var _distancia_mao: float  # distância da mão ao centro do herói (px), espelhada ao virar
@@ -23,9 +24,11 @@ func _ready() -> void:
 	_esconder()
 
 
-## Começa um golpe com a `arma`, virado para `direcao` (1 = direita, -1 = esquerda).
-func golpear(arma: Arma, direcao: int) -> void:
+## Começa um golpe com a `arma`, virado para `direcao` (1 = direita, -1 = esquerda),
+## causando `dano` em quem acertar.
+func golpear(arma: Arma, direcao: int, dano: int) -> void:
 	_arma = arma
+	_dano = dano
 	_tempo = 0.0
 	_golpeando = true
 	position.x = _distancia_mao * direcao
@@ -73,7 +76,7 @@ func _girar_arma() -> void:
 func _atualizar_acerto() -> void:
 	var na_janela := _tempo >= _arma.inicio_acerto and _tempo < _arma.fim_acerto
 	if na_janela and not _hitbox.esta_ligada():
-		_hitbox.ligar(_arma.dano)
+		_hitbox.ligar(_dano)
 		_corte.show()
 		_corte.play(&"corte")
 	elif not na_janela and _hitbox.esta_ligada():

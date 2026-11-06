@@ -33,6 +33,11 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Arquitetura do herói | `jogador.gd` = ferramentas de física + API pública. Comportamento na **máquina de estados** (`core/estados/`): estados `Parado`, `Andando`, `Correndo`, `NoAr` em `features/jogador/estados/`. Números em `data/jogador_padrao.tres` (`StatsJogador`). `AnimacaoJogador` e `CameraJogador` não conhecem o Jogador: ele chama `atualizar()`/`olhar_para()` (call down). | Skills godot-*. |
 | Mudar balanceamento | Edite `data/jogador_padrao.tres` no Inspector (velocidade, pulo, toque duplo). | Dados separados do código. |
 | Classe do herói | **Guerreiro (estilo D&D)**: espada (e futuramente escudo/outras armas). | Pedido do usuário. |
+| Regras de D&D 5e | Classes puras em `core/regras/`: `Dado` ("1d6"), `Atributos` (mod = (valor-10)/2 p/ baixo), `CompraDePontos` (27 pts, 8 a 15, custos do livro), `Ficha` (vida e dano). Testes em `tests/teste_regras_dnd.gd`. | Testável sem abrir o jogo. |
+| Vida | Nível 1 = **dado de vida máximo da classe + mod. CON** (Guerreiro d10, `data/classe_guerreiro.tres`). Mínimo 1. `HealthComponent` guarda a vida (sem dano ainda). | Regra do livro; usuário escolheu d10. |
+| Dano | **Dados da arma + mod.** a cada golpe. Arma com `acuidade` usa o maior entre FOR e DES (espada curta: 1d6, acuidade). **Mínimo 1** por acerto. | Regra do livro; mínimo 1 é regra da casa. |
+| Atributos | Escolhidos na **tela de criação** (`ui/criacao_personagem/`) por **compra de pontos**, no início do jogo (pausado). Botão com a sugestão da classe. INT, SAB e CAR ainda não fazem nada. | Pedido do usuário. |
+| HUD | `ui/hud/`: "PV atual/máximo". | |
 | Ataque | Tecla **J** -> estado `Atacando`. No chão freia e fica firme; no ar continua caindo; não vira durante o golpe. | Peso de Guerreiro. |
 | Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/arma_*.tres`: dano, alcance, tempos da janela de acerto, ângulos e **textura**. A espada é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. | Equipamento visível sem redesenhar o herói. |
 | Dano | `HitboxComponent` (quem bate, acerta cada alvo 1x por golpe) e `HurtboxComponent` (quem apanha, só emite `golpe_recebido`) em `core/componentes/`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`. `HealthComponent` só quando houver o primeiro inimigo que morre. | Reutilizável por herói e inimigos. |
@@ -62,14 +67,17 @@ Regras de uso:
 Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
-core/componentes/        HitboxComponent, HurtboxComponent
-core/dados/              Arma (Resource)
+core/componentes/        HitboxComponent, HurtboxComponent, HealthComponent
+core/dados/              Arma, ClasseRPG (Resources)
+core/regras/             Dado, Atributos, CompraDePontos, Ficha (regras puras de D&D)
+ui/criacao_personagem/   tela de criação (compra de pontos)
+ui/hud/                  HUD (vida)
 core/utilitarios/        ToqueDuplo
 features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
 						 camera_jogador.gd, ataque_jogador.gd, estados/, sprites/
 features/boneco_treino/  boneco de treino (leva golpe, pisca, balança, mostra dano)
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-data/                    jogador_padrao.tres, arma_espada_curta.tres
+data/                    jogador_padrao.tres, arma_espada_curta.tres, classe_guerreiro.tres
 assets/tiles/            ladrilhos e TileSet (compartilhado)
 assets/armas/, efeitos/  sprites de armas e efeitos (compartilhados)
 tools/                   gerar_arte_provisoria.gd, gerar_fase_teste.gd, capturar_tela.gd
@@ -142,3 +150,5 @@ Um teste só:
 - Fatia 4: skills de código limpo, corrida com dois toques (animação provisória), fase reta, herói refatorado em física + componente visual.
 - Skills godot-* criadas e código migrado: novas pastas, máquina de estados do herói, `StatsJogador` em `data/`, sem `get_parent()`, fase com API própria.
 - Fatia 5: golpe de espada (J) no chão e no ar, arma como dado e sprite separado, Hitbox/Hurtbox, boneco de treino. Tentativa de usar pacote pronto (Hero Knight) foi cancelada e limpa.
+- Fatia 6a: ficha de D&D (compra de pontos, vida d10 + CON, dano 1d6 + FOR/DES), tela de criação, HUD de vida.
+- Próximas: 6b inventário (tecla I, pausa; equipar/desequipar/jogar fora; espada começa no inventário; sem arma = soco 1 + FOR) e 6c espada sempre na mão (ponto da mão por quadro, golpe na altura certa).

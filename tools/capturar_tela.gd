@@ -1,7 +1,7 @@
 extends SceneTree
 ## Tira prints do jogo segurando teclas, para conferir o visual sem precisar jogar.
 ## Uso (precisa de janela, NÃO use --headless):
-##   godot --path . --script res://tools/capturar_tela.gd -- <acoes> <quadros> <arquivo.png>
+##   godot --path . --script res://tools/capturar_tela.gd -- <acoes> <quadros> <arquivo.png> [criacao]
 ## Ex.: ... -- mover_direita,pular 40 C:/tmp/print.png
 ## <acoes> separadas por vírgula, ou "nenhuma". <quadros> = passos de física (60 por segundo)
 ## contados DEPOIS de apertar as teclas.
@@ -20,7 +20,10 @@ func _rodar() -> void:
 	var quadros: int = int(args[1]) if args.size() > 1 else 30
 	var arquivo: String = args[2] if args.size() > 2 else "user://print.png"
 
-	root.add_child(load("res://levels/main.tscn").instantiate())
+	var cena: Node = load("res://levels/main.tscn").instantiate()
+	# 4º argumento "criacao" mostra a tela de criação; sem ele, joga direto.
+	cena.mostrar_criacao = args.size() > 3 and args[3] == "criacao"
+	root.add_child(cena)
 	for i in ESPERA_INICIAL:
 		await physics_frame
 	for acao in acoes:

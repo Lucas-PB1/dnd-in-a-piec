@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://levels/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://levels/fase_teste.tscn" id="2_fase"]
 [ext_resource type="PackedScene" path="res://features/jogador/jogador.tscn" id="3_jogador"]
 [ext_resource type="PackedScene" path="res://features/boneco_treino/boneco_treino.tscn" id="4_boneco"]
+[ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="5_hud"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -14,3 +15,8 @@ script = ExtResource("1_main")
 position = Vector2(240, 288)
 
 [node name="Jogador" parent="." instance=ExtResource("3_jogador")]
+
+[node name="Hud" parent="." instance=ExtResource("5_hud")]
+
+[node name="Interface" type="CanvasLayer" parent="."]
+layer = 10

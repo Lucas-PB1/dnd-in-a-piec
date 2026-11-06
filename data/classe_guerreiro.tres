@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ClasseRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="1_classe"]
+
+[resource]
+script = ExtResource("1_classe")
+nome = "Guerreiro"
+dado_vida = 10
+atributos_sugeridos = Dictionary[StringName, int]({
+&"carisma": 10,
+&"constituicao": 13,
+&"destreza": 14,
+&"forca": 15,
+&"inteligencia": 8,
+&"sabedoria": 12
+})

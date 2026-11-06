@@ -1,0 +1,84 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/criacao_personagem/tela_criacao.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="2_classe"]
+[ext_resource type="Resource" path="res://data/arma_espada_curta.tres" id="3_arma"]
+
+[node name="TelaCriacao" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+classe = ExtResource("2_classe")
+arma_previa = ExtResource("3_arma")
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.07, 0.12, 0.85)
+
+[node name="Centro" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Painel" type="PanelContainer" parent="Centro"]
+layout_mode = 2
+
+[node name="Margem" type="MarginContainer" parent="Centro/Painel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel/Margem"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Titulo" type="Label" parent="Centro/Painel/Margem/Coluna"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Pontos" type="Label" parent="Centro/Painel/Margem/Coluna"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Grade" type="GridContainer" parent="Centro/Painel/Margem/Coluna"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 2
+columns = 5
+
+[node name="Previa" type="Label" parent="Centro/Painel/Margem/Coluna"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Botoes" type="HBoxContainer" parent="Centro/Painel/Margem/Coluna"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Sugestao" type="Button" parent="Centro/Painel/Margem/Coluna/Botoes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sugestão do Guerreiro"
+
+[node name="Comecar" type="Button" parent="Centro/Painel/Margem/Coluna/Botoes"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Começar"

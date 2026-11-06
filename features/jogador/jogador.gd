@@ -10,18 +10,25 @@ signal pulou
 signal aterrissou
 ## Emitido quando volta para o início (ex.: caiu num buraco).
 signal reapareceu
+## Emitido quando a vida muda (ex.: ao criar o personagem).
+signal vida_mudou(atual: int, maxima: int)
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
 ## Arma equipada (equipamento). Trocar de arma = trocar este .tres (ex.: data/arma_*.tres).
 @export var arma: Arma
+## Classe de D&D (dado de vida, atributos sugeridos). Padrão: data/classe_guerreiro.tres.
+@export var classe: ClasseRPG
 ## Se cair abaixo desta altura (Y), volta para o início.
 @export var limite_queda: float = 600.0
 
 ## Para onde o herói está olhando: 1 = direita, -1 = esquerda.
 var direcao_olhar: int = 1
 var posicao_inicial: Vector2
+## Ficha de D&D (atributos). Começa com a sugestão da classe; a tela de criação troca.
+var ficha: Ficha
 
+var _rng := RandomNumberGenerator.new()
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -32,6 +39,7 @@ var _toque_duplo: ToqueDuplo
 @onready var _animacao: AnimacaoJogador = $Sprite
 @onready var _camera: CameraJogador = $Camera
 @onready var _ataque: AtaqueJogador = $Ataque
+@onready var _vida: HealthComponent = $Vida
 
 
 func _ready() -> void:
@@ -40,9 +48,13 @@ func _ready() -> void:
 		stats = StatsJogador.new()
 	if arma == null:
 		arma = Arma.new()
+	if classe == null:
+		classe = ClasseRPG.new()
 	posicao_inicial = global_position
 	_toque_duplo = ToqueDuplo.new(stats.janela_toque_duplo)
 	aterrissou.connect(_animacao.tocar_aterrissagem)
+	_vida.vida_mudou.connect(vida_mudou.emit)
+	configurar_ficha(Ficha.new(classe, classe.atributos_sugeridos))
 	_maquina.iniciar(self)
 
 
@@ -64,6 +76,20 @@ func posicionar_no_inicio(posicao: Vector2) -> void:
 	posicao_inicial = posicao
 	global_position = posicao
 	reset_physics_interpolation()
+
+
+## Troca a ficha de D&D (ex.: vinda da tela de criação) e recalcula a vida.
+func configurar_ficha(nova: Ficha) -> void:
+	ficha = nova
+	_vida.configurar(ficha.vida_maxima())
+
+
+func vida_atual() -> int:
+	return _vida.vida_atual
+
+
+func vida_maxima() -> int:
+	return _vida.vida_maxima
 
 
 ## Impede a câmera de mostrar fora da `area` da fase (pixels).
@@ -104,8 +130,9 @@ func pediu_ataque() -> bool:
 
 
 ## Começa um golpe com a arma equipada, para o lado em que o herói olha.
+## O dano é rolado no início de cada golpe (dados da arma + modificador da ficha).
 func iniciar_golpe() -> void:
-	_ataque.golpear(arma, direcao_olhar)
+	_ataque.golpear(arma, direcao_olhar, ficha.rolar_dano(arma, _rng))
 
 
 func esta_golpeando() -> bool:

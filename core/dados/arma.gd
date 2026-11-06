@@ -4,8 +4,10 @@ extends Resource
 ## Os tempos contam a partir do início do golpe.
 
 @export var nome: String = "Espada"
-## Dano por acerto.
-@export var dano: int = 3
+## Dados de dano no formato de D&D (ex.: "1d6" para espada curta, "1d8" para espada longa).
+@export var dados_dano: String = "1d6"
+## Acuidade (D&D): o dano usa o maior entre Força e Destreza. Sem ela, usa só Força.
+@export var acuidade: bool = false
 ## Imagem da arma, desenhada apontando para a DIREITA com o cabo na origem.
 @export var textura: Texture2D
 ## Cor do arco de corte.
@@ -30,3 +32,12 @@ extends Resource
 @export var angulo_inicial: float = -110.0
 ## Ângulo da arma no fim do golpe (positivo = abaixada à frente).
 @export var angulo_final: float = 35.0
+
+
+## Os dados de dano já interpretados. Se o texto estiver errado, avisa e usa 1d4.
+func dado() -> Dado:
+	var resultado := Dado.de_texto(dados_dano)
+	if resultado == null:
+		push_warning("Arma '%s': dados_dano '%s' inválido, usando 1d4." % [nome, dados_dano])
+		return Dado.new(1, 4)
+	return resultado
