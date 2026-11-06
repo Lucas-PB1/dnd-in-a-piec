@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_caido.gd" id="17_caido"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_arremessando.gd" id="18_arremessando"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_desengajando.gd" id="19_desengajando"]
+[ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_escondido.gd" id="20_escondido"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
 size = Vector2(18, 48)
@@ -88,7 +89,10 @@ shape = SubResource("FormaGolpe")
 
 [node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]
 script = ExtResource("9_maquina")
-estado_inicial = NodePath("Parado")
+estado_inicial = NodePath("Escondido")
+
+[node name="Escondido" type="Node" parent="MaquinaEstados"]
+script = ExtResource("20_escondido")
 
 [node name="Parado" type="Node" parent="MaquinaEstados"]
 script = ExtResource("10_parado")

@@ -9,7 +9,9 @@ func processar_fisica(_delta: float) -> void:
 		return
 	if goblin.alvo_ao_alcance():
 		_esperar_vez(&"Atacando")
-	elif goblin.pode_arremessar() or goblin.pode_atirar():
+	elif goblin.pode_arremessar():
+		_esperar_vez(&"Arremessando")
+	elif goblin.pode_atirar() and goblin.pode_disparar():
 		_esperar_vez(&"Arremessando")
 	else:
 		goblin.andar_para_alvo()

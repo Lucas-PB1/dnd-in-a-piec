@@ -37,13 +37,27 @@ static func resolver_ataque(golpe: Golpe, ca: int, rng: RandomNumberGenerator,
 	r.critico = r.d20 == ACERTO_CRITICO
 	r.acertou = r.critico or (r.d20 != FALHA_AUTOMATICA and r.total >= ca)
 	if r.acertou:
-		r.dano = maxi(golpe.dano.rolar(rng, r.critico), DANO_MINIMO)
+		r.dano = dano_do_acerto(golpe, rng, r.critico)
 		r.resistido = golpe.tipo_dano in resistencias
 		if r.resistido:
 			r.dano = TiposDano.aplicar_resistencia(r.dano)
 	elif golpe.dano_raspao > 0:
 		_aplicar_raspao(r, golpe, resistencias)
 	return r
+
+
+## Dano de um acerto. Com vantagem (e sem desvantagem anulando), soma o dado extra.
+## No crítico os dois dados dobram; o bônus de cada um não.
+static func dano_do_acerto(golpe: Golpe, rng: RandomNumberGenerator, critico: bool) -> int:
+	var dano := golpe.dano.rolar(rng, critico)
+	if teve_vantagem(golpe) and golpe.dano_extra != null:
+		dano += golpe.dano_extra.rolar(rng, critico)
+	return maxi(dano, DANO_MINIMO)
+
+
+## O ataque saiu com vantagem de verdade (as duas juntas se anulam, como no d20).
+static func teve_vantagem(golpe: Golpe) -> bool:
+	return golpe.vantagem and not golpe.desvantagem
 
 
 ## Raspão (maestria): errou, mas causa o modificador do ataque como dano (resistência vale).

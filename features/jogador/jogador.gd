@@ -315,7 +315,8 @@ func usar_folego() -> bool:
 	_usos_folego -= 1
 	_tempo_desde_acao_bonus = 0.0
 	var ganho := _vida.curar(classe.cura_do_folego(_rng_folego))
-	_texto.mostrar("Fôlego +%d" % ganho, TextoFlutuanteComponent.COR_CURA)
+	_animacao.pulso_cura()
+	_texto.mostrar_cura("Fôlego +%d" % ganho)
 	_avisar_folego()
 	return true
 

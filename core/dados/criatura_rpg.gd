@@ -66,6 +66,14 @@ extends Resource
 ## Tipo de dano do tiro (TiposDano).
 @export var disparo_tipo_dano: StringName = TiposDano.PERFURANTE
 
+@export_group("Furtividade")
+## Tem a perícia e começa escondido (rola contra a Percepção passiva do herói).
+@export var tem_furtividade: bool = false
+## Bônus de Furtividade já com o modificador (Goblin: +6).
+@export var bonus_furtividade: int = 0
+## Dado extra quando o ataque tem vantagem (Goblin Warrior: "1d4"). Vazio = não tem.
+@export var dano_extra_com_vantagem: String = ""
+
 @export_group("Ações bônus")
 ## Fuga Ágil (Goblin): Desengajar depois de atacar (salta para longe do alvo).
 @export var fuga_agil: bool = false
@@ -93,6 +101,7 @@ func bonus_salvaguarda(atributo: StringName) -> int:
 func golpe() -> Golpe:
 	var ataque := Golpe.new(ataque_nome, ataque_bonus, _dado_ou_padrao(ataque_dano), ataque_tipo_dano)
 	ataque.corroi_armadura = ataque_corroi_armadura
+	_anexar_dano_extra(ataque)
 	return ataque
 
 
@@ -100,7 +109,19 @@ func golpe() -> Golpe:
 func golpe_disparo() -> Golpe:
 	var nome_tiro := disparo_nome if not disparo_nome.is_empty() else ataque_nome
 	var notacao := disparo_dano if not disparo_dano.is_empty() else ataque_dano
-	return Golpe.new(nome_tiro, ataque_bonus, _dado_ou_padrao(notacao), disparo_tipo_dano)
+	var tiro := Golpe.new(nome_tiro, ataque_bonus, _dado_ou_padrao(notacao), disparo_tipo_dano)
+	_anexar_dano_extra(tiro)
+	return tiro
+
+
+func _anexar_dano_extra(ataque: Golpe) -> void:
+	if dano_extra_com_vantagem.is_empty():
+		return
+	var extra := Dado.de_texto(dano_extra_com_vantagem)
+	if extra == null:
+		push_warning("Criatura '%s': dado extra '%s' inválido." % [nome, dano_extra_com_vantagem])
+		return
+	ataque.dano_extra = extra
 
 
 func _dado_ou_padrao(notacao: String) -> Dado:

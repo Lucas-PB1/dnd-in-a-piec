@@ -1,7 +1,7 @@
 class_name TelaCriacao
 extends Control
-## Criação em três passos: quem é o herói, os atributos e as maestrias (os tipos de arma que
-## domina; Guerreiro: 3). Funciona com o jogo pausado.
+## Criação em quatro passos: quem é o herói, os atributos, as perícias (Guerreiro: 2) e as
+## maestrias (os tipos de arma que domina; Guerreiro: 3). Funciona com o jogo pausado.
 ## Ao confirmar, emite `confirmada`.
 
 ## Emitido ao clicar em "Começar", com a ficha montada e o pacote inicial escolhido
@@ -17,8 +17,13 @@ const LARGURA_AJUSTE := 28
 ## De onde vêm as armas que dá para dominar (Maestria em Armas).
 @export var pasta_armas: String = "res://data/armas/"
 
-enum Passo { QUEM, ATRIBUTOS, MAESTRIAS }
-const TITULOS := {Passo.QUEM: "Quem é você", Passo.ATRIBUTOS: "Atributos", Passo.MAESTRIAS: "Maestrias"}
+enum Passo { QUEM, ATRIBUTOS, PERICIAS, MAESTRIAS }
+const TITULOS := {
+	Passo.QUEM: "Quem é você",
+	Passo.ATRIBUTOS: "Atributos",
+	Passo.PERICIAS: "Perícias",
+	Passo.MAESTRIAS: "Maestrias",
+}
 
 var _classe: ClasseRPG
 var _pacote: PacoteInicial
@@ -42,7 +47,11 @@ var _armas: Array[Arma] = []
 @onready var _titulo: Label = %TituloPasso
 @onready var _passo_quem: Control = %PassoQuem
 @onready var _passo_atributos: Control = %PassoAtributos
+@onready var _passo_pericias: Control = %PassoPericias
 @onready var _passo_maestrias: Control = %PassoMaestrias
+@onready var _lista_pericias: ItemList = %ListaPericias
+@onready var _contagem_pericias: Label = %ContagemPericias
+@onready var _detalhe_pericia: Label = %DetalhePericia
 @onready var _lista_maestrias: ItemList = %ListaMaestrias
 @onready var _contagem_maestrias: Label = %ContagemMaestrias
 @onready var _detalhe_maestria: Label = %DetalheMaestria
@@ -72,6 +81,7 @@ func definir_nome(texto: String) -> void:
 func escolher_classe(indice: int) -> void:
 	_classe = classes[indice]
 	_escolha_classe.select(indice)
+	_preencher_pericias()
 	_preencher_armas()
 	_preencher_pacotes()
 	_atualizar()
@@ -105,6 +115,21 @@ func marcar_arma(nome_arma: String, marcada: bool) -> void:
 			_ao_marcar(i, marcada)
 
 
+## Marca ou desmarca uma perícia (pelo id). Não passa da quantidade da classe.
+func marcar_pericia(id: StringName, marcada: bool) -> void:
+	var indice := _classe.pericias_escolhiveis.find(id)
+	if indice >= 0:
+		_ao_marcar_pericia(indice, marcada)
+
+
+## Ids das perícias marcadas.
+func pericias_marcadas() -> Array[StringName]:
+	var ids: Array[StringName] = []
+	for i in _lista_pericias.get_selected_items():
+		ids.append(_classe.pericias_escolhiveis[i])
+	return ids
+
+
 ## Nomes das armas marcadas.
 func armas_marcadas() -> Array[String]:
 	var nomes: Array[String] = []
@@ -133,16 +158,41 @@ func _preparar_campos() -> void:
 	_botao_comecar.pressed.connect(confirmar)
 	(%Atributos as Button).pressed.connect(_mostrar_passo.bind(Passo.ATRIBUTOS))
 	(%Voltar as Button).pressed.connect(_mostrar_passo.bind(Passo.QUEM))
+	(%IrPericias as Button).pressed.connect(_mostrar_passo.bind(Passo.PERICIAS))
+	(%VoltarDasPericias as Button).pressed.connect(_mostrar_passo.bind(Passo.ATRIBUTOS))
 	(%IrMaestrias as Button).pressed.connect(_mostrar_passo.bind(Passo.MAESTRIAS))
-	(%VoltarAtributos as Button).pressed.connect(_mostrar_passo.bind(Passo.ATRIBUTOS))
+	(%VoltarAtributos as Button).pressed.connect(_mostrar_passo.bind(Passo.PERICIAS))
+	_lista_pericias.multi_selected.connect(_ao_marcar_pericia)
 	_lista_maestrias.multi_selected.connect(_ao_marcar)
 
 
 func _mostrar_passo(passo: Passo) -> void:
 	_passo_quem.visible = passo == Passo.QUEM
 	_passo_atributos.visible = passo == Passo.ATRIBUTOS
+	_passo_pericias.visible = passo == Passo.PERICIAS
 	_passo_maestrias.visible = passo == Passo.MAESTRIAS
 	_titulo.text = TITULOS[passo]
+
+
+## Lista as perícias da classe e marca as sugeridas (até a quantidade).
+func _preencher_pericias() -> void:
+	_lista_pericias.clear()
+	for id in _classe.pericias_escolhiveis:
+		_lista_pericias.add_item(Pericia.texto_da_lista(id))
+	for id in _classe.pericias_sugeridas:
+		marcar_pericia(id, true)
+
+
+## Marcou (ou desmarcou) a perícia `indice`. Passou do limite = não marca.
+func _ao_marcar_pericia(indice: int, marcada: bool) -> void:
+	var id := _classe.pericias_escolhiveis[indice]
+	var outras := pericias_marcadas().filter(func(p: StringName) -> bool: return p != id).size()
+	if marcada and outras < _classe.quantidade_pericias:
+		_lista_pericias.select(indice, false)
+	else:
+		_lista_pericias.deselect(indice)
+	_detalhe_pericia.text = Pericia.descricao(id)
+	_atualizar()
 
 
 ## Lista as armas em que a classe é proficiente: "Espada Longa (Enfraquecer)".
@@ -193,6 +243,7 @@ func _preencher_pacotes() -> void:
 func _ficha_atual() -> Ficha:
 	var ficha := Ficha.new(_classe, _compra.valores, _campo_nome.text)
 	ficha.armas_dominadas = armas_marcadas()
+	ficha.pericias = pericias_marcadas()
 	return ficha
 
 
@@ -202,6 +253,8 @@ func _falta_algo() -> String:
 		return "Escreva um nome"
 	if _compra.pontos_restantes() != 0:
 		return "Gaste todos os pontos"
+	if _classe.quantidade_pericias > 0 and pericias_marcadas().size() != _classe.quantidade_pericias:
+		return "Escolha %d perícias" % _classe.quantidade_pericias
 	if armas_marcadas().size() != _classe.quantidade_maestrias:
 		return "Escolha %d armas" % _classe.quantidade_maestrias
 	return ""
@@ -229,6 +282,9 @@ func _atualizar() -> void:
 		_botoes_menos[atributo].disabled = not _compra.pode_diminuir(atributo)
 		_botoes_mais[atributo].disabled = not _compra.pode_aumentar(atributo)
 	var ficha := _ficha_atual()
+	_contagem_pericias.text = "Escolha %d perícias (%d/%d). Percepção passiva: %d." % [
+		_classe.quantidade_pericias, pericias_marcadas().size(), _classe.quantidade_pericias,
+		ficha.percepcao_passiva()]
 	_previa.text = _texto_previa(ficha)
 	_aviso.text = _texto_aviso(ficha)
 	_leva.text = "Leva: %s" % _pacote.texto_itens() if _pacote else ""

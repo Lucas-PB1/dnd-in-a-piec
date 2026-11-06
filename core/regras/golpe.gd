@@ -14,6 +14,8 @@ var nome: String
 ## Somado ao d20 (proficiência + modificador, ou o "+3" da ficha da criatura).
 var bonus_ataque: int
 var dano: Dado
+## Dado somado ao dano só quando o ataque tem vantagem (ex.: 1d4 do Goblin Warrior). Null = não tem.
+var dano_extra: Dado
 var tipo_dano: StringName
 ## True se é uma arma não mágica (sofre Corrosão). Soco e ataques naturais = false.
 var arma_corroivel: bool

@@ -53,6 +53,10 @@ func _testar_tela_sozinha() -> void:
 	tela.marcar_arma("Adaga", true)
 	_checar(tela.armas_marcadas().size() == 3 and tela.armas_marcadas().has("Adaga"),
 		"com uma vaga, a outra arma entra")
+	_checar(tela.pericias_marcadas().size() == 2 and Pericia.PERCEPCAO in tela.pericias_marcadas()
+		and Pericia.ATLETISMO in tela.pericias_marcadas(), "abre com Percepção e Atletismo")
+	tela.marcar_pericia(Pericia.ACROBACIA, true)
+	_checar(not tela.pericias_marcadas().has(Pericia.ACROBACIA), "a terceira perícia não entra")
 	tela.aplicar_sugestao()
 	tela.confirmar()
 	_checar(recebida.is_empty(), "não deixa começar sem nome")
@@ -61,9 +65,15 @@ func _testar_tela_sozinha() -> void:
 	tela.confirmar()
 	_checar(recebida.is_empty(), "não deixa começar com pontos sobrando")
 	tela.mudar_atributo(Atributos.FORCA, 1)
+	tela.marcar_pericia(Pericia.PERCEPCAO, false)
+	tela.confirmar()
+	_checar(recebida.is_empty(), "não deixa começar com uma perícia só")
+	tela.marcar_pericia(Pericia.PERCEPCAO, true)
 	tela.confirmar()
 	_checar(recebida.size() == 1 and recebida[0].nome == NOME_TESTE and recebida[0].atributos[Atributos.FORCA] == 15,
 		"confirma com nome e sugestão e devolve a ficha")
+	_checar(recebida[0].pericias.has(Pericia.PERCEPCAO) and recebida[0].pericias.has(Pericia.ATLETISMO)
+		and recebida[0].percepcao_passiva() == 13, "a ficha guarda as perícias; SAB 12 treinada: passiva 13")
 	tela.queue_free()
 
 

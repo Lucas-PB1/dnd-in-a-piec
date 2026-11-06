@@ -34,11 +34,13 @@ func _rodar() -> void:
 	cena.add_child(_goblin)
 	_goblin.global_position = POSICAO_GOBLIN
 	_goblin.definir_alvo(_jogador)
+	_goblin.definir_percepcao_passiva(100)
 	await _esperar(10)
 
 	await _testar_arremesso()
 	await _testar_golpe_e_fuga()
 	await _testar_morte()
+	await _testar_emboscada(cena)
 	cena.queue_free()
 
 	if _falhas == 0:
@@ -57,6 +59,8 @@ func _testar_ficha() -> void:
 		"Adaga: +4, 4 (1d4 + 2) perfurante")
 	_checar(ficha.arremessos == 3 and ficha.arremesso_normal_pes == 20.0 and ficha.arremesso_longo_pes == 60.0
 		and ficha.fuga_agil, "3 adagas, arremesso 20/60 pés e Fuga Ágil")
+	_checar(ficha.tem_furtividade and ficha.bonus_furtividade == 6 and ficha.dano_extra_com_vantagem == ""
+		and ficha.golpe().dano_extra == null, "Furtividade +6, sem o dado extra do Warrior")
 
 
 ## A cena roda sozinha (como no F6): sem alvo, fica parado.
@@ -64,8 +68,8 @@ func _testar_sozinho() -> void:
 	var goblin: Goblin = load(CENA_GOBLIN).instantiate()
 	root.add_child(goblin)
 	await _esperar(10)
-	_checar(goblin.nome_estado() == &"Parado" and goblin.vida_atual() == 7 and goblin.adagas_restantes() == 3,
-		"Goblin sozinho: parado, 7 PV, 3 adagas")
+	_checar(goblin.nome_estado() == &"Escondido" and goblin.esta_escondido() and goblin.vida_atual() == 7
+		and goblin.adagas_restantes() == 3, "Goblin sozinho: escondido, 7 PV, 3 adagas")
 	goblin.queue_free()
 	await _esperar(1)
 
@@ -77,6 +81,9 @@ func _testar_arremesso() -> void:
 	defesa.golpe_resolvido.connect(anotar)
 	var viu_adaga := false
 	_colocar_heroi_a(LONGE_PARA_ARREMESSO)
+	await _esperar(5)
+	_checar(not _goblin.esta_escondido() and _goblin.nome_estado() != &"Escondido",
+		"passiva alta: aparece dentro da visão")
 	for i in 90:
 		await physics_frame
 		_colocar_heroi_a(LONGE_PARA_ARREMESSO)
@@ -119,6 +126,33 @@ func _testar_morte() -> void:
 		if not is_instance_valid(_goblin):
 			break
 	_checar(not is_instance_valid(_goblin), "termina de morrer e some")
+
+
+## Passiva 0: a Furtividade sempre alcança. Continua invisível até o corpo a corpo.
+func _testar_emboscada(cena: Main) -> void:
+	_goblin = load(CENA_GOBLIN).instantiate()
+	cena.add_child(_goblin)
+	_goblin.global_position = POSICAO_GOBLIN
+	_goblin.definir_alvo(_jogador)
+	_goblin.definir_percepcao_passiva(0)
+	(_jogador.get_node("Defesa") as DefesaComponent).invulneravel = false
+	_colocar_heroi_a(LONGE_PARA_ARREMESSO)
+	await _esperar(8)
+	_checar(_goblin.nome_estado() == &"Escondido" and _goblin.esta_escondido(),
+		"passiva 0: dentro da visão continua escondido")
+	var resultados: Array[Combate.Resultado] = []
+	var defesa: DefesaComponent = _jogador.get_node("Defesa")
+	defesa.golpe_resolvido.connect(func(r: Combate.Resultado, _o: Vector2) -> void: resultados.append(r))
+	_colocar_heroi_a(AO_ALCANCE)
+	for i in 180:
+		await physics_frame
+		if resultados.is_empty():
+			_colocar_heroi_a(AO_ALCANCE)
+	var golpe: Golpe = null if resultados.is_empty() else resultados[0].golpe
+	_checar(golpe != null and golpe.nome == "Adaga" and golpe.vantagem and golpe.dano_extra == null,
+		"no corpo a corpo aparece atacando; o primeiro golpe tem vantagem e não soma dado extra")
+	if is_instance_valid(_goblin):
+		_goblin.queue_free()
 
 
 func _adagas_voando() -> Array[AdagaGoblin]:

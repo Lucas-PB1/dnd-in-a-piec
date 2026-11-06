@@ -167,7 +167,16 @@ func _atualizar_ficha() -> void:
 	linhas.append("Ataque %s   Dano %s" % [_texto_ataque(arma), Equipamento.texto_dano(_ficha, _inventario, arma)])
 	if not _ficha.armas_dominadas.is_empty():
 		linhas.append("Maestrias: %s" % ", ".join(_ficha.armas_dominadas))
+	if not _ficha.pericias.is_empty():
+		linhas.append("Perícias: %s" % ", ".join(_nomes_das_pericias()))
 	_texto_ficha.text = "\n".join(linhas)
+
+
+func _nomes_das_pericias() -> PackedStringArray:
+	var nomes: PackedStringArray = []
+	for pericia in _ficha.pericias:
+		nomes.append(Pericia.nome_de(pericia))
+	return nomes
 
 
 func _atributos_entre(inicio: int, fim: int) -> String:

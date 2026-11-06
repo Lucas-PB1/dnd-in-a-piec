@@ -179,8 +179,9 @@ func _testar_goblins_no_mapa(cena: Node) -> void:
 	_checar(minion != null and guerreiro != null, "o mapa tem um Goblin Minion e um Goblin Warrior")
 	_checar(minion.position.x > _ooze.position.x + visao, "o Minion fica além da visão do Ooze")
 	_checar(guerreiro.position.x > minion.position.x + visao, "o Warrior fica além da visão do Minion")
-	_checar(minion.nome_estado() == &"Parado" and guerreiro.nome_estado() == &"Parado",
-		"longe do herói, os dois ficam parados")
+	_checar(minion.nome_estado() == &"Escondido" and guerreiro.nome_estado() == &"Escondido"
+		and minion.esta_escondido() and guerreiro.esta_escondido(),
+		"longe do herói, os dois ficam escondidos")
 
 
 func _ooze_do_grupo(cena: Node) -> GrayOoze:

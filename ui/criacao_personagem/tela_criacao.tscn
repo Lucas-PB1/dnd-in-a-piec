@@ -156,9 +156,53 @@ custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "Sugestão"
 
-[node name="IrMaestrias" type="Button" parent="Centro/Painel/Coluna/PassoAtributos/Botoes"]
+[node name="IrPericias" type="Button" parent="Centro/Painel/Coluna/PassoAtributos/Botoes"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Perícias"
+
+[node name="PassoPericias" type="VBoxContainer" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="ContagemPericias" type="Label" parent="Centro/Painel/Coluna/PassoPericias"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ListaPericias" type="ItemList" parent="Centro/Painel/Coluna/PassoPericias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+select_mode = 2
+max_columns = 3
+same_column_width = true
+
+[node name="DetalhePericia" type="Label" parent="Centro/Painel/Coluna/PassoPericias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+horizontal_alignment = 1
+
+[node name="BotoesPericias" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoPericias"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="VoltarDasPericias" type="Button" parent="Centro/Painel/Coluna/PassoPericias/BotoesPericias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 28)
+layout_mode = 2
+text = "Voltar"
+
+[node name="IrMaestrias" type="Button" parent="Centro/Painel/Coluna/PassoPericias/BotoesPericias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 28)
 layout_mode = 2
 text = "Maestrias"
 

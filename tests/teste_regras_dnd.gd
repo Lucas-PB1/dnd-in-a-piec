@@ -14,6 +14,7 @@ func _initialize() -> void:
 	_testar_modificador()
 	_testar_compra_de_pontos()
 	_testar_ficha()
+	_testar_pericias()
 	if _falhas == 0:
 		print("PASSOU: todos os testes das regras de D&D")
 	else:
@@ -93,6 +94,23 @@ func _testar_ficha() -> void:
 	for i in ROLAGENS:
 		minimo_ok = minimo_ok and fraco.rolar_dano(espada, _rng) >= Ficha.DANO_MINIMO
 	_checar(minimo_ok, "dano nunca fica abaixo de 1")
+
+
+func _testar_pericias() -> void:
+	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
+	_checar(guerreiro.quantidade_pericias == 2 and guerreiro.pericias_escolhiveis.size() == 9,
+		"Guerreiro escolhe 2 de 9 perícias")
+	_checar(Pericia.PERCEPCAO in guerreiro.pericias_sugeridas and Pericia.ATLETISMO in guerreiro.pericias_sugeridas,
+		"sugestão: Percepção e Atletismo")
+	var ficha := Ficha.new(guerreiro, guerreiro.atributos_sugeridos)
+	_checar(ficha.percepcao_passiva() == Pericia.PASSIVA_BASE + 1, "SAB 12 sem perícia: passiva 11")
+	ficha.pericias = [Pericia.PERCEPCAO, Pericia.ATLETISMO]
+	_checar(ficha.percepcao_passiva() == Pericia.PASSIVA_BASE + 1 + Ficha.BONUS_PROFICIENCIA,
+		"com Percepção: passiva 13")
+	_checar(ficha.bonus_pericia(Pericia.ATLETISMO) == 2 + Ficha.BONUS_PROFICIENCIA,
+		"Atletismo com FOR 15: +4")
+	_checar(Pericia.furtividade_passa(13, 13) and not Pericia.furtividade_passa(12, 13),
+		"Furtividade igual à passiva continua escondido; abaixo, percebe")
 
 
 func _checar(condicao: bool, descricao: String) -> void:

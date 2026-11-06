@@ -12,7 +12,7 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 |---|---|---|---|---|
 | 1 | **Exportar o APK (Android)** | M | `export_presets.cfg`, guia em `docs/` | Precisa do JDK, Android SDK e modelos de exportação do Godot (o usuário instala; a IA guia). Testar os controles de toque com o dedo. |
 | 2 | **Fase com plataformas e buracos** | M | `tools/gerar_fase_teste.gd` | Os tipos `=` (plataforma) e `P` já existem no gerador; a fase está reta por pedido antigo. |
-| 3 | **Testes de Furtividade** | M | `core/regras/`, criaturas | Primeira perícia. Também libera o Esconder do Goblin Warrior e o +1d4 quando o ataque já tem vantagem. |
+| 3 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |
 
 ## 2. Regras do livro que ainda não existem
 
@@ -20,8 +20,10 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 |---|---|---|
 | Raças/espécies | G | Deslocamento padrão 30 pés para todos (`Ficha.DESLOCAMENTO_PADRAO_PES`). |
 | Antecedentes | M | Escolha de talento só quando existir antecedente; `Ficha.talentos` começa vazia. |
-| INT, SAB, CAR | — | Existem na ficha, não fazem nada. |
-| Perícias (Furtividade primeiro) | M | Nenhum teste de perícia. |
+| INT e CAR | — | Entram no bônus da perícia escolhida (História, Intimidação, Persuasão). Essas perícias ainda não têm teste no jogo. SAB entra na Percepção passiva. |
+| Outras perícias | — | Escolhidas e mostradas na ficha. Só a Percepção passiva muda o jogo. |
+| Esconder de novo | M | O goblin começa escondido. A Fuga Ágil ainda não o esconde outra vez depois do golpe. |
+| Desvantagem de armadura em Furtividade | P | A marca existe na armadura. O herói não rola Furtividade, então ela ainda não entra num teste. |
 | Magia | G | Abrir o bloco de talentos de magia em `docs/talentos.md` na fatia dela. |
 | Descanso curto | P | Second Wind recarrega no "Tentar de novo" (regra da casa) em vez de descanso. |
 | Limite de tamanho do Empurrar e do Derrubar | P | Hoje vale para qualquer tamanho (o livro: Grande ou menor). |

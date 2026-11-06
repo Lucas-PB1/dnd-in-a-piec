@@ -24,6 +24,11 @@ var mirando: bool = false
 
 @onready var _mao_frente: AnimatedSprite2D = get_node_or_null("MaoFrente")
 
+var _pulso: Tween
+## Verde claro do Second Wind, antes de voltar ao branco.
+const COR_FOLEGO := Color(0.55, 1.0, 0.7)
+const TEMPO_FOLEGO := 0.55
+
 
 func _ready() -> void:
 	frame_changed.connect(_sincronizar_mao)
@@ -74,6 +79,15 @@ func ponto_da_mao_de_tras() -> Vector2:
 	if pontos_mao == null:
 		return Vector2.ZERO
 	return _espelhar(pontos_mao.ponto_de_tras(animation, frame))
+
+
+## Second Wind: o corpo fica verde e volta ao normal.
+func pulso_cura() -> void:
+	if _pulso:
+		_pulso.kill()
+	modulate = COR_FOLEGO
+	_pulso = create_tween()
+	_pulso.tween_property(self, "modulate", Color.WHITE, TEMPO_FOLEGO)
 
 
 ## Pinta a roupa com a `armadura` (shader roupa_armadura). null = túnica normal.

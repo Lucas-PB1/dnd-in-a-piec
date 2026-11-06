@@ -36,4 +36,6 @@ arremessos = 3
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
 arma_arremesso = ExtResource("2_adaga")
+tem_furtividade = true
+bonus_furtividade = 6
 fuga_agil = true

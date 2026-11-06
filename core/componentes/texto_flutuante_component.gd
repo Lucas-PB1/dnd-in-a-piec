@@ -17,20 +17,32 @@ const COR_CURA := Color(0.45, 0.95, 0.55)
 const COR_CONDICAO := Color(0.78, 0.62, 1.0)
 ## Textos que aparecem juntos (ex.: dano e "Caído!") sobem empilhados, sem se cobrir (px).
 const ALTURA_LINHA := 16.0
+const TAMANHO_NORMAL := 16
+const TAMANHO_CURA := 22
 
 
 func mostrar(texto: String, cor: Color) -> void:
+	_soltar(texto, cor, TAMANHO_NORMAL, subida, duracao)
+
+
+## Cura em destaque: número maior, sobe mais e demora mais para sumir.
+func mostrar_cura(texto: String) -> void:
+	_soltar(texto, COR_CURA, TAMANHO_CURA, subida * 2.0, duracao * 1.6)
+
+
+func _soltar(texto: String, cor: Color, tamanho: int, sobe: float, tempo: float) -> void:
 	var rotulo := Label.new()
 	rotulo.text = texto
 	rotulo.add_theme_color_override("font_color", cor)
 	rotulo.add_theme_color_override("font_outline_color", Color.BLACK)
+	rotulo.add_theme_font_size_override("font_size", tamanho)
 	rotulo.add_theme_constant_override("outline_size", 4)
 	var inicio := -ALTURA_LINHA * get_child_count()  # empilha sobre os que ainda estão subindo
-	rotulo.position = Vector2(-12, inicio)
+	rotulo.position = Vector2(-16, inicio)
 	add_child(rotulo)
 	var tween := create_tween().set_parallel()
-	tween.tween_property(rotulo, "position:y", inicio - subida, duracao)
-	tween.tween_property(rotulo, "modulate:a", 0.0, duracao)
+	tween.tween_property(rotulo, "position:y", inicio - sobe, tempo)
+	tween.tween_property(rotulo, "modulate:a", 0.0, tempo)
 	tween.chain().tween_callback(rotulo.queue_free)
 
 

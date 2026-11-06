@@ -4,7 +4,7 @@ extends CharacterBody2D
 ## não acabam). Longe do corpo a corpo usa o ataque à distância (desvantagem além do alcance
 ## normal; cai no longo). Perto golpeia. Fuga Ágil: depois do golpe corpo a corpo Desengaja.
 ## Números na ficha (CriaturaRPG). Comportamento nos estados (estados/). Não conhece o herói:
-## recebe um alvo qualquer por definir_alvo().
+## recebe um alvo por definir_alvo() e a Percepção passiva por definir_percepcao_passiva().
 
 ## Emitido quando termina de morrer (antes de sumir).
 signal morreu
@@ -31,6 +31,8 @@ const FLECHA := preload("res://data/municoes/flecha.tres")
 @export var fim_acerto: float = 0.3
 ## Quando a adaga ou a flecha sai da mão (s desde o início da animação).
 @export var momento_soltura: float = 0.15
+## Dentro desta distância (pés) quem tem arco guarda o tiro e fecha para o corpo a corpo.
+@export var perto_pes: float = 20.0
 ## Empurrar (maestria): velocidade com que o empurrão o desloca (px/s).
 @export var velocidade_empurrao: float = 320.0
 ## Pisca ao levar dano: cor do clarão.
@@ -48,8 +50,18 @@ var _empurrao_restante: float = 0.0
 var _adagas: int = 0
 ## Cópias do disparo da ficha. Menor que 0 = não acaba.
 var _flechas: int = 0
+## Percepção passiva de quem olha. 0 (ninguém passou) = o goblin sempre se esconde.
+var _percepcao_passiva: int = 0
+var _rolou_furtividade: bool = false
+var _foi_percebido: bool = false
+## O próximo golpe sai com vantagem (a emboscada de quem não foi percebido).
+var _emboscada: bool = false
+var _escondido: bool = false
+var _camada_corpo: int = 0
+var _camada_hurtbox: int = 0
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
+@onready var _hurtbox: Area2D = $Hurtbox
 @onready var _vida: HealthComponent = $Vida
 @onready var _defesa: DefesaComponent = $Defesa
 @onready var _texto: TextoFlutuanteComponent = $Texto
@@ -91,6 +103,11 @@ func definir_alvo(novo_alvo: Node2D) -> void:
 	alvo = novo_alvo
 
 
+## A main passa a Percepção passiva do herói. O goblin não lê a ficha dele.
+func definir_percepcao_passiva(valor: int) -> void:
+	_percepcao_passiva = valor
+
+
 func vida_atual() -> int:
 	return _vida.vida_atual
 
@@ -110,6 +127,57 @@ func flechas_restantes() -> int:
 
 # --- Ferramentas dos estados ----------------------------------------------------
 
+func tem_furtividade() -> bool:
+	return criatura.tem_furtividade
+
+
+func esta_escondido() -> bool:
+	return _escondido
+
+
+func teste_secreto_feito() -> bool:
+	return _rolou_furtividade
+
+
+func foi_percebido() -> bool:
+	return _foi_percebido
+
+
+## Some: sem sprite, sem colisão com o herói e sem hurtbox (um golpe no vazio não acerta).
+func esconder() -> void:
+	if _escondido:
+		return
+	_escondido = true
+	_camada_corpo = collision_layer
+	_camada_hurtbox = _hurtbox.collision_layer
+	collision_layer = 0
+	_hurtbox.collision_layer = 0
+	_sprite.visible = false
+
+
+func revelar() -> void:
+	if not _escondido:
+		return
+	_escondido = false
+	collision_layer = _camada_corpo
+	_hurtbox.collision_layer = _camada_hurtbox
+	_sprite.visible = true
+
+
+## Uma vez, contra a passiva. Sem texto: o jogador só vê o goblin aparecer ou não.
+func rolar_furtividade() -> void:
+	if _rolou_furtividade:
+		return
+	_rolou_furtividade = true
+	var rolagem := _rng.randi_range(1, Combate.FACES_D20) + criatura.bonus_furtividade
+	_foi_percebido = not Pericia.furtividade_passa(rolagem, _percepcao_passiva)
+
+
+## O primeiro golpe depois de não ser percebido sai com vantagem.
+func marcar_emboscada() -> void:
+	_emboscada = true
+
+
 ## Visão no Escuro 60 pés: percebe o alvo até essa distância.
 func alvo_percebido() -> bool:
 	return alvo != null and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.percepcao_pes)
@@ -126,15 +194,25 @@ func pode_arremessar() -> bool:
 		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.arremesso_longo_pes)
 
 
-## Tem flecha, o alvo está fora do corpo a corpo e dentro do alcance longo do arco.
+## Tem flecha, o alvo está longe o bastante para valer o arco e dentro do alcance longo.
 func pode_atirar() -> bool:
-	return _tem_flecha() and alvo != null and not alvo_ao_alcance() \
+	return _tem_flecha() and alvo != null and not _perto_para_oarco() \
 		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes)
 
 
 ## Ritmo pela iniciativa da ficha (Goblin: +2 -> um ataque a cada 0,8 s).
 func pode_atacar() -> bool:
 	return _tempo_desde_ataque >= EscalaDnd.intervalo_ataque(criatura.iniciativa)
+
+
+## O arco espera uma rodada inteira (1,5 s). Mais rápido que isso vira metralhadora.
+func pode_disparar() -> bool:
+	return _tempo_desde_ataque >= EscalaDnd.RODADA_SEGUNDOS
+
+
+## Perto demais para o arco: fecha e usa a arma de corpo a corpo.
+func _perto_para_oarco() -> bool:
+	return _distancia_horizontal() <= EscalaDnd.pes_para_pixels(perto_pes)
 
 
 func tem_fuga_agil() -> bool:
@@ -265,6 +343,9 @@ func _golpe_do_disparo() -> Golpe:
 func _com_autor(golpe: Golpe) -> Golpe:
 	golpe.autor_id = get_instance_id()
 	golpe.desvantagem = _condicoes.consumir_desvantagem()
+	if _emboscada:
+		golpe.vantagem = true
+		_emboscada = false
 	return golpe
 
 

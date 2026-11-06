@@ -19,6 +19,7 @@ func _initialize() -> void:
 	_testar_tipos_e_resistencia()
 	_testar_desgaste()
 	_testar_proficiencias()
+	_testar_dano_extra_com_vantagem()
 	if _falhas == 0:
 		print("PASSOU: todos os testes de combate de D&D")
 	else:
@@ -179,6 +180,33 @@ func _testar_proficiencias() -> void:
 	_checar(ficha_sem.proficiente_com(soco) and ficha_sem.bonus_ataque(soco) == 4, "ataque desarmado: todo mundo é proficiente")
 	_checar(Proficiencias.texto_armaduras(guerreiro.treinamento_armaduras) == "armaduras leves, médias, pesadas e escudos",
 		"texto do treinamento em português")
+
+
+## O 1d4 do Goblin Warrior só entra quando o ataque tem vantagem, e dobra no crítico.
+func _testar_dano_extra_com_vantagem() -> void:
+	var golpe := Golpe.new("Cimitarra", 4, Dado.de_texto("1d6+2"))
+	golpe.dano_extra = Dado.de_texto("1d4")
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	var sem := Combate.dano_do_acerto(golpe, rng, false)
+	rng.seed = 11
+	_checar(sem == Dado.de_texto("1d6+2").rolar(rng, false), "sem vantagem o 1d4 não entra")
+	golpe.vantagem = true
+	rng.seed = 11
+	var com := Combate.dano_do_acerto(golpe, rng, false)
+	rng.seed = 11
+	var esperado := Dado.de_texto("1d6+2").rolar(rng, false) + Dado.de_texto("1d4").rolar(rng, false)
+	_checar(com == esperado, "com vantagem soma o 1d4")
+	rng.seed = 11
+	var critico := Combate.dano_do_acerto(golpe, rng, true)
+	rng.seed = 11
+	var esperado_critico := Dado.de_texto("1d6+2").rolar(rng, true) + Dado.de_texto("1d4").rolar(rng, true)
+	_checar(critico == esperado_critico, "no crítico o 1d4 também dobra")
+	golpe.desvantagem = true
+	rng.seed = 11
+	var anulada := Combate.dano_do_acerto(golpe, rng, false)
+	rng.seed = 11
+	_checar(anulada == Dado.de_texto("1d6+2").rolar(rng, false), "vantagem e desvantagem juntas anulam o 1d4")
 
 
 func _checar(condicao: bool, descricao: String) -> void:

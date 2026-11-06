@@ -33,11 +33,13 @@ func _rodar() -> void:
 	cena.add_child(_goblin)
 	_goblin.global_position = POSICAO
 	_goblin.definir_alvo(_jogador)
+	_goblin.definir_percepcao_passiva(100)
 	await _esperar(10)
 
 	await _testar_tiro()
 	await _testar_golpe_e_fuga()
 	await _testar_morte()
+	await _testar_emboscada(cena)
 	cena.queue_free()
 
 	if _falhas == 0:
@@ -63,6 +65,10 @@ func _testar_ficha() -> void:
 		"Arco Curto: +4, 5 (1d6 + 2) perfurante, 80/320 pés")
 	_checar(ficha.disparos < 0 and ficha.arremessos == 0 and ficha.fuga_agil,
 		"flechas não acabam, não arremessa adaga, tem Fuga Ágil")
+	_checar(ficha.tem_furtividade and ficha.bonus_furtividade == 6
+		and cimitarra.dano_extra != null and cimitarra.dano_extra.texto() == "1d4"
+		and arco.dano_extra != null and arco.dano_extra.texto() == "1d4",
+		"Furtividade +6, e o 1d4 entra na cimitarra e no arco quando há vantagem")
 
 
 ## A cena roda sozinha (como no F6): sem alvo, fica parada.
@@ -70,8 +76,8 @@ func _testar_sozinho() -> void:
 	var goblin: Goblin = load(CENA).instantiate()
 	root.add_child(goblin)
 	await _esperar(10)
-	_checar(goblin.nome_estado() == &"Parado" and goblin.vida_atual() == 10 and goblin.flechas_restantes() < 0,
-		"Guerreiro sozinho: parado, 10 PV, flechas sem fim")
+	_checar(goblin.nome_estado() == &"Escondido" and goblin.esta_escondido() and goblin.vida_atual() == 10
+		and goblin.flechas_restantes() < 0, "Guerreiro sozinho: escondido, 10 PV, flechas sem fim")
 	goblin.queue_free()
 	await _esperar(1)
 
@@ -82,7 +88,14 @@ func _testar_tiro() -> void:
 	var anotar := func(r: Combate.Resultado, _o: Vector2) -> void: resultados.append(r)
 	defesa.golpe_resolvido.connect(anotar)
 	var viu_flecha := false
+	_colocar_heroi_a(100.0)
+	await _esperar(20)
+	_checar(_flechas_voando().is_empty() and _goblin.nome_estado() == &"Perseguindo",
+		"a menos de 20 pés ele fecha para a cimitarra, sem metralhar flechas")
 	_colocar_heroi_a(LONGE)
+	await _esperar(5)
+	_checar(not _goblin.esta_escondido() and _goblin.nome_estado() != &"Escondido",
+		"passiva alta: aparece dentro da visão")
 	for i in 240:
 		await physics_frame
 		_colocar_heroi_a(LONGE)
@@ -145,6 +158,34 @@ func _testar_morte() -> void:
 		if not is_instance_valid(_goblin):
 			break
 	_checar(not is_instance_valid(_goblin), "termina de morrer e some")
+
+
+## Passiva 0: continua invisível até o corpo a corpo, e o primeiro golpe tem vantagem.
+func _testar_emboscada(cena: Main) -> void:
+	_goblin = load(CENA).instantiate()
+	cena.add_child(_goblin)
+	_goblin.global_position = POSICAO
+	_goblin.definir_alvo(_jogador)
+	_goblin.definir_percepcao_passiva(0)
+	(_jogador.get_node("Defesa") as DefesaComponent).invulneravel = false
+	_colocar_heroi_a(LONGE)
+	await _esperar(8)
+	_checar(_goblin.nome_estado() == &"Escondido" and _goblin.esta_escondido(),
+		"passiva 0: dentro da visão continua escondido")
+	var resultados: Array[Combate.Resultado] = []
+	var defesa: DefesaComponent = _jogador.get_node("Defesa")
+	defesa.golpe_resolvido.connect(func(r: Combate.Resultado, _o: Vector2) -> void: resultados.append(r))
+	_colocar_heroi_a(AO_ALCANCE)
+	for i in 180:
+		await physics_frame
+		if resultados.is_empty():
+			_colocar_heroi_a(AO_ALCANCE)
+	var golpe: Golpe = null if resultados.is_empty() else resultados[0].golpe
+	_checar(golpe != null and golpe.nome == "Cimitarra" and golpe.vantagem
+		and golpe.dano_extra != null and golpe.dano_extra.texto() == "1d4",
+		"no corpo a corpo aparece atacando; o primeiro golpe tem vantagem e leva o 1d4")
+	if is_instance_valid(_goblin):
+		_goblin.queue_free()
 
 
 func _flechas_voando() -> Array[FlechaGoblin]:

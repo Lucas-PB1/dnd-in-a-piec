@@ -40,4 +40,7 @@ disparo_normal_pes = 80.0
 disparo_longo_pes = 320.0
 disparo_dano = "1d6+2"
 disparo_tipo_dano = &"perfurante"
+tem_furtividade = true
+bonus_furtividade = 6
+dano_extra_com_vantagem = "1d4"
 fuga_agil = true

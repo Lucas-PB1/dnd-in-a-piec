@@ -21,7 +21,7 @@ decisão deste tema mudar.** Dados gerados por `tools/gerar_armas.gd` e
 
 | Decisão | Escolha | Por quê |
 |---|---|---|
-| Armaduras | **21 armaduras** do Empório (PHB, Obojima, Northlands) em `data/armaduras/*.tres`. `Armadura`: categoria, `ca_base`, `soma_destreza`, `max_destreza`, `forca_minima`, `desvantagem_furtividade`, cor e padrão visual. Espaços **corpo** (armadura) e **mão secundária** (escudo). **CA** (`Ficha.classe_armadura`): sem armadura 10+DES; leve base+DES; média base+DES (máx.); pesada base; escudo +bônus (**só com treinamento**). **FOR abaixo do mínimo: −10 pés.** **Sem treinamento:** desvantagem nos ataques. **Furtividade:** só aparece (não há testes ainda). `Equipamento` junta ficha + inventário para herói e inventário calcularem igual. Ícones do pacote CC0 Idylwild's Armory (tabela `ICONES`, tinta para as repetidas). | Livro; pedido do usuário. |
+| Armaduras | **21 armaduras** do Empório (PHB, Obojima, Northlands) em `data/armaduras/*.tres`. `Armadura`: categoria, `ca_base`, `soma_destreza`, `max_destreza`, `forca_minima`, `desvantagem_furtividade`, cor e padrão visual. Espaços **corpo** (armadura) e **mão secundária** (escudo). **CA** (`Ficha.classe_armadura`): sem armadura 10+DES; leve base+DES; média base+DES (máx.); pesada base; escudo +bônus (**só com treinamento**). **FOR abaixo do mínimo: −10 pés.** **Sem treinamento:** desvantagem nos ataques. **Furtividade:** a marca da armadura continua só na ficha. Quem rola Furtividade no jogo é o goblin, e a armadura de couro dele não dá desvantagem. `Equipamento` junta ficha + inventário para herói e inventário calcularem igual. Ícones do pacote CC0 Idylwild's Armory (tabela `ICONES`, tinta para as repetidas). | Livro; pedido do usuário. |
 
 ## Armas
 

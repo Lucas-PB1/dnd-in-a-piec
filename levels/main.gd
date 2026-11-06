@@ -90,6 +90,7 @@ func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao
 	_jogador.configurar_ficha(ficha)
 	_jogador.receber_pacote(pacote)
 	_mostrar_personagem_no_hud()
+	_apontar_monstros_para(_jogador)
 	tela.queue_free()
 	_pausar(false)
 
@@ -128,10 +129,16 @@ func _recriar_monstros() -> void:
 	_apontar_monstros_para(_jogador)
 
 
-## Todo nó do grupo "monstros" persegue o herói (cada monstro tem definir_alvo()).
+## Todo nó do grupo "monstros" persegue o herói. Quem se esconde também recebe a passiva.
 func _apontar_monstros_para(alvo: Node2D) -> void:
 	for monstro in get_tree().get_nodes_in_group(GRUPO_MONSTROS):
 		monstro.definir_alvo(alvo)
+		_passar_percepcao(monstro)
+
+
+func _passar_percepcao(monstro: Node) -> void:
+	if monstro.has_method(&"definir_percepcao_passiva"):
+		monstro.call(&"definir_percepcao_passiva", _jogador.ficha.percepcao_passiva())
 
 
 ## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
@@ -195,6 +202,7 @@ func trazer_criatura(cena: PackedScene) -> void:
 	monstro.global_position = _jogador.global_position + frente
 	if monstro.has_method(&"definir_alvo"):
 		monstro.call(&"definir_alvo", _jogador)
+	_passar_percepcao(monstro)
 
 
 ## Apaga os monstros que estão na fase (os do mapa e os trazidos).

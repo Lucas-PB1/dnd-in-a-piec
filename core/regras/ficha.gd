@@ -31,6 +31,8 @@ var atributos: Dictionary[StringName, int] = {}
 var armas_dominadas: Array[String] = []
 ## Talentos (origem e geral). Começa vazia: o antecedente é que vai marcar o de origem.
 var talentos: Array[String] = []
+## Perícias treinadas (ids de Pericia), escolhidas na criação. Sem treino, o teste usa só o modificador.
+var pericias: Array[StringName] = []
 
 ## Destreza da ficha sugerida: o teto da carga e o tempo de voo do disparo são os dela.
 const DESTREZA_REFERENCIA := 14
@@ -242,3 +244,22 @@ func proficiente_em_salvaguarda(atributo: StringName) -> bool:
 func bonus_salvaguarda(atributo: StringName) -> int:
 	var extra := BONUS_PROFICIENCIA if proficiente_em_salvaguarda(atributo) else 0
 	return modificador(atributo) + extra
+
+
+## Treinou esta perícia na criação?
+func proficiente_na_pericia(pericia: StringName) -> bool:
+	return pericia in pericias
+
+
+## Bônus do teste: modificador do atributo da perícia, + proficiência se foi escolhida.
+func bonus_pericia(pericia: StringName) -> int:
+	var atributo := Pericia.atributo_de(pericia)
+	if atributo == &"":
+		return 0
+	var extra := BONUS_PROFICIENCIA if proficiente_na_pericia(pericia) else 0
+	return modificador(atributo) + extra
+
+
+## Percepção passiva: 10 + Sabedoria, + proficiência se Percepção foi escolhida.
+func percepcao_passiva() -> int:
+	return Pericia.passiva(bonus_pericia(Pericia.PERCEPCAO))

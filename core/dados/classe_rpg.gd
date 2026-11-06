@@ -17,6 +17,12 @@ extends Resource
 @export var pacotes_iniciais: Array[PacoteInicial] = []
 ## Maestria em Armas: quantos tipos de arma a classe domina no nível 1 (Guerreiro: 3).
 @export var quantidade_maestrias: int = 0
+## Perícias que a classe pode escolher (ids de Pericia). Guerreiro: 9.
+@export var pericias_escolhiveis: Array[StringName] = []
+## Quantas perícias a classe escolhe no nível 1 (Guerreiro: 2).
+@export var quantidade_pericias: int = 0
+## As que já vêm marcadas na criação (dá para trocar).
+@export var pericias_sugeridas: Array[StringName] = []
 ## Second Wind: usos por luta. 0 = a classe não tem o poder. Guerreiro nível 1 = 2.
 @export var usos_segundo_folego: int = 0
 

@@ -35,6 +35,8 @@ O que já foi feito, em ordem. **Acrescente uma linha ao fechar cada fatia.** O 
 - Goblin Minion (ficha do livro): arremessa 3 adagas, golpeia de perto e Desengaja com a Fuga Ágil. Na tela de comandos (C -> Trazer).
 - Goblin Warrior (ficha do livro): cimitarra de perto, arco curto de longe (flechas não acabam) e a mesma Fuga Ágil. Arte CC0 do Goblin Corps. Esconder e o +1d4 com vantagem ficam para a Furtividade.
 - Goblins no mapa: Minion em x = 2176 e Warrior em x = 2752, cada um além dos 60 pés de visão de quem está antes, e fora dos tiros de teste. "Tentar de novo" recria os dois junto com o Ooze.
+- O Goblin Warrior não metralha de perto: a menos de 20 pés guarda o arco e fecha para a cimitarra; de longe o tiro espera uma rodada (1,5 s). O Second Wind pinta o herói de verde e o número da cura sobe maior.
+- Perícias e emboscada: o Guerreiro escolhe 2 perícias na criação (abre com Percepção e Atletismo). Os goblins começam escondidos e rolam Furtividade contra a Percepção passiva, sem mostrar o dado. Se a rolagem fica abaixo, aparecem a 60 pés; se alcança, só aparecem no corpo a corpo, já atacando, e esse golpe tem vantagem. O Warrior soma 1d4 quando o ataque tem vantagem.
 - Guias para IA: `docs/artes_prontas.md`, `docs/arquitetura.md`, `docs/receitas.md`; regras do Cursor geradas das skills (`tools/gerar_regras_cursor.ps1`).
 - Celular (fatia 1): tela larga (aspect expand), celular deitado, controles de toque (analógico ou setas + botões), correr segurando (Shift / borda do analógico).
 - Celular (fatia 2): ajustar os controles de toque (arrastar, tamanho, transparência, Padrão, salvo).
