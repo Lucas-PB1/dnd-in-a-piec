@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_hitlj"]
+
+[resource]
+script = ExtResource("1_hitlj")
+categoria = &"pesada"
+ca_base = 14
+soma_destreza = false
+desvantagem_furtividade = true
+cor = Color(0.6, 0.6, 0.63, 1)
+padrao = 1
+nome_original = "Ring Mail"
+peso = "40 lb."
+preco = "30 GP"
+livro = "Player’s Handbook"
+nome = "Cota de Anéis"
+descricao = "Armadura pesada. CA 14. Desvantagem em Furtividade. (Ring Mail, Player’s Handbook)"
+espaco = &"corpo"

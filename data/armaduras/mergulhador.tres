@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_dritw"]
+
+[resource]
+script = ExtResource("1_dritw")
+categoria = &"pesada"
+ca_base = 17
+soma_destreza = false
+forca_minima = 16
+desvantagem_furtividade = true
+cor = Color(0.68, 0.55, 0.32, 1)
+padrao = 3
+nome_original = "Divers Armor"
+peso = "100 lb."
+preco = "2,000 GP"
+livro = "Obojima"
+nome = "Armadura de Mergulhador"
+descricao = "Armadura pesada. CA 17. Força 16. Desvantagem em Furtividade. (Divers Armor, Obojima)"
+espaco = &"corpo"

@@ -123,7 +123,7 @@ func _atualizar_detalhes() -> void:
 	var item := _item_selecionado()
 	_nome.text = item.nome if item else "(nenhum item)"
 	_descricao.text = item.descricao if item else ""
-	_dano_item.text = _texto_dano_do_item(item as Arma)
+	_dano_item.text = _texto_do_item(item)
 	var equipado := _inventario != null and _inventario.esta_equipado(item)
 	_botao_equipar.disabled = item == null or not item.equipavel() or equipado
 	_botao_desequipar.disabled = not equipado
@@ -134,21 +134,37 @@ func _atualizar_ficha() -> void:
 	var linhas: PackedStringArray = ["%s, %s" % [_ficha.nome, _ficha.classe.nome]]
 	for atributo in Atributos.TODOS:
 		linhas.append(_linha_atributo(atributo))
-	linhas.append("%s   CA %d" % [_texto_vida, _ficha.classe_armadura()])
+	linhas.append("%s   CA %d" % [_texto_vida, Equipamento.classe_armadura(_ficha, _inventario)])
 	linhas.append("Inic. %s (%.1fs)   %d pés" % [Atributos.texto_bonus(_ficha.iniciativa()),
-		EscalaDnd.intervalo_ataque(_ficha.iniciativa()), _ficha.deslocamento_pes()])
-	var na_mao := _inventario.equipado(Item.ESPACO_MAO) as Arma
-	var arma := na_mao if na_mao else _desarmado
+		EscalaDnd.intervalo_ataque(_ficha.iniciativa()), Equipamento.deslocamento_pes(_ficha, _inventario)])
+	var arma := Equipamento.arma(_inventario, _desarmado)
 	linhas.append("Mão: %s" % arma.nome)
-	var ataque := _ficha.bonus_ataque(arma) - _inventario.penalidade(arma)
+	linhas.append("Corpo: %s" % _nome_ou_nada(Equipamento.armadura(_inventario)))
+	var escudo := Equipamento.escudo(_inventario)
+	if escudo:
+		linhas.append("Escudo: %s" % escudo.nome)
+	var ataque := Equipamento.bonus_ataque(_ficha, _inventario, arma)
 	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(ataque), _ficha.texto_dano(arma)])
 	_texto_ficha.text = "\n".join(linhas)
 
 
-## "Dano: 1d6+2 perfurante" e, se a arma estiver gasta, "Corroída: -2 no ataque".
-func _texto_dano_do_item(arma: Arma) -> String:
-	if arma == null or _ficha == null:
+func _nome_ou_nada(item: Item) -> String:
+	return item.nome if item else "(nada)"
+
+
+## Detalhes extras do item selecionado: dano da arma ou regras da armadura.
+func _texto_do_item(item: Item) -> String:
+	if _ficha == null:
 		return ""
+	if item is Arma:
+		return _texto_da_arma(item)
+	if item is Armadura:
+		return _texto_da_armadura(item)
+	return ""
+
+
+## "Dano: 1d6+2 perfurante" e, se a arma estiver gasta, "Corroída: -2 no ataque".
+func _texto_da_arma(arma: Arma) -> String:
 	var texto := "Dano: %s %s" % [_ficha.texto_dano(arma), TiposDano.nome(arma.tipo_dano)]
 	if not _ficha.proficiente_com(arma):
 		texto += "\nSem proficiência: -%d no ataque" % Ficha.BONUS_PROFICIENCIA
@@ -156,6 +172,21 @@ func _texto_dano_do_item(arma: Arma) -> String:
 	if penalidade > 0:
 		texto += "\nCorroída: -%d no ataque" % penalidade
 	return texto
+
+
+## Avisos de regra da armadura para ESTA ficha: treinamento, Força, Furtividade, corrosão.
+func _texto_da_armadura(armadura: Armadura) -> String:
+	var avisos: PackedStringArray = []
+	if not _ficha.treinado_com(armadura):
+		avisos.append("Sem treinamento: " + ("não soma CA" if armadura.e_escudo() else "desvantagem em FOR e DES"))
+	if _ficha.falta_forca_para(armadura):
+		avisos.append("Precisa FOR %d: -%d pés" % [armadura.forca_minima, Ficha.PERDA_DESLOCAMENTO_SEM_FORCA])
+	if armadura.desvantagem_furtividade:
+		avisos.append("Desvantagem em Furtividade")
+	var penalidade := _inventario.penalidade(armadura)
+	if penalidade > 0:
+		avisos.append("Corroída: -%d na CA" % penalidade)
+	return "\n".join(avisos)
 
 
 ## "FOR 15 (+2) salv +4*" — o * marca salvaguarda em que a classe é proficiente.

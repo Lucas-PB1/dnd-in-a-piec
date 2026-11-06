@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_tthbg"]
+
+[resource]
+script = ExtResource("1_tthbg")
+categoria = &"media"
+ca_base = 13
+max_destreza = 2
+cor = Color(0.7, 0.72, 0.76, 1)
+padrao = 1
+nome_original = "Chain Shirt"
+peso = "20 lb."
+preco = "50 GP"
+livro = "Player’s Handbook"
+nome = "Camisão de Malha"
+descricao = "Armadura média. CA 13 + DES (máx. 2). (Chain Shirt, Player’s Handbook)"
+espaco = &"corpo"

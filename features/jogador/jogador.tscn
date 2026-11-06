@@ -15,6 +15,8 @@
 [ext_resource type="Resource" path="res://data/ataque_desarmado.tres" id="18_desarmado"]
 [ext_resource type="Script" path="res://core/dados/item.gd" id="19_item"]
 [ext_resource type="Resource" path="res://features/jogador/sprites/pontos_mao.tres" id="20_pontos_mao"]
+[ext_resource type="Script" path="res://features/jogador/escudo_jogador.gd" id="25_escudo"]
+[ext_resource type="Shader" path="res://assets/shaders/roupa_armadura.gdshader" id="26_roupa"]
 [ext_resource type="Script" path="res://features/jogador/ataque_jogador.gd" id="13_ataque"]
 [ext_resource type="SpriteFrames" path="res://assets/efeitos/corte_frames.tres" id="14_corte"]
 [ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="15_hitbox"]
@@ -24,6 +26,10 @@
 [ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="22_defesa"]
 [ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="23_texto"]
 [ext_resource type="Script" path="res://features/jogador/estados/estado_levando_dano.gd" id="24_levando_dano"]
+
+[sub_resource type="ShaderMaterial" id="MaterialRoupa"]
+resource_local_to_scene = true
+shader = ExtResource("26_roupa")
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
 size = Vector2(18, 50)
@@ -70,7 +76,11 @@ script = ExtResource("17_vida")
 position = Vector2(0, -28)
 shape = SubResource("Forma")
 
+[node name="Escudo" type="Sprite2D" parent="."]
+script = ExtResource("25_escudo")
+
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+material = SubResource("MaterialRoupa")
 position = Vector2(0, -40)
 sprite_frames = ExtResource("3_frames")
 animation = &"idle"

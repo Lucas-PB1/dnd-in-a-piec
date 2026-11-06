@@ -54,6 +54,7 @@ var _toque_duplo: ToqueDuplo
 @onready var _vida: HealthComponent = $Vida
 @onready var _defesa: DefesaComponent = $Defesa
 @onready var _texto: TextoFlutuanteComponent = $Texto
+@onready var _escudo: EscudoJogador = $Escudo
 
 
 func _ready() -> void:
@@ -72,6 +73,7 @@ func _ready() -> void:
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	_vida.morreu.connect(_morrer, CONNECT_DEFERRED)  # depois que o golpe terminar de ser tratado
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
+	inventario.mudou.connect(_atualizar_equipamento)
 	configurar_ficha(Ficha.new(classe, classe.atributos_sugeridos))
 	_maquina.iniciar(self)
 
@@ -84,6 +86,7 @@ func _physics_process(delta: float) -> void:
 	_checar_aterrissagem()
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
+	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar)
 	_camera.olhar_para(direcao_olhar)
 	if global_position.y > limite_queda:
 		reaparecer()
@@ -103,7 +106,31 @@ func configurar_ficha(nova: Ficha) -> void:
 	ficha = nova
 	classe = nova.classe
 	_vida.configurar(ficha.vida_maxima())
-	_defesa.classe_armadura = ficha.classe_armadura()
+	_atualizar_equipamento()
+
+
+## Coloca a armadura escolhida na criação na mochila (cópia própria) e veste.
+func vestir_armadura_inicial(armadura: Armadura) -> void:
+	if armadura == null:
+		return
+	var minha := armadura.duplicate() as Armadura
+	inventario.adicionar(minha)
+	inventario.equipar(minha)
+
+
+## Armadura vestida (espaço corpo), ou null.
+func armadura_atual() -> Armadura:
+	return Equipamento.armadura(inventario)
+
+
+## Escudo na mão secundária, ou null.
+func escudo_atual() -> Armadura:
+	return Equipamento.escudo(inventario)
+
+
+## CA com a armadura e o escudo vestidos (e o desgaste da armadura).
+func classe_armadura() -> int:
+	return Equipamento.classe_armadura(ficha, inventario)
 
 
 func esta_invencivel() -> bool:
@@ -152,8 +179,9 @@ func pediu_corrida() -> int:
 
 
 ## Velocidade andando (px/s): o deslocamento de D&D da ficha (30 pés -> ~128 px/s).
+## Armadura que pede mais Força do que o herói tem tira 10 pés.
 func velocidade_andar() -> float:
-	return EscalaDnd.deslocamento_para_velocidade(ficha.deslocamento_pes())
+	return EscalaDnd.deslocamento_para_velocidade(Equipamento.deslocamento_pes(ficha, inventario))
 
 
 ## Correndo = Disparada (Dash) do D&D: o dobro do deslocamento.
@@ -183,8 +211,7 @@ func pediu_ataque() -> bool:
 
 ## Arma na mão, ou o ataque desarmado se a mão estiver vazia.
 func arma_atual() -> Arma:
-	var na_mao := inventario.equipado(Item.ESPACO_MAO) as Arma
-	return na_mao if na_mao else ataque_desarmado
+	return Equipamento.arma(inventario, ataque_desarmado)
 
 
 ## Começa um golpe com a arma atual, para o lado em que o herói olha.
@@ -198,7 +225,7 @@ func iniciar_golpe() -> void:
 ## O golpe da arma atual (com o desgaste dela). Se um alvo corrosivo avisar, a arma se desgasta.
 func criar_golpe() -> Golpe:
 	var arma := arma_atual()
-	var golpe := ficha.golpe_com(arma, inventario.penalidade(arma))
+	var golpe := Equipamento.golpe(ficha, inventario, arma)
 	golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
 	return golpe
 
@@ -290,6 +317,8 @@ func _ao_resolver_golpe(resultado: Combate.Resultado, origem: Vector2) -> void:
 	_texto.mostrar_resultado(resultado, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
 	if not resultado.acertou:
 		return
+	if resultado.golpe.corroi_armadura:
+		_corroer_armadura()
 	origem_ultimo_golpe = origem
 	_ataque.cancelar()
 	_contador_invencivel = stats.tempo_invencibilidade
@@ -313,6 +342,28 @@ func _morrer() -> void:
 		reviver()
 	else:
 		caiu.emit()
+
+
+## Equipamento mudou (vestiu, tirou, quebrou): recalcula a CA e troca o visual.
+func _atualizar_equipamento() -> void:
+	if ficha == null:
+		return
+	_defesa.classe_armadura = classe_armadura()
+	_animacao.vestir(armadura_atual())
+	_escudo.equipar(escudo_atual())
+
+
+## Pseudópode do Gray Ooze: a armadura não mágica perde 1 de CA; é destruída quando a CA
+## que ela oferece chega a 10.
+func _corroer_armadura() -> void:
+	var armadura := armadura_atual()
+	if armadura == null or not armadura.corroivel:
+		return
+	var limite := armadura.ca_base - Ficha.CA_BASE
+	if inventario.desgastar(armadura, 1, limite):
+		_texto.mostrar("%s se desfez!" % armadura.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
+	else:
+		_texto.mostrar("%s corroída -%d" % [armadura.nome, inventario.penalidade(armadura)], TextoFlutuanteComponent.COR_ERRO)
 
 
 ## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão

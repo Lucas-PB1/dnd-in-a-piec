@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armaduras/escudo.png" id="1_tuu0t"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_p4jxp"]
+
+[resource]
+script = ExtResource("2_p4jxp")
+categoria = &"escudo"
+ca_base = 2
+soma_destreza = false
+cor = Color(0.6, 0.37, 0.19, 1)
+textura = ExtResource("1_tuu0t")
+nome_original = "Shield"
+peso = "6 lb."
+preco = "10 GP"
+livro = "Player’s Handbook"
+nome = "Escudo"
+descricao = "Escudo. CA +2. (Shield, Player’s Handbook)"
+icone = ExtResource("1_tuu0t")
+espaco = &"mao_secundaria"

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_kwv5c"]
+
+[resource]
+script = ExtResource("1_kwv5c")
+categoria = &"media"
+ca_base = 12
+max_destreza = 2
+cor = Color(0.62, 0.47, 0.3, 1)
+nome_original = "Hide Armor"
+peso = "12 lb."
+preco = "10 GP"
+livro = "Player’s Handbook"
+nome = "Gibão de Peles"
+descricao = "Armadura média. CA 12 + DES (máx. 2). (Hide Armor, Player’s Handbook)"
+espaco = &"corpo"

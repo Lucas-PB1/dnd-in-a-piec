@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armaduras/tampa_panela.png" id="1_4llva"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_01acl"]
+
+[resource]
+script = ExtResource("2_01acl")
+categoria = &"escudo"
+ca_base = 1
+soma_destreza = false
+cor = Color(0.5, 0.52, 0.56, 1)
+textura = ExtResource("1_4llva")
+nome_original = "Pot Lid"
+peso = "2 lb."
+preco = "1 GP"
+livro = "Obojima"
+nome = "Tampa de Panela"
+descricao = "Escudo. CA +1. (Pot Lid, Obojima)"
+icone = ExtResource("1_4llva")
+espaco = &"mao_secundaria"

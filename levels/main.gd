@@ -63,8 +63,9 @@ func _abrir_criacao() -> void:
 	_interface.add_child(tela)
 
 
-func _ao_criar_personagem(ficha: Ficha, tela: TelaCriacao) -> void:
+func _ao_criar_personagem(ficha: Ficha, armadura: Armadura, tela: TelaCriacao) -> void:
 	_jogador.configurar_ficha(ficha)
+	_jogador.vestir_armadura_inicial(armadura)
 	_mostrar_personagem_no_hud()
 	tela.queue_free()
 	_pausar(false)

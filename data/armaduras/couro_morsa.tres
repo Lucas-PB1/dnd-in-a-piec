@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_cp0g0"]
+
+[resource]
+script = ExtResource("1_cp0g0")
+categoria = &"media"
+ca_base = 13
+max_destreza = 2
+cor = Color(0.52, 0.43, 0.35, 1)
+nome_original = "Walrus Hide"
+peso = "20 lb."
+preco = "75 GP"
+livro = "Northlands Worldbook"
+nome = "Couro de Morsa"
+descricao = "Armadura média. CA 13 + DES (máx. 2). (Walrus Hide, Northlands Worldbook)"
+espaco = &"corpo"

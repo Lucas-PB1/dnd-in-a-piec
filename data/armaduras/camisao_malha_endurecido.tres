@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_drp5o"]
+
+[resource]
+script = ExtResource("1_drp5o")
+categoria = &"media"
+ca_base = 15
+max_destreza = 2
+forca_minima = 13
+desvantagem_furtividade = true
+cor = Color(0.55, 0.57, 0.62, 1)
+padrao = 1
+nome_original = "Hardened Mail Shirt"
+peso = "40 lb."
+preco = "500 GP"
+livro = "Northlands Worldbook"
+nome = "Camisão de Malha Endurecido"
+descricao = "Armadura média. CA 15 + DES (máx. 2). Força 13. Desvantagem em Furtividade. (Hardened Mail Shirt, Northlands Worldbook)"
+espaco = &"corpo"

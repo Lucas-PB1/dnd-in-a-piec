@@ -41,6 +41,8 @@ extends Resource
 @export var ataque_tipo_dano: StringName = TiposDano.CONTUNDENTE
 ## Alcance (pés). "Reach 5 ft" = 1 ladrilho.
 @export var ataque_alcance_pes: float = 5.0
+## O acerto corrói a armadura não mágica do alvo (-1 na CA dela; Pseudópode do Gray Ooze).
+@export var ataque_corroi_armadura: bool = false
 
 
 func dado_vida() -> Dado:
@@ -63,7 +65,9 @@ func bonus_salvaguarda(atributo: StringName) -> int:
 
 ## O ataque da criatura, pronto para ser resolvido contra a CA do alvo.
 func golpe() -> Golpe:
-	return Golpe.new(ataque_nome, ataque_bonus, _dado_ou_padrao(ataque_dano), ataque_tipo_dano)
+	var ataque := Golpe.new(ataque_nome, ataque_bonus, _dado_ou_padrao(ataque_dano), ataque_tipo_dano)
+	ataque.corroi_armadura = ataque_corroi_armadura
+	return ataque
 
 
 func _dado_ou_padrao(notacao: String) -> Dado:

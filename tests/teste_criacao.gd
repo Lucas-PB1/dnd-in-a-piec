@@ -36,7 +36,7 @@ func _testar_tela_sozinha() -> void:
 	root.add_child(tela)
 	await process_frame
 	var recebida: Array[Ficha] = []
-	tela.confirmada.connect(func(f: Ficha) -> void: recebida.append(f))
+	tela.confirmada.connect(func(f: Ficha, _a: Armadura) -> void: recebida.append(f))
 	var escolha: OptionButton = tela.get_node("%Classe")
 	_checar(escolha.item_count == 1 and escolha.get_item_text(0) == "Guerreiro", "classe: só Guerreiro por enquanto")
 	tela.aplicar_sugestao()
@@ -76,7 +76,7 @@ func _testar_fluxo_da_main() -> void:
 	var compra := CompraDePontos.new()
 	compra.aplicar({Atributos.FORCA: 8, Atributos.DESTREZA: 15, Atributos.CONSTITUICAO: 15,
 		Atributos.INTELIGENCIA: 15})
-	tela.confirmada.emit(Ficha.new(jogador.classe, compra.valores, NOME_TESTE))
+	tela.confirmada.emit(Ficha.new(jogador.classe, compra.valores, NOME_TESTE), jogador.classe.armaduras_iniciais[0])
 	await process_frame
 	_checar(not paused, "ao confirmar, o jogo despausa")
 	_checar(jogador.ficha.nome == NOME_TESTE and jogador.vida_maxima() == 12, "herói recebe a ficha (nome e CON 15 -> 12 PV)")

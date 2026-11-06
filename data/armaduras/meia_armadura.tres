@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_sbb7k"]
+
+[resource]
+script = ExtResource("1_sbb7k")
+categoria = &"media"
+ca_base = 15
+max_destreza = 2
+desvantagem_furtividade = true
+cor = Color(0.72, 0.74, 0.79, 1)
+padrao = 3
+nome_original = "Half Plate Armor"
+peso = "40 lb."
+preco = "750 GP"
+livro = "Player’s Handbook"
+nome = "Meia-Armadura"
+descricao = "Armadura média. CA 15 + DES (máx. 2). Desvantagem em Furtividade. (Half Plate Armor, Player’s Handbook)"
+espaco = &"corpo"

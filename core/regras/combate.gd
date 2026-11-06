@@ -30,7 +30,7 @@ static func resolver_ataque(golpe: Golpe, ca: int, rng: RandomNumberGenerator,
 		resistencias: Array[StringName] = []) -> Resultado:
 	var r := Resultado.new()
 	r.golpe = golpe
-	r.d20 = rng.randi_range(1, FACES_D20)
+	r.d20 = rolar_d20(rng, golpe.desvantagem)
 	r.total = r.d20 + golpe.bonus_ataque
 	r.critico = r.d20 == ACERTO_CRITICO
 	r.acertou = r.critico or (r.d20 != FALHA_AUTOMATICA and r.total >= ca)
@@ -43,5 +43,13 @@ static func resolver_ataque(golpe: Golpe, ca: int, rng: RandomNumberGenerator,
 
 
 ## Rola uma salvaguarda: true se d20 + `bonus` alcançar a `cd`.
-static func passou_salvaguarda(bonus: int, cd: int, rng: RandomNumberGenerator) -> bool:
-	return rng.randi_range(1, FACES_D20) + bonus >= cd
+static func passou_salvaguarda(bonus: int, cd: int, rng: RandomNumberGenerator, desvantagem: bool = false) -> bool:
+	return rolar_d20(rng, desvantagem) + bonus >= cd
+
+
+## Um d20; com desvantagem, rola dois e fica com o menor.
+static func rolar_d20(rng: RandomNumberGenerator, desvantagem: bool = false) -> int:
+	var d20 := rng.randi_range(1, FACES_D20)
+	if desvantagem:
+		d20 = mini(d20, rng.randi_range(1, FACES_D20))
+	return d20

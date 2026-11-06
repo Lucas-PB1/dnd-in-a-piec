@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_rw6i4"]
+
+[resource]
+script = ExtResource("1_rw6i4")
+categoria = &"media"
+ca_base = 14
+max_destreza = 2
+desvantagem_furtividade = true
+cor = Color(0.66, 0.6, 0.48, 1)
+padrao = 5
+nome_original = "Scale Mail"
+peso = "45 lb."
+preco = "50 GP"
+livro = "Player’s Handbook"
+nome = "Brunea"
+descricao = "Armadura média. CA 14 + DES (máx. 2). Desvantagem em Furtividade. (Scale Mail, Player’s Handbook)"
+espaco = &"corpo"

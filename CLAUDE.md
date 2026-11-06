@@ -51,7 +51,11 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Tela de inventário | `ui/inventario/`, tecla **I** (Esc também fecha), **pausa o jogo**. Lista, detalhes, Equipar/Desequipar/Jogar fora (com confirmação) e a ficha. Não conhece o herói: emite `abrir_pedido` e a `main` chama `abrir(...)`. Não abre durante a criação. | |
 | Tipos de dano | `TiposDano` (`core/regras/`): contundente, cortante, perfurante, ácido, frio, fogo. **Espada Curta = perfurante** (igual ao livro), **soco = contundente**, Pseudópode = ácido. `Arma.tipo_dano`; o `Golpe` leva o tipo. **Resistência** (`DefesaComponent.resistencias`): dano pela metade, arredondado para baixo (pode dar 0); o texto mostra "(resistiu)". | Pedido do usuário. |
 | Corrosão (armas) | Arma **não mágica** (`Arma.corroivel`) que causa dano no Ooze leva −1 no ataque (cumulativo) e é **destruída em −5**. O desgaste fica **no Inventario** (`penalidade`/`desgastar`), por item: o herói guarda **cópias** dos itens iniciais, e o `.tres` nunca muda. O alvo avisa pelo sinal `Golpe.arma_corroida`; quem decide o que acontece com a arma é o dono. O inventário mostra "Corroída: −X no ataque". | Regra da ficha do Ooze. |
-| Proficiências | `Proficiencias` (`core/regras/`): armas **simples/marcial** e armaduras **leve/média/pesada/escudo**. `ClasseRPG.proficiencias_armas` e `treinamento_armaduras` (Guerreiro: tudo). `Arma.categoria` (Espada Curta = marcial; vazio = desarmado, sempre proficiente). **Arma sem proficiência: não soma o +2 de proficiência no ataque** (`Ficha.proficiente_com`). Armadura sem treinamento (desvantagem em FOR/DES) entra junto com os itens de armadura. Criação mostra as proficiências da classe; o inventário avisa "Sem proficiência". | Regra do livro. |
+| Proficiências | `Proficiencias` (`core/regras/`): armas **simples/marcial** e armaduras **leve/média/pesada/escudo**. `ClasseRPG.proficiencias_armas` e `treinamento_armaduras` (Guerreiro: tudo). `Arma.categoria` (Espada Curta = marcial; vazio = desarmado, sempre proficiente). **Arma sem proficiência: não soma o +2 de proficiência no ataque** (`Ficha.proficiente_com`). Criação mostra as proficiências da classe; o inventário avisa "Sem proficiência". | Regra do livro. |
+| Armaduras | **21 armaduras** do Empório (PHB, Obojima, Northlands) em `data/armaduras/*.tres`, geradas por `tools/gerar_armaduras.gd` (**edite a TABELA, não os .tres**). `Armadura` (`core/dados/`): categoria, `ca_base`, `soma_destreza`, `max_destreza`, `forca_minima`, `desvantagem_furtividade`, cor e padrão visual. Espaços: **corpo** (armadura) e **mão secundária** (escudo). **CA** (`Ficha.classe_armadura`): sem armadura 10+DES; leve base+DES; média base+DES (máx.); pesada base; escudo +bônus (**só com treinamento**). **FOR abaixo do mínimo: −10 pés.** **Sem treinamento:** desvantagem nos testes de FOR/DES (= ataques; `Combate.rolar_d20` com desvantagem). **Furtividade:** só aparece (ainda não há testes de Furtividade). `Equipamento` (`core/regras/`) junta ficha + inventário (arma, armadura, escudo, CA, deslocamento, golpe) para herói e inventário calcularem igual. | Regras do livro; pedido do usuário. |
+| Armadura inicial | `ClasseRPG.armaduras_iniciais` (Guerreiro: **Cota de Malha** ou **Couro Batido**); escolhida na criação e já vestida. A prévia mostra CA, deslocamento e o aviso de Força. | Pedido do usuário. |
+| Armadura visível | Shader `assets/shaders/roupa_armadura.gdshader` no sprite do herói: troca a túnica azul pela cor da armadura mantendo luz e sombra, com padrão (malha, tachas, placas, acolchoado, escamas). Escudo: `EscudoJogador` na **mão de trás** (pontos de trás em `PontosMao`, marcados pela mesma ferramenta), desenhado atrás do corpo. Arte do escudo provisória por script. | Pedido do usuário. |
+| Corrosão (armadura) | Pseudópode (`ataque_corroi_armadura`) que acerta: armadura não mágica perde 1 de CA (desgaste no Inventario) e **se desfaz quando a CA dela chega a 10**. | Regra da ficha do Ooze. |
 | Desarmado | Mão vazia = `data/ataque_desarmado.tres` ("1d1" + FOR = soco de D&D, contundente, não sofre Corrosão, alcance curto, sem sprite de arma). | Regra do livro. |
 | Ataque | Tecla **J** -> estado `Atacando`. No chão freia e fica firme; no ar continua caindo; não vira durante o golpe. | Peso de Guerreiro. |
 | Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/arma_*.tres`: dano, alcance, tempos da janela de acerto, ângulos e **textura**. A espada é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. | Equipamento visível sem redesenhar o herói. |
@@ -85,8 +89,9 @@ Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
 core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante (componentes de combate)
-core/dados/              Item, Arma, ClasseRPG, CriaturaRPG (Resources)
-core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd
+core/dados/              Item, Arma, Armadura, ClasseRPG, CriaturaRPG (Resources)
+core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd,
+                         TiposDano, Proficiencias, Equipamento
 ui/titulo/               tela de título (DnD in a Piece)
 ui/criacao_personagem/   tela de criação (nome, classe, compra de pontos)
 ui/inventario/           tela de inventário (tecla I)
@@ -98,10 +103,10 @@ features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd
 features/boneco_treino/  boneco de treino (CA 10, mostra dano/Errou!, pisca e balança)
 features/gray_ooze/      Gray Ooze (D&D): cena, estados/, sprites/
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-data/                    jogador_padrao, arma_espada_curta, ataque_desarmado, classe_guerreiro, gray_ooze (.tres)
+data/                    jogador_padrao, arma_espada_curta, ataque_desarmado, classe_guerreiro, gray_ooze (.tres), armaduras/
 assets/tiles/            ladrilhos e TileSet (compartilhado)
-assets/armas/, efeitos/  sprites de armas e efeitos (compartilhados)
-tools/                   gerar_arte_provisoria, gerar_fase_teste, marcar_pontos_mao, gerar_gray_ooze, capturar_tela
+assets/armas/, efeitos/, armaduras/, shaders/  armas, efeitos, escudos, shader da roupa
+tools/                   gerar_arte_provisoria, gerar_fase_teste, gerar_armaduras, marcar_pontos_mao, gerar_gray_ooze, capturar_tela
 tests/                   teste_*.gd, rodar_testes.ps1
 ```
 
@@ -186,5 +191,6 @@ Um teste só:
 - Ajuste: movimento pelo deslocamento de D&D e ritmo de ataque pela iniciativa (tiques).
 - Fatia 9: "Você caiu!" com Tentar de novo; tipos de dano (espada perfurante, soco contundente, Pseudópode ácido); resistências do Ooze; Corrosão da arma.
 - Proficiências de armas (efeito no ataque) e de armaduras (só na ficha da classe por enquanto).
-- Próximas ideias: armadura (CA) e a corrosão de armadura do Pseudópode; usar salvaguarda em algum efeito; Cimitarra/Espada Longa (cortantes).
+- Fatia 10: 21 armaduras + escudos com as regras do livro, escolha na criação, armadura visível no herói, corrosão de armadura.
+- Próximas ideias: como obter as outras armaduras (baú/loja); testes de Furtividade; usar salvaguarda em algum efeito; Cimitarra/Espada Longa (cortantes).
 - Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.

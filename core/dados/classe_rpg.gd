@@ -13,3 +13,5 @@ extends Resource
 @export var proficiencias_armas: Array[StringName] = []
 ## Treinamento de armaduras (Proficiencias: leve, media, pesada, escudo).
 @export var treinamento_armaduras: Array[StringName] = []
+## Armaduras iniciais à escolha na criação (Guerreiro: Cota de Malha ou Couro Batido).
+@export var armaduras_iniciais: Array[Armadura] = []

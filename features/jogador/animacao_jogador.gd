@@ -43,7 +43,28 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 func ponto_da_mao() -> Vector2:
 	if pontos_mao == null:
 		return Vector2.ZERO
-	var ponto := pontos_mao.ponto(animation, frame)
+	return _espelhar(pontos_mao.ponto(animation, frame))
+
+
+## Ponto da mão de trás (a do escudo) no quadro atual.
+func ponto_da_mao_de_tras() -> Vector2:
+	if pontos_mao == null:
+		return Vector2.ZERO
+	return _espelhar(pontos_mao.ponto_de_tras(animation, frame))
+
+
+## Pinta a roupa com a `armadura` (shader roupa_armadura). null = túnica normal.
+func vestir(armadura: Armadura) -> void:
+	var shader := material as ShaderMaterial
+	if shader == null:
+		return
+	shader.set_shader_parameter(&"vestida", armadura != null)
+	if armadura:
+		shader.set_shader_parameter(&"cor_armadura", armadura.cor)
+		shader.set_shader_parameter(&"padrao", armadura.padrao)
+
+
+func _espelhar(ponto: Vector2) -> Vector2:
 	return Vector2(-ponto.x, ponto.y) if flip_h else ponto
 
 

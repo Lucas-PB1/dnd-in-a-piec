@@ -72,10 +72,14 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 autowrap_mode = 3
+theme_override_font_sizes/font_size = 13
 
 [node name="DanoItem" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+custom_minimum_size = Vector2(160, 0)
 
 [node name="Equipar" type="Button" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
 unique_name_in_owner = true
@@ -103,6 +107,7 @@ text = "Ficha"
 [node name="TextoFicha" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Ficha"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 13
 
 [node name="Dica" type="Label" parent="Centro/Painel/Margem/Coluna"]
 layout_mode = 2

@@ -34,7 +34,8 @@ func _initialize() -> void:
 	var frames: SpriteFrames = load(FRAMES)
 	var resultado := PontosMao.new()
 	for animacao in frames.get_animation_names():
-		resultado.pontos[animacao] = _pontos_da_animacao(frames, animacao)
+		resultado.pontos[animacao] = _pontos_da_animacao(frames, animacao, true)
+		resultado.pontos_de_tras[animacao] = _pontos_da_animacao(frames, animacao, false)
 		resultado.angulos[animacao] = ANGULOS.get(animacao, PontosMao.ANGULO_PADRAO)
 	ResourceSaver.save(resultado, DESTINO)
 	print("Pontos da mão salvos em ", DESTINO)
@@ -44,10 +45,11 @@ func _initialize() -> void:
 	quit()
 
 
-func _pontos_da_animacao(frames: SpriteFrames, animacao: StringName) -> PackedVector2Array:
+## Pontos da mão da frente (`da_frente`) ou de trás em cada quadro da animação.
+func _pontos_da_animacao(frames: SpriteFrames, animacao: StringName, da_frente: bool) -> PackedVector2Array:
 	var achados: Array = []  # Vector2 ou null (não achou)
 	for i in frames.get_frame_count(animacao):
-		achados.append(_achar_mao(_imagem_do_quadro(frames, animacao, i)))
+		achados.append(_achar_mao(_imagem_do_quadro(frames, animacao, i), da_frente))
 	return _preencher_buracos(achados)
 
 
@@ -56,15 +58,20 @@ func _imagem_do_quadro(frames: SpriteFrames, animacao: StringName, i: int) -> Im
 	return atlas.atlas.get_image().get_region(Rect2i(atlas.region))
 
 
-## Centro da mancha de pele mais à direita (relativo aos pés), ou null.
-func _achar_mao(img: Image) -> Variant:
+## Centro da mancha de pele (relativo aos pés), ou null. Mão da frente = a mais à direita
+## depois de X_MINIMO_FRENTE; mão de trás = a mais à esquerda antes dele.
+func _achar_mao(img: Image, da_frente: bool) -> Variant:
 	var melhor: Array[Vector2i] = []
-	var melhor_x := -INF
+	var melhor_x := -INF if da_frente else INF
 	for mancha in _manchas_de_pele(img):
-		var centro := _centro(mancha)
-		if mancha.size() >= PIXELS_MINIMOS and centro.x > X_MINIMO_FRENTE and centro.x > melhor_x:
+		if mancha.size() < PIXELS_MINIMOS:
+			continue
+		var x := _centro(mancha).x
+		var do_lado_certo := x > X_MINIMO_FRENTE if da_frente else x <= X_MINIMO_FRENTE
+		var mais_na_ponta := x > melhor_x if da_frente else x < melhor_x
+		if do_lado_certo and mais_na_ponta:
 			melhor = mancha
-			melhor_x = centro.x
+			melhor_x = x
 	if melhor.is_empty():
 		return null
 	return (_centro(melhor) - PES).round()
@@ -153,10 +160,14 @@ func _salvar_revisao(frames: SpriteFrames, resultado: PontosMao, caminho: String
 		for i in frames.get_frame_count(animacao):
 			var origem := Vector2i(i * TAMANHO_QUADRO, linha * TAMANHO_QUADRO)
 			folha.blend_rect(_imagem_do_quadro(frames, animacao, i), Rect2i(0, 0, TAMANHO_QUADRO, TAMANHO_QUADRO), origem)
-			var mao := Vector2i(resultado.ponto(animacao, i) + PES) + origem
-			for d in [-2, -1, 0, 1, 2]:
-				folha.set_pixelv(mao + Vector2i(d, d), Color.RED)
-				folha.set_pixelv(mao + Vector2i(d, -d), Color.RED)
+			_marcar_x(folha, Vector2i(resultado.ponto(animacao, i) + PES) + origem, Color.RED)
+			_marcar_x(folha, Vector2i(resultado.ponto_de_tras(animacao, i) + PES) + origem, Color.CYAN)
 	folha.resize(folha.get_width() * ESCALA_REVISAO, folha.get_height() * ESCALA_REVISAO, Image.INTERPOLATE_NEAREST)
 	folha.save_png(caminho)
-	print("Revisão salva em ", caminho, " (linhas: ", ", ".join(nomes), ")")
+	print("Revisão salva em ", caminho, " (linhas: ", ", ".join(nomes), "; vermelho = frente, ciano = trás)")
+
+
+func _marcar_x(folha: Image, centro: Vector2i, cor: Color) -> void:
+	for d in [-2, -1, 0, 1, 2]:
+		folha.set_pixelv(centro + Vector2i(d, d), cor)
+		folha.set_pixelv(centro + Vector2i(d, -d), cor)

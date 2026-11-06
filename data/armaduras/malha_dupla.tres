@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_o6x5y"]
+
+[resource]
+script = ExtResource("1_o6x5y")
+categoria = &"pesada"
+ca_base = 17
+soma_destreza = false
+forca_minima = 16
+desvantagem_furtividade = true
+cor = Color(0.58, 0.6, 0.65, 1)
+padrao = 1
+nome_original = "Double Mail"
+peso = "65 lb."
+preco = "350 GP"
+livro = "Northlands Worldbook"
+nome = "Malha Dupla"
+descricao = "Armadura pesada. CA 17. Força 16. Desvantagem em Furtividade. (Double Mail, Northlands Worldbook)"
+espaco = &"corpo"

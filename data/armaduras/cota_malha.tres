@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_yyoc5"]
+
+[resource]
+script = ExtResource("1_yyoc5")
+categoria = &"pesada"
+ca_base = 16
+soma_destreza = false
+forca_minima = 13
+desvantagem_furtividade = true
+cor = Color(0.68, 0.7, 0.75, 1)
+padrao = 1
+nome_original = "Chain Mail"
+peso = "55 lb."
+preco = "75 GP"
+livro = "Player’s Handbook"
+nome = "Cota de Malha"
+descricao = "Armadura pesada. CA 16. Força 13. Desvantagem em Furtividade. (Chain Mail, Player’s Handbook)"
+espaco = &"corpo"

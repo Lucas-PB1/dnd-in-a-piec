@@ -1,10 +1,12 @@
 class_name TelaCriacao
 extends Control
-## Tela de criação do personagem: nome, classe e compra de pontos (27) dos seis atributos,
-## com prévia da vida e do dano. Funciona com o jogo pausado. Ao confirmar, emite `confirmada`.
+## Tela de criação do personagem: nome, classe, armadura inicial e compra de pontos (27) dos
+## seis atributos, com prévia de vida, CA, deslocamento e dano. Funciona com o jogo pausado.
+## Ao confirmar, emite `confirmada`.
 
-## Emitido ao clicar em "Começar", com a ficha montada.
-signal confirmada(ficha: Ficha)
+## Emitido ao clicar em "Começar", com a ficha montada e a armadura inicial escolhida
+## (null se a classe não tiver armaduras iniciais).
+signal confirmada(ficha: Ficha, armadura: Armadura)
 
 ## Classes que o jogador pode escolher (por enquanto só o Guerreiro).
 @export var classes: Array[ClasseRPG] = []
@@ -12,6 +14,7 @@ signal confirmada(ficha: Ficha)
 @export var arma_previa: Arma
 
 var _classe: ClasseRPG
+var _armadura: Armadura
 var _compra := CompraDePontos.new()
 var _rotulos_valor: Dictionary[StringName, Label] = {}
 var _rotulos_mod: Dictionary[StringName, Label] = {}
@@ -20,6 +23,7 @@ var _botoes_mais: Dictionary[StringName, Button] = {}
 
 @onready var _campo_nome: LineEdit = %Nome
 @onready var _escolha_classe: OptionButton = %Classe
+@onready var _escolha_armadura: OptionButton = %Armadura
 @onready var _pontos: Label = %Pontos
 @onready var _grade: GridContainer = %Grade
 @onready var _previa: Label = %Previa
@@ -49,6 +53,13 @@ func definir_nome(texto: String) -> void:
 func escolher_classe(indice: int) -> void:
 	_classe = classes[indice]
 	_escolha_classe.select(indice)
+	_preencher_armaduras()
+	_atualizar()
+
+
+func escolher_armadura(indice: int) -> void:
+	_armadura = _classe.armaduras_iniciais[indice] if indice < _classe.armaduras_iniciais.size() else null
+	_escolha_armadura.select(indice)
 	_atualizar()
 
 
@@ -70,7 +81,7 @@ func mudar_atributo(atributo: StringName, quanto: int) -> void:
 func confirmar() -> void:
 	if _falta_algo() != "":
 		return
-	confirmada.emit(_ficha_atual())
+	confirmada.emit(_ficha_atual(), _armadura)
 
 
 func _preparar_campos() -> void:
@@ -80,9 +91,19 @@ func _preparar_campos() -> void:
 	for classe in classes:
 		_escolha_classe.add_item(classe.nome)
 	_escolha_classe.item_selected.connect(escolher_classe)
+	_escolha_armadura.item_selected.connect(escolher_armadura)
 	_escolha_classe.disabled = classes.size() == 1  # só uma classe por enquanto
 	_botao_sugestao.pressed.connect(aplicar_sugestao)
 	_botao_comecar.pressed.connect(confirmar)
+
+
+## Lista as armaduras iniciais da classe (com a CA de cada) e escolhe a primeira.
+func _preencher_armaduras() -> void:
+	_escolha_armadura.clear()
+	for armadura in _classe.armaduras_iniciais:
+		_escolha_armadura.add_item("%s (%s)" % [armadura.nome, armadura.texto_ca()])
+	_escolha_armadura.disabled = _classe.armaduras_iniciais.is_empty()
+	escolher_armadura(0)
 
 
 func _ficha_atual() -> Ficha:
@@ -119,15 +140,24 @@ func _atualizar() -> void:
 		_rotulos_mod[atributo].text = "mod %s" % Atributos.texto_modificador(valor)
 		_botoes_menos[atributo].disabled = not _compra.pode_diminuir(atributo)
 		_botoes_mais[atributo].disabled = not _compra.pode_aumentar(atributo)
-	var ficha := _ficha_atual()
-	_previa.text = "Vida: %d PV (d%d + CON)    Dano (%s): %s" % [
-		ficha.vida_maxima(), _classe.dado_vida, arma_previa.nome, ficha.texto_dano(arma_previa)]
+	_previa.text = _texto_previa(_ficha_atual())
 	_proficiencias.text = "Proficiência: %s · %s" % [Proficiencias.texto_armas(_classe.proficiencias_armas),
 		Proficiencias.texto_armaduras(_classe.treinamento_armaduras)]
 	_botao_sugestao.text = "Sugestão do %s" % _classe.nome
 	var falta := _falta_algo()
 	_botao_comecar.disabled = falta != ""
 	_botao_comecar.text = "Começar" if falta == "" else falta
+
+
+## "Vida 11 PV · CA 16 · 30 pés · Dano 1d6+2", avisando se falta Força para a armadura.
+func _texto_previa(ficha: Ficha) -> String:
+	var texto := "Vida %d PV (d%d + CON) · CA %d · %d pés · Dano %s" % [
+		ficha.vida_maxima(), _classe.dado_vida, ficha.classe_armadura(_armadura),
+		ficha.deslocamento_pes(_armadura), ficha.texto_dano(arma_previa)]
+	if ficha.falta_forca_para(_armadura):
+		texto += "\nA %s pede FOR %d: -%d pés de deslocamento" % [
+			_armadura.nome, _armadura.forca_minima, Ficha.PERDA_DESLOCAMENTO_SEM_FORCA]
+	return texto
 
 
 func _rotulo(texto: String) -> Label:

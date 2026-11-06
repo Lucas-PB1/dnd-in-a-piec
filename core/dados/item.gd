@@ -4,6 +4,10 @@ extends Resource
 
 ## Espaço "mão" (armas).
 const ESPACO_MAO := &"mao"
+## Espaço "corpo" (armaduras).
+const ESPACO_CORPO := &"corpo"
+## Espaço "mão secundária" (escudos).
+const ESPACO_MAO_SECUNDARIA := &"mao_secundaria"
 
 @export var nome: String = "Item"
 @export_multiline var descricao: String = ""

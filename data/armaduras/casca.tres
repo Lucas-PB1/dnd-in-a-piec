@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Armadura" format=3]
+
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_f2asr"]
+
+[resource]
+script = ExtResource("1_f2asr")
+cor = Color(0.45, 0.33, 0.21, 1)
+padrao = 5
+nome_original = "Bark Armor"
+peso = "14 lb."
+preco = "8 GP"
+livro = "Obojima"
+nome = "Armadura de Casca"
+descricao = "Armadura leve. CA 11 + DES. (Bark Armor, Obojima)"
+espaco = &"corpo"

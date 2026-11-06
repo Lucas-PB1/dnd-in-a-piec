@@ -5,7 +5,8 @@ extends SceneTree
 ## Ex.: ... -- mover_direita,pular 40 C:/tmp/print.png equipar
 ## <acoes> separadas por vírgula, ou "nenhuma". <quadros> = passos de física (60 por segundo)
 ## contados DEPOIS de apertar as teclas. [opcoes] separadas por vírgula:
-##   inicio = mostra o título e a criação;  equipar = começa com a 1ª arma da mochila na mão.
+##   inicio = mostra o título e a criação;  equipar = começa com a 1ª arma da mochila na mão;
+##   vestir:<arquivo> = veste data/armaduras/<arquivo>.tres (ex.: vestir:cota_malha, vestir:escudo).
 
 ## Passos de física de espera antes de apertar as teclas (a fase estabiliza depois de carregar).
 const ESPERA_INICIAL := 30
@@ -26,9 +27,12 @@ func _rodar() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = "inicio" in opcoes
 	root.add_child(cena)
+	var jogador: Jogador = cena.get_node("Jogador")
 	if "equipar" in opcoes:
-		var jogador: Jogador = cena.get_node("Jogador")
 		jogador.inventario.equipar(jogador.inventario.itens[0])
+	for opcao in opcoes:
+		if opcao.begins_with("vestir:"):
+			jogador.vestir_armadura_inicial(load("res://data/armaduras/%s.tres" % opcao.trim_prefix("vestir:")))
 	for i in ESPERA_INICIAL:
 		await physics_frame
 	for acao in acoes:

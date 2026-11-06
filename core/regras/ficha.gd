@@ -10,6 +10,8 @@ const BONUS_PROFICIENCIA := 2
 const CA_BASE := 10
 ## Deslocamento por rodada (pés). Ainda não há raças: todo mundo é "humano" (30 pés).
 const DESLOCAMENTO_PADRAO_PES := 30.0
+## Armadura com Força mínima que o personagem não alcança: perde isto de deslocamento.
+const PERDA_DESLOCAMENTO_SEM_FORCA := 10.0
 ## Vida mínima no nível 1, mesmo com Constituição muito baixa.
 const VIDA_MINIMA := 1
 ## Nome usado quando nenhum foi escolhido.
@@ -90,8 +92,11 @@ func bonus_ataque(arma: Arma) -> int:
 
 ## O ataque com a arma, pronto para ser resolvido contra a CA do alvo.
 ## `penalidade` = desgaste da arma (ex.: Corrosão), subtraído do bônus de ataque.
-func golpe_com(arma: Arma, penalidade: int = 0) -> Golpe:
-	return Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado_dano(arma), arma.tipo_dano, arma.corroivel)
+## `armadura` vestida: sem treinamento nela, o ataque (teste de FOR/DES) tem desvantagem.
+func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null) -> Golpe:
+	var golpe := Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado_dano(arma), arma.tipo_dano, arma.corroivel)
+	golpe.desvantagem = desvantagem_por_armadura(armadura)
+	return golpe
 
 
 ## Iniciativa = modificador de Destreza. Define o ritmo dos ataques (EscalaDnd).
@@ -99,13 +104,48 @@ func iniciativa() -> int:
 	return modificador(Atributos.DESTREZA)
 
 
-func deslocamento_pes() -> float:
+## Deslocamento (pés). Armadura com Força mínima que o personagem não tem: -10 pés.
+func deslocamento_pes(armadura: Armadura = null) -> float:
+	if falta_forca_para(armadura):
+		return DESLOCAMENTO_PADRAO_PES - PERDA_DESLOCAMENTO_SEM_FORCA
 	return DESLOCAMENTO_PADRAO_PES
 
 
-## Classe de Armadura sem armadura: 10 + modificador de Destreza.
-func classe_armadura() -> int:
-	return CA_BASE + modificador(Atributos.DESTREZA)
+# --- Armadura ------------------------------------------------------------------------
+
+## Classe de Armadura com a `armadura` e o `escudo` vestidos (null = sem eles).
+## Sem armadura: 10 + DES. Leve: base + DES. Média: base + DES até o máximo. Pesada: base.
+## `desgaste_armadura` (ex.: corrosão) é subtraído do que a armadura oferece.
+## Escudo só soma se tiver treinamento com escudos.
+func classe_armadura(armadura: Armadura = null, escudo: Armadura = null, desgaste_armadura: int = 0) -> int:
+	var ca := CA_BASE + modificador(Atributos.DESTREZA)
+	if armadura:
+		ca = armadura.ca_base - desgaste_armadura + _destreza_na_armadura(armadura)
+	if escudo and treinado_com(escudo):
+		ca += escudo.ca_base
+	return ca
+
+
+## Treinado na categoria da armadura ou escudo? (Guerreiro: em todas.)
+func treinado_com(armadura: Armadura) -> bool:
+	return armadura.categoria in classe.treinamento_armaduras
+
+
+## Vestir armadura (não escudo) sem treinamento dá desvantagem nos testes de FOR e DES.
+func desvantagem_por_armadura(armadura: Armadura) -> bool:
+	return armadura != null and not armadura.e_escudo() and not treinado_com(armadura)
+
+
+## A armadura pede mais Força do que o personagem tem?
+func falta_forca_para(armadura: Armadura) -> bool:
+	return armadura != null and atributos[Atributos.FORCA] < armadura.forca_minima
+
+
+func _destreza_na_armadura(armadura: Armadura) -> int:
+	if not armadura.soma_destreza:
+		return 0
+	var mod := modificador(Atributos.DESTREZA)
+	return mini(mod, armadura.max_destreza) if armadura.max_destreza >= 0 else mod
 
 
 func proficiente_em_salvaguarda(atributo: StringName) -> bool:

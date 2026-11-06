@@ -17,6 +17,10 @@ var dano: Dado
 var tipo_dano: StringName
 ## True se é uma arma não mágica (sofre Corrosão). Soco e ataques naturais = false.
 var arma_corroivel: bool
+## Desvantagem: rola 2d20 e fica com o menor (ex.: armadura sem treinamento).
+var desvantagem: bool = false
+## O acerto corrói a armadura não mágica do alvo (Pseudópode do Gray Ooze).
+var corroi_armadura: bool = false
 
 
 func _init(nome_golpe: String, bonus: int, dado_dano: Dado, tipo: StringName = TiposDano.CONTUNDENTE,
