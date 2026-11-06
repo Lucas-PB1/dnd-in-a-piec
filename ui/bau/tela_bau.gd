@@ -1,23 +1,29 @@
 class_name TelaBau
 extends Control
-## Tela do baú do arsenal: lista o que há no baú e "Pegar" põe uma CÓPIA na mochila (o baú
-## nunca esvazia). Pausa o jogo enquanto está aberta. Não conhece o herói nem o baú: quem
-## monta o jogo chama abrir() com os itens e o inventário.
+## Tela do baú do arsenal: filtra armas ou armaduras e "Pegar" põe uma CÓPIA na mochila
+## (o baú nunca esvazia). Pausa o jogo. Quem monta o jogo chama abrir().
 
 const AVISO_CHEIA := "Mochila cheia! Jogue algo fora (I)."
 const AVISO_PEGOU := "Pegou: %s"
+const FILTRO_TUDO := 0
+const FILTRO_ARMAS := 1
+const FILTRO_ARMADURAS := 2
 
 var _itens: Array[Item] = []
+var _visiveis: Array[Item] = []
 var _inventario: Inventario
+var _filtro: int = FILTRO_TUDO
 
 @onready var _lista: ItemList = %Lista
 @onready var _nome: Label = %Nome
-@onready var _descricao: Label = %Descricao
 @onready var _regras: Label = %Regras
 @onready var _aviso: Label = %Aviso
 @onready var _mochila: Label = %Mochila
 @onready var _botao_pegar: Button = %Pegar
 @onready var _botao_fechar: Button = %Fechar
+@onready var _botao_tudo: Button = %FiltroTudo
+@onready var _botao_armas: Button = %FiltroArmas
+@onready var _botao_armaduras: Button = %FiltroArmaduras
 
 
 func _ready() -> void:
@@ -27,6 +33,9 @@ func _ready() -> void:
 	_lista.item_activated.connect(func(_i: int) -> void: pegar_selecionado())
 	_botao_pegar.pressed.connect(pegar_selecionado)
 	_botao_fechar.pressed.connect(fechar)
+	_botao_tudo.pressed.connect(_escolher_filtro.bind(FILTRO_TUDO))
+	_botao_armas.pressed.connect(_escolher_filtro.bind(FILTRO_ARMAS))
+	_botao_armaduras.pressed.connect(_escolher_filtro.bind(FILTRO_ARMADURAS))
 
 
 func _unhandled_input(evento: InputEvent) -> void:
@@ -39,13 +48,8 @@ func _unhandled_input(evento: InputEvent) -> void:
 func abrir(itens: Array[Item], inventario: Inventario) -> void:
 	_itens = itens
 	_inventario = inventario
-	_lista.clear()
-	for item in _itens:
-		_lista.add_item(item.nome, item.icone)
 	_aviso.text = ""
-	if _lista.item_count > 0:
-		_lista.select(0)
-	_atualizar_detalhes()
+	_escolher_filtro(FILTRO_TUDO)
 	show()
 	_lista.grab_focus()
 	get_tree().paused = true
@@ -67,27 +71,44 @@ func pegar_selecionado() -> bool:
 	return pegou
 
 
+func _escolher_filtro(filtro: int) -> void:
+	_filtro = filtro
+	_botao_tudo.disabled = filtro == FILTRO_TUDO
+	_botao_armas.disabled = filtro == FILTRO_ARMAS
+	_botao_armaduras.disabled = filtro == FILTRO_ARMADURAS
+	_preencher_lista()
+
+
+func _preencher_lista() -> void:
+	_visiveis.clear()
+	for item in _itens:
+		if _passa_filtro(item):
+			_visiveis.append(item)
+	_lista.clear()
+	for item in _visiveis:
+		_lista.add_item(item.nome, item.icone)
+	if _lista.item_count > 0:
+		_lista.select(0)
+	_atualizar_detalhes()
+
+
+func _passa_filtro(item: Item) -> bool:
+	if _filtro == FILTRO_ARMAS:
+		return item is Arma
+	if _filtro == FILTRO_ARMADURAS:
+		return item is Armadura
+	return true
+
+
 func _item_selecionado() -> Item:
 	var selecionados := _lista.get_selected_items()
-	return _itens[selecionados[0]] if not selecionados.is_empty() else null
+	return _visiveis[selecionados[0]] if not selecionados.is_empty() else null
 
 
 func _atualizar_detalhes() -> void:
 	var item := _item_selecionado()
-	_nome.text = item.nome if item else "(baú vazio)"
-	_descricao.text = item.descricao if item else ""
-	_regras.text = _texto_regras(item)
+	_nome.text = item.nome if item else "(nada neste filtro)"
+	_regras.text = ResumoItem.texto(item)
 	_botao_pegar.disabled = item == null
 	if _inventario:
-		_mochila.text = "Mochila: %d/%d" % [_inventario.itens.size(), _inventario.capacidade]
-
-
-## "Dano 1d8 cortante · 3 lb. · 15 GP" ou "CA 16 · 55 lb. · 75 GP".
-func _texto_regras(item: Item) -> String:
-	if item is Arma:
-		var arma := item as Arma
-		return "Dano %s %s · %s · %s" % [arma.dados_dano, TiposDano.nome(arma.tipo_dano), arma.peso, arma.preco]
-	if item is Armadura:
-		var armadura := item as Armadura
-		return "%s · %s · %s" % [armadura.texto_ca(), armadura.peso, armadura.preco]
-	return ""
+		_mochila.text = "Mochila %d/%d" % [_inventario.itens.size(), _inventario.capacidade]

@@ -1,12 +1,13 @@
 class_name TelaCriacao
 extends Control
-## Tela de criação do personagem: nome, classe, pacote de equipamento inicial e compra de pontos (27) dos
-## seis atributos, com prévia de vida, CA, deslocamento e dano. Funciona com o jogo pausado.
+## Criação em dois passos: quem é o herói, depois os atributos. Funciona com o jogo pausado.
 ## Ao confirmar, emite `confirmada`.
 
 ## Emitido ao clicar em "Começar", com a ficha montada e o pacote inicial escolhido
 ## (null se a classe não tiver pacotes).
 signal confirmada(ficha: Ficha, pacote: PacoteInicial)
+
+const LARGURA_AJUSTE := 28
 
 ## Classes que o jogador pode escolher (por enquanto só o Guerreiro).
 @export var classes: Array[ClasseRPG] = []
@@ -28,6 +29,11 @@ var _botoes_mais: Dictionary[StringName, Button] = {}
 @onready var _grade: GridContainer = %Grade
 @onready var _previa: Label = %Previa
 @onready var _proficiencias: Label = %Proficiencias
+@onready var _leva: Label = %Leva
+@onready var _aviso: Label = %Aviso
+@onready var _titulo: Label = %TituloPasso
+@onready var _passo_quem: Control = %PassoQuem
+@onready var _passo_atributos: Control = %PassoAtributos
 @onready var _botao_sugestao: Button = %Sugestao
 @onready var _botao_comecar: Button = %Comecar
 
@@ -42,6 +48,7 @@ func _ready() -> void:
 	for atributo in Atributos.TODOS:
 		_criar_linha(atributo)
 	escolher_classe(0)
+	_mostrar_quem(true)
 	_campo_nome.grab_focus()
 
 
@@ -95,22 +102,23 @@ func _preparar_campos() -> void:
 	_escolha_classe.disabled = classes.size() == 1  # só uma classe por enquanto
 	_botao_sugestao.pressed.connect(aplicar_sugestao)
 	_botao_comecar.pressed.connect(confirmar)
+	(%Atributos as Button).pressed.connect(_mostrar_quem.bind(false))
+	(%Voltar as Button).pressed.connect(_mostrar_quem.bind(true))
 
 
-## Lista os pacotes iniciais da classe ("Pacote A: Cota de Malha + Espada Grande") e escolhe o primeiro.
+func _mostrar_quem(quem: bool) -> void:
+	_passo_quem.visible = quem
+	_passo_atributos.visible = not quem
+	_titulo.text = "Quem é você" if quem else "Atributos"
+
+
+## Lista os pacotes da classe ("Pacote A") e escolhe o primeiro. O que leva fica numa linha.
 func _preencher_pacotes() -> void:
 	_escolha_pacote.clear()
 	for pacote in _classe.pacotes_iniciais:
-		_escolha_pacote.add_item(_nome_curto(pacote))
+		_escolha_pacote.add_item(pacote.nome)
 	_escolha_pacote.disabled = _classe.pacotes_iniciais.is_empty()
 	escolher_pacote(0)
-
-
-func _nome_curto(pacote: PacoteInicial) -> String:
-	var vestidos: PackedStringArray = []
-	for item in pacote.equipar:
-		vestidos.append(item.nome)
-	return "%s: %s" % [pacote.nome, " + ".join(vestidos)]
 
 
 func _ficha_atual() -> Ficha:
@@ -127,12 +135,12 @@ func _falta_algo() -> String:
 
 
 func _criar_linha(atributo: StringName) -> void:
-	_grade.add_child(_rotulo("%s (%s)" % [Atributos.NOMES[atributo], Atributos.SIGLAS[atributo]]))
-	_botoes_menos[atributo] = _botao("-", mudar_atributo.bind(atributo, -1))
+	_grade.add_child(_rotulo(Atributos.SIGLAS[atributo]))
 	_rotulos_valor[atributo] = _rotulo("")
-	_botoes_mais[atributo] = _botao("+", mudar_atributo.bind(atributo, 1))
 	_rotulos_mod[atributo] = _rotulo("")
-	for no in [_botoes_menos[atributo], _rotulos_valor[atributo], _botoes_mais[atributo], _rotulos_mod[atributo]]:
+	_botoes_menos[atributo] = _botao("-", mudar_atributo.bind(atributo, -1))
+	_botoes_mais[atributo] = _botao("+", mudar_atributo.bind(atributo, 1))
+	for no in [_rotulos_valor[atributo], _rotulos_mod[atributo], _botoes_menos[atributo], _botoes_mais[atributo]]:
 		_grade.add_child(no)
 
 
@@ -144,10 +152,13 @@ func _atualizar() -> void:
 	for atributo in Atributos.TODOS:
 		var valor: int = _compra.valores[atributo]
 		_rotulos_valor[atributo].text = str(valor)
-		_rotulos_mod[atributo].text = "mod %s" % Atributos.texto_modificador(valor)
+		_rotulos_mod[atributo].text = Atributos.texto_modificador(valor)
 		_botoes_menos[atributo].disabled = not _compra.pode_diminuir(atributo)
 		_botoes_mais[atributo].disabled = not _compra.pode_aumentar(atributo)
-	_previa.text = _texto_previa(_ficha_atual())
+	var ficha := _ficha_atual()
+	_previa.text = _texto_previa(ficha)
+	_aviso.text = _texto_aviso(ficha)
+	_leva.text = "Leva: %s" % _pacote.texto_itens() if _pacote else ""
 	_proficiencias.text = "Proficiência: %s · %s" % [Proficiencias.texto_armas(_classe.proficiencias_armas),
 		Proficiencias.texto_armaduras(_classe.treinamento_armaduras)]
 	_botao_sugestao.text = "Sugestão do %s" % _classe.nome
@@ -156,23 +167,23 @@ func _atualizar() -> void:
 	_botao_comecar.text = "Começar" if falta == "" else falta
 
 
-## "Vida 11 PV · CA 16 · 30 pés · Dano 2d6+2", os itens do pacote e os avisos de Força.
-## Os pacotes não têm escudo: arma Versátil aparece com o dado de duas mãos.
+## "Vida 12 · CA 16 · 30 pés · Dano 2d6+2".
 func _texto_previa(ficha: Ficha) -> String:
 	var armadura := _pacote.armadura() if _pacote else null
 	var arma := _pacote.arma() if _pacote and _pacote.arma() else arma_previa
-	var texto := "Vida %d PV (d%d + CON) · CA %d · %d pés · Dano %s" % [
-		ficha.vida_maxima(), _classe.dado_vida, ficha.classe_armadura(armadura),
-		ficha.deslocamento_pes(armadura), ficha.texto_dano(arma, arma.e_versatil())]
-	if _pacote:
-		texto += "\nLeva: %s" % _pacote.texto_itens()
+	return "Vida %d · CA %d · %d pés · Dano %s" % [ficha.vida_maxima(), ficha.classe_armadura(armadura),
+		int(ficha.deslocamento_pes(armadura)), ficha.texto_dano(arma, arma.e_versatil())]
+
+
+func _texto_aviso(ficha: Ficha) -> String:
+	var armadura := _pacote.armadura() if _pacote else null
+	var arma := _pacote.arma() if _pacote and _pacote.arma() else arma_previa
+	var avisos: PackedStringArray = []
 	if ficha.falta_forca_para(armadura):
-		texto += "\nA %s pede FOR %d: -%d pés de deslocamento" % [
-			armadura.nome, armadura.forca_minima, Ficha.PERDA_DESLOCAMENTO_SEM_FORCA]
+		avisos.append("A %s pede FOR %d: -%d pés" % [armadura.nome, armadura.forca_minima, Ficha.PERDA_DESLOCAMENTO_SEM_FORCA])
 	if ficha.fraco_para(arma):
-		texto += "\n%s é Pesada: com FOR abaixo de %d, ataca com desvantagem" % [
-			arma.nome, Ficha.FORCA_MINIMA_ARMA_PESADA]
-	return texto
+		avisos.append("%s é Pesada: FOR abaixo de %d, desvantagem" % [arma.nome, Ficha.FORCA_MINIMA_ARMA_PESADA])
+	return "\n".join(avisos)
 
 
 func _rotulo(texto: String) -> Label:
@@ -184,6 +195,6 @@ func _rotulo(texto: String) -> Label:
 func _botao(texto: String, ao_apertar: Callable) -> Button:
 	var botao := Button.new()
 	botao.text = texto
-	botao.custom_minimum_size = Vector2(24, 0)
+	botao.custom_minimum_size = Vector2(LARGURA_AJUSTE, 0)
 	botao.pressed.connect(ao_apertar)
 	return botao

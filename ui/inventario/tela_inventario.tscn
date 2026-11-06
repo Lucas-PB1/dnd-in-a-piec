@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://ui/inventario/tela_inventario.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/tema_menu.tres" id="2_tema"]
 
 [node name="TelaInventario" type="Control"]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_tema")
 script = ExtResource("1_script")
 
 [node name="Fundo" type="ColorRect" parent="."]
@@ -31,87 +33,94 @@ grow_vertical = 2
 [node name="Painel" type="PanelContainer" parent="Centro"]
 layout_mode = 2
 
-[node name="Margem" type="MarginContainer" parent="Centro/Painel"]
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 8
+theme_override_constants/separation = 6
 
-[node name="Coluna" type="VBoxContainer" parent="Centro/Painel/Margem"]
-layout_mode = 2
-
-[node name="Colunas" type="HBoxContainer" parent="Centro/Painel/Margem/Coluna"]
+[node name="Colunas" type="HBoxContainer" parent="Centro/Painel/Coluna"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Itens" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
+[node name="Itens" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas"]
 layout_mode = 2
 
-[node name="Titulo" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Itens"]
+[node name="Titulo" type="Label" parent="Centro/Painel/Coluna/Colunas/Itens"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"Titulo"
 text = "Inventário"
 
-[node name="Lista" type="ItemList" parent="Centro/Painel/Margem/Coluna/Colunas/Itens"]
+[node name="Lista" type="ItemList" parent="Centro/Painel/Coluna/Colunas/Itens"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(170, 210)
+custom_minimum_size = Vector2(180, 200)
 layout_mode = 2
 
-[node name="Detalhes" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
-custom_minimum_size = Vector2(160, 0)
+[node name="Direita" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas"]
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
+theme_override_constants/separation = 6
 
-[node name="Nome" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+[node name="Abas" type="HBoxContainer" parent="Centro/Painel/Coluna/Colunas/Direita"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="AbaItem" type="Button" parent="Centro/Painel/Coluna/Colunas/Direita/Abas"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.55, 1)
+size_flags_horizontal = 3
+text = "Item"
 
-[node name="Descricao" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+[node name="AbaFicha" type="Button" parent="Centro/Painel/Coluna/Colunas/Direita/Abas"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ficha"
+
+[node name="PainelItem" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas/Direita"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Nome" type="Label" parent="Centro/Painel/Coluna/Colunas/Direita/PainelItem"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.4, 1)
+text = "(nenhum item)"
+
+[node name="DanoItem" type="Label" parent="Centro/Painel/Coluna/Colunas/Direita/PainelItem"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
 autowrap_mode = 3
 theme_override_font_sizes/font_size = 13
 
-[node name="DanoItem" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+[node name="Equipar" type="Button" parent="Centro/Painel/Coluna/Colunas/Direita/PainelItem"]
 unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-autowrap_mode = 3
 custom_minimum_size = Vector2(160, 0)
-
-[node name="Equipar" type="Button" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
-unique_name_in_owner = true
 layout_mode = 2
 text = "Equipar"
 
-[node name="Desequipar" type="Button" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
+[node name="JogarFora" type="Button" parent="Centro/Painel/Coluna/Colunas/Direita/PainelItem"]
 unique_name_in_owner = true
-layout_mode = 2
-text = "Desequipar"
-
-[node name="JogarFora" type="Button" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
-unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "Jogar fora"
 
-[node name="Ficha" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
-custom_minimum_size = Vector2(185, 0)
-layout_mode = 2
-
-[node name="TituloFicha" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Ficha"]
-layout_mode = 2
-text = "Ficha"
-
-[node name="TextoFicha" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Ficha"]
+[node name="PainelFicha" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas/Direita"]
 unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="TextoFicha" type="Label" parent="Centro/Painel/Coluna/Colunas/Direita/PainelFicha"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
 
-[node name="Dica" type="Label" parent="Centro/Painel/Margem/Coluna"]
+[node name="Dica" type="Label" parent="Centro/Painel/Coluna"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+theme_type_variation = &"Dica"
 text = "I ou Esc: fechar"
 horizontal_alignment = 1
 
