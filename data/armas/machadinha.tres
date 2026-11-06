@@ -1,37 +1,38 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/machadinha.png" id="1_wmaer"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_yvhv0"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_rdy38"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/machadinha.png" id="1_yvhv0"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_rdy38"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_i5eha"]
+[ext_resource type="Texture2D" path="res://assets/armas/machadinha.png" id="4_fw158"]
 
-[sub_resource type="Resource" id="Resource_i5eha"]
-script = ExtResource("2_yvhv0")
+[sub_resource type="Resource" id="Resource_fkl6u"]
+script = ExtResource("2_rdy38")
 angulo = -70.0
 mao = Vector2(-2, -3)
 
-[sub_resource type="Resource" id="Resource_fw158"]
-script = ExtResource("2_yvhv0")
+[sub_resource type="Resource" id="Resource_l2wtw"]
+script = ExtResource("2_rdy38")
 tempo = 0.07
 angulo = -105.0
 mao = Vector2(-4, -5)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_fkl6u"]
-script = ExtResource("2_yvhv0")
+[sub_resource type="Resource" id="Resource_u0utm"]
+script = ExtResource("2_rdy38")
 tempo = 0.14
 angulo = 45.0
 mao = Vector2(3, 1)
 
-[sub_resource type="Resource" id="Resource_l2wtw"]
-script = ExtResource("2_yvhv0")
+[sub_resource type="Resource" id="Resource_y8j85"]
+script = ExtResource("2_rdy38")
 tempo = 0.27
 angulo = 35.0
 
 [resource]
-script = ExtResource("3_rdy38")
+script = ExtResource("3_i5eha")
 tipo_dano = &"cortante"
 categoria = &"simples"
-textura = ExtResource("1_wmaer")
+textura = ExtResource("4_fw158")
 angulo_arte = -45.0
 pegada = Vector2(4.8284273, 19.171574)
 comprimento = 25.700000000000003
@@ -43,9 +44,9 @@ nome_original = "Handaxe"
 peso = "2 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_yvhv0")]([SubResource("Resource_i5eha"), SubResource("Resource_fw158"), SubResource("Resource_fkl6u"), SubResource("Resource_l2wtw")])
+poses = Array[ExtResource("2_rdy38")]([SubResource("Resource_fkl6u"), SubResource("Resource_l2wtw"), SubResource("Resource_u0utm"), SubResource("Resource_y8j85")])
 passo = 17.5
 nome = "Machadinha"
 descricao = "Arma simples. Leve, Arremesso (20/60). Maestria: Atormentar. (Handaxe, Player’s Handbook)"
-icone = ExtResource("1_wmaer")
+icone = ExtResource("1_yvhv0")
 espaco = &"mao"

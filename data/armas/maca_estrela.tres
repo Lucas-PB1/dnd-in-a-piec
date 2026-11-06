@@ -1,38 +1,39 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/maca_estrela.png" id="1_bt2mw"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_s7kxx"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_vkbdk"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/maca_estrela.png" id="1_s7kxx"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_vkbdk"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_267hq"]
+[ext_resource type="Texture2D" path="res://assets/armas/maca_estrela.png" id="4_1o0uu"]
 
-[sub_resource type="Resource" id="Resource_267hq"]
-script = ExtResource("2_s7kxx")
+[sub_resource type="Resource" id="Resource_7piro"]
+script = ExtResource("2_vkbdk")
 angulo = -85.0
 mao = Vector2(-3, -3)
 
-[sub_resource type="Resource" id="Resource_1o0uu"]
-script = ExtResource("2_s7kxx")
+[sub_resource type="Resource" id="Resource_om332"]
+script = ExtResource("2_vkbdk")
 tempo = 0.11
 angulo = -130.0
 mao = Vector2(-6, -7)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_7piro"]
-script = ExtResource("2_s7kxx")
+[sub_resource type="Resource" id="Resource_p0iia"]
+script = ExtResource("2_vkbdk")
 tempo = 0.2
 angulo = 60.0
 mao = Vector2(4, 2)
 
-[sub_resource type="Resource" id="Resource_om332"]
-script = ExtResource("2_s7kxx")
+[sub_resource type="Resource" id="Resource_ay5ah"]
+script = ExtResource("2_vkbdk")
 tempo = 0.35
 angulo = 35.0
 
 [resource]
-script = ExtResource("3_vkbdk")
+script = ExtResource("3_267hq")
 dados_dano = "1d8"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("1_bt2mw")
+textura = ExtResource("4_1o0uu")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 30.671574)
 comprimento = 39.800000000000004
@@ -41,9 +42,9 @@ nome_original = "Morningstar"
 peso = "4 lb."
 preco = "15 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_s7kxx")]([SubResource("Resource_267hq"), SubResource("Resource_1o0uu"), SubResource("Resource_7piro"), SubResource("Resource_om332")])
+poses = Array[ExtResource("2_vkbdk")]([SubResource("Resource_7piro"), SubResource("Resource_om332"), SubResource("Resource_p0iia"), SubResource("Resource_ay5ah")])
 passo = 3.5
 nome = "Maça Estrela"
 descricao = "Arma marcial. Maestria: Enfraquecer. (Morningstar, Player’s Handbook)"
-icone = ExtResource("1_bt2mw")
+icone = ExtResource("1_s7kxx")
 espaco = &"mao"

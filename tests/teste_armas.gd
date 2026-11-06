@@ -94,6 +94,12 @@ func _testar_alcance() -> void:
 	for arquivo in ResourceLoader.list_directory(PASTA):
 		var arma := load(PASTA + arquivo) as Arma
 		movimentos[str(arma.poses.map(func(p: PoseGolpe) -> Array: return [p.tempo, p.angulo, p.mao]))] = true
+	var flexiveis_ok := ["mangual", "chicote"].all(func(id: String) -> bool:
+		var arma := _arma(id)
+		return arma.quadros.size() == arma.poses.size() and arma.quadros.size() >= 8)
+	_checar(flexiveis_ok, "Mangual e Chicote têm quadros desenhados (um por pose)")
+	_checar(_arma("espada_longa").quadros.is_empty(), "armas rígidas giram a imagem (sem quadros)")
+	_checar(_arma("adaga").icone.get_width() == 16 and _arma("chicote").icone.get_height() == 16, "ícones dos menus em 16x16")
 	_checar(movimentos.size() == TOTAL_ARMAS, "cada uma das 29 armas tem um movimento diferente (%d)" % movimentos.size())
 
 

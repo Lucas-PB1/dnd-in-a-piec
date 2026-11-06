@@ -53,6 +53,7 @@ text = "Inventário"
 [node name="Lista" type="ItemList" parent="Centro/Painel/Coluna/Colunas/Itens"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(180, 200)
+fixed_icon_size = Vector2i(16, 16)
 layout_mode = 2
 
 [node name="Direita" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas"]

@@ -1,36 +1,37 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/maca.png" id="1_g5bew"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_fi6ay"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_3g3eo"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/maca.png" id="1_fi6ay"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_3g3eo"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_58bhl"]
+[ext_resource type="Texture2D" path="res://assets/armas/maca.png" id="4_x5ad8"]
 
-[sub_resource type="Resource" id="Resource_58bhl"]
-script = ExtResource("2_fi6ay")
+[sub_resource type="Resource" id="Resource_ui3ud"]
+script = ExtResource("2_3g3eo")
 angulo = -80.0
 mao = Vector2(-3, -3)
 
-[sub_resource type="Resource" id="Resource_x5ad8"]
-script = ExtResource("2_fi6ay")
+[sub_resource type="Resource" id="Resource_3takj"]
+script = ExtResource("2_3g3eo")
 tempo = 0.1
 angulo = -120.0
 mao = Vector2(-5, -6)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_ui3ud"]
-script = ExtResource("2_fi6ay")
+[sub_resource type="Resource" id="Resource_1vcrv"]
+script = ExtResource("2_3g3eo")
 tempo = 0.19
 angulo = 55.0
 mao = Vector2(3, 2)
 
-[sub_resource type="Resource" id="Resource_3takj"]
-script = ExtResource("2_fi6ay")
+[sub_resource type="Resource" id="Resource_n1dcs"]
+script = ExtResource("2_3g3eo")
 tempo = 0.33
 angulo = 35.0
 
 [resource]
-script = ExtResource("3_3g3eo")
+script = ExtResource("3_58bhl")
 categoria = &"simples"
-textura = ExtResource("1_g5bew")
+textura = ExtResource("4_x5ad8")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 25.671574)
 comprimento = 35.6
@@ -40,9 +41,9 @@ peso = "4 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
-poses = Array[ExtResource("2_fi6ay")]([SubResource("Resource_58bhl"), SubResource("Resource_x5ad8"), SubResource("Resource_ui3ud"), SubResource("Resource_3takj")])
+poses = Array[ExtResource("2_3g3eo")]([SubResource("Resource_ui3ud"), SubResource("Resource_3takj"), SubResource("Resource_1vcrv"), SubResource("Resource_n1dcs")])
 passo = 8.0
 nome = "Maça"
 descricao = "Arma simples. Maestria: Enfraquecer. (Mace, Player’s Handbook)"
-icone = ExtResource("1_g5bew")
+icone = ExtResource("1_fi6ay")
 espaco = &"mao"

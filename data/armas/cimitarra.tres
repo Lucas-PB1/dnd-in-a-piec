@@ -1,38 +1,39 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/cimitarra.png" id="1_8piag"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_dfm1l"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_j5k3a"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/cimitarra.png" id="1_dfm1l"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_j5k3a"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_8murm"]
+[ext_resource type="Texture2D" path="res://assets/armas/cimitarra.png" id="4_356m1"]
 
-[sub_resource type="Resource" id="Resource_8murm"]
-script = ExtResource("2_dfm1l")
+[sub_resource type="Resource" id="Resource_uaulf"]
+script = ExtResource("2_j5k3a")
 angulo = -70.0
 mao = Vector2(-2, -3)
 
-[sub_resource type="Resource" id="Resource_356m1"]
-script = ExtResource("2_dfm1l")
+[sub_resource type="Resource" id="Resource_2a2qt"]
+script = ExtResource("2_j5k3a")
 tempo = 0.06
 angulo = -125.0
 mao = Vector2(-4, -5)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_uaulf"]
-script = ExtResource("2_dfm1l")
+[sub_resource type="Resource" id="Resource_3b502"]
+script = ExtResource("2_j5k3a")
 tempo = 0.14
 angulo = 55.0
 mao = Vector2(4, 2)
 
-[sub_resource type="Resource" id="Resource_2a2qt"]
-script = ExtResource("2_dfm1l")
+[sub_resource type="Resource" id="Resource_mdre6"]
+script = ExtResource("2_j5k3a")
 tempo = 0.27
 angulo = 35.0
 
 [resource]
-script = ExtResource("3_j5k3a")
+script = ExtResource("3_8murm")
 tipo_dano = &"cortante"
 categoria = &"marcial"
 acuidade = true
-textura = ExtResource("1_8piag")
+textura = ExtResource("4_356m1")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 22.671574)
 comprimento = 30.6
@@ -42,9 +43,9 @@ nome_original = "Scimitar"
 peso = "3 lb."
 preco = "25 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_dfm1l")]([SubResource("Resource_8murm"), SubResource("Resource_356m1"), SubResource("Resource_uaulf"), SubResource("Resource_2a2qt")])
+poses = Array[ExtResource("2_j5k3a")]([SubResource("Resource_uaulf"), SubResource("Resource_2a2qt"), SubResource("Resource_3b502"), SubResource("Resource_mdre6")])
 passo = 12.0
 nome = "Cimitarra"
 descricao = "Arma marcial. Acuidade, Leve. Maestria: Corte Duplo. (Scimitar, Player’s Handbook)"
-icone = ExtResource("1_8piag")
+icone = ExtResource("1_dfm1l")
 espaco = &"mao"

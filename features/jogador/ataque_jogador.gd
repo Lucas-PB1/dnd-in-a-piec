@@ -121,14 +121,22 @@ func _virar(direcao: int) -> void:
 func _aplicar_pose() -> void:
 	var pose := _arma.pose_em(_tempo)
 	position = _mao + pose.mao
-	_espada.rotation_degrees = DesenhoArma.rotacao(_arma, pose.angulo)
-	# Só arte na horizontal (o chicote) encolhe sem distorcer: estica ao longo da lâmina.
-	_espada.scale = Vector2(pose.escala, 1.0) if _arma.angulo_arte == 0.0 else Vector2.ONE
+	if _arma.quadros.is_empty():
+		_espada.rotation_degrees = DesenhoArma.rotacao(_arma, pose.angulo)
+	else:
+		_mostrar_quadro(_arma.indice_da_pose(_tempo))
 	var comprimento := _arma.comprimento * pose.escala + FOLGA_PONTA
 	var retangulo := _forma.shape as RectangleShape2D
 	retangulo.size = Vector2(comprimento, ESPESSURA_ACERTO)
 	_forma.rotation_degrees = pose.angulo
 	_forma.position = Vector2.from_angle(deg_to_rad(pose.angulo)) * comprimento / 2.0
+
+
+## Arma flexível (mangual, chicote): mostra o quadro desenhado da pose, sem girar.
+func _mostrar_quadro(indice: int) -> void:
+	_espada.texture = _arma.quadros[mini(indice, _arma.quadros.size() - 1)]
+	_espada.offset = -_arma.pegada_quadros
+	_espada.rotation = 0.0
 
 
 ## Limita o ângulo para baixo: a ponta não passa dos pés. `altura_mao` = y da mão

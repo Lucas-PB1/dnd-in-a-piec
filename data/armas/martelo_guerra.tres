@@ -1,37 +1,38 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/martelo_guerra.png" id="1_y2ddq"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_1cf3r"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_0uak7"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/martelo_guerra.png" id="1_1cf3r"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_0uak7"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_fgf7a"]
+[ext_resource type="Texture2D" path="res://assets/armas/martelo_guerra.png" id="4_fwr5w"]
 
-[sub_resource type="Resource" id="Resource_fgf7a"]
-script = ExtResource("2_1cf3r")
+[sub_resource type="Resource" id="Resource_ycjf5"]
+script = ExtResource("2_0uak7")
 angulo = -85.0
 mao = Vector2(-4, -4)
 
-[sub_resource type="Resource" id="Resource_fwr5w"]
-script = ExtResource("2_1cf3r")
+[sub_resource type="Resource" id="Resource_qb0wi"]
+script = ExtResource("2_0uak7")
 tempo = 0.12
 angulo = -135.0
 mao = Vector2(-6, -9)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_ycjf5"]
-script = ExtResource("2_1cf3r")
+[sub_resource type="Resource" id="Resource_trooa"]
+script = ExtResource("2_0uak7")
 tempo = 0.22
 angulo = 65.0
 mao = Vector2(4, 3)
 
-[sub_resource type="Resource" id="Resource_qb0wi"]
-script = ExtResource("2_1cf3r")
+[sub_resource type="Resource" id="Resource_jecda"]
+script = ExtResource("2_0uak7")
 tempo = 0.37
 angulo = 40.0
 
 [resource]
-script = ExtResource("3_0uak7")
+script = ExtResource("3_fgf7a")
 dados_dano = "1d8"
 categoria = &"marcial"
-textura = ExtResource("1_y2ddq")
+textura = ExtResource("4_fwr5w")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 28.671574)
 comprimento = 39.800000000000004
@@ -42,9 +43,9 @@ peso = "5 lb."
 preco = "15 GP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
-poses = Array[ExtResource("2_1cf3r")]([SubResource("Resource_fgf7a"), SubResource("Resource_fwr5w"), SubResource("Resource_ycjf5"), SubResource("Resource_qb0wi")])
+poses = Array[ExtResource("2_0uak7")]([SubResource("Resource_ycjf5"), SubResource("Resource_qb0wi"), SubResource("Resource_trooa"), SubResource("Resource_jecda")])
 passo = 4.0
 nome = "Martelo de Guerra"
 descricao = "Arma marcial. Versátil (1d10). Maestria: Empurrar. (Warhammer, Player’s Handbook)"
-icone = ExtResource("1_y2ddq")
+icone = ExtResource("1_1cf3r")
 espaco = &"mao"

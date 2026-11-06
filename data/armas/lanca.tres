@@ -1,36 +1,37 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/lanca.png" id="1_hly1w"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_da4tj"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_4ccw3"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/lanca.png" id="1_da4tj"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_4ccw3"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_2xlum"]
+[ext_resource type="Texture2D" path="res://assets/armas/lanca.png" id="4_76uiq"]
 
-[sub_resource type="Resource" id="Resource_2xlum"]
-script = ExtResource("2_da4tj")
+[sub_resource type="Resource" id="Resource_iums3"]
+script = ExtResource("2_4ccw3")
 angulo = 5.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_76uiq"]
-script = ExtResource("2_da4tj")
+[sub_resource type="Resource" id="Resource_3xant"]
+script = ExtResource("2_4ccw3")
 tempo = 0.08
 mao = Vector2(-10, -2)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_iums3"]
-script = ExtResource("2_da4tj")
+[sub_resource type="Resource" id="Resource_kfwai"]
+script = ExtResource("2_4ccw3")
 tempo = 0.16
 angulo = -2.0
 mao = Vector2(12, -2)
 
-[sub_resource type="Resource" id="Resource_3xant"]
-script = ExtResource("2_da4tj")
+[sub_resource type="Resource" id="Resource_22id4"]
+script = ExtResource("2_4ccw3")
 tempo = 0.31
 angulo = 20.0
 
 [resource]
-script = ExtResource("3_4ccw3")
+script = ExtResource("3_2xlum")
 tipo_dano = &"perfurante"
 categoria = &"simples"
-textura = ExtResource("1_hly1w")
+textura = ExtResource("4_76uiq")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 35.671574)
 comprimento = 49.7
@@ -42,8 +43,8 @@ nome_original = "Spear"
 peso = "3 lb."
 preco = "1 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_da4tj")]([SubResource("Resource_2xlum"), SubResource("Resource_76uiq"), SubResource("Resource_iums3"), SubResource("Resource_3xant")])
+poses = Array[ExtResource("2_4ccw3")]([SubResource("Resource_iums3"), SubResource("Resource_3xant"), SubResource("Resource_kfwai"), SubResource("Resource_22id4")])
 nome = "Lança"
 descricao = "Arma simples. Versátil (1d8), Arremesso (20/60). Maestria: Enfraquecer. (Spear, Player’s Handbook)"
-icone = ExtResource("1_hly1w")
+icone = ExtResource("1_da4tj")
 espaco = &"mao"

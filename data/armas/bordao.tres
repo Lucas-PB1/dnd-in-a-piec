@@ -1,41 +1,42 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/bordao.png" id="1_ntkds"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_65gxl"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_vonje"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/bordao.png" id="1_65gxl"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_vonje"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_a5ybw"]
+[ext_resource type="Texture2D" path="res://assets/armas/bordao.png" id="4_5sten"]
 
-[sub_resource type="Resource" id="Resource_a5ybw"]
-script = ExtResource("2_65gxl")
+[sub_resource type="Resource" id="Resource_u4uk8"]
+script = ExtResource("2_vonje")
 angulo = 30.0
 
-[sub_resource type="Resource" id="Resource_5sten"]
-script = ExtResource("2_65gxl")
+[sub_resource type="Resource" id="Resource_yld4w"]
+script = ExtResource("2_vonje")
 tempo = 0.07
 angulo = -30.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_u4uk8"]
-script = ExtResource("2_65gxl")
+[sub_resource type="Resource" id="Resource_lk10w"]
+script = ExtResource("2_vonje")
 tempo = 0.13
 angulo = -165.0
 mao = Vector2(-6, -4)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_yld4w"]
-script = ExtResource("2_65gxl")
+[sub_resource type="Resource" id="Resource_cm13a"]
+script = ExtResource("2_vonje")
 tempo = 0.23
 angulo = 35.0
 mao = Vector2(5, 0)
 
-[sub_resource type="Resource" id="Resource_lk10w"]
-script = ExtResource("2_65gxl")
+[sub_resource type="Resource" id="Resource_l6wso"]
+script = ExtResource("2_vonje")
 tempo = 0.37
 angulo = 30.0
 
 [resource]
-script = ExtResource("3_vonje")
+script = ExtResource("3_a5ybw")
 categoria = &"simples"
-textura = ExtResource("1_ntkds")
+textura = ExtResource("4_5sten")
 angulo_arte = -45.0
 pegada = Vector2(4.495094, 35.83824)
 comprimento = 49.0
@@ -46,8 +47,8 @@ peso = "4 lb."
 preco = "2 SP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
-poses = Array[ExtResource("2_65gxl")]([SubResource("Resource_a5ybw"), SubResource("Resource_5sten"), SubResource("Resource_u4uk8"), SubResource("Resource_yld4w"), SubResource("Resource_lk10w")])
+poses = Array[ExtResource("2_vonje")]([SubResource("Resource_u4uk8"), SubResource("Resource_yld4w"), SubResource("Resource_lk10w"), SubResource("Resource_cm13a"), SubResource("Resource_l6wso")])
 nome = "Bordão"
 descricao = "Arma simples. Versátil (1d8). Maestria: Derrubar. (Quarterstaff, Player’s Handbook)"
-icone = ExtResource("1_ntkds")
+icone = ExtResource("1_65gxl")
 espaco = &"mao"

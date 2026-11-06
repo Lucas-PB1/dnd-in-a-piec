@@ -1,39 +1,40 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/espada_grande.png" id="1_18m40"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_fsp7t"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_aufpn"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/espada_grande.png" id="1_fsp7t"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_aufpn"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_123yy"]
+[ext_resource type="Texture2D" path="res://assets/armas/espada_grande.png" id="4_0gkxi"]
 
-[sub_resource type="Resource" id="Resource_123yy"]
-script = ExtResource("2_fsp7t")
+[sub_resource type="Resource" id="Resource_xn52f"]
+script = ExtResource("2_aufpn")
 angulo = -50.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_0gkxi"]
-script = ExtResource("2_fsp7t")
+[sub_resource type="Resource" id="Resource_ujeoh"]
+script = ExtResource("2_aufpn")
 tempo = 0.15
 angulo = -150.0
 mao = Vector2(-8, -8)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_xn52f"]
-script = ExtResource("2_fsp7t")
+[sub_resource type="Resource" id="Resource_cnwlj"]
+script = ExtResource("2_aufpn")
 tempo = 0.28
 angulo = 60.0
 mao = Vector2(6, 2)
 
-[sub_resource type="Resource" id="Resource_ujeoh"]
-script = ExtResource("2_fsp7t")
+[sub_resource type="Resource" id="Resource_1iajg"]
+script = ExtResource("2_aufpn")
 tempo = 0.47
 angulo = 40.0
 mao = Vector2(2, 0)
 
 [resource]
-script = ExtResource("3_aufpn")
+script = ExtResource("3_123yy")
 dados_dano = "2d6"
 tipo_dano = &"cortante"
 categoria = &"marcial"
-textura = ExtResource("1_18m40")
+textura = ExtResource("4_0gkxi")
 angulo_arte = -45.0
 pegada = Vector2(4.8284273, 39.171574)
 comprimento = 54.7
@@ -44,8 +45,8 @@ nome_original = "Greatsword"
 peso = "6 lb."
 preco = "50 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_fsp7t")]([SubResource("Resource_123yy"), SubResource("Resource_0gkxi"), SubResource("Resource_xn52f"), SubResource("Resource_ujeoh")])
+poses = Array[ExtResource("2_aufpn")]([SubResource("Resource_xn52f"), SubResource("Resource_ujeoh"), SubResource("Resource_cnwlj"), SubResource("Resource_1iajg")])
 nome = "Espada Grande"
 descricao = "Arma marcial. Pesada, Duas Mãos. Maestria: Raspão. (Greatsword, Player’s Handbook)"
-icone = ExtResource("1_18m40")
+icone = ExtResource("1_fsp7t")
 espaco = &"mao"

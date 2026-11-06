@@ -1,39 +1,40 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/rapieira.png" id="1_0l14a"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_das00"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_2r3um"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/rapieira.png" id="1_das00"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_2r3um"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_g0sa0"]
+[ext_resource type="Texture2D" path="res://assets/armas/rapieira.png" id="4_787tx"]
 
-[sub_resource type="Resource" id="Resource_g0sa0"]
-script = ExtResource("2_das00")
+[sub_resource type="Resource" id="Resource_msngi"]
+script = ExtResource("2_2r3um")
 angulo = -8.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_787tx"]
-script = ExtResource("2_das00")
+[sub_resource type="Resource" id="Resource_m08tj"]
+script = ExtResource("2_2r3um")
 tempo = 0.09
 angulo = -2.0
 mao = Vector2(-11, -1)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_msngi"]
-script = ExtResource("2_das00")
+[sub_resource type="Resource" id="Resource_i3yso"]
+script = ExtResource("2_2r3um")
 tempo = 0.17
 mao = Vector2(14, -1)
 
-[sub_resource type="Resource" id="Resource_m08tj"]
-script = ExtResource("2_das00")
+[sub_resource type="Resource" id="Resource_lann7"]
+script = ExtResource("2_2r3um")
 tempo = 0.34
 angulo = 28.0
 mao = Vector2(2, 0)
 
 [resource]
-script = ExtResource("3_2r3um")
+script = ExtResource("3_g0sa0")
 dados_dano = "1d8"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
 acuidade = true
-textura = ExtResource("1_0l14a")
+textura = ExtResource("4_787tx")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 30.671574)
 comprimento = 42.7
@@ -42,8 +43,8 @@ nome_original = "Rapier"
 peso = "2 lb."
 preco = "25 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_das00")]([SubResource("Resource_g0sa0"), SubResource("Resource_787tx"), SubResource("Resource_msngi"), SubResource("Resource_m08tj")])
+poses = Array[ExtResource("2_2r3um")]([SubResource("Resource_msngi"), SubResource("Resource_m08tj"), SubResource("Resource_i3yso"), SubResource("Resource_lann7")])
 nome = "Rapieira"
 descricao = "Arma marcial. Acuidade. Maestria: Atormentar. (Rapier, Player’s Handbook)"
-icone = ExtResource("1_0l14a")
+icone = ExtResource("1_das00")
 espaco = &"mao"

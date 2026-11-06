@@ -1,36 +1,37 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/azagaia.png" id="1_lgax4"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_0iguj"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_ffsv8"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/azagaia.png" id="1_0iguj"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_ffsv8"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_alffr"]
+[ext_resource type="Texture2D" path="res://assets/armas/azagaia.png" id="4_07w86"]
 
-[sub_resource type="Resource" id="Resource_alffr"]
-script = ExtResource("2_0iguj")
+[sub_resource type="Resource" id="Resource_ovm8l"]
+script = ExtResource("2_ffsv8")
 angulo = 5.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_07w86"]
-script = ExtResource("2_0iguj")
+[sub_resource type="Resource" id="Resource_hugvx"]
+script = ExtResource("2_ffsv8")
 tempo = 0.07
 mao = Vector2(-9, -2)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_ovm8l"]
-script = ExtResource("2_0iguj")
+[sub_resource type="Resource" id="Resource_bo06d"]
+script = ExtResource("2_ffsv8")
 tempo = 0.14
 angulo = -2.0
 mao = Vector2(11, -2)
 
-[sub_resource type="Resource" id="Resource_hugvx"]
-script = ExtResource("2_0iguj")
+[sub_resource type="Resource" id="Resource_jvpth"]
+script = ExtResource("2_ffsv8")
 tempo = 0.28
 angulo = 20.0
 
 [resource]
-script = ExtResource("3_ffsv8")
+script = ExtResource("3_alffr")
 tipo_dano = &"perfurante"
 categoria = &"simples"
-textura = ExtResource("1_lgax4")
+textura = ExtResource("4_07w86")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 32.671574)
 comprimento = 45.5
@@ -41,9 +42,9 @@ nome_original = "Javelin"
 peso = "2 lb."
 preco = "5 SP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_0iguj")]([SubResource("Resource_alffr"), SubResource("Resource_07w86"), SubResource("Resource_ovm8l"), SubResource("Resource_hugvx")])
+poses = Array[ExtResource("2_ffsv8")]([SubResource("Resource_ovm8l"), SubResource("Resource_hugvx"), SubResource("Resource_bo06d"), SubResource("Resource_jvpth")])
 nome = "Azagaia"
 descricao = "Arma simples. Arremesso (30/120). Maestria: Lentidão. (Javelin, Player’s Handbook)"
-icone = ExtResource("1_lgax4")
+icone = ExtResource("1_0iguj")
 espaco = &"mao"
 empilhavel = true

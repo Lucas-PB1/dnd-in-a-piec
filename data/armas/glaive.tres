@@ -1,38 +1,39 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/glaive.png" id="1_poxiv"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_vhtfv"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_mkrgr"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/glaive.png" id="1_vhtfv"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_mkrgr"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_33kos"]
+[ext_resource type="Texture2D" path="res://assets/armas/glaive.png" id="4_wwfhn"]
 
-[sub_resource type="Resource" id="Resource_33kos"]
-script = ExtResource("2_vhtfv")
+[sub_resource type="Resource" id="Resource_pno72"]
+script = ExtResource("2_mkrgr")
 angulo = -25.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_wwfhn"]
-script = ExtResource("2_vhtfv")
+[sub_resource type="Resource" id="Resource_w64ar"]
+script = ExtResource("2_mkrgr")
 tempo = 0.15
 angulo = -150.0
 mao = Vector2(-6, -6)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_pno72"]
-script = ExtResource("2_vhtfv")
+[sub_resource type="Resource" id="Resource_krjkg"]
+script = ExtResource("2_mkrgr")
 tempo = 0.29
 angulo = 25.0
 mao = Vector2(6, 0)
 
-[sub_resource type="Resource" id="Resource_w64ar"]
-script = ExtResource("2_vhtfv")
+[sub_resource type="Resource" id="Resource_eoynd"]
+script = ExtResource("2_mkrgr")
 tempo = 0.47
 angulo = 20.0
 
 [resource]
-script = ExtResource("3_mkrgr")
+script = ExtResource("3_33kos")
 dados_dano = "1d10"
 tipo_dano = &"cortante"
 categoria = &"marcial"
-textura = ExtResource("1_poxiv")
+textura = ExtResource("4_wwfhn")
 angulo_arte = -45.0
 pegada = Vector2(3.828427, 52.171574)
 comprimento = 75.2
@@ -44,8 +45,8 @@ nome_original = "Glaive"
 peso = "6 lb."
 preco = "20 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_vhtfv")]([SubResource("Resource_33kos"), SubResource("Resource_wwfhn"), SubResource("Resource_pno72"), SubResource("Resource_w64ar")])
+poses = Array[ExtResource("2_mkrgr")]([SubResource("Resource_pno72"), SubResource("Resource_w64ar"), SubResource("Resource_krjkg"), SubResource("Resource_eoynd")])
 nome = "Glaive"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Raspão. (Glaive, Player’s Handbook)"
-icone = ExtResource("1_poxiv")
+icone = ExtResource("1_vhtfv")
 espaco = &"mao"

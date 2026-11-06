@@ -1,36 +1,37 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/pique.png" id="1_pe0vi"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_x6kuj"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_gdygf"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/pique.png" id="1_x6kuj"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_gdygf"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_70vj3"]
+[ext_resource type="Texture2D" path="res://assets/armas/pique.png" id="4_4sd5t"]
 
-[sub_resource type="Resource" id="Resource_70vj3"]
-script = ExtResource("2_x6kuj")
+[sub_resource type="Resource" id="Resource_6m52l"]
+script = ExtResource("2_gdygf")
 angulo = 2.0
 mao = Vector2(-6, -2)
 
-[sub_resource type="Resource" id="Resource_4sd5t"]
-script = ExtResource("2_x6kuj")
+[sub_resource type="Resource" id="Resource_w24fw"]
+script = ExtResource("2_gdygf")
 tempo = 0.13
 mao = Vector2(-12, -2)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_6m52l"]
-script = ExtResource("2_x6kuj")
+[sub_resource type="Resource" id="Resource_clp7l"]
+script = ExtResource("2_gdygf")
 tempo = 0.23
 mao = Vector2(14, -2)
 
-[sub_resource type="Resource" id="Resource_w24fw"]
-script = ExtResource("2_x6kuj")
+[sub_resource type="Resource" id="Resource_ih738"]
+script = ExtResource("2_gdygf")
 tempo = 0.43
 angulo = 15.0
 
 [resource]
-script = ExtResource("3_gdygf")
+script = ExtResource("3_70vj3")
 dados_dano = "1d10"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("1_pe0vi")
+textura = ExtResource("4_4sd5t")
 angulo_arte = -45.0
 pegada = Vector2(4.1617603, 56.504906)
 comprimento = 78.7
@@ -42,8 +43,8 @@ nome_original = "Pike"
 peso = "18 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_x6kuj")]([SubResource("Resource_70vj3"), SubResource("Resource_4sd5t"), SubResource("Resource_6m52l"), SubResource("Resource_w24fw")])
+poses = Array[ExtResource("2_gdygf")]([SubResource("Resource_6m52l"), SubResource("Resource_w24fw"), SubResource("Resource_clp7l"), SubResource("Resource_ih738")])
 nome = "Pique"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Empurrar. (Pike, Player’s Handbook)"
-icone = ExtResource("1_pe0vi")
+icone = ExtResource("1_x6kuj")
 espaco = &"mao"

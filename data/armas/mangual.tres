@@ -1,42 +1,107 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/mangual.png" id="1_invu5"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_x4tbb"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_ec865"]
-
-[sub_resource type="Resource" id="Resource_pduhp"]
-script = ExtResource("2_x4tbb")
-angulo = 30.0
-
-[sub_resource type="Resource" id="Resource_bans3"]
-script = ExtResource("2_x4tbb")
-tempo = 0.08
-angulo = -70.0
-mao = Vector2(-2, -4)
-
-[sub_resource type="Resource" id="Resource_4ekwc"]
-script = ExtResource("2_x4tbb")
-tempo = 0.15
-angulo = -210.0
-mao = Vector2(-4, -6)
-acerta = true
-
-[sub_resource type="Resource" id="Resource_r4b0s"]
-script = ExtResource("2_x4tbb")
-tempo = 0.25
-angulo = 55.0
-mao = Vector2(4, 2)
+[ext_resource type="Texture2D" path="res://assets/armas/icones/mangual.png" id="1_ec865"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_pduhp"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/mangual.png" id="3_bans3"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_4ekwc"]
+[ext_resource type="Texture2D" path="res://assets/armas/mangual.png" id="5_r4b0s"]
 
 [sub_resource type="Resource" id="Resource_ta5t0"]
-script = ExtResource("2_x4tbb")
-tempo = 0.39
-angulo = 35.0
+script = ExtResource("2_pduhp")
+angulo = 52.216348827356846
+escala = 0.5475152057150136
+
+[sub_resource type="Resource" id="Resource_xvns4"]
+script = ExtResource("2_pduhp")
+tempo = 0.05
+angulo = 195.87418790523205
+escala = 0.34619401529879873
+
+[sub_resource type="Resource" id="Resource_sxno0"]
+script = ExtResource("2_pduhp")
+tempo = 0.1
+angulo = 211.66409628506247
+escala = 0.9716078589193796
+
+[sub_resource type="Resource" id="Resource_ym341"]
+script = ExtResource("2_pduhp")
+tempo = 0.15
+angulo = 232.604950846323
+escala = 1.0067314607243871
+
+[sub_resource type="Resource" id="Resource_l5l33"]
+script = ExtResource("2_pduhp")
+tempo = 0.19
+angulo = 287.1873079380235
+escala = 1.0692314479662024
+acerta = true
+
+[sub_resource type="Resource" id="Resource_faytq"]
+script = ExtResource("2_pduhp")
+tempo = 0.23
+angulo = 362.1873044755599
+escala = 1.0692314479662024
+acerta = true
+
+[sub_resource type="Resource" id="Resource_u0lg8"]
+script = ExtResource("2_pduhp")
+tempo = 0.27
+angulo = 408.4428059147082
+escala = 1.061221795735949
+
+[sub_resource type="Resource" id="Resource_f2ryh"]
+script = ExtResource("2_pduhp")
+tempo = 0.33
+angulo = 440.9877181588081
+escala = 0.8243442139896661
+
+[sub_resource type="Resource" id="Resource_14hhi"]
+script = ExtResource("2_pduhp")
+tempo = 0.4
+angulo = 421.2230358330021
+escala = 0.9513169865943117
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3v4bd"]
+atlas = ExtResource("3_bans3")
+region = Rect2(0, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_romxm"]
+atlas = ExtResource("3_bans3")
+region = Rect2(176, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tkpyr"]
+atlas = ExtResource("3_bans3")
+region = Rect2(352, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xcxt7"]
+atlas = ExtResource("3_bans3")
+region = Rect2(528, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_njyp7"]
+atlas = ExtResource("3_bans3")
+region = Rect2(704, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qbmci"]
+atlas = ExtResource("3_bans3")
+region = Rect2(880, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sgkmr"]
+atlas = ExtResource("3_bans3")
+region = Rect2(1056, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hivoi"]
+atlas = ExtResource("3_bans3")
+region = Rect2(1232, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fjgqq"]
+atlas = ExtResource("3_bans3")
+region = Rect2(1408, 0, 176, 144)
 
 [resource]
-script = ExtResource("3_ec865")
+script = ExtResource("4_4ekwc")
 dados_dano = "1d8"
 categoria = &"marcial"
-textura = ExtResource("1_invu5")
+textura = ExtResource("5_r4b0s")
 angulo_arte = -45.0
 pegada = Vector2(9.328427, 26.671574)
 comprimento = 29.900000000000002
@@ -46,9 +111,11 @@ peso = "2 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
-poses = Array[ExtResource("2_x4tbb")]([SubResource("Resource_pduhp"), SubResource("Resource_bans3"), SubResource("Resource_4ekwc"), SubResource("Resource_r4b0s"), SubResource("Resource_ta5t0")])
+poses = Array[ExtResource("2_pduhp")]([SubResource("Resource_ta5t0"), SubResource("Resource_xvns4"), SubResource("Resource_sxno0"), SubResource("Resource_ym341"), SubResource("Resource_l5l33"), SubResource("Resource_faytq"), SubResource("Resource_u0lg8"), SubResource("Resource_f2ryh"), SubResource("Resource_14hhi")])
+quadros = Array[Texture2D]([SubResource("AtlasTexture_3v4bd"), SubResource("AtlasTexture_romxm"), SubResource("AtlasTexture_tkpyr"), SubResource("AtlasTexture_xcxt7"), SubResource("AtlasTexture_njyp7"), SubResource("AtlasTexture_qbmci"), SubResource("AtlasTexture_sgkmr"), SubResource("AtlasTexture_hivoi"), SubResource("AtlasTexture_fjgqq")])
+pegada_quadros = Vector2(88, 72)
 passo = 12.0
 nome = "Mangual"
 descricao = "Arma marcial. Maestria: Enfraquecer. (Flail, Player’s Handbook)"
-icone = ExtResource("1_invu5")
+icone = ExtResource("1_ec865")
 espaco = &"mao"

@@ -1,37 +1,38 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/clava_grande.png" id="1_g3yl5"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_5hifq"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_vn1gs"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/clava_grande.png" id="1_5hifq"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_vn1gs"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_oe1go"]
+[ext_resource type="Texture2D" path="res://assets/armas/clava_grande.png" id="4_t2bil"]
 
-[sub_resource type="Resource" id="Resource_oe1go"]
-script = ExtResource("2_5hifq")
+[sub_resource type="Resource" id="Resource_samb6"]
+script = ExtResource("2_vn1gs")
 angulo = -60.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_t2bil"]
-script = ExtResource("2_5hifq")
+[sub_resource type="Resource" id="Resource_kewuh"]
+script = ExtResource("2_vn1gs")
 tempo = 0.16
 angulo = -150.0
 mao = Vector2(-8, -8)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_samb6"]
-script = ExtResource("2_5hifq")
+[sub_resource type="Resource" id="Resource_ooa5i"]
+script = ExtResource("2_vn1gs")
 tempo = 0.29
 angulo = 75.0
 mao = Vector2(4, 4)
 
-[sub_resource type="Resource" id="Resource_kewuh"]
-script = ExtResource("2_5hifq")
+[sub_resource type="Resource" id="Resource_5snm0"]
+script = ExtResource("2_vn1gs")
 tempo = 0.48
 angulo = 50.0
 
 [resource]
-script = ExtResource("3_vn1gs")
+script = ExtResource("3_oe1go")
 dados_dano = "1d8"
 categoria = &"simples"
-textura = ExtResource("1_g3yl5")
+textura = ExtResource("4_t2bil")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 33.671574)
 comprimento = 45.5
@@ -42,8 +43,8 @@ peso = "10 lb."
 preco = "2 SP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
-poses = Array[ExtResource("2_5hifq")]([SubResource("Resource_oe1go"), SubResource("Resource_t2bil"), SubResource("Resource_samb6"), SubResource("Resource_kewuh")])
+poses = Array[ExtResource("2_vn1gs")]([SubResource("Resource_samb6"), SubResource("Resource_kewuh"), SubResource("Resource_ooa5i"), SubResource("Resource_5snm0")])
 nome = "Clava Grande"
 descricao = "Arma simples. Duas Mãos. Maestria: Empurrar. (Greatclub, Player’s Handbook)"
-icone = ExtResource("1_g3yl5")
+icone = ExtResource("1_5hifq")
 espaco = &"mao"

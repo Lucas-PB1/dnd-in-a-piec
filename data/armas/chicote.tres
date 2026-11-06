@@ -1,42 +1,120 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/chicote.png" id="1_trmwu"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_8r805"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_780xb"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/chicote.png" id="1_780xb"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_0i0p7"]
+[ext_resource type="Texture2D" path="res://assets/armas/quadros/chicote.png" id="3_0t88i"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_5hva7"]
+[ext_resource type="Texture2D" path="res://assets/armas/chicote.png" id="5_reus3"]
 
-[sub_resource type="Resource" id="Resource_0i0p7"]
-script = ExtResource("2_8r805")
-angulo = -120.0
-mao = Vector2(-3, -6)
-escala = 0.35
+[sub_resource type="Resource" id="Resource_3xuko"]
+script = ExtResource("2_0i0p7")
+angulo = 61.15425582806007
+escala = 0.5492044713375343
 
-[sub_resource type="Resource" id="Resource_0t88i"]
-script = ExtResource("2_8r805")
-tempo = 0.1
-angulo = -145.0
-mao = Vector2(-6, -8)
-escala = 0.4
+[sub_resource type="Resource" id="Resource_udg4g"]
+script = ExtResource("2_0i0p7")
+tempo = 0.06
+angulo = 5.932945638562257
+escala = 0.5323468507641423
+
+[sub_resource type="Resource" id="Resource_376d2"]
+script = ExtResource("2_0i0p7")
+tempo = 0.11
+angulo = -78.60183062888508
+escala = 0.7607581702462078
+
+[sub_resource type="Resource" id="Resource_aluf4"]
+script = ExtResource("2_0i0p7")
+tempo = 0.15
+angulo = -151.44940446695284
+escala = 0.9020000374230155
+
+[sub_resource type="Resource" id="Resource_1gmp4"]
+script = ExtResource("2_0i0p7")
+tempo = 0.18
+angulo = -195.83367122307553
+escala = 0.6185228111100023
 acerta = true
 
-[sub_resource type="Resource" id="Resource_5hva7"]
-script = ExtResource("2_8r805")
-tempo = 0.18
-angulo = -5.0
-mao = Vector2(6, -2)
+[sub_resource type="Resource" id="Resource_8sd8s"]
+script = ExtResource("2_0i0p7")
+tempo = 0.21
+angulo = -40.60251031362602
+escala = 0.9828497893618842
+acerta = true
 
-[sub_resource type="Resource" id="Resource_reus3"]
-script = ExtResource("2_8r805")
+[sub_resource type="Resource" id="Resource_o20fl"]
+script = ExtResource("2_0i0p7")
+tempo = 0.24
+angulo = 1.7464476744256434
+escala = 1.036214563968408
+acerta = true
+
+[sub_resource type="Resource" id="Resource_ojqbr"]
+script = ExtResource("2_0i0p7")
+tempo = 0.27
+angulo = 31.86039410057579
+escala = 1.0138250197807368
+
+[sub_resource type="Resource" id="Resource_o4wum"]
+script = ExtResource("2_0i0p7")
 tempo = 0.34
-angulo = 30.0
-escala = 0.6
+angulo = 62.477406904264114
+escala = 0.7096436772033246
+
+[sub_resource type="Resource" id="Resource_ixjdo"]
+script = ExtResource("2_0i0p7")
+tempo = 0.4
+angulo = 61.15425582806007
+escala = 0.5492044713375343
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6bq1"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(0, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ewqje"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(176, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dao26"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(352, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ykflv"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(528, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_01itq"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(704, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_54vcx"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(880, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_126t1"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(1056, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dlq6c"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(1232, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a1nld"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(1408, 0, 176, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a1a1u"]
+atlas = ExtResource("3_0t88i")
+region = Rect2(1584, 0, 176, 144)
 
 [resource]
-script = ExtResource("3_780xb")
+script = ExtResource("4_5hva7")
 dados_dano = "1d4"
 tipo_dano = &"cortante"
 categoria = &"marcial"
 acuidade = true
-textura = ExtResource("1_trmwu")
+textura = ExtResource("5_reus3")
 pegada = Vector2(5, 3.5)
 comprimento = 68.5
 alcance_estendido = true
@@ -45,9 +123,11 @@ nome_original = "Whip"
 peso = "3 lb."
 preco = "2 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_8r805")]([SubResource("Resource_0i0p7"), SubResource("Resource_0t88i"), SubResource("Resource_5hva7"), SubResource("Resource_reus3")])
-passo = 2.0
+poses = Array[ExtResource("2_0i0p7")]([SubResource("Resource_3xuko"), SubResource("Resource_udg4g"), SubResource("Resource_376d2"), SubResource("Resource_aluf4"), SubResource("Resource_1gmp4"), SubResource("Resource_8sd8s"), SubResource("Resource_o20fl"), SubResource("Resource_ojqbr"), SubResource("Resource_o4wum"), SubResource("Resource_ixjdo")])
+quadros = Array[Texture2D]([SubResource("AtlasTexture_p6bq1"), SubResource("AtlasTexture_ewqje"), SubResource("AtlasTexture_dao26"), SubResource("AtlasTexture_ykflv"), SubResource("AtlasTexture_01itq"), SubResource("AtlasTexture_54vcx"), SubResource("AtlasTexture_126t1"), SubResource("AtlasTexture_dlq6c"), SubResource("AtlasTexture_a1nld"), SubResource("AtlasTexture_a1a1u")])
+pegada_quadros = Vector2(88, 72)
+passo = 5.0
 nome = "Chicote"
 descricao = "Arma marcial. Acuidade, Alcance. Maestria: Lentidão. (Whip, Player’s Handbook)"
-icone = ExtResource("1_trmwu")
+icone = ExtResource("1_780xb")
 espaco = &"mao"

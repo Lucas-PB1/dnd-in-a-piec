@@ -1,38 +1,39 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/alabarda.png" id="1_fo77l"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_2focm"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_eyxrg"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/alabarda.png" id="1_2focm"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_eyxrg"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_wl1qv"]
+[ext_resource type="Texture2D" path="res://assets/armas/alabarda.png" id="4_xsv2l"]
 
-[sub_resource type="Resource" id="Resource_wl1qv"]
-script = ExtResource("2_2focm")
+[sub_resource type="Resource" id="Resource_pra7q"]
+script = ExtResource("2_eyxrg")
 angulo = -40.0
 mao = Vector2(-4, -2)
 
-[sub_resource type="Resource" id="Resource_xsv2l"]
-script = ExtResource("2_2focm")
+[sub_resource type="Resource" id="Resource_qse8x"]
+script = ExtResource("2_eyxrg")
 tempo = 0.17
 angulo = -140.0
 mao = Vector2(-6, -8)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_pra7q"]
-script = ExtResource("2_2focm")
+[sub_resource type="Resource" id="Resource_sc6p8"]
+script = ExtResource("2_eyxrg")
 tempo = 0.31
 angulo = 40.0
 mao = Vector2(6, 2)
 
-[sub_resource type="Resource" id="Resource_qse8x"]
-script = ExtResource("2_2focm")
+[sub_resource type="Resource" id="Resource_ug7c0"]
+script = ExtResource("2_eyxrg")
 tempo = 0.49
 angulo = 25.0
 
 [resource]
-script = ExtResource("3_eyxrg")
+script = ExtResource("3_wl1qv")
 dados_dano = "1d10"
 tipo_dano = &"cortante"
 categoria = &"marcial"
-textura = ExtResource("1_fo77l")
+textura = ExtResource("4_xsv2l")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 53.671574)
 comprimento = 75.2
@@ -44,8 +45,8 @@ nome_original = "Halberd"
 peso = "6 lb."
 preco = "20 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_2focm")]([SubResource("Resource_wl1qv"), SubResource("Resource_xsv2l"), SubResource("Resource_pra7q"), SubResource("Resource_qse8x")])
+poses = Array[ExtResource("2_eyxrg")]([SubResource("Resource_pra7q"), SubResource("Resource_qse8x"), SubResource("Resource_sc6p8"), SubResource("Resource_ug7c0")])
 nome = "Alabarda"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Trespassar. (Halberd, Player’s Handbook)"
-icone = ExtResource("1_fo77l")
+icone = ExtResource("1_2focm")
 espaco = &"mao"

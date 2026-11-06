@@ -1,36 +1,37 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/lanca_montaria.png" id="1_f2s1v"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_2yu0d"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_0jqih"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/lanca_montaria.png" id="1_2yu0d"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_0jqih"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_wkxkq"]
+[ext_resource type="Texture2D" path="res://assets/armas/lanca_montaria.png" id="4_2lsxe"]
 
-[sub_resource type="Resource" id="Resource_wkxkq"]
-script = ExtResource("2_2yu0d")
+[sub_resource type="Resource" id="Resource_kawu8"]
+script = ExtResource("2_0jqih")
 mao = Vector2(-5, -1)
 
-[sub_resource type="Resource" id="Resource_2lsxe"]
-script = ExtResource("2_2yu0d")
+[sub_resource type="Resource" id="Resource_i5728"]
+script = ExtResource("2_0jqih")
 tempo = 0.13
 angulo = -2.0
 mao = Vector2(-11, -1)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_kawu8"]
-script = ExtResource("2_2yu0d")
+[sub_resource type="Resource" id="Resource_bcr75"]
+script = ExtResource("2_0jqih")
 tempo = 0.25
 mao = Vector2(14, -1)
 
-[sub_resource type="Resource" id="Resource_i5728"]
-script = ExtResource("2_2yu0d")
+[sub_resource type="Resource" id="Resource_n3iab"]
+script = ExtResource("2_0jqih")
 tempo = 0.45
 angulo = 15.0
 
 [resource]
-script = ExtResource("3_0jqih")
+script = ExtResource("3_wkxkq")
 dados_dano = "1d10"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("1_f2s1v")
+textura = ExtResource("4_2lsxe")
 angulo_arte = -45.0
 pegada = Vector2(4.3284273, 54.671574)
 comprimento = 76.60000000000001
@@ -42,8 +43,8 @@ nome_original = "Lance"
 peso = "6 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_2yu0d")]([SubResource("Resource_wkxkq"), SubResource("Resource_2lsxe"), SubResource("Resource_kawu8"), SubResource("Resource_i5728")])
+poses = Array[ExtResource("2_0jqih")]([SubResource("Resource_kawu8"), SubResource("Resource_i5728"), SubResource("Resource_bcr75"), SubResource("Resource_n3iab")])
 nome = "Lança de Montaria"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Derrubar. (Lance, Player’s Handbook)"
-icone = ExtResource("1_f2s1v")
+icone = ExtResource("1_2yu0d")
 espaco = &"mao"

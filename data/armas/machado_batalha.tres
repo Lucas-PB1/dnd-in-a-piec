@@ -1,38 +1,39 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/machado_batalha.png" id="1_m5tnk"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_lmqpg"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_cafc2"]
+[ext_resource type="Texture2D" path="res://assets/armas/icones/machado_batalha.png" id="1_lmqpg"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_cafc2"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_kxcrp"]
+[ext_resource type="Texture2D" path="res://assets/armas/machado_batalha.png" id="4_r7f25"]
 
-[sub_resource type="Resource" id="Resource_kxcrp"]
-script = ExtResource("2_lmqpg")
+[sub_resource type="Resource" id="Resource_gr27g"]
+script = ExtResource("2_cafc2")
 angulo = -75.0
 mao = Vector2(-3, -4)
 
-[sub_resource type="Resource" id="Resource_r7f25"]
-script = ExtResource("2_lmqpg")
+[sub_resource type="Resource" id="Resource_0jkpu"]
+script = ExtResource("2_cafc2")
 tempo = 0.11
 angulo = -130.0
 mao = Vector2(-6, -8)
 acerta = true
 
-[sub_resource type="Resource" id="Resource_gr27g"]
-script = ExtResource("2_lmqpg")
+[sub_resource type="Resource" id="Resource_ecgc7"]
+script = ExtResource("2_cafc2")
 tempo = 0.21
 angulo = 60.0
 mao = Vector2(4, 3)
 
-[sub_resource type="Resource" id="Resource_0jkpu"]
-script = ExtResource("2_lmqpg")
+[sub_resource type="Resource" id="Resource_dfqtu"]
+script = ExtResource("2_cafc2")
 tempo = 0.37
 angulo = 40.0
 
 [resource]
-script = ExtResource("3_cafc2")
+script = ExtResource("3_kxcrp")
 dados_dano = "1d8"
 tipo_dano = &"cortante"
 categoria = &"marcial"
-textura = ExtResource("1_m5tnk")
+textura = ExtResource("4_r7f25")
 angulo_arte = -45.0
 pegada = Vector2(4.2034273, 28.421574)
 comprimento = 39.800000000000004
@@ -42,9 +43,9 @@ nome_original = "Battleaxe"
 peso = "4 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
-poses = Array[ExtResource("2_lmqpg")]([SubResource("Resource_kxcrp"), SubResource("Resource_r7f25"), SubResource("Resource_gr27g"), SubResource("Resource_0jkpu")])
+poses = Array[ExtResource("2_cafc2")]([SubResource("Resource_gr27g"), SubResource("Resource_0jkpu"), SubResource("Resource_ecgc7"), SubResource("Resource_dfqtu")])
 passo = 3.5
 nome = "Machado de Batalha"
 descricao = "Arma marcial. Versátil (1d10). Maestria: Derrubar. (Battleaxe, Player’s Handbook)"
-icone = ExtResource("1_m5tnk")
+icone = ExtResource("1_lmqpg")
 espaco = &"mao"

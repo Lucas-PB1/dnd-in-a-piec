@@ -53,6 +53,11 @@ extends Item
 ## Poses-chave do golpe desta arma, em ordem de tempo (gerado por tools/gerar_armas.gd).
 ## A última pose marca o fim do golpe. A área de acerto acompanha a arma (pegada até a ponta).
 @export var poses: Array[PoseGolpe] = []
+## Quadros desenhados do golpe (armas flexíveis: mangual, chicote). Vazio = a imagem da arma
+## gira com as poses. Com quadros, a pose i mostra o quadro i, sem girar (já desenhado
+## com o herói olhando para a direita) e com a mão em `pegada_quadros`.
+@export var quadros: Array[Texture2D] = []
+@export var pegada_quadros: Vector2 = Vector2.ZERO
 ## Passo à frente (px) que o herói dá no golpe para a ponta chegar ao alcance da regra
 ## (5 pés; 10 com Alcance). Armas curtas dão um passo maior.
 @export var passo: float = 0.0
@@ -113,7 +118,7 @@ func duracao() -> float:
 
 ## Pose no instante `t` (s), interpolada entre as poses-chave.
 func pose_em(t: float) -> PoseGolpe:
-	var i := _trecho(t)
+	var i := indice_da_pose(t)
 	if i >= poses.size() - 1:
 		return poses[poses.size() - 1]
 	var a := poses[i]
@@ -124,7 +129,7 @@ func pose_em(t: float) -> PoseGolpe:
 
 ## O golpe está acertando no instante `t`?
 func acertando(t: float) -> bool:
-	var i := _trecho(t)
+	var i := indice_da_pose(t)
 	return i < poses.size() - 1 and poses[i].acerta
 
 
@@ -137,7 +142,7 @@ func fim_do_acerto() -> float:
 
 
 ## Índice da pose em que o instante `t` está (a última com tempo <= t).
-func _trecho(t: float) -> int:
+func indice_da_pose(t: float) -> int:
 	var i := 0
 	while i < poses.size() - 1 and poses[i + 1].tempo <= t:
 		i += 1

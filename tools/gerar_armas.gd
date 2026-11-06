@@ -9,6 +9,9 @@ extends SceneTree
 
 const PASTA_DADOS := "res://data/armas/"
 const PASTA_ARTE := "res://assets/armas/"
+## Ícones de 16x16 para os menus (o ícone do pacote reduzido pela metade).
+const PASTA_ICONES := "res://assets/armas/icones/"
+const TAMANHO_ICONE := 16
 const LIVRO := "Player’s Handbook"
 
 const S := Proficiencias.ARMA_SIMPLES
@@ -82,8 +85,6 @@ const GOLPES := {
 	"maca_estrela": [[0.0, -85, -3, -3, false], [0.11, -130, -6, -7, true], [0.2, 60, 4, 2, false], [0.35, 35, 0, 0, false]],
 	"martelo_leve": [[0.0, -60, -2, -2, false], [0.06, -100, -3, -4, true], [0.13, 40, 3, 0, false], [0.24, 35, 0, 0, false]],
 	"martelo_guerra": [[0.0, -85, -4, -4, false], [0.12, -135, -6, -9, true], [0.22, 65, 4, 3, false], [0.37, 40, 0, 0, false]],
-	# Mangual: a bola dá uma volta por trás antes de descer (giro grande).
-	"mangual": [[0.0, 30, 0, 0, false], [0.08, -70, -2, -4, false], [0.15, -210, -4, -6, true], [0.25, 55, 4, 2, false], [0.39, 35, 0, 0, false]],
 	# Pesadas de duas mãos: preparação longa, golpe largo, recuperação pesada.
 	"espada_grande": [[0.0, -50, -4, -2, false], [0.15, -150, -8, -8, true], [0.28, 60, 6, 2, false], [0.47, 40, 2, 0, false]],
 	"machado_grande": [[0.0, -55, -4, 0, false], [0.17, -160, -8, -10, true], [0.31, 70, 6, 4, false], [0.5, 45, 2, 0, false]],
@@ -99,8 +100,6 @@ const GOLPES := {
 	"tridente": [[0.0, 12, -5, -2, false], [0.09, 6, -10, -2, true], [0.17, 4, 12, 0, false], [0.33, 25, 0, 0, false]],
 	"pique": [[0.0, 2, -6, -2, false], [0.13, 0, -12, -2, true], [0.23, 0, 14, -2, false], [0.43, 15, 0, 0, false]],
 	"lanca_montaria": [[0.0, 0, -5, -1, false], [0.13, -2, -11, -1, true], [0.25, 0, 14, -1, false], [0.45, 15, 0, 0, false]],
-	# Chicote: enrolado no alto, estala para a frente esticando.
-	"chicote": [[0.0, -120, -3, -6, false, 0.35], [0.1, -145, -6, -8, true, 0.4], [0.18, -5, 6, -2, false, 1.0], [0.34, 30, 0, 0, false, 0.6]],
 }
 ## Soco (ataque desarmado): um direto curto.
 const GOLPE_SOCO := [[0.0, 0, -3, 0, false], [0.05, 0, -6, 0, true], [0.11, 0, 10, 0, false], [0.22, 0, 0, 0, false]]
@@ -112,9 +111,14 @@ const COMPRIMENTO_SOCO := 8.0
 func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_DADOS))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_ARTE))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_ICONES))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_QUADROS))
 	for id in TABELA:
 		_desenhar(id, TABELA[id]).save_png(PASTA_ARTE + id + ".png")
-	var faltando := TABELA.keys().filter(func(id: String) -> bool: return not ResourceLoader.exists(PASTA_ARTE + id + ".png"))
+		_icone(id, TABELA[id]).save_png(PASTA_ICONES + id + ".png")
+		if QUADROS.has(id):
+			_folha_de_quadros(id).save_png(PASTA_QUADROS + id + ".png")
+	var faltando := TABELA.keys().filter(func(id: String) -> bool: return _falta_arte(id))
 	if not faltando.is_empty():
 		print("Sprites gerados. Rode --import e depois este script de novo para criar os .tres.")
 		quit()
@@ -124,6 +128,12 @@ func _initialize() -> void:
 	_atualizar_soco()
 	print("%d armas geradas em %s" % [TABELA.size(), PASTA_DADOS])
 	quit()
+
+
+## Alguma imagem da arma ainda não foi importada (sprite, ícone ou quadros)?
+func _falta_arte(id: String) -> bool:
+	var falta_quadros := QUADROS.has(id) and not ResourceLoader.exists(PASTA_QUADROS + id + ".png")
+	return not ResourceLoader.exists(PASTA_ARTE + id + ".png") or not ResourceLoader.exists(PASTA_ICONES + id + ".png") or falta_quadros
 
 
 # --- Dados ------------------------------------------------------------------------
@@ -152,12 +162,15 @@ func _criar(id: String, d: Array) -> Arma:
 	a.preco = d[10]
 	a.livro = LIVRO
 	a.textura = load(PASTA_ARTE + id + ".png")
-	a.icone = a.textura
+	a.icone = load(PASTA_ICONES + id + ".png")
 	a.angulo_arte = _angulo_da_arte(d[11])
 	var medidas := geometria(a.textura.get_image(), a.angulo_arte)
 	a.pegada = medidas[0]
 	a.comprimento = snappedf(medidas[1], 0.1)
-	a.poses = _poses(GOLPES[id])
+	if QUADROS.has(id):
+		_aplicar_quadros(a, id)
+	else:
+		a.poses = _poses(GOLPES[id])
 	a.passo = _passo(a, PONTA_ALCANCE if a.alcance_estendido else PONTA_NORMAL)
 	a.cor_corte = Color(1.0, 0.92, 0.7, 0.85) if a.tipo_dano == B else Color(0.85, 0.95, 1.0, 0.9)
 	a.descricao = _descricao(a)
@@ -373,3 +386,200 @@ func _contornar(img: Image) -> void:
 					break
 	for p in bordas:
 		img.set_pixelv(p, COR_CONTORNO)
+
+
+# --- Ícones dos menus (16x16) ---------------------------------------------------
+
+## Ícone do menu: o ícone original do pacote (com a cor da variação), reduzido pela metade.
+## O chicote, desenhado por script, ganha um ícone enrolado.
+func _icone(id: String, d: Array) -> Image:
+	var fonte: String = d[11]
+	if fonte == "":
+		return _icone_chicote()
+	var img := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + fonte + ".png"))
+	img.convert(Image.FORMAT_RGBA8)
+	_variar(img, VARIACOES.get(id, ""), Vector2.from_angle(deg_to_rad(_angulo_da_arte(fonte))))
+	return _reduzir(img, TAMANHO_ICONE)
+
+
+## Reduz para `tamanho` escolhendo, em cada bloco, o pixel opaco de luz mediana: as linhas
+## finas (hastes diagonais de 1 px) não somem, como sumiriam pegando um pixel fixo.
+static func _reduzir(img: Image, tamanho: int) -> Image:
+	var bloco := img.get_width() / tamanho
+	var saida := Image.create(tamanho, tamanho, false, Image.FORMAT_RGBA8)
+	for y in tamanho:
+		for x in tamanho:
+			var opacos: Array[Color] = []
+			for dy in bloco:
+				for dx in bloco:
+					var cor := img.get_pixel(x * bloco + dx, y * bloco + dy)
+					if cor.a > 0.0:
+						opacos.append(cor)
+			if opacos.is_empty():
+				continue
+			opacos.sort_custom(func(a: Color, b: Color) -> bool: return a.get_luminance() < b.get_luminance())
+			saida.set_pixel(x, y, opacos[opacos.size() / 2])
+	return saida
+
+
+## Chicote enrolado em espiral, com o cabo para baixo.
+func _icone_chicote() -> Image:
+	var img := Image.create(TAMANHO_ICONE, TAMANHO_ICONE, false, Image.FORMAT_RGBA8)
+	var centro := Vector2(9.0, 7.0)
+	for i in 60:
+		var t := float(i) / 60.0
+		var ponto := centro + Vector2.from_angle(t * TAU * 1.6) * (1.5 + t * 4.5)
+		img.set_pixelv(Vector2i(ponto), COR_COURO_CLARO if i % 3 else COR_COURO)
+	img.fill_rect(Rect2i(2, 11, 2, 4), COR_COURO)  # cabo
+	img.set_pixel(3, 11, COR_COURO_CLARO)
+	_contornar(img)
+	return img
+
+
+# --- Quadros desenhados (armas flexíveis) -------------------------------------------
+# O mangual e o chicote não são rígidos: em vez de girar uma imagem, cada pose do golpe
+# mostra um quadro desenhado (herói olhando para a direita, mão no centro do quadro).
+# A ponta de cada quadro (a bola, a ponta da correia) vira a pose: a área de acerto vai
+# da mão até ela.
+
+const PASTA_QUADROS := "res://assets/armas/quadros/"
+## Tamanho de cada quadro e onde fica a mão nele.
+const TAMANHO_QUADRO := Vector2i(176, 144)
+const MAO_QUADRO := Vector2(88, 72)
+
+## Mangual: [tempo, ângulo do cabo, ângulo da corrente, acerta]. A bola fica para trás no
+## giro (a corrente atrasa em relação ao cabo), passa por cima e desce à frente.
+const QUADROS_MANGUAL := [
+	[0.0, -20, 100, false], [0.05, -70, 145, false], [0.1, -120, 190, false],
+	[0.15, -150, 250, false], [0.19, -70, -75, true], [0.23, 5, 0, true],
+	[0.27, 40, 55, false], [0.33, 35, 115, false], [0.4, 30, 85, false],
+]
+const CABO_MANGUAL := 14.0
+const CORRENTE_MANGUAL := 18.0
+const RAIO_BOLA := 4.0
+const ELO := 3.0
+const COR_CABO_MANGUAL := Color8(168, 116, 66)
+const COR_PUNHO_MANGUAL := Color8(150, 40, 40)
+const COR_ELO := Color8(150, 154, 168)
+const COR_BOLA := Color8(70, 72, 82)
+const COR_ESPINHO := Color8(200, 204, 214)
+
+## Chicote: [tempo, ângulo do cabo, curva no começo e no fim da correia (graus somados ao
+## cabo), extensão (1 = esticado), acerta, estalo]. Sobe, a correia fica para trás e faz
+## um laço, desenrola para a frente e estala esticado.
+const QUADROS_CHICOTE := [
+	[0.0, 30, 20, 60, 0.5, false, false], [0.06, -60, 40, 120, 0.6, false, false],
+	[0.11, -130, 30, 90, 0.8, false, false], [0.15, -160, -20, 40, 0.9, false, false],
+	[0.18, -40, -120, -200, 0.9, true, false], [0.21, -10, -60, -10, 1.0, true, false],
+	[0.24, 0, 4, 0, 1.0, true, true], [0.27, 10, 10, 40, 1.0, false, false],
+	[0.34, 25, 20, 70, 0.7, false, false], [0.4, 30, 20, 60, 0.5, false, false],
+]
+const CABO_CHICOTE_PX := 9.0
+const SEGMENTOS_CHICOTE := 14
+const CORREIA_CHICOTE := 62.0
+const COR_ESTALO := Color8(255, 250, 220)
+
+const QUADROS := {"mangual": QUADROS_MANGUAL, "chicote": QUADROS_CHICOTE}
+
+
+## Folha com todos os quadros do golpe, lado a lado.
+func _folha_de_quadros(id: String) -> Image:
+	var lista: Array = QUADROS[id]
+	var folha := Image.create(TAMANHO_QUADRO.x * lista.size(), TAMANHO_QUADRO.y, false, Image.FORMAT_RGBA8)
+	for i in lista.size():
+		var quadro := Image.create(TAMANHO_QUADRO.x, TAMANHO_QUADRO.y, false, Image.FORMAT_RGBA8)
+		if id == "mangual":
+			_quadro_mangual(quadro, lista[i])
+		else:
+			_quadro_chicote(quadro, lista[i])
+		_contornar(quadro)
+		folha.blit_rect(quadro, Rect2i(Vector2i.ZERO, TAMANHO_QUADRO), Vector2i(i * TAMANHO_QUADRO.x, 0))
+	return folha
+
+
+## Quadros da folha + poses tiradas da ponta de cada quadro.
+func _aplicar_quadros(a: Arma, id: String) -> void:
+	var folha: Texture2D = load(PASTA_QUADROS + id + ".png")
+	var lista: Array = QUADROS[id]
+	a.pegada_quadros = MAO_QUADRO
+	a.quadros = []
+	a.poses = []
+	var angulo_anterior := 0.0
+	for i in lista.size():
+		var quadro := AtlasTexture.new()
+		quadro.atlas = folha
+		quadro.region = Rect2(i * TAMANHO_QUADRO.x, 0, TAMANHO_QUADRO.x, TAMANHO_QUADRO.y)
+		a.quadros.append(quadro)
+		var ponta: Vector2 = _ponta_mangual(lista[i]) if id == "mangual" else _pontos_chicote(lista[i]).back() - MAO_QUADRO
+		# Ângulo sem "pulo" de 360 entre quadros, para a interpolação ir pelo caminho curto.
+		var angulo := rad_to_deg(ponta.angle())
+		angulo += 360.0 * round((angulo_anterior - angulo) / 360.0) if i > 0 else 0.0
+		angulo_anterior = angulo
+		var acerta: bool = lista[i][3] if id == "mangual" else lista[i][5]
+		a.poses.append(PoseGolpe.criar(lista[i][0], angulo, Vector2.ZERO, ponta.length() / a.comprimento, acerta))
+
+
+# Mangual -------------------------------------------------------------------------
+
+func _quadro_mangual(img: Image, q: Array) -> void:
+	var fim_cabo := MAO_QUADRO + Vector2.from_angle(deg_to_rad(q[1])) * CABO_MANGUAL
+	var bola := MAO_QUADRO + _ponta_mangual(q)
+	var atras := MAO_QUADRO - Vector2.from_angle(deg_to_rad(q[1])) * 3.0  # pomo atrás da mão
+	_linha(img, atras, fim_cabo, COR_CABO_MANGUAL, 2)
+	_linha(img, atras, MAO_QUADRO + Vector2.from_angle(deg_to_rad(q[1])) * 4.0, COR_PUNHO_MANGUAL, 2)
+	var elos := int(CORRENTE_MANGUAL / ELO)
+	for k in elos:
+		img.set_pixelv(Vector2i(fim_cabo.lerp(bola, float(k) / elos)), COR_ELO)
+	_disco(img, bola, RAIO_BOLA, COR_BOLA)
+	for k in 6:  # espinhos
+		img.set_pixelv(Vector2i(bola + Vector2.from_angle(k * TAU / 6.0 + 0.3) * (RAIO_BOLA + 1.0)), COR_ESPINHO)
+	img.set_pixelv(Vector2i(bola + Vector2(-1, -1)), COR_ESPINHO)  # brilho
+
+
+## Centro da bola em relação à mão.
+func _ponta_mangual(q: Array) -> Vector2:
+	return Vector2.from_angle(deg_to_rad(q[1])) * CABO_MANGUAL + Vector2.from_angle(deg_to_rad(q[2])) * CORRENTE_MANGUAL
+
+
+# Chicote -------------------------------------------------------------------------
+
+func _quadro_chicote(img: Image, q: Array) -> void:
+	var pontos := _pontos_chicote(q)
+	_linha(img, MAO_QUADRO - Vector2.from_angle(deg_to_rad(q[1])) * 2.0, pontos[0], COR_COURO, 2)
+	for k in range(1, pontos.size()):
+		var grosso := 2 if k < pontos.size() * 0.5 else 1  # a correia afina até a ponta
+		_linha(img, pontos[k - 1], pontos[k], COR_COURO_CLARO if k % 2 else COR_COURO, grosso)
+	if q[6]:  # estalo na ponta
+		var ponta: Vector2 = pontos.back()
+		for d in [Vector2(2, 0), Vector2(0, 2), Vector2(0, -2), Vector2(2, -2), Vector2(2, 2)]:
+			img.set_pixelv(Vector2i(ponta + d), COR_ESTALO)
+
+
+## Pontos da correia: começa no fim do cabo; cada segmento vira um pouco mais (curva).
+func _pontos_chicote(q: Array) -> Array[Vector2]:
+	var cabo: float = q[1]
+	var pontos: Array[Vector2] = [MAO_QUADRO + Vector2.from_angle(deg_to_rad(cabo)) * CABO_CHICOTE_PX]
+	var passo_correia: float = CORREIA_CHICOTE / SEGMENTOS_CHICOTE * q[4]
+	for k in SEGMENTOS_CHICOTE:
+		var curva := lerpf(q[2], q[3], float(k) / (SEGMENTOS_CHICOTE - 1))
+		pontos.append(pontos.back() + Vector2.from_angle(deg_to_rad(cabo + curva)) * passo_correia)
+	return pontos
+
+
+# Desenho -------------------------------------------------------------------------
+
+func _linha(img: Image, a: Vector2, b: Vector2, cor: Color, grossura: int) -> void:
+	var passos := maxi(int(a.distance_to(b) * 2.0), 1)
+	for s in passos + 1:
+		var p := a.lerp(b, float(s) / passos)
+		for dy in grossura:
+			var v := Vector2i(p) + Vector2i(0, dy)
+			if Rect2i(Vector2i.ZERO, img.get_size()).has_point(v):
+				img.set_pixelv(v, cor)
+
+
+func _disco(img: Image, centro: Vector2, raio: float, cor: Color) -> void:
+	for y in range(int(centro.y - raio) - 1, int(centro.y + raio) + 2):
+		for x in range(int(centro.x - raio) - 1, int(centro.x + raio) + 2):
+			if Vector2(x + 0.5, y + 0.5).distance_to(centro) <= raio and Rect2i(Vector2i.ZERO, img.get_size()).has_point(Vector2i(x, y)):
+				img.set_pixel(x, y, cor)
