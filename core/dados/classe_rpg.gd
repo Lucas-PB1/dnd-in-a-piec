@@ -9,3 +9,7 @@ extends Resource
 @export var atributos_sugeridos: Dictionary[StringName, int] = {}
 ## Salvaguardas em que a classe é proficiente (Guerreiro: Força e Constituição).
 @export var salvaguardas_proficientes: Array[StringName] = []
+## Categorias de arma em que é proficiente (Proficiencias: simples, marcial).
+@export var proficiencias_armas: Array[StringName] = []
+## Treinamento de armaduras (Proficiencias: leve, media, pesada, escudo).
+@export var treinamento_armaduras: Array[StringName] = []

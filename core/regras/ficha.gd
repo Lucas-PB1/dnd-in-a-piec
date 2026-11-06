@@ -76,10 +76,16 @@ func texto_dano(arma: Arma) -> String:
 	return dado.texto()
 
 
-## Bônus para acertar: proficiência + o mesmo modificador do dano (o Guerreiro é proficiente
-## com todas as armas e com o ataque desarmado).
+## Proficiente com a arma? Ataque desarmado (sem categoria) sempre é.
+func proficiente_com(arma: Arma) -> bool:
+	return arma.categoria == &"" or arma.categoria in classe.proficiencias_armas
+
+
+## Bônus para acertar: o mesmo modificador do dano + proficiência, se for proficiente com
+## a arma (sem proficiência a arma ainda funciona, só não soma o +2).
 func bonus_ataque(arma: Arma) -> int:
-	return BONUS_PROFICIENCIA + bonus_dano(arma)
+	var proficiencia := BONUS_PROFICIENCIA if proficiente_com(arma) else 0
+	return proficiencia + bonus_dano(arma)
 
 
 ## O ataque com a arma, pronto para ser resolvido contra a CA do alvo.

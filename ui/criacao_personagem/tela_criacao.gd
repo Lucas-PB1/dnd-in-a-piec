@@ -23,6 +23,7 @@ var _botoes_mais: Dictionary[StringName, Button] = {}
 @onready var _pontos: Label = %Pontos
 @onready var _grade: GridContainer = %Grade
 @onready var _previa: Label = %Previa
+@onready var _proficiencias: Label = %Proficiencias
 @onready var _botao_sugestao: Button = %Sugestao
 @onready var _botao_comecar: Button = %Comecar
 
@@ -121,6 +122,8 @@ func _atualizar() -> void:
 	var ficha := _ficha_atual()
 	_previa.text = "Vida: %d PV (d%d + CON)    Dano (%s): %s" % [
 		ficha.vida_maxima(), _classe.dado_vida, arma_previa.nome, ficha.texto_dano(arma_previa)]
+	_proficiencias.text = "Proficiência: %s · %s" % [Proficiencias.texto_armas(_classe.proficiencias_armas),
+		Proficiencias.texto_armaduras(_classe.treinamento_armaduras)]
 	_botao_sugestao.text = "Sugestão do %s" % _classe.nome
 	var falta := _falta_algo()
 	_botao_comecar.disabled = falta != ""

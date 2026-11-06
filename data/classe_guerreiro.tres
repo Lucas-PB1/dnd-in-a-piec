@@ -15,3 +15,5 @@ atributos_sugeridos = Dictionary[StringName, int]({
 &"sabedoria": 12
 })
 salvaguardas_proficientes = Array[StringName]([&"forca", &"constituicao"])
+proficiencias_armas = Array[StringName]([&"simples", &"marcial"])
+treinamento_armaduras = Array[StringName]([&"leve", &"media", &"pesada", &"escudo"])

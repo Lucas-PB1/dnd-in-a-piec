@@ -7,6 +7,9 @@ extends Item
 @export var dados_dano: String = "1d6"
 ## Tipo de dano (TiposDano): espada curta = perfurante, soco = contundente.
 @export var tipo_dano: StringName = TiposDano.CONTUNDENTE
+## Categoria para proficiência (Proficiencias: simples ou marcial; espada curta = marcial).
+## Vazio = ataque desarmado: todo mundo é proficiente.
+@export var categoria: StringName = &""
 ## Acuidade (D&D): o dano usa o maior entre Força e Destreza. Sem ela, usa só Força.
 @export var acuidade: bool = false
 ## Arma não mágica: sofre Corrosão (ex.: tocar o Gray Ooze). Falso para soco e armas mágicas.

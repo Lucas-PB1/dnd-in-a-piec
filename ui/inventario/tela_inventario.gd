@@ -150,6 +150,8 @@ func _texto_dano_do_item(arma: Arma) -> String:
 	if arma == null or _ficha == null:
 		return ""
 	var texto := "Dano: %s %s" % [_ficha.texto_dano(arma), TiposDano.nome(arma.tipo_dano)]
+	if not _ficha.proficiente_com(arma):
+		texto += "\nSem proficiência: -%d no ataque" % Ficha.BONUS_PROFICIENCIA
 	var penalidade := _inventario.penalidade(arma)
 	if penalidade > 0:
 		texto += "\nCorroída: -%d no ataque" % penalidade

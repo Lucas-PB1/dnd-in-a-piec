@@ -18,6 +18,7 @@ func _initialize() -> void:
 	_testar_gray_ooze()
 	_testar_tipos_e_resistencia()
 	_testar_desgaste()
+	_testar_proficiencias()
 	if _falhas == 0:
 		print("PASSOU: todos os testes de combate de D&D")
 	else:
@@ -153,6 +154,31 @@ func _testar_desgaste() -> void:
 	_checar(espada.resource_path != "" and inv.penalidade(espada) == 0, "o .tres original nunca é desgastado")
 	_checar(inv.desgastar(minha, 1, 5) and minha not in inv.itens and inv.equipado(Item.ESPACO_MAO) == null,
 		"no -5 a arma é destruída e sai da mão")
+
+
+## Guerreiro: armas simples e marciais; armaduras leves, médias, pesadas e escudos.
+## Sem proficiência na arma, o ataque perde o +2 de proficiência.
+func _testar_proficiencias() -> void:
+	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
+	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var soco: Arma = load("res://data/ataque_desarmado.tres")
+	_checar(espada.categoria == Proficiencias.ARMA_MARCIAL, "espada curta é arma marcial")
+	_checar(Proficiencias.ARMA_SIMPLES in guerreiro.proficiencias_armas and Proficiencias.ARMA_MARCIAL in guerreiro.proficiencias_armas,
+		"Guerreiro: proficiente em armas simples e marciais")
+	_checar(guerreiro.treinamento_armaduras.size() == 4 and Proficiencias.ESCUDO in guerreiro.treinamento_armaduras,
+		"Guerreiro: treinado em armaduras leves, médias, pesadas e escudos")
+	var valores := {Atributos.FORCA: 15}
+	var ficha_guerreiro := Ficha.new(guerreiro, valores)
+	_checar(ficha_guerreiro.proficiente_com(espada) and ficha_guerreiro.bonus_ataque(espada) == 4,
+		"Guerreiro com espada curta: proficiente, +2 FOR +2 proficiência = +4")
+	var sem_marciais := guerreiro.duplicate() as ClasseRPG
+	sem_marciais.proficiencias_armas = [Proficiencias.ARMA_SIMPLES]
+	var ficha_sem := Ficha.new(sem_marciais, valores)
+	_checar(not ficha_sem.proficiente_com(espada) and ficha_sem.bonus_ataque(espada) == 2,
+		"classe sem armas marciais: espada curta só com +2 FOR (sem proficiência)")
+	_checar(ficha_sem.proficiente_com(soco) and ficha_sem.bonus_ataque(soco) == 4, "ataque desarmado: todo mundo é proficiente")
+	_checar(Proficiencias.texto_armaduras(guerreiro.treinamento_armaduras) == "armaduras leves, médias, pesadas e escudos",
+		"texto do treinamento em português")
 
 
 func _checar(condicao: bool, descricao: String) -> void:

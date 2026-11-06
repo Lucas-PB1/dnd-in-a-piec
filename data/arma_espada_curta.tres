@@ -6,11 +6,12 @@
 [resource]
 script = ExtResource("1_arma")
 nome = "Espada Curta"
-descricao = "Lâmina leve de estocada (perfurante). Acuidade: usa Força ou Destreza, a maior."
+descricao = "Arma marcial leve de estocada (perfurante). Acuidade: usa Força ou Destreza, a maior."
 icone = ExtResource("2_textura")
 espaco = &"mao"
 dados_dano = "1d6"
 tipo_dano = &"perfurante"
+categoria = &"marcial"
 acuidade = true
 corroivel = true
 textura = ExtResource("2_textura")
