@@ -41,7 +41,10 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Criaturas | Bloco de estatísticas do livro em `CriaturaRPG` (`core/dados/`), ex.: `data/gray_ooze.tres` (CA 9, PV 22 = média de 3d8+9, atributos, iniciativa −2, Pseudópode +3 / 2d8+1 **ácido** / 5 pés, 10 pés, Visão às Cegas 60 pés, **resistências** ácido/frio/fogo, **Forma Corrosiva** −1 por toque até −5). Ainda **não**: Amorfo e a corrosão de **armadura** (não há armadura). | Usar as criaturas do D&D em vez de inventar números. |
 | Escala D&D | `EscalaDnd`: **5 pés = 1 ladrilho (32 px)**; **1 rodada = 1,5 s**. **Movimento = deslocamento da ficha**: herói 30 pés ≈ 128 px/s (correndo 256), Ooze 10 pés ≈ 43 px/s. **Ritmo de ataque = iniciativa em tiques**: intervalo = (10 − iniciativa) × 0,1 s, mínimo 3 tiques. Herói: iniciativa = mod. DES (+2 → 0,8 s); criatura: campo `iniciativa` da ficha (Ooze −2 → 1,2 s). O herói tem buffer de ataque (`tempo_buffer_ataque`). Ainda sem raças: deslocamento padrão 30 pés (`Ficha.DESLOCAMENTO_PADRAO_PES`). | Pedido do usuário. |
 | Gray Ooze | `features/gray_ooze/`: estados Parado -> Perseguindo -> Atacando (janela 0,2-0,35 s) -> LevandoDano -> Morrendo. Arte: slime CC0 de **rvros**, recolorida de cinza por `tools/gerar_gray_ooze.gd` (créditos em `assets/CREDITOS.md`). Fica no grupo `monstros`; a `main` chama `definir_alvo(herói)` em todo monstro do grupo. | |
-| Herói apanhando | Acerto -> estado `LevandoDano` (recuo `recuo_dano`, `tempo_recuo`) + **invencível piscando** por `tempo_invencibilidade` (dados em `StatsJogador`). Vida zerou -> sinal `caiu` -> a `main` mostra **"Você caiu!"** (`ui/derrota/`, pausa). **Tentar de novo**: `reviver()` (início, vida cheia) e os monstros são **recriados** como no começo. Sem ninguém escutando `caiu` (F6), revive sozinho. | Pedido do usuário. |
+| Herói apanhando | Acerto -> estado `LevandoDano` (recuo `recuo_dano`, `tempo_recuo`) + **invencível piscando** por `tempo_invencibilidade` (dados em `StatsJogador`). Vida zerou -> sinal `caiu` -> a `main` mostra **"Você caiu!"** (`ui/derrota/`, pausa). **Tentar de novo**: `reviver()` (início, vida cheia, Fôlego cheio) e os monstros do mapa são **recriados**. Os trazidos pela tela de comandos não voltam. Sem ninguém escutando `caiu` (F6), revive sozinho. | Pedido do usuário. |
+| Second Wind | Tecla **F** (`folego`). Ação bônus, cura **1d10+1** (nível 1, de 2 a 11), sem passar da vida máxima. **2 usos por luta** (`ClasseRPG.usos_segundo_folego`; 0 = a classe não tem). Gasta o uso mesmo com a vida cheia. No mesmo instante não dá para usar o golpe extra sem Corte Duplo. `reviver()` devolve os 2. HUD «Fôlego 2/2» e texto flutuante com o quanto subiu. | Livro; recarga escolhida pelo usuário (sem descanso curto). |
+| Comandos | Tecla **C** abre `ui/comandos/` (pausa, no estilo do inventário): o que cada botão faz e a tecla atual. Clicar numa ação e apertar uma tecla troca o atalho; essa tecla sai da ação que já a usava. `Comandos` (`core/utilitarios/`) grava em `user://comandos.cfg` e a `main` carrega no começo. Não é autoload. | Pedido do usuário. |
+| Criatura na arena | Na mesma tela, lista **Combate**. Hoje só o Gray Ooze. **Trazer** põe uma cópia à frente do herói (15 pés) e a `main` chama `definir_alvo`. **Tirar da arena** apaga o grupo `monstros`. O Ooze que já está no mapa continua na cena. | Pedido do usuário. |
 | Nome do jogo | **"DnD in a Piece"**, em `project.godot` (`application/config/name`); a tela de título lê de lá. "D&D" é marca da Wizards of the Coast: trocar o nome se um dia for publicar. | Pedido do usuário. |
 | Início do jogo | `main`: **tela de título** (`ui/titulo/`: Novo Jogo, Sair) -> **criação** -> jogo. Título e criação pausam o jogo e escondem o HUD. `mostrar_inicio = false` pula tudo (testes). | Pedido do usuário. |
 | Criação | `ui/criacao_personagem/`: três passos. **Quem**: nome (até 16 letras), classe e pacote. **Atributos**: compra de pontos, sugestão da classe e uma linha de vida/CA/dano. **Maestrias**: marca as 3 armas que domina (efeito de cada maestria explicado). INT, SAB e CAR ainda não fazem nada. | Pedido do usuário. |
@@ -109,8 +112,9 @@ ui/criacao_personagem/   tela de criação (nome, classe, compra de pontos)
 ui/inventario/           tela de inventário (tecla I)
 ui/hud/                  HUD (nome, vida)
 ui/derrota/              tela "Você caiu!"
+ui/comandos/             tela de comandos (tecla C): atalhos e trazer criatura
 ui/bau/                  tela do baú do arsenal (Pegar)
-core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos (carrega os .tres de uma pasta)
+core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos (atalhos em user://)
 features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
 						 camera_jogador.gd, ataque_jogador.gd, estados/, sprites/
 features/boneco_treino/  boneco de treino (CA 10, mostra dano/Errou!, pisca e balança)
@@ -131,7 +135,7 @@ tests/                   teste_*.gd, rodar_testes.ps1
 - **Classes e nós:** `PascalCase` (ex.: `class_name Jogador`, nó `Sprite`).
 - **Comentários e nomes do jogo em português.** Termos do Godot ficam em inglês.
 - Balanceamento em Resources (`data/`); ajustes só visuais podem ficar em `@export` do componente.
-- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J), `arremessar` (K), `inventario` (I), `interagir` (E).
+- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J), `arremessar` (K), `folego` (F), `inventario` (I), `interagir` (E), `comandos` (C).
 - Edite `.tscn` à mão só em mudanças pequenas e seguras. Estruturas grandes: script gerador, MCP do Godot ou editor.
 - Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha 2 opções com prós e contras.
 
@@ -215,5 +219,7 @@ Um teste só:
 - Fatia 11c: maestrias de arma (3 na criação), condições com ícones, vantagem/desvantagem, um alvo por golpe + Trespassar, Raspão, Corte Duplo.
 - Revisão: duas armas (2ª atrás do corpo, extra em X), escudo seguro pela mão de trás, camada da mão por cima da arma, arremesso com carga (normal/longo), voo por tipo e queda no alvo.
 - Armadura visível só na túnica (ladrilho do material). Sem ombro, peitoral, saia nem elmo por cima do corpo.
+- Second Wind do Guerreiro (F): cura 1d10+1, 2 usos por luta, ação bônus, HUD «Fôlego 2/2». «Tentar de novo» devolve os usos.
+- Tela de comandos (C): ver e trocar teclas (salvo em `user://comandos.cfg`) e trazer ou tirar o Gray Ooze. O trazido não volta no «Tentar de novo».
 - Próximas ideias: armas à distância (com o Arco Longo do pacote B), testes de Furtividade.
 - Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.

@@ -11,6 +11,8 @@ const COR_DANO := Color(1.0, 0.9, 0.4)
 const COR_CRITICO := Color(1.0, 0.55, 0.2)
 const COR_ERRO := Color(0.8, 0.82, 0.88)
 const COR_DANO_SOFRIDO := Color(1.0, 0.45, 0.45)
+## Cura (Second Wind).
+const COR_CURA := Color(0.45, 0.95, 0.55)
 ## Condições das maestrias (Caído!, Lento!, Salvou!...).
 const COR_CONDICAO := Color(0.78, 0.62, 1.0)
 ## Textos que aparecem juntos (ex.: dano e "Caído!") sobem empilhados, sem se cobrir (px).

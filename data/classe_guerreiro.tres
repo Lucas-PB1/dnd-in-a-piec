@@ -22,3 +22,4 @@ proficiencias_armas = Array[StringName]([&"simples", &"marcial"])
 treinamento_armaduras = Array[StringName]([&"leve", &"media", &"pesada", &"escudo"])
 pacotes_iniciais = Array[ExtResource("2_pacote")]([ExtResource("3_pacote_a"), ExtResource("4_pacote_b")])
 quantidade_maestrias = 3
+usos_segundo_folego = 2

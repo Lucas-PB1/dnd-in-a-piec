@@ -12,6 +12,8 @@ signal aterrissou
 signal reapareceu
 ## Emitido quando a vida muda (ex.: ao criar o personagem).
 signal vida_mudou(atual: int, maxima: int)
+## Emitido quando os usos do Second Wind mudam (restantes e o total da classe).
+signal folego_mudou(restantes: int, total: int)
 ## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
 ## depois reviver()). Se ninguém escutar (cena aberta sozinha), o herói revive sozinho.
 signal caiu
@@ -49,8 +51,11 @@ var _contador_buffer_arremesso: float = 0.0
 var _combo_pedido: bool = false
 ## O golpe atual já é o extra (não encadeia um terceiro).
 var _golpe_extra: bool = false
-## Tempo desde que a ação bônus foi gasta (golpe extra sem Corte Duplo).
+## Tempo desde que a ação bônus foi gasta (golpe extra sem Corte Duplo, ou Second Wind).
 var _tempo_desde_acao_bonus: float = INF
+## Usos de Second Wind que ainda restam nesta luta.
+var _usos_folego: int = 0
+var _rng_folego := RandomNumberGenerator.new()
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -121,6 +126,7 @@ func configurar_ficha(nova: Ficha) -> void:
 	classe = nova.classe
 	_vida.configurar(ficha.vida_maxima())
 	_atualizar_equipamento()
+	_repor_folego()
 
 
 ## Troca a mochila pelo pacote escolhido na criação (cópias próprias: cada uma com seu
@@ -253,9 +259,55 @@ func quer_golpe_extra() -> bool:
 	return leves and (_tem_corte_duplo() or acao_bonus_livre())
 
 
-## A ação bônus da rodada já voltou (o golpe extra sem Corte Duplo a gasta).
+## A ação bônus da rodada já voltou (o golpe extra sem Corte Duplo e o Second Wind a gastam).
 func acao_bonus_livre() -> bool:
 	return _tempo_desde_acao_bonus >= EscalaDnd.RODADA_SEGUNDOS
+
+
+## Usos de Second Wind que ainda restam nesta luta.
+func usos_folego() -> int:
+	return _usos_folego
+
+
+## Usos de Second Wind da classe (0 = ela não tem o poder).
+func usos_folego_total() -> int:
+	if classe == null:
+		return 0
+	return classe.usos_segundo_folego
+
+
+## Second Wind: ação bônus, cura 1d10+nível, gasta um uso mesmo com a vida cheia.
+## Devolve false se não havia uso, se a ação bônus já foi gasta ou se a classe não tem o poder.
+func usar_folego() -> bool:
+	if not _pode_usar_folego():
+		return false
+	_usos_folego -= 1
+	_tempo_desde_acao_bonus = 0.0
+	var ganho := _vida.curar(classe.cura_do_folego(_rng_folego))
+	_texto.mostrar("Fôlego +%d" % ganho, TextoFlutuanteComponent.COR_CURA)
+	_avisar_folego()
+	return true
+
+
+func _pode_usar_folego() -> bool:
+	if classe == null or classe.usos_segundo_folego <= 0 or _vida.esta_morto():
+		return false
+	if _usos_folego <= 0:
+		avisar("Sem fôlego")
+		return false
+	if not acao_bonus_livre():
+		avisar("Ação bônus")
+		return false
+	return true
+
+
+func _repor_folego() -> void:
+	_usos_folego = usos_folego_total()
+	_avisar_folego()
+
+
+func _avisar_folego() -> void:
+	folego_mudou.emit(_usos_folego, usos_folego_total())
 
 
 ## Começa um golpe com a arma atual, para o lado em que o herói olha.
@@ -319,7 +371,9 @@ func reviver() -> void:
 	_contador_invencivel = 0.0
 	_defesa.invulneravel = false
 	_animacao.piscando = false
+	_tempo_desde_acao_bonus = INF
 	_vida.curar_tudo()
+	_repor_folego()
 	reaparecer()
 
 
@@ -381,6 +435,8 @@ func _atualizar_contadores(delta: float) -> void:
 		_contador_buffer_arremesso = stats.tempo_buffer_ataque
 	else:
 		_contador_buffer_arremesso -= delta
+	if Input.is_action_just_pressed("folego"):
+		usar_folego()
 	# Toque duplo para correr.
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()

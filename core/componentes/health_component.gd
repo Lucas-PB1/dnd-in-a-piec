@@ -22,6 +22,19 @@ func curar_tudo() -> void:
 	vida_mudou.emit(vida_atual, vida_maxima)
 
 
+## Sobe a vida em `quantidade`, sem passar do máximo. Devolve o quanto de fato subiu.
+## Morto não cura. Com a vida cheia, devolve 0.
+func curar(quantidade: int) -> int:
+	if esta_morto() or quantidade <= 0:
+		return 0
+	var antes := vida_atual
+	vida_atual = mini(vida_atual + quantidade, vida_maxima)
+	var ganho := vida_atual - antes
+	if ganho > 0:
+		vida_mudou.emit(vida_atual, vida_maxima)
+	return ganho
+
+
 ## Tira `quantidade` de vida (nunca abaixo de zero). Ao zerar, emite `morreu`.
 func receber_dano(quantidade: int) -> void:
 	if esta_morto() or quantidade <= 0:

@@ -17,3 +17,13 @@ extends Resource
 @export var pacotes_iniciais: Array[PacoteInicial] = []
 ## Maestria em Armas: quantos tipos de arma a classe domina no nível 1 (Guerreiro: 3).
 @export var quantidade_maestrias: int = 0
+## Second Wind: usos por luta. 0 = a classe não tem o poder. Guerreiro nível 1 = 2.
+@export var usos_segundo_folego: int = 0
+
+## Cura do Second Wind no nível 1: 1d10 + nível (o +1). De 2 a 11.
+const DADO_SEGUNDO_FOLEGO := "1d10+1"
+
+
+## Rolagem da cura do Second Wind. Quem chama confere se ainda há usos.
+func cura_do_folego(rng: RandomNumberGenerator) -> int:
+	return Dado.de_texto(DADO_SEGUNDO_FOLEGO).rolar(rng)

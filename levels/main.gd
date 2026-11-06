@@ -1,3 +1,4 @@
+class_name Main
 extends Node2D
 ## Cena principal: monta o jogo ligando fase, herói e interface (só pelas APIs públicas).
 ## Fluxo: tela de título -> criação do personagem -> jogo. Título, criação e "Você caiu!"
@@ -7,7 +8,10 @@ const CENA_TITULO := preload("res://ui/titulo/tela_titulo.tscn")
 const CENA_CRIACAO := preload("res://ui/criacao_personagem/tela_criacao.tscn")
 const CENA_DERROTA := preload("res://ui/derrota/tela_derrota.tscn")
 const CENA_ARREMESSO := preload("res://features/arremesso/arma_arremessada.tscn")
+const CENA_OOZE := preload("res://features/gray_ooze/gray_ooze.tscn")
 const GRUPO_MONSTROS := &"monstros"
+## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
+const DISTANCIA_CRIATURA_PES := 15.0
 
 ## Começa pelo título e pela criação. Os testes desligam para jogar direto com a sugestão.
 @export var mostrar_inicio: bool = true
@@ -26,17 +30,24 @@ var _monstros_iniciais: Array[Dictionary] = []
 @onready var _inventario: TelaInventario = $Interface/TelaInventario
 @onready var _bau: Bau = $Bau
 @onready var _tela_bau: TelaBau = $Interface/TelaBau
+@onready var _comandos: TelaComandos = $Interface/TelaComandos
 
 
 func _ready() -> void:
+	Comandos.carregar()
 	_jogador.posicionar_no_inicio(_fase.posicao_inicio())
 	_jogador.definir_limites_camera(_fase.area_jogavel())
 	_jogador.limite_queda = _fase.limite_queda()
 	_jogador.vida_mudou.connect(_hud.mostrar_vida)
+	_jogador.folego_mudou.connect(_hud.mostrar_folego)
 	_jogador.caiu.connect(_ao_cair)
 	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
 	_bau.abrir_pedido.connect(_abrir_bau)
+	_comandos.abrir_pedido.connect(_abrir_comandos)
+	_comandos.trazer_pedido.connect(trazer_criatura)
+	_comandos.tirar_pedido.connect(tirar_criaturas)
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze"]), _cena_ooze())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_guardar_monstros_iniciais()
 	_apontar_monstros_para(_jogador)
@@ -116,10 +127,16 @@ func _apontar_monstros_para(alvo: Node2D) -> void:
 		monstro.definir_alvo(alvo)
 
 
+func _cena_ooze() -> Array[PackedScene]:
+	var cenas: Array[PackedScene] = []
+	cenas.append(CENA_OOZE)
+	return cenas
+
+
 # --- Interface --------------------------------------------------------------------
 
 func _abrir_inventario() -> void:
-	if _em_tela_de_pausa or _tela_bau.visible:
+	if _em_tela_de_pausa or _tela_bau.visible or _comandos.visible:
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
@@ -142,9 +159,35 @@ func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> voi
 
 
 func _abrir_bau(itens: Array[Item]) -> void:
-	if _em_tela_de_pausa or _inventario.visible:
+	if _em_tela_de_pausa or _inventario.visible or _comandos.visible:
 		return
 	_tela_bau.abrir(itens, _jogador.inventario)
+
+
+func _abrir_comandos() -> void:
+	if _em_tela_de_pausa or _inventario.visible or _tela_bau.visible:
+		return
+	_comandos.abrir()
+
+
+## Põe uma cópia da criatura à frente do herói. Não entra na lista do "Tentar de novo".
+func trazer_criatura(cena: PackedScene) -> void:
+	if cena == null:
+		return
+	var monstro: Node2D = cena.instantiate()
+	monstro.add_to_group(GRUPO_MONSTROS)
+	add_child(monstro)
+	var frente := Vector2(EscalaDnd.pes_para_pixels(DISTANCIA_CRIATURA_PES) * _jogador.direcao_olhar, 0.0)
+	monstro.global_position = _jogador.global_position + frente
+	if monstro.has_method(&"definir_alvo"):
+		monstro.call(&"definir_alvo", _jogador)
+
+
+## Apaga os monstros que estão na fase (os do mapa e os trazidos).
+func tirar_criaturas() -> void:
+	var presentes := get_tree().get_nodes_in_group(GRUPO_MONSTROS)
+	for monstro in presentes:
+		monstro.free()
 
 
 ## Telas de pausa (título, criação, derrota) param o jogo e escondem o HUD.
@@ -157,4 +200,5 @@ func _pausar(pausar: bool) -> void:
 func _mostrar_personagem_no_hud() -> void:
 	_hud.mostrar_personagem(_jogador.ficha.nome, _jogador.ficha.classe.nome)
 	_hud.mostrar_vida(_jogador.vida_atual(), _jogador.vida_maxima())
+	_hud.mostrar_folego(_jogador.usos_folego(), _jogador.usos_folego_total())
 
