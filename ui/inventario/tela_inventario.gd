@@ -123,8 +123,7 @@ func _atualizar_detalhes() -> void:
 	var item := _item_selecionado()
 	_nome.text = item.nome if item else "(nenhum item)"
 	_descricao.text = item.descricao if item else ""
-	var arma := item as Arma
-	_dano_item.text = "Dano: %s" % _ficha.texto_dano(arma) if arma and _ficha else ""
+	_dano_item.text = _texto_dano_do_item(item as Arma)
 	var equipado := _inventario != null and _inventario.esta_equipado(item)
 	_botao_equipar.disabled = item == null or not item.equipavel() or equipado
 	_botao_desequipar.disabled = not equipado
@@ -141,8 +140,20 @@ func _atualizar_ficha() -> void:
 	var na_mao := _inventario.equipado(Item.ESPACO_MAO) as Arma
 	var arma := na_mao if na_mao else _desarmado
 	linhas.append("Mão: %s" % arma.nome)
-	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(_ficha.bonus_ataque(arma)), _ficha.texto_dano(arma)])
+	var ataque := _ficha.bonus_ataque(arma) - _inventario.penalidade(arma)
+	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(ataque), _ficha.texto_dano(arma)])
 	_texto_ficha.text = "\n".join(linhas)
+
+
+## "Dano: 1d6+2 perfurante" e, se a arma estiver gasta, "Corroída: -2 no ataque".
+func _texto_dano_do_item(arma: Arma) -> String:
+	if arma == null or _ficha == null:
+		return ""
+	var texto := "Dano: %s %s" % [_ficha.texto_dano(arma), TiposDano.nome(arma.tipo_dano)]
+	var penalidade := _inventario.penalidade(arma)
+	if penalidade > 0:
+		texto += "\nCorroída: -%d no ataque" % penalidade
+	return texto
 
 
 ## "FOR 15 (+2) salv +4*" — o * marca salvaguarda em que a classe é proficiente.

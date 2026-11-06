@@ -37,6 +37,7 @@ func _ready() -> void:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
 	_vida.configurar(criatura.vida_maxima(_rng))
 	_defesa.classe_armadura = criatura.classe_armadura
+	_defesa.resistencias = criatura.resistencias
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
 	_preparar_pseudopode()
@@ -150,8 +151,17 @@ func _preparar_pseudopode() -> void:
 
 func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:
 	_texto.mostrar_resultado(resultado)
+	_corroer_arma_se_preciso(resultado)
 	if resultado.acertou and not _vida.esta_morto():
 		_maquina.trocar(&"LevandoDano")
+
+
+## Forma Corrosiva: arma não mágica que CAUSA DANO no Ooze leva penalidade cumulativa no
+## ataque e é destruída no limite. Quem decide o que fazer com a arma é o dono dela.
+func _corroer_arma_se_preciso(resultado: Combate.Resultado) -> void:
+	if criatura.corrosao_por_toque <= 0 or resultado.dano <= 0 or not resultado.golpe.arma_corroivel:
+		return
+	resultado.golpe.arma_corroida.emit(criatura.corrosao_por_toque, criatura.corrosao_limite)
 
 
 func _ao_morrer() -> void:

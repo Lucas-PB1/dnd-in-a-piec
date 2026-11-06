@@ -5,8 +5,12 @@ extends Item
 
 ## Dados de dano no formato de D&D (ex.: "1d6" para espada curta, "1d8" para espada longa).
 @export var dados_dano: String = "1d6"
+## Tipo de dano (TiposDano): espada curta = perfurante, soco = contundente.
+@export var tipo_dano: StringName = TiposDano.CONTUNDENTE
 ## Acuidade (D&D): o dano usa o maior entre Força e Destreza. Sem ela, usa só Força.
 @export var acuidade: bool = false
+## Arma não mágica: sofre Corrosão (ex.: tocar o Gray Ooze). Falso para soco e armas mágicas.
+@export var corroivel: bool = true
 ## Imagem da arma, desenhada apontando para a DIREITA com o cabo na origem.
 @export var textura: Texture2D
 ## Cor do arco de corte.

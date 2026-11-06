@@ -21,6 +21,15 @@ extends Resource
 @export var deslocamento_pes: float = 30.0
 ## Até onde percebe o alvo (pés). Gray Ooze: Visão às Cegas 60 pés.
 @export var percepcao_pes: float = 60.0
+## Tipos de dano a que resiste (metade do dano). Gray Ooze: ácido, frio e fogo.
+@export var resistencias: Array[StringName] = []
+
+@export_group("Forma Corrosiva")
+## Penalidade no ataque que uma arma não mágica leva cada vez que causa dano nesta criatura.
+## 0 = não tem Forma Corrosiva.
+@export var corrosao_por_toque: int = 0
+## A arma é destruída quando a penalidade chega a este valor.
+@export var corrosao_limite: int = 5
 
 @export_group("Ataque")
 @export var ataque_nome: String = "Ataque"
@@ -28,8 +37,8 @@ extends Resource
 @export var ataque_bonus: int = 0
 ## Dano do acerto (ex.: "2d8+1").
 @export var ataque_dano: String = "1d4"
-## Tipo de dano, só para mostrar por enquanto (ex.: "ácido").
-@export var ataque_tipo_dano: String = ""
+## Tipo de dano do ataque (TiposDano, ex.: &"acido").
+@export var ataque_tipo_dano: StringName = TiposDano.CONTUNDENTE
 ## Alcance (pés). "Reach 5 ft" = 1 ladrilho.
 @export var ataque_alcance_pes: float = 5.0
 
@@ -54,7 +63,7 @@ func bonus_salvaguarda(atributo: StringName) -> int:
 
 ## O ataque da criatura, pronto para ser resolvido contra a CA do alvo.
 func golpe() -> Golpe:
-	return Golpe.new(ataque_nome, ataque_bonus, _dado_ou_padrao(ataque_dano))
+	return Golpe.new(ataque_nome, ataque_bonus, _dado_ou_padrao(ataque_dano), ataque_tipo_dano)
 
 
 func _dado_ou_padrao(notacao: String) -> Dado:

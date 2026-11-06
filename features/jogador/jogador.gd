@@ -12,6 +12,9 @@ signal aterrissou
 signal reapareceu
 ## Emitido quando a vida muda (ex.: ao criar o personagem).
 signal vida_mudou(atual: int, maxima: int)
+## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
+## depois reviver()). Se ninguém escutar (cena aberta sozinha), o herói revive sozinho.
+signal caiu
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
@@ -60,7 +63,7 @@ func _ready() -> void:
 	if ataque_desarmado == null:
 		ataque_desarmado = Arma.new()
 	for item in itens_iniciais:
-		inventario.adicionar(item)
+		inventario.adicionar(item.duplicate())  # cópia própria: cada item tem seu desgaste
 	if classe == null:
 		classe = ClasseRPG.new()
 	posicao_inicial = global_position
@@ -189,8 +192,24 @@ func arma_atual() -> Arma:
 func iniciar_golpe() -> void:
 	_tempo_desde_golpe = 0.0
 	_contador_buffer_ataque = 0.0
+	_ataque.golpear(arma_atual(), criar_golpe())
+
+
+## O golpe da arma atual (com o desgaste dela). Se um alvo corrosivo avisar, a arma se desgasta.
+func criar_golpe() -> Golpe:
 	var arma := arma_atual()
-	_ataque.golpear(arma, ficha.golpe_com(arma))
+	var golpe := ficha.golpe_com(arma, inventario.penalidade(arma))
+	golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
+	return golpe
+
+
+## Volta para o início com a vida cheia (ex.: "Tentar de novo" depois de cair).
+func reviver() -> void:
+	_contador_invencivel = 0.0
+	_defesa.invulneravel = false
+	_animacao.piscando = false
+	_vida.curar_tudo()
+	reaparecer()
 
 
 func esta_golpeando() -> bool:
@@ -287,10 +306,19 @@ func _atualizar_invencibilidade(delta: float) -> void:
 	_animacao.piscando = esta_invencivel()
 
 
-## Vida zerou: volta para o início com a vida cheia (por enquanto não há "fim de jogo").
+## Vida zerou: avisa quem monta o jogo. Sem ninguém escutando, revive sozinho.
 func _morrer() -> void:
-	_contador_invencivel = 0.0
-	_defesa.invulneravel = false
-	_animacao.piscando = false
-	_vida.curar_tudo()
-	reaparecer()
+	_defesa.invulneravel = true
+	if caiu.get_connections().is_empty():
+		reviver()
+	else:
+		caiu.emit()
+
+
+## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão
+## e é destruída no limite.
+func _ao_corroer_arma(penalidade: int, limite: int, arma: Arma) -> void:
+	if inventario.desgastar(arma, penalidade, limite):
+		_texto.mostrar("%s derreteu!" % arma.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
+	else:
+		_texto.mostrar("%s corroída -%d" % [arma.nome, inventario.penalidade(arma)], TextoFlutuanteComponent.COR_ERRO)

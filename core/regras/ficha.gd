@@ -83,8 +83,9 @@ func bonus_ataque(arma: Arma) -> int:
 
 
 ## O ataque com a arma, pronto para ser resolvido contra a CA do alvo.
-func golpe_com(arma: Arma) -> Golpe:
-	return Golpe.new(arma.nome, bonus_ataque(arma), dado_dano(arma))
+## `penalidade` = desgaste da arma (ex.: Corrosão), subtraído do bônus de ataque.
+func golpe_com(arma: Arma, penalidade: int = 0) -> Golpe:
+	return Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado_dano(arma), arma.tipo_dano, arma.corroivel)
 
 
 ## Iniciativa = modificador de Destreza. Define o ritmo dos ataques (EscalaDnd).

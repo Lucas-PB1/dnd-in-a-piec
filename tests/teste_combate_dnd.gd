@@ -16,6 +16,8 @@ func _initialize() -> void:
 	_testar_salvaguarda()
 	_testar_ficha_de_combate()
 	_testar_gray_ooze()
+	_testar_tipos_e_resistencia()
+	_testar_desgaste()
 	if _falhas == 0:
 		print("PASSOU: todos os testes de combate de D&D")
 	else:
@@ -104,6 +106,53 @@ func _testar_gray_ooze() -> void:
 	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
 	var ficha := Ficha.new(guerreiro, guerreiro.atributos_sugeridos)
 	_checar(ficha.iniciativa() == 2 and ooze.iniciativa == -2, "iniciativa: herói = mod. DES (+2), Ooze = -2 da ficha")
+
+
+func _testar_tipos_e_resistencia() -> void:
+	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var soco: Arma = load("res://data/ataque_desarmado.tres")
+	var ooze: CriaturaRPG = load("res://data/gray_ooze.tres")
+	_checar(espada.tipo_dano == TiposDano.PERFURANTE and soco.tipo_dano == TiposDano.CONTUNDENTE,
+		"espada curta = perfurante (livro), soco = contundente")
+	_checar(ooze.golpe().tipo_dano == TiposDano.ACIDO, "Pseudópode = dano ácido")
+	_checar(TiposDano.ACIDO in ooze.resistencias and TiposDano.FRIO in ooze.resistencias
+		and TiposDano.FOGO in ooze.resistencias, "Ooze resiste a ácido, frio e fogo")
+	_checar(TiposDano.aplicar_resistencia(9) == 4 and TiposDano.aplicar_resistencia(1) == 0,
+		"resistência = metade, arredondado para baixo (9 -> 4, 1 -> 0)")
+	var acido := Golpe.new("Ácido", 100, Dado.new(1, 1, 9), TiposDano.ACIDO)
+	var perfurante := Golpe.new("Estocada", 100, Dado.new(1, 1, 9), TiposDano.PERFURANTE)
+	var resistencias: Array[StringName] = ooze.resistencias
+	var metade_ok := true
+	var inteiro_ok := true
+	for i in 50:
+		var r1 := Combate.resolver_ataque(acido, 9, _rng, resistencias)
+		var r2 := Combate.resolver_ataque(perfurante, 9, _rng, resistencias)
+		# 1d1+9 = 10 (crítico: 2d1+9 = 11). Com resistência: 5 nos dois casos.
+		metade_ok = metade_ok and (not r1.acertou or (r1.resistido and r1.dano == 5))
+		inteiro_ok = inteiro_ok and (not r2.acertou or (not r2.resistido and r2.dano in [10, 11]))
+	_checar(metade_ok, "golpe de ácido no Ooze: dano pela metade (10 -> 5)")
+	_checar(inteiro_ok, "golpe perfurante no Ooze: dano inteiro")
+	var golpe_espada := Ficha.new(load("res://data/classe_guerreiro.tres"), {}).golpe_com(espada, 2)
+	_checar(golpe_espada.tipo_dano == TiposDano.PERFURANTE and golpe_espada.arma_corroivel and golpe_espada.bonus_ataque == 0,
+		"golpe da espada leva o tipo, é corroível e desconta o desgaste (+2 - 2 = 0)")
+
+
+## Corrosão no inventário: -1 por toque, destruída em -5; cópias da mesma arma são separadas.
+func _testar_desgaste() -> void:
+	var espada: Arma = load("res://data/arma_espada_curta.tres")
+	var inv := Inventario.new()
+	var minha := espada.duplicate() as Arma
+	var outra := espada.duplicate() as Arma
+	inv.adicionar(minha)
+	inv.adicionar(outra)
+	inv.equipar(minha)
+	for i in 4:
+		inv.desgastar(minha, 1, 5)
+	_checar(inv.penalidade(minha) == 4 and inv.penalidade(outra) == 0 and minha in inv.itens,
+		"desgaste é por item: -4 numa espada, a outra intacta")
+	_checar(espada.resource_path != "" and inv.penalidade(espada) == 0, "o .tres original nunca é desgastado")
+	_checar(inv.desgastar(minha, 1, 5) and minha not in inv.itens and inv.equipado(Item.ESPACO_MAO) == null,
+		"no -5 a arma é destruída e sai da mão")
 
 
 func _checar(condicao: bool, descricao: String) -> void:

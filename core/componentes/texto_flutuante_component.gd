@@ -27,12 +27,14 @@ func mostrar(texto: String, cor: Color) -> void:
 	tween.chain().tween_callback(rotulo.queue_free)
 
 
-## Mostra o resultado de um ataque: o dano, "Crítico X!" ou "Errou!".
-## `cor_dano` muda a cor do dano (ex.: vermelho quando é o herói que apanha).
+## Mostra o resultado de um ataque: o dano, "Crítico X!" ou "Errou!"; se o alvo resistiu
+## ao tipo de dano, acrescenta "(resistiu)". `cor_dano` muda a cor do dano (ex.: vermelho
+## quando é o herói que apanha).
 func mostrar_resultado(resultado: Combate.Resultado, cor_dano: Color = COR_DANO) -> void:
 	if not resultado.acertou:
 		mostrar("Errou!", COR_ERRO)
-	elif resultado.critico:
-		mostrar("Crítico %d!" % resultado.dano, COR_CRITICO)
-	else:
-		mostrar(str(resultado.dano), cor_dano)
+		return
+	var texto := ("Crítico %d!" % resultado.dano) if resultado.critico else str(resultado.dano)
+	if resultado.resistido:
+		texto += " (resistiu)"
+	mostrar(texto, COR_CRITICO if resultado.critico else cor_dano)

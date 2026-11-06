@@ -8,6 +8,8 @@ signal golpe_resolvido(resultado: Combate.Resultado, origem: Vector2)
 
 ## Classe de Armadura.
 @export var classe_armadura: int = 10
+## Tipos de dano a que resiste (metade do dano), ex.: [&"acido", &"frio", &"fogo"].
+@export var resistencias: Array[StringName] = []
 ## Área que recebe os golpes.
 @export var hurtbox: HurtboxComponent
 ## Vida que perde o dano. Vazio = não perde vida (ex.: boneco de treino).
@@ -26,7 +28,7 @@ func _ready() -> void:
 func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 	if invulneravel or (vida and vida.esta_morto()):
 		return
-	var resultado := Combate.resolver_ataque(golpe, classe_armadura, rng)
+	var resultado := Combate.resolver_ataque(golpe, classe_armadura, rng, resistencias)
 	if resultado.acertou and vida:
 		vida.receber_dano(resultado.dano)
 	golpe_resolvido.emit(resultado, origem)

@@ -6,6 +6,9 @@ extends SceneTree
 const LONGE := 500.0
 const PERTO := 200.0
 const AO_ALCANCE := 40.0
+const VIDA_DE_TESTE := 999
+## Acertos com dano na espada para conferir a Corrosão.
+const ACERTOS_CORROSAO := 2
 
 var _falhas := 0
 var _jogador: Jogador
@@ -27,7 +30,9 @@ func _rodar() -> void:
 
 	await _testar_percepcao_e_perseguicao()
 	await _testar_ataques_contra_o_heroi()
+	await _testar_corrosao_da_espada()
 	await _testar_morte_do_ooze()
+	await _testar_voce_caiu(cena)
 	cena.queue_free()
 
 	if _falhas == 0:
@@ -63,6 +68,8 @@ func _testar_ataques_contra_o_heroi() -> void:
 	var resultados: Array[Combate.Resultado] = []
 	var defesa: DefesaComponent = _jogador.get_node("Defesa")
 	defesa.golpe_resolvido.connect(func(r: Combate.Resultado, _o: Vector2) -> void: resultados.append(r))
+	# Só neste teste: muita vida, para o herói não cair (cair pausa o jogo com "Você caiu!").
+	(_jogador.get_node("Vida") as HealthComponent).configurar(VIDA_DE_TESTE)
 	var vida_inicial := _jogador.vida_atual()
 	_colocar_heroi_a(AO_ALCANCE)
 	var viu_dano_no_heroi := false
@@ -101,6 +108,64 @@ func _testar_morte_do_ooze() -> void:
 			break
 		await physics_frame
 	_checar(morreu[0], "depois da animação, o Ooze avisa que morreu e some")
+
+
+## Forma Corrosiva: cada golpe da espada que causa dano no Ooze dá -1 no ataque da espada.
+## Usa um Ooze à parte (longe) para não matar o da fase.
+func _testar_corrosao_da_espada() -> void:
+	var alvo: GrayOoze = load("res://features/gray_ooze/gray_ooze.tscn").instantiate()
+	alvo.position = Vector2(5000, 0)
+	root.add_child(alvo)
+	await _esperar(2)
+	var espada := _jogador.inventario.itens[0] as Arma
+	_jogador.inventario.equipar(espada)
+	var danos := [0]
+	(alvo.get_node("Defesa") as DefesaComponent).golpe_resolvido.connect(
+		func(r: Combate.Resultado, _o: Vector2) -> void:
+			if r.dano > 0:
+				danos[0] += 1)
+	var hurtbox: HurtboxComponent = alvo.get_node("Hurtbox")
+	for i in 20:  # repete até ter acertos com dano suficientes (errar é possível)
+		if danos[0] >= ACERTOS_CORROSAO:
+			break
+		hurtbox.receber_golpe(_jogador.criar_golpe(), alvo.global_position + Vector2.LEFT)
+	_checar(danos[0] == ACERTOS_CORROSAO and _jogador.inventario.penalidade(espada) == ACERTOS_CORROSAO,
+		"cada acerto com dano corrói a espada em -1 (%d acertos -> -%d)" % [danos[0], _jogador.inventario.penalidade(espada)])
+	var golpe := _jogador.criar_golpe()
+	_checar(golpe.bonus_ataque == _jogador.ficha.bonus_ataque(espada) - danos[0], "o ataque da espada cai com o desgaste")
+	var antes := _jogador.inventario.penalidade(espada)
+	var soco := Golpe.new("Soco", 100, Dado.new(1, 1, 3))  # não é arma: não sofre Corrosão
+	hurtbox.receber_golpe(soco, alvo.global_position + Vector2.LEFT)
+	_checar(_jogador.inventario.penalidade(espada) == antes, "soco (não corroível) não desgasta nada")
+	alvo.queue_free()
+	await _esperar(1)
+
+
+## Herói com vida zerada: "Você caiu!" pausa; "Tentar de novo" revive e traz o Ooze de volta.
+func _testar_voce_caiu(cena: Node) -> void:
+	_jogador.configurar_ficha(_jogador.ficha)  # volta à vida normal da ficha
+	var golpe_fatal := Golpe.new("Fatal", 100, Dado.new(1, 1, 99), TiposDano.ACIDO)
+	var hurtbox: HurtboxComponent = _jogador.get_node("Hurtbox")
+	for i in 5:
+		if _jogador.vida_atual() == 0:
+			break
+		(_jogador.get_node("Defesa") as DefesaComponent).invulneravel = false
+		hurtbox.receber_golpe(golpe_fatal, _jogador.global_position + Vector2.RIGHT)
+	await process_frame
+	await process_frame
+	var tela: TelaDerrota = null
+	for filho in cena.get_node("Interface").get_children():
+		if filho is TelaDerrota:
+			tela = filho
+	_checar(tela != null and paused, "vida zerou: aparece 'Você caiu!' e o jogo pausa")
+	if tela == null:
+		return
+	tela.tentar_de_novo_escolhido.emit()
+	await process_frame
+	await physics_frame
+	var oozes := cena.get_tree().get_nodes_in_group(&"monstros")
+	_checar(not paused and _jogador.vida_atual() == _jogador.vida_maxima(), "Tentar de novo: despausa com a vida cheia")
+	_checar(oozes.size() == 1 and (oozes[0] as GrayOoze).vida_atual() == 22, "o Gray Ooze volta à vida para a luta recomeçar")
 
 
 func _colocar_heroi_a(distancia: float) -> void:
