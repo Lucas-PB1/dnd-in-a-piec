@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armaduras/icones/beinagrind.png" id="1_7un7o"]
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_4jrlb"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/beinagrind.png" id="1_0m6wo"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/beinagrind_elmo.png" id="2_l2rnk"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/beinagrind.png" id="3_0n5e8"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/beinagrind_ombreira.png" id="4_3gh0h"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/beinagrind_saiote.png" id="5_vurod"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="6_6tng1"]
 
 [resource]
-script = ExtResource("2_4jrlb")
+script = ExtResource("6_6tng1")
 categoria = &"pesada"
 ca_base = 15
 soma_destreza = false
@@ -12,11 +16,15 @@ forca_minima = 13
 desvantagem_furtividade = true
 cor = Color(0.88, 0.85, 0.76, 1)
 padrao = 3
+detalhe = ExtResource("1_0m6wo")
+ombreira = ExtResource("4_3gh0h")
+saiote = ExtResource("5_vurod")
+elmo = ExtResource("2_l2rnk")
 nome_original = "Beinagrind"
 peso = "40 lb."
 preco = "50 GP"
 livro = "Northlands Worldbook"
 nome = "Beinagrind"
 descricao = "Armadura pesada. CA 15. Força 13. Desvantagem em Furtividade. (Beinagrind, Northlands Worldbook)"
-icone = ExtResource("1_7un7o")
+icone = ExtResource("3_0n5e8")
 espaco = &"corpo"

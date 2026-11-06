@@ -37,6 +37,13 @@ const ANGULOS := {
 	&"pulo_topo": 30.0, &"pulo_caindo": 40.0, &"aterrissar": 35.0, &"ataque": 35.0,
 }
 const ESCALA_REVISAO := 4
+## Túnica = azul maior que vermelho e verde por esta margem (igual ao shader da roupa).
+const LIMITE_AZUL := 0.1
+## O ombro é procurado nas primeiras linhas da túnica.
+const LINHAS_DO_OMBRO := 4
+## Cinto: couro escuro (vermelho > verde > azul, bem avermelhado e escuro).
+const COURO_R_MENOS_B := 0.12
+const LUZ_MAXIMA_COURO := 0.35
 
 
 func _initialize() -> void:
@@ -46,6 +53,9 @@ func _initialize() -> void:
 		resultado.pontos[animacao] = _pontos_da_animacao(frames, animacao, true)
 		resultado.pontos_de_tras[animacao] = _pontos_da_animacao(frames, animacao, false)
 		resultado.angulos[animacao] = ANGULOS.get(animacao, PontosMao.ANGULO_PADRAO)
+		resultado.ombros[animacao] = _pontos_com(frames, animacao, _achar_ombro)
+		resultado.cinturas[animacao] = _pontos_com(frames, animacao, _achar_cintura)
+		resultado.cabecas[animacao] = _pontos_com(frames, animacao, _achar_cabeca)
 	ResourceSaver.save(resultado, DESTINO)
 	print("Pontos da mão salvos em ", DESTINO)
 	_salvar_camada_da_mao(frames)
@@ -53,6 +63,15 @@ func _initialize() -> void:
 	if not args.is_empty():
 		_salvar_revisao(frames, resultado, args[0])
 	quit()
+
+
+## Um ponto por quadro da animação, achado por `achar` (imagem do quadro -> Vector2 relativo
+## aos pés, ou null). Quadros sem ponto usam a média dos vizinhos.
+func _pontos_com(frames: SpriteFrames, animacao: StringName, achar: Callable) -> PackedVector2Array:
+	var achados: Array = []
+	for i in frames.get_frame_count(animacao):
+		achados.append(achar.call(_imagem_do_quadro(frames, animacao, i)))
+	return _preencher_buracos(achados)
 
 
 ## Pontos da mão da frente (`da_frente`) ou de trás em cada quadro da animação.
@@ -202,6 +221,75 @@ func _pixels_da_mao(img: Image) -> Array[Vector2i]:
 				if cor.a > 0.5 and cor.get_luminance() < LUZ_CONTORNO:
 					com_borda.append(v)
 	return com_borda
+
+# --- Pontos do corpo (peças da armadura) -----------------------------------------
+
+## Pixels da túnica: o mesmo critério do shader roupa_armadura (azul bem maior que R e G).
+func _tunica(img: Image) -> Array[Vector2i]:
+	var pixels: Array[Vector2i] = []
+	for y in TAMANHO_QUADRO:
+		for x in TAMANHO_QUADRO:
+			var c := img.get_pixel(x, y)
+			if c.a > 0.5 and c.b - maxf(c.r, c.g) > LIMITE_AZUL:
+				pixels.append(Vector2i(x, y))
+	return pixels
+
+
+## Ombro da frente: o pixel mais à frente nas primeiras linhas da túnica.
+func _achar_ombro(img: Image) -> Variant:
+	var tunica := _tunica(img)
+	if tunica.is_empty():
+		return null
+	var topo: int = tunica.map(func(p: Vector2i) -> int: return p.y).min()
+	var melhor := Vector2i(-1, -1)
+	for p in tunica:
+		if p.y <= topo + LINHAS_DO_OMBRO and p.x > melhor.x:
+			melhor = p
+	return Vector2(melhor) - PES
+
+
+## Cintura: a linha do cinto (a de mais pixels de couro escuro na altura da túnica), no meio.
+func _achar_cintura(img: Image) -> Variant:
+	var tunica := _tunica(img)
+	if tunica.is_empty():
+		return null
+	var xs := tunica.map(func(p: Vector2i) -> int: return p.x)
+	var ys := tunica.map(func(p: Vector2i) -> int: return p.y)
+	var melhor_y := -1
+	var melhor_total := 0
+	for y in range(ys.min(), ys.max() + 1):
+		var total := 0
+		for x in range(xs.min(), xs.max() + 1):
+			if _e_cinto(img.get_pixel(x, y)):
+				total += 1
+		if total > melhor_total:
+			melhor_total = total
+			melhor_y = y
+	if melhor_y < 0:
+		return null
+	return Vector2((xs.min() + xs.max()) / 2.0, melhor_y) - PES
+
+
+func _e_cinto(c: Color) -> bool:
+	return c.a > 0.5 and c.r > c.g and c.g > c.b and c.r - c.b > COURO_R_MENOS_B and c.get_luminance() < LUZ_MAXIMA_COURO
+
+
+## Topo da cabeça (o fio de cabelo mais alto) e o meio dela.
+func _achar_cabeca(img: Image) -> Variant:
+	var tunica := _tunica(img)
+	if tunica.is_empty():
+		return null
+	var pescoco: int = tunica.map(func(p: Vector2i) -> int: return p.y).min()
+	var xs: Array[int] = []
+	var topo := TAMANHO_QUADRO
+	for y in pescoco:
+		for x in TAMANHO_QUADRO:
+			if img.get_pixel(x, y).a > 0.5:
+				xs.append(x)
+				topo = mini(topo, y)
+	if xs.is_empty():
+		return null
+	return Vector2((xs.min() + xs.max()) / 2.0, topo) - PES
 
 ## Folha ampliada com cada quadro e um X vermelho na mão, para revisar.
 func _salvar_revisao(frames: SpriteFrames, resultado: PontosMao, caminho: String) -> void:

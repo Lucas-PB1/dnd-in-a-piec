@@ -34,3 +34,33 @@ angulos = Dictionary[StringName, float]({
 &"pulo_topo": 30.0,
 &"walk": 35.0
 })
+ombros = Dictionary[StringName, PackedVector2Array]({
+&"ataque": PackedVector2Array(14, -28, 14, -29),
+&"aterrissar": PackedVector2Array(14, -28, 10, -31),
+&"correr": PackedVector2Array(6, -33, 7, -31, 6, -35, 7, -33, 7, -30, 6, -34, 6, -35, 6, -36),
+&"idle": PackedVector2Array(6, -33, 6, -34, 6, -34, 10, -31, 12, -29, 6, -32, 6, -32, 6, -33),
+&"pulo_caindo": PackedVector2Array(13, -33),
+&"pulo_subindo": PackedVector2Array(12, -38),
+&"pulo_topo": PackedVector2Array(12, -38),
+&"walk": PackedVector2Array(6, -33, 7, -31, 6, -35, 7, -33, 7, -30, 6, -34, 6, -35, 6, -36)
+})
+cinturas = Dictionary[StringName, PackedVector2Array]({
+&"ataque": PackedVector2Array(0.5, -19, 0, -19),
+&"aterrissar": PackedVector2Array(0.5, -19, -1, -20),
+&"correr": PackedVector2Array(-1, -20, -0.5, -21, -1, -22, 0.5, -22, 2, -19, 0.5, -21, -0.5, -23, -1.5, -23),
+&"idle": PackedVector2Array(-1, -20, -1, -21, -1.5, -21, -1.5, -21, -1.5, -20, -1, -19, -1, -19, -1, -20),
+&"pulo_caindo": PackedVector2Array(-1.5, -23),
+&"pulo_subindo": PackedVector2Array(-1.5, -27),
+&"pulo_topo": PackedVector2Array(-1.5, -27),
+&"walk": PackedVector2Array(-1, -20, -0.5, -21, -1, -22, 0.5, -22, 2, -19, 0.5, -21, -0.5, -23, -1.5, -23)
+})
+cabecas = Dictionary[StringName, PackedVector2Array]({
+&"ataque": PackedVector2Array(-0.5, -68, 0, -69),
+&"aterrissar": PackedVector2Array(-0.5, -68, -0.5, -72),
+&"correr": PackedVector2Array(-0.5, -72, -0.5, -74, 0, -74, -0.5, -75, -0.5, -73, -0.5, -74, -0.5, -75, -0.5, -76),
+&"idle": PackedVector2Array(-0.5, -72, -0.5, -73, -0.5, -73, -0.5, -72, 0, -71, -0.5, -70, 0, -71, -0.5, -72),
+&"pulo_caindo": PackedVector2Array(-0.5, -74),
+&"pulo_subindo": PackedVector2Array(-0.5, -78),
+&"pulo_topo": PackedVector2Array(-1, -80),
+&"walk": PackedVector2Array(-0.5, -72, -0.5, -74, 0, -74, -0.5, -75, -0.5, -73, -0.5, -74, -0.5, -75, -0.5, -76)
+})

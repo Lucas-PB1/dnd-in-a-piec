@@ -44,6 +44,9 @@ func _testar_tabela() -> void:
 	_checar(couro_batido.categoria == Proficiencias.ARMADURA_LEVE and couro_batido.ca_base == 12 and couro_batido.soma_destreza
 		and couro_batido.max_destreza == -1 and not couro_batido.desvantagem_furtividade, "Couro Batido: leve, CA 12 + DES")
 	_checar(_a("placas").ca_base == 18 and _a("placas").forca_minima == 15, "Placas: CA 18, FOR 15")
+	_checar(_a("couro").detalhe != null and _a("couro").ombreira == null and _a("brunea").saiote != null and _a("brunea").elmo == null
+		and _a("placas").elmo != null and _a("escudo").detalhe == null and _a("couro").icone.get_width() == 16,
+		"visual: todas com textura; médias com ombreira/saiote; elmo só nas pesadas; ícones 16x16")
 	_checar(_a("meia_armadura").max_destreza == 2 and _a("meia_armadura").desvantagem_furtividade, "Meia-Armadura: DES máx. 2, desv.")
 	_checar(_a("scumweed").max_destreza == 1, "Scumweed (Obojima): DES máx. 1")
 	_checar(_a("escudo").e_escudo() and _a("escudo").ca_base == 2 and _a("tampa_panela").ca_base == 1, "Escudo +2, Tampa de Panela +1")
@@ -111,8 +114,11 @@ func _testar_heroi_vestido() -> void:
 	await physics_frame
 	_checar(jogador.classe_armadura() == 16 and (jogador.get_node("Defesa") as DefesaComponent).classe_armadura == 16,
 		"vestiu Cota de Malha: CA 16 (e a Defesa usa 16)")
-	_checar(material.get_shader_parameter(&"vestida") and material.get_shader_parameter(&"padrao") == Armadura.Padrao.MALHA,
-		"Cota de Malha aparece no herói (shader com padrão de malha)")
+	_checar(material.get_shader_parameter(&"vestida") and material.get_shader_parameter(&"tem_detalhe")
+		and material.get_shader_parameter(&"detalhe") == cota.detalhe, "Cota de Malha aparece no herói (shader com o ladrilho de anéis)")
+	var pecas := jogador.get_node("Pecas")
+	var visiveis := pecas.get_children().filter(func(p: Sprite2D) -> bool: return p.visible).size()
+	_checar(visiveis == 3, "pesada: ombreira, saiote e elmo aparecem (%d peças)" % visiveis)
 	var escudo := _a("escudo").duplicate() as Armadura
 	jogador.inventario.adicionar(escudo)
 	jogador.inventario.equipar(escudo)

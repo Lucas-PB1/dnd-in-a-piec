@@ -1,20 +1,26 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armaduras/icones/scumweed.png" id="1_gjteq"]
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_oivn6"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/scumweed.png" id="1_qo1mr"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/scumweed.png" id="2_inw6l"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/scumweed_ombreira.png" id="3_x4fe1"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/scumweed_saiote.png" id="4_nq8pq"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="5_wya5q"]
 
 [resource]
-script = ExtResource("2_oivn6")
+script = ExtResource("5_wya5q")
 categoria = &"media"
 ca_base = 15
 max_destreza = 1
 cor = Color(0.32, 0.46, 0.3, 1)
 padrao = 4
+detalhe = ExtResource("1_qo1mr")
+ombreira = ExtResource("3_x4fe1")
+saiote = ExtResource("4_nq8pq")
 nome_original = "Scumweed Armor"
 peso = "22 lb."
 preco = "60 GP"
 livro = "Obojima"
 nome = "Armadura de Scumweed"
 descricao = "Armadura média. CA 15 + DES (máx. 1). (Scumweed Armor, Obojima)"
-icone = ExtResource("1_gjteq")
+icone = ExtResource("2_inw6l")
 espaco = &"corpo"

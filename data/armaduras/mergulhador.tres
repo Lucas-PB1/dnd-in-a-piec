@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armaduras/icones/mergulhador.png" id="1_tf865"]
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_3pyyd"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/mergulhador.png" id="1_2d2fq"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/mergulhador_elmo.png" id="2_6mcrt"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/mergulhador.png" id="3_e7niv"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/mergulhador_ombreira.png" id="4_aif7l"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/mergulhador_saiote.png" id="5_3raqx"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="6_gpf7r"]
 
 [resource]
-script = ExtResource("2_3pyyd")
+script = ExtResource("6_gpf7r")
 categoria = &"pesada"
 ca_base = 17
 soma_destreza = false
@@ -12,11 +16,15 @@ forca_minima = 16
 desvantagem_furtividade = true
 cor = Color(0.68, 0.55, 0.32, 1)
 padrao = 3
+detalhe = ExtResource("1_2d2fq")
+ombreira = ExtResource("4_aif7l")
+saiote = ExtResource("5_3raqx")
+elmo = ExtResource("2_6mcrt")
 nome_original = "Divers Armor"
 peso = "100 lb."
 preco = "2,000 GP"
 livro = "Obojima"
 nome = "Armadura de Mergulhador"
 descricao = "Armadura pesada. CA 17. Força 16. Desvantagem em Furtividade. (Divers Armor, Obojima)"
-icone = ExtResource("1_tf865")
+icone = ExtResource("3_e7niv")
 espaco = &"corpo"

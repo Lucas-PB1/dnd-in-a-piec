@@ -10,6 +10,21 @@ extends SceneTree
 const PASTA := "res://data/armaduras/"
 const PASTA_FONTE := "res://assets/armaduras/fonte_idylwild/"
 const PASTA_ICONES := "res://assets/armaduras/icones/"
+## Ladrilhos de textura das roupas (8x8), repetidos pelo shader no corpo do herói.
+const PASTA_TEXTURAS := "res://assets/armaduras/texturas/"
+const TAMANHO_LADRILHO := 8
+const COR_TACHA := Color(0.86, 0.8, 0.58)
+## Peças por cima do corpo: médias têm ombreira e saiote; pesadas, também elmo.
+const PASTA_PECAS := "res://assets/armaduras/pecas/"
+const TAMANHO_OMBREIRA := Vector2i(11, 8)
+const TAMANHO_SAIOTE := Vector2i(14, 8)
+const TAMANHO_ELMO := Vector2i(36, 22)
+## Protetor do nariz do elmo: largura e quanto desce abaixo da aba (px).
+const NASAL := Vector2i(3, 5)
+## Sombra de cima para baixo nas peças (multiplica a cor do ladrilho).
+const LUZ_TOPO := 1.25
+const LUZ_BASE := 0.75
+const COR_CONTORNO := Color8(34, 28, 40)
 const TAMANHO_ICONE := 16
 ## Escudos: a mesma arte serve de ícone e de escudo na mão do herói.
 const ESCUDOS := ["escudo", "tampa_panela"]
@@ -80,9 +95,14 @@ const TABELA := {
 func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_ICONES))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_TEXTURAS))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_PECAS))
 	for arquivo in TABELA:
 		_icone(arquivo).save_png(ProjectSettings.globalize_path(PASTA_ICONES + arquivo + ".png"))
-	if TABELA.keys().any(func(arquivo: String) -> bool: return not ResourceLoader.exists(PASTA_ICONES + arquivo + ".png")):
+		if TABELA[arquivo][2] != E:
+			_ladrilho(TABELA[arquivo][12], TABELA[arquivo][11]).save_png(ProjectSettings.globalize_path(PASTA_TEXTURAS + arquivo + ".png"))
+			_salvar_pecas(arquivo, TABELA[arquivo])
+	if TABELA.keys().any(_falta_arte):
 		print("Ícones gerados. Rode --import e depois este script de novo para criar os .tres.")
 		quit()
 		return
@@ -90,6 +110,16 @@ func _initialize() -> void:
 		ResourceSaver.save(_criar(arquivo, TABELA[arquivo]), PASTA + arquivo + ".tres")
 	print("%d armaduras geradas em %s" % [TABELA.size(), PASTA])
 	quit()
+
+
+## Alguma imagem da armadura (ícone, ladrilho, peças) ainda não foi importada?
+func _falta_arte(arquivo: String) -> bool:
+	var caminhos: Array[String] = [PASTA_ICONES + arquivo + ".png"]
+	if TABELA[arquivo][2] != E:
+		caminhos.append(PASTA_TEXTURAS + arquivo + ".png")
+	for peca in _pecas_de(TABELA[arquivo][2]):
+		caminhos.append(PASTA_PECAS + arquivo + "_" + peca + ".png")
+	return caminhos.any(func(caminho: String) -> bool: return not ResourceLoader.exists(caminho))
 
 
 func _criar(arquivo: String, d: Array) -> Armadura:
@@ -111,6 +141,10 @@ func _criar(arquivo: String, d: Array) -> Armadura:
 	a.icone = load(PASTA_ICONES + arquivo + ".png")
 	if arquivo in ESCUDOS:
 		a.textura = a.icone  # o broquel do pacote também é o escudo na mão do herói
+	else:
+		a.detalhe = load(PASTA_TEXTURAS + arquivo + ".png")
+		for peca in _pecas_de(d[2]):
+			a.set(peca, load(PASTA_PECAS + arquivo + "_" + peca + ".png"))
 	a.descricao = _descricao(a)
 	return a
 
@@ -146,3 +180,163 @@ func _icone(arquivo: String) -> Image:
 				if cor.a > 0.0 and cor.get_luminance() >= LUZ_CONTORNO:
 					img.set_pixel(x, y, Color(cor.r * tinta.r, cor.g * tinta.g, cor.b * tinta.b, cor.a).clamp())
 	return FerramentasPixel.reduzir(img, TAMANHO_ICONE)
+
+
+# --- Ladrilhos da roupa ------------------------------------------------------------
+# 8x8, nas cores da armadura. O shader repete o ladrilho e multiplica pela luz da arte.
+
+func _ladrilho(padrao: Armadura.Padrao, cor: Color) -> Image:
+	var img := Image.create(TAMANHO_LADRILHO, TAMANHO_LADRILHO, false, Image.FORMAT_RGBA8)
+	var claro := cor.lightened(0.25)
+	var escuro := cor.darkened(0.35)
+	img.fill(cor)
+	match padrao:
+		Armadura.Padrao.MALHA: _malha(img, cor, claro, escuro)
+		Armadura.Padrao.TACHAS: _couro(img, claro, escuro); _tachas(img)
+		Armadura.Padrao.PLACAS: _placas(img, cor, claro, escuro)
+		Armadura.Padrao.ACOLCHOADO: _acolchoado(img, claro, escuro)
+		Armadura.Padrao.ESCAMAS: _escamas(img, cor, claro, escuro)
+		_: _couro(img, claro, escuro)
+	return img
+
+
+## Couro: grão escuro salpicado e uma costura clara pontilhada.
+func _couro(img: Image, claro: Color, escuro: Color) -> void:
+	for p in [Vector2i(2, 5), Vector2i(5, 2), Vector2i(1, 1)]:
+		img.set_pixelv(p, escuro)
+	for y in range(0, TAMANHO_LADRILHO, 2):
+		img.set_pixel(7, y, claro)
+
+
+## Tachas: dois rebites dourados com brilho em cima.
+func _tachas(img: Image) -> void:
+	for canto in [Vector2i(1, 2), Vector2i(5, 6)]:
+		img.fill_rect(Rect2i(canto, Vector2i(2, 2)), COR_TACHA.darkened(0.2))
+		img.set_pixelv(canto, COR_TACHA.lightened(0.3))
+
+
+## Malha: anéis de 4x4 com o furo escuro; fileiras desencontradas.
+func _malha(img: Image, cor: Color, claro: Color, escuro: Color) -> void:
+	img.fill(escuro.darkened(0.2))
+	for celula_y in 2:
+		for celula_x in 2:
+			var origem := Vector2i(celula_x * 4 + (2 if celula_y == 1 else 0), celula_y * 4)
+			for p in [Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(0, 2)]:
+				img.set_pixelv(_no_ladrilho(origem + p), claro)
+			for p in [Vector2i(3, 1), Vector2i(3, 2), Vector2i(1, 3), Vector2i(2, 3)]:
+				img.set_pixelv(_no_ladrilho(origem + p), cor)
+
+
+## Placas: faixa com borda brilhante em cima, sombra e emenda embaixo, dois rebites.
+func _placas(img: Image, cor: Color, claro: Color, escuro: Color) -> void:
+	var faixas := [claro, cor.lightened(0.1), cor, cor, cor.darkened(0.1), cor.darkened(0.2), escuro, escuro.darkened(0.3)]
+	for y in TAMANHO_LADRILHO:
+		img.fill_rect(Rect2i(0, y, TAMANHO_LADRILHO, 1), faixas[y])
+	for x in [1, 6]:
+		img.set_pixel(x, 2, claro.lightened(0.3))
+		img.set_pixel(x, 3, escuro)
+
+
+## Acolchoado: costuras em losango e um ponto claro no meio de cada gomo.
+func _acolchoado(img: Image, claro: Color, escuro: Color) -> void:
+	for y in TAMANHO_LADRILHO:
+		for x in TAMANHO_LADRILHO:
+			if (x + y) % TAMANHO_LADRILHO == 0 or (x - y + TAMANHO_LADRILHO) % TAMANHO_LADRILHO == 0:
+				img.set_pixel(x, y, escuro)
+	img.set_pixel(4, 2, claro)
+	img.set_pixel(4, 6, claro)
+
+
+## Escamas: fileiras de escamas arredondadas, desencontradas.
+func _escamas(img: Image, cor: Color, claro: Color, escuro: Color) -> void:
+	img.fill(escuro)
+	var forma := [[1, 2, claro], [0, 3, cor], [0, 3, cor.darkened(0.1)], [1, 2, escuro.darkened(0.2)]]
+	for fileira in 2:
+		for coluna in 2:
+			var origem := Vector2i(coluna * 4 + (2 if fileira == 1 else 0), fileira * 4)
+			for dy in forma.size():
+				for dx in range(forma[dy][0], forma[dy][1] + 1):
+					img.set_pixelv(_no_ladrilho(origem + Vector2i(dx, dy)), forma[dy][2])
+
+
+func _no_ladrilho(p: Vector2i) -> Vector2i:
+	return Vector2i(posmod(p.x, TAMANHO_LADRILHO), posmod(p.y, TAMANHO_LADRILHO))
+
+
+# --- Peças por cima do corpo ---------------------------------------------------------
+
+## Quais peças a categoria tem (nomes iguais aos campos da Armadura).
+func _pecas_de(categoria: StringName) -> Array[String]:
+	match categoria:
+		M: return ["ombreira", "saiote"]
+		P: return ["ombreira", "saiote", "elmo"]
+	return []
+
+
+func _salvar_pecas(arquivo: String, d: Array) -> void:
+	var ladrilho := _ladrilho(d[12], d[11])
+	for peca in _pecas_de(d[2]):
+		var img: Image
+		match peca:
+			"ombreira": img = _ombreira(ladrilho)
+			"saiote": img = _saiote(ladrilho)
+			_: img = _elmo(ladrilho)
+		img.save_png(ProjectSettings.globalize_path(PASTA_PECAS + arquivo + "_" + peca + ".png"))
+
+
+## Ombreira: meia cúpula sobre o ombro.
+func _ombreira(ladrilho: Image) -> Image:
+	var tam := TAMANHO_OMBREIRA
+	return _pintar(tam + Vector2i(2, 2), ladrilho, func(p: Vector2) -> bool:
+		var v := (p - Vector2(tam.x / 2.0, tam.y)) / Vector2(tam.x / 2.0, tam.y)
+		return v.length() <= 1.0 and p.y < tam.y)
+
+
+## Saiote: três lâminas penduradas no cinto, com fresta entre elas e pontas arredondadas.
+func _saiote(ladrilho: Image) -> Image:
+	var tam := TAMANHO_SAIOTE
+	var largura_lamina := (tam.x - 2) / 3
+	return _pintar(tam + Vector2i(2, 2), ladrilho, func(p: Vector2) -> bool:
+		var x := int(p.x)
+		var na_fresta := x % (largura_lamina + 1) == largura_lamina
+		var canto := int(p.y) == tam.y - 1 and (x % (largura_lamina + 1) == 0 or x % (largura_lamina + 1) == largura_lamina - 1)
+		return x < tam.x and p.y < tam.y and not na_fresta and not canto)
+
+
+## Elmo de perfil (olhando para a direita): cúpula sobre o cabelo e protetor do nariz na frente.
+func _elmo(ladrilho: Image) -> Image:
+	var tam := TAMANHO_ELMO
+	return _pintar(tam + Vector2i(2, NASAL.y + 2), ladrilho, func(p: Vector2) -> bool:
+		var v := (p - Vector2(tam.x / 2.0, tam.y)) / Vector2(tam.x / 2.0, tam.y)
+		var cupula := v.length() <= 1.0 and p.y < tam.y
+		var nasal := p.y >= tam.y - 1 and p.y < tam.y + NASAL.y and p.x >= tam.x - NASAL.x - 3 and p.x < tam.x - 3
+		return cupula or nasal)
+
+
+## Imagem `tamanho` com os pixels de `dentro` pintados com o ladrilho, mais claro em cima e
+## mais escuro embaixo, com contorno. A peça fica a 1 px da borda (espaço do contorno).
+func _pintar(tamanho: Vector2i, ladrilho: Image, dentro: Callable) -> Image:
+	var img := Image.create(tamanho.x, tamanho.y, false, Image.FORMAT_RGBA8)
+	for y in tamanho.y - 2:
+		for x in tamanho.x - 2:
+			if dentro.call(Vector2(x, y) + Vector2(0.5, 0.5)):
+				var luz := lerpf(LUZ_TOPO, LUZ_BASE, float(y) / (tamanho.y - 2))
+				var cor := ladrilho.get_pixel(x % TAMANHO_LADRILHO, y % TAMANHO_LADRILHO) * luz
+				img.set_pixel(x + 1, y + 1, Color(cor.r, cor.g, cor.b, 1.0).clamp())
+	_contornar(img)
+	return img
+
+
+func _contornar(img: Image) -> void:
+	var bordas: Array[Vector2i] = []
+	for y in img.get_height():
+		for x in img.get_width():
+			if img.get_pixel(x, y).a > 0.0:
+				continue
+			for d in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				var v: Vector2i = Vector2i(x, y) + d
+				if Rect2i(Vector2i.ZERO, img.get_size()).has_point(v) and img.get_pixelv(v).a > 0.0:
+					bordas.append(Vector2i(x, y))
+					break
+	for p in bordas:
+		img.set_pixelv(p, COR_CONTORNO)
