@@ -32,6 +32,12 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Animação de correr | **Provisória:** quadros do walk a 20 fps (animação `correr` em `heroi_frames.tres`). Trocar pela animação `run` do SpriteCook (~32 créditos) sem mexer no código. | Só sobraram 2 créditos. |
 | Arquitetura do herói | `jogador.gd` = ferramentas de física + API pública. Comportamento na **máquina de estados** (`core/estados/`): estados `Parado`, `Andando`, `Correndo`, `NoAr` em `features/jogador/estados/`. Números em `data/jogador_padrao.tres` (`StatsJogador`). `AnimacaoJogador` e `CameraJogador` não conhecem o Jogador: ele chama `atualizar()`/`olhar_para()` (call down). | Skills godot-*. |
 | Mudar balanceamento | Edite `data/jogador_padrao.tres` no Inspector (velocidade, pulo, toque duplo). | Dados separados do código. |
+| Classe do herói | **Guerreiro (estilo D&D)**: espada (e futuramente escudo/outras armas). | Pedido do usuário. |
+| Ataque | Tecla **J** -> estado `Atacando`. No chão freia e fica firme; no ar continua caindo; não vira durante o golpe. | Peso de Guerreiro. |
+| Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/arma_*.tres`: dano, alcance, tempos da janela de acerto, ângulos e **textura**. A espada é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. | Equipamento visível sem redesenhar o herói. |
+| Dano | `HitboxComponent` (quem bate, acerta cada alvo 1x por golpe) e `HurtboxComponent` (quem apanha, só emite `golpe_recebido`) em `core/componentes/`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`. `HealthComponent` só quando houver o primeiro inimigo que morre. | Reutilizável por herói e inimigos. |
+| Pacotes prontos de personagem | **Não usar** para o herói (decisão do usuário: o equipamento fica "pintado" no sprite). Talvez em outros casos. | Equipamento visível. |
+| Arte do golpe | Provisória por script: `assets/armas/espada_curta.png`, `assets/efeitos/corte.png` (+ `corte_frames.tres`). Pose do herói = quadros 2 e 3 do jump. | Grátis; trocar depois. |
 | Câmera | `Camera2D` filha do herói, com suavização, olha à frente na direção em que ele corre; limites calculados pelo tamanho da fase | Ver o que vem pela frente. |
 | Movimento suave | Interpolação de física ligada | Sem tremedeira em monitores de 144 Hz. |
 
@@ -56,12 +62,16 @@ Regras de uso:
 Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
+core/componentes/        HitboxComponent, HurtboxComponent
+core/dados/              Arma (Resource)
 core/utilitarios/        ToqueDuplo
 features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
-						 camera_jogador.gd, estados/, sprites/
+						 camera_jogador.gd, ataque_jogador.gd, estados/, sprites/
+features/boneco_treino/  boneco de treino (leva golpe, pisca, balança, mostra dano)
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-data/                    jogador_padrao.tres
+data/                    jogador_padrao.tres, arma_espada_curta.tres
 assets/tiles/            ladrilhos e TileSet (compartilhado)
+assets/armas/, efeitos/  sprites de armas e efeitos (compartilhados)
 tools/                   gerar_arte_provisoria.gd, gerar_fase_teste.gd, capturar_tela.gd
 tests/                   teste_*.gd, rodar_testes.ps1
 ```
@@ -72,7 +82,7 @@ tests/                   teste_*.gd, rodar_testes.ps1
 - **Classes e nós:** `PascalCase` (ex.: `class_name Jogador`, nó `Sprite`).
 - **Comentários e nomes do jogo em português.** Termos do Godot ficam em inglês.
 - Balanceamento em Resources (`data/`); ajustes só visuais podem ficar em `@export` do componente.
-- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑).
+- Ações de input: `mover_esquerda` (A, ←), `mover_direita` (D, →), `mover_baixo` (S, ↓), `pular` (Espaço, W, ↑), `atacar` (J).
 - Edite `.tscn` à mão só em mudanças pequenas e seguras. Estruturas grandes: script gerador, MCP do Godot ou editor.
 - Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha 2 opções com prós e contras.
 
@@ -131,3 +141,4 @@ Um teste só:
 - Fatia 3: herói andando e pulando numa fase de teste em 2D lateral.
 - Fatia 4: skills de código limpo, corrida com dois toques (animação provisória), fase reta, herói refatorado em física + componente visual.
 - Skills godot-* criadas e código migrado: novas pastas, máquina de estados do herói, `StatsJogador` em `data/`, sem `get_parent()`, fase com API própria.
+- Fatia 5: golpe de espada (J) no chão e no ar, arma como dado e sprite separado, Hitbox/Hurtbox, boneco de treino. Tentativa de usar pacote pronto (Hero Knight) foi cancelada e limpa.

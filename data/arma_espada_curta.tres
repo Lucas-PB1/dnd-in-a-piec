@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Arma" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="1_arma"]
+[ext_resource type="Texture2D" path="res://assets/armas/espada_curta.png" id="2_textura"]
+
+[resource]
+script = ExtResource("1_arma")
+nome = "Espada Curta"
+dano = 3
+textura = ExtResource("2_textura")
+cor_corte = Color(0.85, 0.95, 1, 0.9)
+alcance = 44.0
+altura = 40.0
+duracao = 0.32
+inicio_acerto = 0.06
+fim_acerto = 0.16
+angulo_inicial = -110.0
+angulo_final = 35.0

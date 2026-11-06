@@ -72,6 +72,10 @@ region = Rect2(560, 0, 80, 80)
 atlas = ExtResource("3_jump")
 region = Rect2(160, 0, 80, 80)
 
+[sub_resource type="AtlasTexture" id="j3"]
+atlas = ExtResource("3_jump")
+region = Rect2(240, 0, 80, 80)
+
 [sub_resource type="AtlasTexture" id="j4"]
 atlas = ExtResource("3_jump")
 region = Rect2(320, 0, 80, 80)
@@ -210,5 +214,16 @@ animations = [{
 }],
 "loop": false,
 "name": &"aterrissar",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("j2")
+}, {
+"duration": 3.0,
+"texture": SubResource("j3")
+}],
+"loop": false,
+"name": &"ataque",
 "speed": 14.0
 }]

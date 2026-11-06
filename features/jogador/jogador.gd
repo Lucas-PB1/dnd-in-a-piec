@@ -13,6 +13,8 @@ signal reapareceu
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
+## Arma equipada (equipamento). Trocar de arma = trocar este .tres (ex.: data/arma_*.tres).
+@export var arma: Arma
 ## Se cair abaixo desta altura (Y), volta para o início.
 @export var limite_queda: float = 600.0
 
@@ -29,11 +31,15 @@ var _toque_duplo: ToqueDuplo
 @onready var _maquina: MaquinaEstados = $MaquinaEstados
 @onready var _animacao: AnimacaoJogador = $Sprite
 @onready var _camera: CameraJogador = $Camera
+@onready var _ataque: AtaqueJogador = $Ataque
 
 
 func _ready() -> void:
+	# Valores padrão seguros: a cena aberta sozinha (F6) continua funcionando.
 	if stats == null:
-		stats = StatsJogador.new()  # cena aberta sozinha (F6) continua funcionando
+		stats = StatsJogador.new()
+	if arma == null:
+		arma = Arma.new()
 	posicao_inicial = global_position
 	_toque_duplo = ToqueDuplo.new(stats.janela_toque_duplo)
 	aterrissou.connect(_animacao.tocar_aterrissagem)
@@ -93,6 +99,19 @@ func pediu_corrida() -> int:
 	return _pedido_corrida
 
 
+func pediu_ataque() -> bool:
+	return Input.is_action_just_pressed("atacar")
+
+
+## Começa um golpe com a arma equipada, para o lado em que o herói olha.
+func iniciar_golpe() -> void:
+	_ataque.golpear(arma, direcao_olhar)
+
+
+func esta_golpeando() -> bool:
+	return _ataque.esta_golpeando()
+
+
 func aplicar_gravidade(delta: float) -> void:
 	var g := stats.gravidade() if velocity.y < 0.0 else stats.gravidade() * stats.multiplicador_queda
 	velocity.y = minf(velocity.y + g * delta, stats.velocidade_max_queda)
@@ -115,10 +134,10 @@ func cortar_pulo_se_soltou() -> void:
 		velocity.y *= stats.corte_pulo
 
 
-## Acelera até `dir * maxima` (px/s) e vira o herói para o lado do movimento.
-func mover_horizontal(dir: float, maxima: float, delta: float) -> void:
+## Acelera até `dir * maxima` (px/s). Com `virar`, o herói olha para o lado do movimento.
+func mover_horizontal(dir: float, maxima: float, delta: float, virar: bool = true) -> void:
 	velocity.x = move_toward(velocity.x, dir * maxima, _taxa_aceleracao(dir) * delta)
-	if dir != 0.0:
+	if virar and dir != 0.0:
 		direcao_olhar = 1 if dir > 0.0 else -1
 
 

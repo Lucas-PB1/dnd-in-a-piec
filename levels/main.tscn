@@ -1,12 +1,16 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://levels/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://levels/fase_teste.tscn" id="2_fase"]
 [ext_resource type="PackedScene" path="res://features/jogador/jogador.tscn" id="3_jogador"]
+[ext_resource type="PackedScene" path="res://features/boneco_treino/boneco_treino.tscn" id="4_boneco"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
 
 [node name="FaseTeste" parent="." instance=ExtResource("2_fase")]
+
+[node name="BonecoTreino" parent="." instance=ExtResource("4_boneco")]
+position = Vector2(240, 288)
 
 [node name="Jogador" parent="." instance=ExtResource("3_jogador")]
