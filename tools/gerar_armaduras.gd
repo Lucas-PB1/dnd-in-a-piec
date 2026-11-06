@@ -1,13 +1,45 @@
 extends SceneTree
 ## Gera um .tres por armadura em data/armaduras/ a partir da TABELA abaixo (as 21 armaduras
-## do Empório: Player's Handbook, Obojima e Northlands Worldbook).
-##   godot --headless --path . --script res://tools/gerar_armaduras.gd
+## do Empório: Player's Handbook, Obojima e Northlands Worldbook) e os ícones dos menus
+## (16x16, do pacote CC0 Idylwild's Armory). Duas passadas, como o gerar_armas:
+##   godot --headless --path . --script res://tools/gerar_armaduras.gd   (ícones)
+##   godot --headless --path . --import
+##   godot --headless --path . --script res://tools/gerar_armaduras.gd   (.tres)
 ## Para mudar uma armadura, edite a tabela e rode de novo (não edite os .tres à mão).
 
 const PASTA := "res://data/armaduras/"
-const TEXTURAS_ESCUDO := {
-	"escudo": "res://assets/armaduras/escudo.png",
-	"tampa_panela": "res://assets/armaduras/tampa_panela.png",
+const PASTA_FONTE := "res://assets/armaduras/fonte_idylwild/"
+const PASTA_ICONES := "res://assets/armaduras/icones/"
+const TAMANHO_ICONE := 16
+## Escudos: a mesma arte serve de ícone e de escudo na mão do herói.
+const ESCUDOS := ["escudo", "tampa_panela"]
+## Pixels mais escuros que isto são contorno e não recebem a tinta.
+const LUZ_CONTORNO := 0.15
+
+## Ícone de cada armadura: [ícone do pacote, tinta]. A tinta (multiplica a cor) diferencia
+## armaduras do livro que usam o mesmo ícone; branco = como no pacote.
+const ICONES := {
+	"acolchoada": ["quilted_armor", Color.WHITE],
+	"scumweed": ["quilted_armor", Color(0.62, 0.95, 0.6)],
+	"couro": ["leather_jacket", Color.WHITE],
+	"couro_morsa": ["leather_jacket", Color(0.85, 0.85, 0.9)],
+	"couro_batido": ["studded_jacket", Color.WHITE],
+	"gibao_peles": ["leather_jacket_alt", Color.WHITE],
+	"casca": ["leather_jacket_alt", Color(0.8, 0.95, 0.65)],
+	"brunea": ["studded_jacket_alt", Color(1.1, 1.0, 0.75)],
+	"camisao_malha": ["chainmail_alt", Color.WHITE],
+	"camisao_malha_endurecido": ["chainmail_alt", Color(0.78, 0.8, 0.88)],
+	"cota_aneis": ["chainmail_alt", Color(1.05, 0.95, 0.8)],
+	"cota_malha": ["chainmail_jacket", Color.WHITE],
+	"malha_dupla": ["chainmail_jacket", Color(0.8, 0.82, 0.92)],
+	"peitoral": ["breastplate", Color.WHITE],
+	"meia_armadura": ["platemail", Color(0.92, 0.92, 0.97)],
+	"talas": ["platemail", Color(0.78, 0.78, 0.84)],
+	"placas": ["platemail", Color.WHITE],
+	"beinagrind": ["platemail", Color(1.05, 0.98, 0.82)],
+	"mergulhador": ["close_helmet", Color(1.0, 0.78, 0.48)],
+	"escudo": ["wooden_buckler", Color.WHITE],
+	"tampa_panela": ["iron_buckler", Color.WHITE],
 }
 
 const L := Proficiencias.ARMADURA_LEVE
@@ -47,6 +79,13 @@ const TABELA := {
 
 func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_ICONES))
+	for arquivo in TABELA:
+		_icone(arquivo).save_png(ProjectSettings.globalize_path(PASTA_ICONES + arquivo + ".png"))
+	if TABELA.keys().any(func(arquivo: String) -> bool: return not ResourceLoader.exists(PASTA_ICONES + arquivo + ".png")):
+		print("Ícones gerados. Rode --import e depois este script de novo para criar os .tres.")
+		quit()
+		return
 	for arquivo in TABELA:
 		ResourceSaver.save(_criar(arquivo, TABELA[arquivo]), PASTA + arquivo + ".tres")
 	print("%d armaduras geradas em %s" % [TABELA.size(), PASTA])
@@ -69,9 +108,9 @@ func _criar(arquivo: String, d: Array) -> Armadura:
 	a.livro = d[10]
 	a.cor = d[11]
 	a.padrao = d[12]
-	if TEXTURAS_ESCUDO.has(arquivo):
-		a.textura = load(TEXTURAS_ESCUDO[arquivo])
-		a.icone = a.textura
+	a.icone = load(PASTA_ICONES + arquivo + ".png")
+	if arquivo in ESCUDOS:
+		a.textura = a.icone  # o broquel do pacote também é o escudo na mão do herói
 	a.descricao = _descricao(a)
 	return a
 
@@ -92,3 +131,18 @@ func _nome_categoria(categoria: StringName) -> String:
 		M: return "Armadura média"
 		P: return "Armadura pesada"
 	return "Escudo"
+
+
+## Ícone 16x16: o do pacote (com a tinta, se tiver) reduzido pela metade.
+func _icone(arquivo: String) -> Image:
+	var fonte: String = ICONES[arquivo][0]
+	var tinta: Color = ICONES[arquivo][1]
+	var img := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + fonte + ".png"))
+	img.convert(Image.FORMAT_RGBA8)
+	if tinta != Color.WHITE:
+		for y in img.get_height():
+			for x in img.get_width():
+				var cor := img.get_pixel(x, y)
+				if cor.a > 0.0 and cor.get_luminance() >= LUZ_CONTORNO:
+					img.set_pixel(x, y, Color(cor.r * tinta.r, cor.g * tinta.g, cor.b * tinta.b, cor.a).clamp())
+	return FerramentasPixel.reduzir(img, TAMANHO_ICONE)

@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_tthbg"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/camisao_malha.png" id="1_3x7mj"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_bi8c3"]
 
 [resource]
-script = ExtResource("1_tthbg")
+script = ExtResource("2_bi8c3")
 categoria = &"media"
 ca_base = 13
 max_destreza = 2
@@ -15,4 +16,5 @@ preco = "50 GP"
 livro = "Player’s Handbook"
 nome = "Camisão de Malha"
 descricao = "Armadura média. CA 13 + DES (máx. 2). (Chain Shirt, Player’s Handbook)"
+icone = ExtResource("1_3x7mj")
 espaco = &"corpo"

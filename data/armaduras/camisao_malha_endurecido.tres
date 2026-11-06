@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_drp5o"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/camisao_malha_endurecido.png" id="1_b734u"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_t4f2v"]
 
 [resource]
-script = ExtResource("1_drp5o")
+script = ExtResource("2_t4f2v")
 categoria = &"media"
 ca_base = 15
 max_destreza = 2
@@ -17,4 +18,5 @@ preco = "500 GP"
 livro = "Northlands Worldbook"
 nome = "Camisão de Malha Endurecido"
 descricao = "Armadura média. CA 15 + DES (máx. 2). Força 13. Desvantagem em Furtividade. (Hardened Mail Shirt, Northlands Worldbook)"
+icone = ExtResource("1_b734u")
 espaco = &"corpo"

@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_cp0g0"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/couro_morsa.png" id="1_ot6ru"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_sueen"]
 
 [resource]
-script = ExtResource("1_cp0g0")
+script = ExtResource("2_sueen")
 categoria = &"media"
 ca_base = 13
 max_destreza = 2
@@ -14,4 +15,5 @@ preco = "75 GP"
 livro = "Northlands Worldbook"
 nome = "Couro de Morsa"
 descricao = "Armadura média. CA 13 + DES (máx. 2). (Walrus Hide, Northlands Worldbook)"
+icone = ExtResource("1_ot6ru")
 espaco = &"corpo"

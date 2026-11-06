@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djiiynca58ypc"
-path="res://.godot/imported/tampa_panela.png-7b5cbed56b9ca258754e66ab72713afb.ctex"
+uid="uid://c42le4a053uhr"
+path="res://.godot/imported/chainmail_alt.png-8bce29c87dd1beaa2e7b5711eff2a377.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/armaduras/tampa_panela.png"
-dest_files=["res://.godot/imported/tampa_panela.png-7b5cbed56b9ca258754e66ab72713afb.ctex"]
+source_file="res://assets/armaduras/fonte_idylwild/chainmail_alt.png"
+dest_files=["res://.godot/imported/chainmail_alt.png-8bce29c87dd1beaa2e7b5711eff2a377.ctex"]
 
 [params]
 
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

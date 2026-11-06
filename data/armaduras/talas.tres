@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_8qy6p"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/talas.png" id="1_605p2"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_6ilp2"]
 
 [resource]
-script = ExtResource("1_8qy6p")
+script = ExtResource("2_6ilp2")
 categoria = &"pesada"
 ca_base = 17
 soma_destreza = false
@@ -17,4 +18,5 @@ preco = "200 GP"
 livro = "Player’s Handbook"
 nome = "Armadura de Talas"
 descricao = "Armadura pesada. CA 17. Força 15. Desvantagem em Furtividade. (Splint Armor, Player’s Handbook)"
+icone = ExtResource("1_605p2")
 espaco = &"corpo"

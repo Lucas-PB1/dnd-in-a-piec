@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_o6x5y"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/malha_dupla.png" id="1_jfji6"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_ylrck"]
 
 [resource]
-script = ExtResource("1_o6x5y")
+script = ExtResource("2_ylrck")
 categoria = &"pesada"
 ca_base = 17
 soma_destreza = false
@@ -17,4 +18,5 @@ preco = "350 GP"
 livro = "Northlands Worldbook"
 nome = "Malha Dupla"
 descricao = "Armadura pesada. CA 17. Força 16. Desvantagem em Furtividade. (Double Mail, Northlands Worldbook)"
+icone = ExtResource("1_jfji6")
 espaco = &"corpo"

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armaduras/escudo.png" id="1_tuu0t"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/escudo.png" id="1_tuu0t"]
 [ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_p4jxp"]
 
 [resource]

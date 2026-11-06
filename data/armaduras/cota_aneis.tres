@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_hitlj"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/cota_aneis.png" id="1_eih5i"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_k171f"]
 
 [resource]
-script = ExtResource("1_hitlj")
+script = ExtResource("2_k171f")
 categoria = &"pesada"
 ca_base = 14
 soma_destreza = false
@@ -16,4 +17,5 @@ preco = "30 GP"
 livro = "Player’s Handbook"
 nome = "Cota de Anéis"
 descricao = "Armadura pesada. CA 14. Desvantagem em Furtividade. (Ring Mail, Player’s Handbook)"
+icone = ExtResource("1_eih5i")
 espaco = &"corpo"

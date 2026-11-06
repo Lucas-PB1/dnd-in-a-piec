@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_dritw"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/mergulhador.png" id="1_tf865"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_3pyyd"]
 
 [resource]
-script = ExtResource("1_dritw")
+script = ExtResource("2_3pyyd")
 categoria = &"pesada"
 ca_base = 17
 soma_destreza = false
@@ -17,4 +18,5 @@ preco = "2,000 GP"
 livro = "Obojima"
 nome = "Armadura de Mergulhador"
 descricao = "Armadura pesada. CA 17. Força 16. Desvantagem em Furtividade. (Divers Armor, Obojima)"
+icone = ExtResource("1_tf865")
 espaco = &"corpo"

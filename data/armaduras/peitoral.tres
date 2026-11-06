@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_8bgqv"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/peitoral.png" id="1_j22x6"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_bpif8"]
 
 [resource]
-script = ExtResource("1_8bgqv")
+script = ExtResource("2_bpif8")
 categoria = &"media"
 ca_base = 14
 max_destreza = 2
@@ -15,4 +16,5 @@ preco = "400 GP"
 livro = "Player’s Handbook"
 nome = "Peitoral"
 descricao = "Armadura média. CA 14 + DES (máx. 2). (Breastplate, Player’s Handbook)"
+icone = ExtResource("1_j22x6")
 espaco = &"corpo"

@@ -16,8 +16,6 @@ const ARQ_RASTRO := "res://assets/efeitos/rastro.png"
 const ARQ_IMPACTO := "res://assets/efeitos/impacto.png"
 const ARQ_CONDICOES := "res://assets/efeitos/condicoes.png"
 const ARQ_BONECO := "res://features/boneco_treino/boneco_treino.png"
-const ARQ_ESCUDO := "res://assets/armaduras/escudo.png"
-const ARQ_TAMPA := "res://assets/armaduras/tampa_panela.png"
 const ARQ_BAU := "res://features/bau/bau.png"
 
 ## Arco de corte: quadros quadrados lado a lado.
@@ -38,8 +36,6 @@ func _initialize() -> void:
 	_gerar_condicoes()
 	_gerar_boneco()
 	_gerar_bau()
-	_gerar_escudo(ARQ_ESCUDO, 20, Color8(150, 92, 48), Color8(180, 184, 196), true)
-	_gerar_escudo(ARQ_TAMPA, 16, Color8(120, 124, 134), Color8(170, 174, 186), false)
 	print("Arte provisória gerada.")
 	quit()
 
@@ -180,26 +176,6 @@ func _gerar_bau() -> void:
 	_contornar(img, Rect2i(0, 0, 30, 22))
 	_salvar(img, ARQ_BAU)
 
-
-## Escudo redondo visto de frente: madeira (ou metal) com aro e, se `com_bossa`, o miolo
-## de metal. Fica no braço de trás, por trás do corpo (aparece pela borda das costas).
-func _gerar_escudo(caminho: String, diametro: int, cor_centro: Color, cor_aro: Color, com_bossa: bool) -> void:
-	var img := Image.create(diametro + 2, diametro + 2, false, Image.FORMAT_RGBA8)
-	var centro := Vector2(diametro / 2.0 + 1.0, diametro / 2.0 + 1.0)
-	var raio := diametro / 2.0
-	for y in img.get_height():
-		for x in img.get_width():
-			var d := (Vector2(x, y) + Vector2(0.5, 0.5)).distance_to(centro)
-			if d > raio:
-				continue
-			var cor := cor_aro if d > raio - 2.0 else cor_centro
-			if com_bossa and d < 2.5:
-				cor = cor_aro
-			if d <= raio - 2.0 and (x + y) % 5 == 0:
-				cor = cor.darkened(0.15)  # veios / amassados
-			img.set_pixel(x, y, cor)
-	_contornar(img, Rect2i(0, 0, img.get_width(), img.get_height()))
-	_salvar(img, caminho)
 
 
 func _salvar(img: Image, caminho: String) -> void:

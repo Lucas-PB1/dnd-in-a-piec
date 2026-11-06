@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="1_sbb7k"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/meia_armadura.png" id="1_s7w80"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="2_onk1v"]
 
 [resource]
-script = ExtResource("1_sbb7k")
+script = ExtResource("2_onk1v")
 categoria = &"media"
 ca_base = 15
 max_destreza = 2
@@ -16,4 +17,5 @@ preco = "750 GP"
 livro = "Player’s Handbook"
 nome = "Meia-Armadura"
 descricao = "Armadura média. CA 15 + DES (máx. 2). Desvantagem em Furtividade. (Half Plate Armor, Player’s Handbook)"
+icone = ExtResource("1_s7w80")
 espaco = &"corpo"
