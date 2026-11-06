@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/funda.png" id="1_x6ted"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_xfdnh"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_lvxda"]
+[ext_resource type="Texture2D" path="res://assets/armas/funda.png" id="4_0b78l"]
+
+[resource]
+script = ExtResource("3_lvxda")
+dados_dano = "1d4"
+categoria = &"simples"
+textura = ExtResource("4_0b78l")
+pegada = Vector2(6.166667, 12)
+comprimento = 17.3
+disparo_normal_pes = 30.0
+disparo_longo_pes = 120.0
+municao = "Pedra de Funda"
+maestria = &"lentidao"
+nome_original = "Sling"
+peso = "—"
+preco = "1 SP"
+livro = "Player’s Handbook"
+efeito = &""
+cor_corte = Color(1, 0.92, 0.7, 0.85)
+nome = "Funda"
+descricao = "Arma simples. Disparo (30/120), Munição. Maestria: Lentidão. (Sling, Player’s Handbook)"
+icone = ExtResource("1_x6ted")
+espaco = &"mao"

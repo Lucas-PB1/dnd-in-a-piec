@@ -9,7 +9,7 @@ static func texto(item: Item, ficha: Ficha = null, inventario: Inventario = null
 		return _arma(item as Arma, ficha, inventario)
 	if item is Armadura:
 		return _armadura(item as Armadura, ficha, inventario)
-	return ""
+	return item.descricao if item else ""
 
 
 static func _arma(arma: Arma, ficha: Ficha, inventario: Inventario) -> String:

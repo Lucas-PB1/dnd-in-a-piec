@@ -8,7 +8,7 @@ extends Area2D
 signal abrir_pedido(itens: Array[Item])
 
 ## Pastas cujos .tres de Item formam o conteúdo (o baú nunca esvazia: dá cópias).
-@export var pastas: PackedStringArray = ["res://data/armas/", "res://data/armaduras/"]
+@export var pastas: PackedStringArray = ["res://data/armas/", "res://data/armaduras/", "res://data/municoes/"]
 
 var _itens: Array[Item] = []
 var _corpos_perto: int = 0

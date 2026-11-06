@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/pistola.png" id="1_nx8ht"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_6x82u"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_paa1a"]
+[ext_resource type="Texture2D" path="res://assets/armas/pistola.png" id="4_4qtj0"]
+
+[resource]
+script = ExtResource("3_paa1a")
+dados_dano = "1d10"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("4_4qtj0")
+pegada = Vector2(6.1, 14)
+comprimento = 23.400000000000002
+disparo_normal_pes = 30.0
+disparo_longo_pes = 90.0
+municao = "Bala"
+recarga = true
+maestria = &"atormentar"
+nome_original = "Pistol"
+peso = "3 lb."
+preco = "250 GP"
+livro = "Player’s Handbook"
+efeito = &""
+nome = "Pistola"
+descricao = "Arma marcial. Disparo (30/90), Recarga, Munição. Maestria: Atormentar. (Pistol, Player’s Handbook)"
+icone = ExtResource("1_nx8ht")
+espaco = &"mao"

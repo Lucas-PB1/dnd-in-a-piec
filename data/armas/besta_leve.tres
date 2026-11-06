@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/besta_leve.png" id="1_kke2q"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_fpbl3"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_3soqi"]
+[ext_resource type="Texture2D" path="res://assets/armas/besta_leve.png" id="4_8jmqn"]
+
+[resource]
+script = ExtResource("3_3soqi")
+dados_dano = "1d8"
+tipo_dano = &"perfurante"
+categoria = &"simples"
+textura = ExtResource("4_8jmqn")
+pegada = Vector2(6.083333, 13.5)
+comprimento = 39.400000000000006
+duas_maos = true
+disparo_normal_pes = 80.0
+disparo_longo_pes = 320.0
+municao = "Virote"
+recarga = true
+besta = true
+maestria = &"lentidao"
+nome_original = "Light Crossbow"
+peso = "5 lb."
+preco = "25 GP"
+livro = "Player’s Handbook"
+efeito = &""
+nome = "Besta Leve"
+descricao = "Arma simples. Duas Mãos, Disparo (80/320), Recarga, Munição. Maestria: Lentidão. (Light Crossbow, Player’s Handbook)"
+icone = ExtResource("1_kke2q")
+espaco = &"mao"

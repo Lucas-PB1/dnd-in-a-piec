@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Municao" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/agulha.png" id="1_eqtvt"]
+[ext_resource type="Script" path="res://core/dados/municao.gd" id="2_0f2ot"]
+[ext_resource type="Texture2D" path="res://assets/armas/municoes/agulha.png" id="3_w81d5"]
+
+[resource]
+script = ExtResource("2_0f2ot")
+textura = ExtResource("3_w81d5")
+nome = "Agulha"
+descricao = "Munição. Empilha na mochila. (Needle)"
+icone = ExtResource("1_eqtvt")
+empilhavel = true

@@ -17,9 +17,10 @@ signal folego_mudou(restantes: int, total: int)
 ## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
 ## depois reviver()). Se ninguém escutar (cena aberta sozinha), o herói revive sozinho.
 signal caiu
-## Emitido ao arremessar a arma da mão. Quem monta o jogo cria o projétil.
-## Sem ninguém escutando (cena aberta sozinha), a arma continua na mão.
-signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float)
+## Emitido ao arremessar ou disparar. Quem monta o jogo cria o projétil.
+## `municao` preenchida = disparo: a arma fica na mão e essa munição é o que voa.
+## Sem ninguém escutando (cena aberta sozinha), nada é gasto.
+signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool)
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
@@ -228,14 +229,36 @@ func tempo_para_proximo_golpe() -> float:
 	return maxf(intervalo_entre_golpes() - _tempo_desde_golpe, 0.0)
 
 
-## Apertou atacar há pouco (buffer) e já pode golpear.
+## Apertou atacar há pouco (buffer) e já pode golpear. Arma à distância não corta: o tiro é o K.
 func pediu_ataque() -> bool:
+	var na_mao := inventario.equipado(Item.ESPACO_MAO) as Arma
+	if na_mao and na_mao.disparavel():
+		return false
 	return _contador_buffer_ataque > 0.0 and pode_golpear()
 
 
-## Apertou arremessar há pouco, já pode agir e a arma da mão arremessa.
+## Apertou arremessar há pouco, já pode agir e a arma da mão arremessa ou dispara.
+## Sem munição, avisa e não entra na pose.
 func pediu_arremesso() -> bool:
-	return _contador_buffer_arremesso > 0.0 and pode_golpear() and _arma_arremessavel() != null
+	if _contador_buffer_arremesso <= 0.0 or not pode_golpear():
+		return false
+	var arma := _arma_do_k()
+	if arma == null:
+		return false
+	if arma.disparavel() and not _tem_municao(arma):
+		avisar(AVISO_SEM_MUNICAO)
+		_contador_buffer_arremesso = 0.0
+		return false
+	return true
+
+
+## Segundo K logo depois do tiro da Besta de Mão, com o talento: gasta a ação bônus e outro virote.
+func quer_disparo_extra() -> bool:
+	if _contador_buffer_arremesso <= 0.0 or ficha == null or not acao_bonus_livre():
+		return false
+	var arma := _arma_do_k()
+	var de_mao := arma != null and arma.besta and arma.leve and arma.disparavel()
+	return de_mao and ficha.tem_talento(Ficha.TALENTO_ESPECIALISTA_EM_BESTA) and _tem_municao(arma)
 
 
 ## Arma na mão, ou o ataque desarmado se a mão estiver vazia.
@@ -255,7 +278,9 @@ func quer_golpe_extra() -> bool:
 		return false
 	var principal := inventario.equipado(Item.ESPACO_MAO) as Arma
 	var segunda := arma_secundaria()
-	var leves := principal != null and principal.leve and segunda != null and segunda.leve
+	if principal == null or principal.disparavel() or segunda == null or segunda.disparavel():
+		return false
+	var leves := principal.leve and segunda.leve
 	return leves and (_tem_corte_duplo() or acao_bonus_livre())
 
 
@@ -326,25 +351,29 @@ func segurando_arremesso() -> bool:
 	return Input.is_action_pressed("arremessar")
 
 
-## Pose de carregar o arremesso: `fracao` de 0 a 1 (quanto mais, mais para trás). -1 = sai da pose.
-func carregar_arremesso(fracao: float) -> void:
-	_ataque.carregar_arremesso(fracao)
+## Pose de carregar: `fracao` de 0 a 1 (quanto mais, mais para trás). `mira` em graus,
+## positivo = para cima. -1 na fração = sai da pose.
+func carregar_arremesso(fracao: float, mira: float = 0.0) -> void:
+	_ataque.carregar_arremesso(fracao, mira)
 
 
-## Solta a arma da mão. Sem ninguém escutando o sinal, ela continua equipada.
-## `forca` de 0 (alcance normal) a 1 (alcance longo).
-func lancar_arma(forca: float = 0.0) -> void:
-	var arma := _arma_arremessavel()
+## Enquanto carrega o K, W mira e não vira pulo.
+func anular_buffer_pulo() -> void:
+	_contador_buffer = 0.0
+
+
+## Solta o K. Arremesso: a arma sai da mão. Disparo: a arma fica e gasta 1 munição.
+## `forca` de 0 (alcance normal) a 1 (alcance longo). `mira` soma graus para cima no arco.
+## `extra` = o segundo tiro da Besta de Mão (ação bônus).
+## Sem ninguém escutando o sinal, nada é gasto.
+func lancar_arma(forca: float = 0.0, mira: float = 0.0, extra: bool = false) -> void:
+	var arma := _arma_do_k()
 	if arma == null or arma_arremessada.get_connections().is_empty():
 		return
-	var pen := inventario.penalidade(arma)
-	var golpe := Equipamento.golpe(ficha, inventario, arma)
-	_assinar(golpe)
-	var extraida := inventario.extrair_uma(arma)
-	_tempo_desde_golpe = 0.0
-	_contador_buffer_arremesso = 0.0
-	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar, forca)
-	_ataque.carregar_arremesso(-1.0)
+	if arma.disparavel():
+		_disparar(arma, forca, mira, extra)
+		return
+	_arremessar(arma, forca, mira)
 
 
 ## Arma caída volta para a mochila (e para a mão, se ela estiver vazia). false = mochila cheia.
@@ -558,11 +587,73 @@ func _tem_corte_duplo() -> bool:
 	return na_principal or na_segunda
 
 
-func _arma_arremessavel() -> Arma:
+## Inimigo a até 5 pés: o tiro à distância sai com desvantagem (as bestas do talento, não).
+const DISTANCIA_PERTO_TIRO_PES := 5.0
+const GRUPO_INIMIGOS := &"monstros"
+const AVISO_SEM_MUNICAO := "Sem munição"
+
+
+func _arma_do_k() -> Arma:
 	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
-	if arma and arma.arremessavel():
+	if arma and (arma.arremessavel() or arma.disparavel()):
 		return arma
 	return null
+
+
+func _arremessar(arma: Arma, forca: float, mira: float) -> void:
+	var pen := inventario.penalidade(arma)
+	var golpe := Equipamento.golpe(ficha, inventario, arma)
+	_assinar(golpe)
+	var extraida := inventario.extrair_uma(arma) as Arma
+	_marcar_ataque(false)
+	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar, forca, mira, null, false)
+
+
+func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
+	var pilha := _gastar_municao(arma)
+	if pilha == null:
+		avisar(AVISO_SEM_MUNICAO)
+		_contador_buffer_arremesso = 0.0
+		return
+	var golpe := _criar_golpe_de(arma, false)
+	if _inimigo_em_5_pes() and not _besta_ignora_perto(arma):
+		golpe.desvantagem = true
+	_marcar_ataque(extra)
+	arma_arremessada.emit(arma, golpe, 0, _ataque.global_position, direcao_olhar, forca, mira, pilha,
+		ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE))
+
+
+func _marcar_ataque(extra: bool) -> void:
+	if extra:
+		_tempo_desde_acao_bonus = 0.0
+	else:
+		_tempo_desde_golpe = 0.0
+	_contador_buffer_arremesso = 0.0
+	_ataque.carregar_arremesso(-1.0)
+
+
+func _gastar_municao(arma: Arma) -> Municao:
+	var pilha := inventario.item_chamado(arma.municao) as Municao
+	if pilha == null or inventario.extrair_uma(pilha) == null:
+		return null
+	return pilha
+
+
+func _tem_municao(arma: Arma) -> bool:
+	var pilha := inventario.item_chamado(arma.municao)
+	return pilha != null and inventario.quantidade_de(pilha) > 0
+
+
+func _inimigo_em_5_pes() -> bool:
+	var limite := EscalaDnd.pes_para_pixels(DISTANCIA_PERTO_TIRO_PES)
+	for n in get_tree().get_nodes_in_group(GRUPO_INIMIGOS):
+		if n is Node2D and global_position.distance_to((n as Node2D).global_position) <= limite:
+			return true
+	return false
+
+
+func _besta_ignora_perto(arma: Arma) -> bool:
+	return arma.besta and ficha.tem_talento(Ficha.TALENTO_ESPECIALISTA_EM_BESTA)
 
 
 ## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão

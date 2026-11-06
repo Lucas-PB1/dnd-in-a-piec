@@ -49,6 +49,14 @@ func quantidade_de(item: Item) -> int:
 	return _quantidades.get(item, 1) if item in itens else 0
 
 
+## Primeiro item com esse nome, ou null (a munição é achada pelo nome).
+func item_chamado(nome: String) -> Item:
+	for item in itens:
+		if item.nome == nome:
+			return item
+	return null
+
+
 ## Esvazia tudo (ex.: o herói recebe o pacote inicial).
 func limpar() -> void:
 	itens.clear()
@@ -184,10 +192,10 @@ func _destino_ao_equipar(item: Item) -> StringName:
 
 
 func _cabe_na_outra_mao(arma: Arma) -> bool:
-	if not arma.leve or arma.duas_maos or espaco_de(arma) == Item.ESPACO_MAO:
+	if not arma.leve or arma.duas_maos or arma.disparavel() or espaco_de(arma) == Item.ESPACO_MAO:
 		return false
 	var principal := _equipados.get(Item.ESPACO_MAO) as Arma
-	if principal == null or not principal.leve or principal.duas_maos:
+	if principal == null or not principal.leve or principal.duas_maos or principal.disparavel():
 		return false
 	var secundaria: Item = _equipados.get(Item.ESPACO_MAO_SECUNDARIA)
 	return secundaria == null or secundaria is Armadura

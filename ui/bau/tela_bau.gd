@@ -94,7 +94,7 @@ func _preencher_lista() -> void:
 
 func _passa_filtro(item: Item) -> bool:
 	if _filtro == FILTRO_ARMAS:
-		return item is Arma
+		return item is Arma or item is Municao
 	if _filtro == FILTRO_ARMADURAS:
 		return item is Armadura
 	return true

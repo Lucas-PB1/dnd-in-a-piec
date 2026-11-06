@@ -1,8 +1,8 @@
 extends EstadoJogador
-## Arremesso em duas fases. CARREGANDO: enquanto K está apertado, a arma vai para trás e a
-## força sobe (toque rápido = alcance normal; segurando até TEMPO_CARGA = alcance longo).
-## SOLTANDO: ao soltar K, a arma sai da mão e o herói termina o gesto. No chão o herói
-## freia; no ar continua caindo.
+## K em duas fases. CARREGANDO: a arma vai para trás, a força sobe (toque = alcance normal;
+## até TEMPO_CARGA = longo) e W/S miram para cima ou para baixo. W não pula neste estado.
+## Sem mexer na mira, o voo cai no chão na distância da força. SOLTANDO: arremesso solta a
+## arma; disparo gasta munição e a arma fica. No chão o herói freia; no ar continua caindo.
 
 enum Etapa { CARREGANDO, SOLTANDO }
 
@@ -10,16 +10,24 @@ enum Etapa { CARREGANDO, SOLTANDO }
 const TEMPO_CARGA := 0.6
 ## Tempo do gesto depois de soltar (s). O intervalo até o próximo ataque é o da iniciativa.
 const DURACAO_SOLTURA := 0.2
+## Graus por segundo ao mirar com W (cima) ou S (baixo) enquanto segura o K.
+const VELOCIDADE_MIRA := 140.0
+## Limite da mira (graus somados ao arco; positivo = para cima).
+const MIRA_CIMA := 70.0
+const MIRA_BAIXO := 40.0
 
 var _etapa: Etapa = Etapa.CARREGANDO
 var _carga: float = 0.0
 var _tempo: float = 0.0
+## Graus a mais para cima. 0 = o arco que cai no chão na distância da força.
+var _mira: float = 0.0
 
 
 func entrar() -> void:
 	_etapa = Etapa.CARREGANDO
 	_carga = 0.0
 	_tempo = 0.0
+	_mira = 0.0
 	jogador.carregar_arremesso(0.0)
 
 
@@ -28,9 +36,14 @@ func sair() -> void:
 
 
 func processar_fisica(delta: float) -> void:
+	jogador.anular_buffer_pulo()
 	_mover(delta)
 	if _etapa == Etapa.CARREGANDO:
 		_carregar(delta)
+		return
+	if jogador.quer_disparo_extra():
+		jogador.lancar_arma(_carga / TEMPO_CARGA, _mira, true)
+		_tempo = 0.0
 		return
 	_tempo += delta
 	if _tempo >= DURACAO_SOLTURA:
@@ -38,12 +51,21 @@ func processar_fisica(delta: float) -> void:
 
 
 func _carregar(delta: float) -> void:
+	_apontar_mira(delta)
 	if jogador.segurando_arremesso():
 		_carga = minf(_carga + delta, TEMPO_CARGA)
-		jogador.carregar_arremesso(_carga / TEMPO_CARGA)
+		jogador.carregar_arremesso(_carga / TEMPO_CARGA, _mira)
 		return
-	jogador.lancar_arma(_carga / TEMPO_CARGA)
+	jogador.lancar_arma(_carga / TEMPO_CARGA, _mira)
 	_etapa = Etapa.SOLTANDO
+
+
+## W sobe a mira, S desce. Sem os dois, o tiro fica no arco que cai no chão.
+func _apontar_mira(delta: float) -> void:
+	if Input.is_action_pressed("pular"):
+		_mira = minf(_mira + VELOCIDADE_MIRA * delta, MIRA_CIMA)
+	if Input.is_action_pressed("mover_baixo"):
+		_mira = maxf(_mira - VELOCIDADE_MIRA * delta, -MIRA_BAIXO)
 
 
 func _mover(delta: float) -> void:

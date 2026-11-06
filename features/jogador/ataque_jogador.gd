@@ -43,6 +43,10 @@ var _cruzada: Arma
 var _soma_cruzado: float = 0.0
 ## Carga do arremesso (0 a 1); negativo = não está carregando.
 var _carga: float = -1.0
+## Mira da carga (graus; positivo = para cima, além do ângulo da força).
+var _mira: float = 0.0
+## A arma carregada não aponta para trás do corpo nem para dentro do chão.
+const LIMITE_MIRA_VISUAL := Vector2(-100.0, 45.0)
 
 @onready var _espada: Sprite2D = $Espada
 @onready var _espada_cruzada: Sprite2D = $EspadaCruzada
@@ -71,7 +75,8 @@ func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
 	DesenhoArma.preparar(_espada, arma)
 	if _carga >= 0.0:
 		position = mao + RECUO_CARGA * _carga
-		_espada.rotation_degrees = DesenhoArma.rotacao(arma, lerpf(ANGULOS_CARGA.x, ANGULOS_CARGA.y, _carga))
+		var angulo_carga := clampf(lerpf(ANGULOS_CARGA.x, ANGULOS_CARGA.y, _carga) - _mira, LIMITE_MIRA_VISUAL.x, LIMITE_MIRA_VISUAL.y)
+		_espada.rotation_degrees = DesenhoArma.rotacao(arma, angulo_carga)
 		return
 	_espada.rotation_degrees = DesenhoArma.rotacao(arma, DesenhoArma.angulo_sem_tocar_chao(angulo, mao.y, arma, FOLGA_DO_CHAO))
 
@@ -93,9 +98,10 @@ func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false, principal: Arma
 	_aplicar_pose()
 
 
-## Pose de carregar o arremesso (`fracao` 0 a 1; negativo = volta ao repouso).
-func carregar_arremesso(fracao: float) -> void:
+## Pose de carregar (`fracao` 0 a 1; negativo = volta ao repouso). `mira` levanta a arma.
+func carregar_arremesso(fracao: float, mira: float = 0.0) -> void:
 	_carga = fracao
+	_mira = mira
 
 
 ## A mão saiu do lugar da animação (golpe ou carga): a camada da mão não deve cobrir a arma.

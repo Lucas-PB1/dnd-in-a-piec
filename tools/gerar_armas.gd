@@ -1,14 +1,17 @@
 extends SceneTree
-## Gera as armas de corpo a corpo e de arremesso do Player's Handbook (2024): o sprite
-## provisório de cada uma (assets/armas/<id>.png) e o .tres (data/armas/<id>.tres).
+## Gera as armas do Player's Handbook (2024): corpo a corpo, arremesso e à distância.
+## Sprite provisório em assets/armas/<id>.png e .tres em data/armas/<id>.tres.
+## Munição em data/municoes/ (a flecha do pacote Idylwild vira o projétil).
 ##   godot --headless --path . --script res://tools/gerar_armas.gd
 ##   godot --headless --path . --import
 ##   godot --headless --path . --script res://tools/gerar_armas.gd   (2ª vez: cria os .tres)
 ## Para mudar uma arma, edite a TABELA e rode de novo (não edite os .tres à mão).
-## Armas à distância (arcos, bestas, funda, zarabatana, armas de fogo) entram numa fatia própria.
+## À distância: a coluna de alcance vai para o disparo (propriedade D), não para o arremesso.
 
 const PASTA_DADOS := "res://data/armas/"
+const PASTA_MUNICOES := "res://data/municoes/"
 const PASTA_ARTE := "res://assets/armas/"
+const PASTA_MUNICAO_ARTE := "res://assets/armas/municoes/"
 ## Ícones de 16x16 para os menus (o ícone do pacote reduzido pela metade).
 const PASTA_ICONES := "res://assets/armas/icones/"
 const TAMANHO_ICONE := 16
@@ -26,10 +29,12 @@ const PONTA_NORMAL := EscalaDnd.PONTA_5_PES
 const PONTA_ALCANCE := PONTA_NORMAL + EscalaDnd.PIXELS_POR_LADRILHO
 const ARQ_DESARMADO := "res://data/ataque_desarmado.tres"
 
-## Propriedades: F acuidade, L leve, H pesada, T duas mãos, R alcance, E empilhável.
-## id: [nome, nome original, categoria, dano, tipo, propriedades, versátil, arremesso "n/l",
-##      maestria, peso, preço, ícone de origem (assets/armas/fonte_idylwild/; vazio = desenhado
-##      por script), comprimento da pegada até a ponta (px, escala de jogo; 0 = o do ícone)]
+## Propriedades: F acuidade, L leve, H pesada, T duas mãos, R alcance, E empilhável,
+## D disparo, G recarga, X besta.
+## id: [nome, nome original, categoria, dano, tipo, propriedades, versátil, alcance "n/l"
+##      (arremesso, ou disparo se tiver D), maestria, peso, preço, ícone de origem
+##      (assets/armas/fonte_idylwild/; vazio = desenhado por script), comprimento da pegada
+##      até a ponta (px; 0 = o do ícone), munição (só no disparo)]
 const TABELA := {
 	"clava": ["Clava", "Club", S, "1d4", B, "L", "", "", Proficiencias.LENTIDAO, "2 lb.", "1 SP", "club1", 30],
 	"adaga": ["Adaga", "Dagger", S, "1d4", P, "FL", "", "20/60", Proficiencias.CORTE_DUPLO, "1 lb.", "2 GP", "dagger1", 24],
@@ -60,7 +65,27 @@ const TABELA := {
 	"picareta_guerra": ["Picareta de Guerra", "War Pick", M, "1d8", P, "", "1d10", "", Proficiencias.ENFRAQUECER, "2 lb.", "5 GP", "axe4", 38],
 	"martelo_guerra": ["Martelo de Guerra", "Warhammer", M, "1d8", B, "", "1d10", "", Proficiencias.EMPURRAR, "5 lb.", "15 GP", "hammer1", 40],
 	"chicote": ["Chicote", "Whip", M, "1d4", C, "FR", "", "", Proficiencias.LENTIDAO, "3 lb.", "2 GP", "", 70],
+	"besta_leve": ["Besta Leve", "Light Crossbow", S, "1d8", P, "TXGD", "", "80/320", Proficiencias.LENTIDAO, "5 lb.", "25 GP", "", 44, "Virote"],
+	"arco_curto": ["Arco Curto", "Shortbow", S, "1d6", P, "TD", "", "80/320", Proficiencias.ATORMENTAR, "2 lb.", "25 GP", "", 40, "Flecha"],
+	"funda": ["Funda", "Sling", S, "1d4", B, "D", "", "30/120", Proficiencias.LENTIDAO, "—", "1 SP", "", 22, "Pedra de Funda"],
+	"zarabatana": ["Zarabatana", "Blowgun", M, "1d1", P, "GD", "", "25/100", Proficiencias.ATORMENTAR, "1 lb.", "10 GP", "", 36, "Agulha"],
+	"besta_mao": ["Besta de Mão", "Hand Crossbow", M, "1d6", P, "LXGD", "", "30/120", Proficiencias.ATORMENTAR, "3 lb.", "75 GP", "", 28, "Virote"],
+	"besta_pesada": ["Besta Pesada", "Heavy Crossbow", M, "1d10", P, "HTXGD", "", "100/400", Proficiencias.EMPURRAR, "18 lb.", "50 GP", "", 52, "Virote"],
+	"arco_longo": ["Arco Longo", "Longbow", M, "1d8", P, "HTD", "", "150/600", Proficiencias.LENTIDAO, "2 lb.", "50 GP", "", 56, "Flecha"],
+	"mosquete": ["Mosquete", "Musket", M, "1d12", P, "HTGD", "", "40/120", Proficiencias.LENTIDAO, "10 lb.", "500 GP", "", 56, "Bala"],
+	"pistola": ["Pistola", "Pistol", M, "1d10", P, "GD", "", "30/90", Proficiencias.ATORMENTAR, "3 lb.", "250 GP", "", 28, "Bala"],
 }
+
+## Munição: id do arquivo -> [nome, nome original, usa a flecha do pacote?].
+const MUNICOES := {
+	"flecha": ["Flecha", "Arrow", true],
+	"virote": ["Virote", "Bolt", false],
+	"pedra_funda": ["Pedra de Funda", "Sling Bullet", false],
+	"agulha": ["Agulha", "Needle", false],
+	"bala": ["Bala", "Firearm Bullet", false],
+}
+## A flecha do pacote aponta para cima e à direita, como os outros ícones.
+const ANGULO_FLECHA := -45.0
 
 ## Armas de arremesso que voam de ponta (as outras giram no ar).
 const DE_PONTA := ["azagaia", "lanca", "tridente", "dardo"]
@@ -113,7 +138,9 @@ const COMPRIMENTO_SOCO := 8.0
 
 func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_DADOS))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_MUNICOES))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_ARTE))
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_MUNICAO_ARTE))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_ICONES))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA_QUADROS))
 	for id in TABELA:
@@ -121,6 +148,9 @@ func _initialize() -> void:
 		_icone(id, TABELA[id]).save_png(PASTA_ICONES + id + ".png")
 		if QUADROS.has(id):
 			_folha_de_quadros(id).save_png(PASTA_QUADROS + id + ".png")
+	for id in MUNICOES:
+		_desenhar_municao(id).save_png(PASTA_MUNICAO_ARTE + id + ".png")
+		_icone_municao(id).save_png(PASTA_ICONES + id + ".png")
 	var faltando := TABELA.keys().filter(func(id: String) -> bool: return _falta_arte(id))
 	if not faltando.is_empty():
 		print("Sprites gerados. Rode --import e depois este script de novo para criar os .tres.")
@@ -128,15 +158,21 @@ func _initialize() -> void:
 		return
 	for id in TABELA:
 		ResourceSaver.save(_criar(id, TABELA[id]), PASTA_DADOS + id + ".tres")
+	for id in MUNICOES:
+		ResourceSaver.save(_criar_municao(id), PASTA_MUNICOES + id + ".tres")
 	_atualizar_soco()
-	print("%d armas geradas em %s" % [TABELA.size(), PASTA_DADOS])
+	print("%d armas e %d munições geradas." % [TABELA.size(), MUNICOES.size()])
 	quit()
 
 
 ## Alguma imagem da arma ainda não foi importada (sprite, ícone ou quadros)?
 func _falta_arte(id: String) -> bool:
 	var falta_quadros := QUADROS.has(id) and not ResourceLoader.exists(PASTA_QUADROS + id + ".png")
-	return not ResourceLoader.exists(PASTA_ARTE + id + ".png") or not ResourceLoader.exists(PASTA_ICONES + id + ".png") or falta_quadros
+	var falta_municao := false
+	for mid in MUNICOES:
+		if not ResourceLoader.exists(PASTA_MUNICAO_ARTE + mid + ".png") or not ResourceLoader.exists(PASTA_ICONES + mid + ".png"):
+			falta_municao = true
+	return falta_municao or not ResourceLoader.exists(PASTA_ARTE + id + ".png") or not ResourceLoader.exists(PASTA_ICONES + id + ".png") or falta_quadros
 
 
 # --- Dados ------------------------------------------------------------------------
@@ -159,8 +195,15 @@ func _criar(id: String, d: Array) -> Arma:
 	a.arremesso_de_ponta = id in DE_PONTA
 	if d[7] != "":
 		var partes: PackedStringArray = (d[7] as String).split("/")
-		a.arremesso_normal_pes = float(partes[0])
-		a.arremesso_longo_pes = float(partes[1])
+		if "D" in props:
+			a.disparo_normal_pes = float(partes[0])
+			a.disparo_longo_pes = float(partes[1])
+			a.municao = d[13]
+			a.recarga = "G" in props
+			a.besta = "X" in props
+		else:
+			a.arremesso_normal_pes = float(partes[0])
+			a.arremesso_longo_pes = float(partes[1])
 	a.maestria = d[8]
 	a.peso = d[9]
 	a.preco = d[10]
@@ -171,12 +214,18 @@ func _criar(id: String, d: Array) -> Arma:
 	var medidas := geometria(a.textura.get_image(), a.angulo_arte)
 	a.pegada = medidas[0]
 	a.comprimento = snappedf(medidas[1], 0.1)
-	if QUADROS.has(id):
+	if a.disparavel():
+		a.poses = []
+		a.passo = 0.0
+		a.efeito = &""
+	elif QUADROS.has(id):
 		_aplicar_quadros(a, id)
+		a.passo = _passo(a, PONTA_ALCANCE if a.alcance_estendido else PONTA_NORMAL)
+		a.efeito = _efeito(a, id)
 	else:
 		a.poses = _poses(GOLPES[id])
-	a.passo = _passo(a, PONTA_ALCANCE if a.alcance_estendido else PONTA_NORMAL)
-	a.efeito = _efeito(a, id)
+		a.passo = _passo(a, PONTA_ALCANCE if a.alcance_estendido else PONTA_NORMAL)
+		a.efeito = _efeito(a, id)
 	a.cor_corte = Color(1.0, 0.92, 0.7, 0.85) if a.tipo_dano == B else Color(0.85, 0.95, 1.0, 0.9)
 	a.descricao = _descricao(a)
 	return a
@@ -285,6 +334,8 @@ const LUZ_CONTORNO := 0.18
 func _desenhar(id: String, d: Array) -> Image:
 	var fonte: String = d[11]
 	var alvo: float = d[12]
+	if "D" in (d[5] as String):
+		return _desenhar_distancia(id, roundi(alvo))
 	if fonte == "":
 		return _chicote(roundi(alvo + PEGADA_ARTE))
 	var img := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + fonte + ".png"))
@@ -418,12 +469,184 @@ func _contornar(img: Image) -> void:
 		img.set_pixelv(p, COR_CONTORNO)
 
 
+## Munição empilhável. A flecha reusa a arte do pacote; o resto é desenhado apontando para a direita.
+func _criar_municao(id: String) -> Municao:
+	var d: Array = MUNICOES[id]
+	var m := Municao.new()
+	m.nome = d[0]
+	m.descricao = "Munição. Empilha na mochila. (%s)" % d[1]
+	m.empilhavel = true
+	m.textura = load(PASTA_MUNICAO_ARTE + id + ".png")
+	m.icone = load(PASTA_ICONES + id + ".png")
+	m.angulo_arte = ANGULO_FLECHA if d[2] else 0.0
+	return m
+
+
+func _desenhar_municao(id: String) -> Image:
+	if MUNICOES[id][2]:
+		var flecha := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + "arrow1.png"))
+		flecha.convert(Image.FORMAT_RGBA8)
+		return flecha
+	match id:
+		"virote":
+			return _haste_municao(18, 5, COR_MADEIRA, COR_FERRO)
+		"agulha":
+			return _haste_municao(14, 3, COR_FERRO, COR_FERRO_CLARO)
+		"pedra_funda":
+			return _pedra_municao()
+		_:
+			return _bala_municao()
+
+
+func _icone_municao(id: String) -> Image:
+	var img := Image.create(TAMANHO_ICONE, TAMANHO_ICONE, false, Image.FORMAT_RGBA8)
+	match id:
+		"flecha":
+			_linha(img, Vector2(2, 13), Vector2(12, 3), COR_MADEIRA_CLARA, 1)
+			img.set_pixel(12, 3, COR_FERRO_CLARO)
+			img.set_pixel(3, 12, COR_COURO)
+		"virote":
+			_linha(img, Vector2(3, 12), Vector2(12, 4), COR_MADEIRA, 1)
+			img.set_pixel(12, 4, COR_FERRO)
+		"agulha":
+			_linha(img, Vector2(4, 11), Vector2(11, 4), COR_FERRO_CLARO, 1)
+		"pedra_funda":
+			_disco(img, Vector2(8, 8), 3.0, COR_PEDRA)
+		_:
+			_disco(img, Vector2(8, 8), 2.2, COR_FERRO_ESCURO)
+	_contornar(img)
+	return img
+
+
+# --- Armas à distância (desenhadas, na horizontal, cabo à esquerda) -------------
+
+const COR_MADEIRA := Color8(120, 72, 40)
+const COR_MADEIRA_CLARA := Color8(176, 122, 70)
+const COR_FERRO := Color8(140, 146, 160)
+const COR_FERRO_CLARO := Color8(196, 202, 214)
+const COR_FERRO_ESCURO := Color8(62, 66, 78)
+const COR_CORDA := Color8(210, 196, 150)
+const COR_PEDRA := Color8(110, 108, 100)
+
+
+func _desenhar_distancia(id: String, comprimento: int) -> Image:
+	var altura := 28 if id in ["arco_longo", "besta_pesada", "mosquete"] else 20
+	var img := Image.create(comprimento + 4, altura + 4, false, Image.FORMAT_RGBA8)
+	match id:
+		"arco_curto", "arco_longo":
+			_arco(img, id == "arco_longo")
+		"besta_leve", "besta_mao", "besta_pesada":
+			_besta(img, id == "besta_mao")
+		"funda":
+			_funda(img)
+		"zarabatana":
+			_tubo(img, COR_MADEIRA)
+		"mosquete", "pistola":
+			_arma_de_fogo(img, id == "pistola")
+	_contornar(img)
+	return img
+
+
+func _icone_distancia(id: String) -> Image:
+	var img := Image.create(TAMANHO_ICONE, TAMANHO_ICONE, false, Image.FORMAT_RGBA8)
+	match id:
+		"arco_curto", "arco_longo":
+			_linha(img, Vector2(3, 8), Vector2(12, 2), COR_MADEIRA, 1)
+			_linha(img, Vector2(3, 8), Vector2(12, 13), COR_MADEIRA, 1)
+			_linha(img, Vector2(12, 2), Vector2(12, 13), COR_CORDA, 1)
+		"besta_leve", "besta_mao", "besta_pesada":
+			img.fill_rect(Rect2i(2, 7, 10, 3), COR_MADEIRA)
+			_linha(img, Vector2(11, 3), Vector2(11, 12), COR_MADEIRA_CLARA, 1)
+		"funda":
+			_linha(img, Vector2(4, 3), Vector2(8, 12), COR_COURO, 1)
+			_linha(img, Vector2(12, 3), Vector2(8, 12), COR_COURO, 1)
+		"zarabatana":
+			_linha(img, Vector2(2, 8), Vector2(13, 7), COR_MADEIRA, 1)
+		_:
+			img.fill_rect(Rect2i(2, 8, 7, 4), COR_MADEIRA)
+			img.fill_rect(Rect2i(8, 6, 5, 2), COR_FERRO)
+	_contornar(img)
+	return img
+
+
+func _arco(img: Image, longo: bool) -> void:
+	var h := img.get_height()
+	var w := img.get_width()
+	var meio := h / 2
+	var curva := 2 if longo else 1
+	img.fill_rect(Rect2i(2, meio - 2, 5, 4), COR_MADEIRA_CLARA)
+	_linha(img, Vector2(6, meio), Vector2(w - 4, curva), COR_MADEIRA, 2)
+	_linha(img, Vector2(6, meio), Vector2(w - 4, h - curva - 1), COR_MADEIRA, 2)
+	_linha(img, Vector2(w - 4, curva), Vector2(w - 4, h - curva - 1), COR_CORDA, 1)
+
+
+func _besta(img: Image, de_mao: bool) -> void:
+	var h := img.get_height()
+	var w := img.get_width()
+	var meio := h / 2
+	var corpo := 4 if de_mao else 6
+	img.fill_rect(Rect2i(2, meio - 1, w - 8, 3), COR_MADEIRA)
+	img.fill_rect(Rect2i(2, meio + 1, corpo, 3), COR_MADEIRA_CLARA)
+	_linha(img, Vector2(w - 6, 3), Vector2(w - 6, h - 4), COR_MADEIRA_CLARA, 2)
+	_linha(img, Vector2(w - 4, 4), Vector2(w - 4, h - 5), COR_CORDA, 1)
+
+
+func _funda(img: Image) -> void:
+	var h := img.get_height()
+	var w := img.get_width()
+	var meio := h / 2
+	_linha(img, Vector2(2, meio), Vector2(w - 6, 3), COR_COURO, 1)
+	_linha(img, Vector2(2, meio), Vector2(w - 6, h - 4), COR_COURO, 1)
+	_disco(img, Vector2(w - 5, meio), 2.5, COR_PEDRA)
+
+
+func _tubo(img: Image, cor: Color) -> void:
+	var meio := img.get_height() / 2
+	img.fill_rect(Rect2i(2, meio - 1, img.get_width() - 4, 2), cor)
+	img.set_pixel(3, meio - 1, COR_MADEIRA_CLARA)
+
+
+func _arma_de_fogo(img: Image, pistola: bool) -> void:
+	var meio := img.get_height() / 2
+	var coronha := 8 if pistola else 14
+	img.fill_rect(Rect2i(2, meio, coronha, 4), COR_MADEIRA)
+	img.fill_rect(Rect2i(coronha, meio - 1, img.get_width() - coronha - 3, 2), COR_FERRO)
+	img.set_pixel(coronha, meio - 2, COR_FERRO_ESCURO)
+
+
+func _haste_municao(comprimento: int, altura: int, corpo: Color, ponta: Color) -> Image:
+	var img := Image.create(comprimento, altura, false, Image.FORMAT_RGBA8)
+	var meio := altura / 2
+	img.fill_rect(Rect2i(1, meio, comprimento - 4, 1), corpo)
+	img.set_pixel(comprimento - 3, meio, ponta)
+	img.set_pixel(2, meio, COR_COURO)
+	_contornar(img)
+	return img
+
+
+func _pedra_municao() -> Image:
+	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	_disco(img, Vector2(3.5, 3.5), 2.4, COR_PEDRA)
+	_contornar(img)
+	return img
+
+
+func _bala_municao() -> Image:
+	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	_disco(img, Vector2(3.5, 3.5), 2.0, COR_FERRO_ESCURO)
+	img.set_pixel(3, 2, COR_FERRO_CLARO)
+	_contornar(img)
+	return img
+
+
 # --- Ícones dos menus (16x16) ---------------------------------------------------
 
 ## Ícone do menu: o ícone original do pacote (com a cor da variação), reduzido pela metade.
 ## O chicote, desenhado por script, ganha um ícone enrolado.
 func _icone(id: String, d: Array) -> Image:
 	var fonte: String = d[11]
+	if "D" in (d[5] as String):
+		return _icone_distancia(id)
 	if fonte == "":
 		return _icone_chicote()
 	var img := Image.load_from_file(ProjectSettings.globalize_path(PASTA_FONTE + fonte + ".png"))

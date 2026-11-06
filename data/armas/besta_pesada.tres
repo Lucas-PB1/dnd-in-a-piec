@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/besta_pesada.png" id="1_m05rm"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_ffk4n"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_gib4f"]
+[ext_resource type="Texture2D" path="res://assets/armas/besta_pesada.png" id="4_nplx5"]
+
+[resource]
+script = ExtResource("3_gib4f")
+dados_dano = "1d10"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("4_nplx5")
+pegada = Vector2(6.083333, 17.5)
+comprimento = 47.400000000000006
+pesada = true
+duas_maos = true
+disparo_normal_pes = 100.0
+disparo_longo_pes = 400.0
+municao = "Virote"
+recarga = true
+besta = true
+maestria = &"empurrar"
+nome_original = "Heavy Crossbow"
+peso = "18 lb."
+preco = "50 GP"
+livro = "Player’s Handbook"
+efeito = &""
+nome = "Besta Pesada"
+descricao = "Arma marcial. Pesada, Duas Mãos, Disparo (100/400), Recarga, Munição. Maestria: Empurrar. (Heavy Crossbow, Player’s Handbook)"
+icone = ExtResource("1_m05rm")
+espaco = &"mao"

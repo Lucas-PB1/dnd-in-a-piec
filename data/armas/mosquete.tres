@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/mosquete.png" id="1_h2t7n"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_grx17"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_ufs75"]
+[ext_resource type="Texture2D" path="res://assets/armas/mosquete.png" id="4_yso3n"]
+
+[resource]
+script = ExtResource("3_ufs75")
+dados_dano = "1d12"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("4_yso3n")
+pegada = Vector2(6.1, 18)
+comprimento = 51.400000000000006
+pesada = true
+duas_maos = true
+disparo_normal_pes = 40.0
+disparo_longo_pes = 120.0
+municao = "Bala"
+recarga = true
+maestria = &"lentidao"
+nome_original = "Musket"
+peso = "10 lb."
+preco = "500 GP"
+livro = "Player’s Handbook"
+efeito = &""
+nome = "Mosquete"
+descricao = "Arma marcial. Pesada, Duas Mãos, Disparo (40/120), Recarga, Munição. Maestria: Lentidão. (Musket, Player’s Handbook)"
+icone = ExtResource("1_h2t7n")
+espaco = &"mao"

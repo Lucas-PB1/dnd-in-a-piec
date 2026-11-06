@@ -1,6 +1,7 @@
 class_name Arma
 extends Item
-## Dados de uma arma corpo a corpo (item equipável na mão). Uma arma nova = um .tres novo em data/.
+## Dados de uma arma (item equipável na mão). Uma arma nova = um .tres novo em data/.
+## Corpo a corpo e arremesso têm golpe. À distância dispara com K e gasta munição.
 ## Os tempos contam a partir do início do golpe.
 
 ## Dados de dano no formato de D&D (ex.: "1d6" para espada curta, "1d8" para espada longa).
@@ -39,6 +40,15 @@ extends Item
 @export var arremesso_longo_pes: float = 0.0
 ## Arremessada, voa de ponta (Azagaia, Lança, Tridente, Dardo) e finca no chão; senão, gira.
 @export var arremesso_de_ponta: bool = false
+## Disparo: distância normal e longa (pés). 0 = não é arma à distância. Tecla K; a arma fica na mão.
+@export var disparo_normal_pes: float = 0.0
+@export var disparo_longo_pes: float = 0.0
+## Nome do item de munição que o disparo gasta (ex.: "Flecha"). Vazio = não gasta.
+@export var municao: String = ""
+## Recarga (Loading): no nível 1 o ritmo já é a iniciativa, então ainda não pula um tiro.
+@export var recarga: bool = false
+## Besta: o talento Especialista em Besta vale para ela.
+@export var besta: bool = false
 ## Maestria (Proficiencias.MAESTRIAS): só vale se a classe dominar a arma (fatia 11c).
 @export var maestria: StringName = &""
 
@@ -91,6 +101,11 @@ func arremessavel() -> bool:
 	return arremesso_normal_pes > 0.0
 
 
+## Arma à distância: K dispara, a arma fica na mão e gasta munição.
+func disparavel() -> bool:
+	return disparo_normal_pes > 0.0
+
+
 ## Duas Mãos ocupa também a mão secundária.
 func espacos_extras() -> Array[StringName]:
 	return [Item.ESPACO_MAO_SECUNDARIA] if duas_maos else []
@@ -107,6 +122,12 @@ func texto_propriedades() -> String:
 		partes.append("Versátil (%s)" % dados_versatil)
 	if arremessavel():
 		partes.append("Arremesso (%d/%d)" % [arremesso_normal_pes, arremesso_longo_pes])
+	if disparavel():
+		partes.append("Disparo (%d/%d)" % [disparo_normal_pes, disparo_longo_pes])
+	if recarga:
+		partes.append("Recarga")
+	if municao != "":
+		partes.append("Munição")
 	return ", ".join(partes)
 
 

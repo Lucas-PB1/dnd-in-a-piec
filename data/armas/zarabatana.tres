@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/zarabatana.png" id="1_0q0ob"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_ui2x8"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_hxwuk"]
+[ext_resource type="Texture2D" path="res://assets/armas/zarabatana.png" id="4_hnm52"]
+
+[resource]
+script = ExtResource("3_hxwuk")
+dados_dano = "1d1"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("4_hnm52")
+pegada = Vector2(6.166667, 12)
+comprimento = 32.300000000000004
+disparo_normal_pes = 25.0
+disparo_longo_pes = 100.0
+municao = "Agulha"
+recarga = true
+maestria = &"atormentar"
+nome_original = "Blowgun"
+peso = "1 lb."
+preco = "10 GP"
+livro = "Player’s Handbook"
+efeito = &""
+nome = "Zarabatana"
+descricao = "Arma marcial. Disparo (25/100), Recarga, Munição. Maestria: Atormentar. (Blowgun, Player’s Handbook)"
+icone = ExtResource("1_0q0ob")
+espaco = &"mao"

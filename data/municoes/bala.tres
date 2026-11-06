@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Municao" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/bala.png" id="1_43eb5"]
+[ext_resource type="Script" path="res://core/dados/municao.gd" id="2_xn770"]
+[ext_resource type="Texture2D" path="res://assets/armas/municoes/bala.png" id="3_it4dn"]
+
+[resource]
+script = ExtResource("2_xn770")
+textura = ExtResource("3_it4dn")
+nome = "Bala"
+descricao = "Munição. Empilha na mochila. (Firearm Bullet)"
+icone = ExtResource("1_43eb5")
+empilhavel = true

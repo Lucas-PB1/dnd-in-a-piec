@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/arco_curto.png" id="1_eo4yo"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_uh57n"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_0ul0p"]
+[ext_resource type="Texture2D" path="res://assets/armas/arco_curto.png" id="4_v8yby"]
+
+[resource]
+script = ExtResource("3_0ul0p")
+tipo_dano = &"perfurante"
+categoria = &"simples"
+textura = ExtResource("4_v8yby")
+pegada = Vector2(6.1, 12)
+comprimento = 35.4
+duas_maos = true
+disparo_normal_pes = 80.0
+disparo_longo_pes = 320.0
+municao = "Flecha"
+maestria = &"atormentar"
+nome_original = "Shortbow"
+peso = "2 lb."
+preco = "25 GP"
+livro = "Player’s Handbook"
+efeito = &""
+nome = "Arco Curto"
+descricao = "Arma simples. Duas Mãos, Disparo (80/320), Munição. Maestria: Atormentar. (Shortbow, Player’s Handbook)"
+icone = ExtResource("1_eo4yo")
+espaco = &"mao"

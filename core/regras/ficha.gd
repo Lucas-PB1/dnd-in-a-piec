@@ -29,6 +29,14 @@ var atributos: Dictionary[StringName, int] = {}
 ## Maestria em Armas: nomes dos tipos de arma que o personagem domina (Guerreiro: 3,
 ## escolhidos na criação). Só com elas a maestria da arma vale.
 var armas_dominadas: Array[String] = []
+## Talentos (origem e geral). Começa vazia: o antecedente é que vai marcar o de origem.
+var talentos: Array[String] = []
+
+## Tiro longo sem a desvantagem de distância.
+const TALENTO_ATIRADOR_DE_ELITE := "Atirador de Elite"
+## Besta: sem a desvantagem de atirar colado no inimigo; a Besta de Mão dispara de novo
+## na ação bônus.
+const TALENTO_ESPECIALISTA_EM_BESTA := "Especialista em Besta"
 
 
 func _init(classe_rpg: ClasseRPG, valores: Dictionary, nome_personagem: String = NOME_PADRAO) -> void:
@@ -59,12 +67,19 @@ func vida_maxima() -> int:
 	return maxi(classe.dado_vida + modificador(Atributos.CONSTITUICAO), VIDA_MINIMA)
 
 
-## Modificador somado ao dano: Força, ou o maior entre Força e Destreza se a arma tem acuidade.
+## Modificador somado ao ataque e ao dano. Arma à distância usa Destreza. Acuidade usa o
+## maior entre Força e Destreza. As outras usam Força.
 func bonus_dano(arma: Arma) -> int:
+	if arma.disparavel():
+		return modificador(Atributos.DESTREZA)
 	var mod_forca := modificador(Atributos.FORCA)
 	if arma.acuidade:
 		return maxi(mod_forca, modificador(Atributos.DESTREZA))
 	return mod_forca
+
+
+func tem_talento(talento: String) -> bool:
+	return talento in talentos
 
 
 ## Dados de dano da arma já com o modificador (ex.: espada curta + 2 = "1d6+2").

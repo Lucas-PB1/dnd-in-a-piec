@@ -4,7 +4,9 @@ extends SceneTree
 ## godot --headless --debug --path . --script res://tests/teste_armas.gd
 
 const PASTA := "res://data/armas/"
-const TOTAL_ARMAS := 29
+const TOTAL_CORPO := 29
+const TOTAL_DISTANCIA := 9
+const TOTAL_MUNICOES := 5
 const TOTAL_ARMADURAS := 21
 ## Até onde a ponta tem de chegar (px à frente da mão): 5 pés; com Alcance, 10 pés.
 const PONTA_NORMAL := EscalaDnd.PONTA_5_PES
@@ -30,9 +32,38 @@ func _arma(id: String) -> Arma:
 	return load(PASTA + id + ".tres")
 
 
+func _testar_distancia() -> void:
+	var longo := _arma("arco_longo")
+	_checar(longo.disparo_normal_pes == 150 and longo.disparo_longo_pes == 600 and longo.pesada
+		and longo.duas_maos and longo.municao == "Flecha" and not longo.arremessavel() and longo.poses.is_empty(),
+		"Arco Longo: disparo 150/600, pesado, duas mãos, flecha, sem golpe de corte")
+	var funda := _arma("funda")
+	_checar(funda.tipo_dano == TiposDano.CONTUNDENTE and funda.disparo_normal_pes == 30 and not funda.duas_maos,
+		"Funda: 1d4 contundente, 30/120, uma mão")
+	var mao := _arma("besta_mao")
+	_checar(mao.leve and mao.besta and mao.recarga and mao.municao == "Virote" and not mao.duas_maos,
+		"Besta de Mão: leve, recarga, virote")
+	_checar(_arma("zarabatana").dados_dano == "1d1" and _arma("mosquete").dados_dano == "1d12"
+		and _arma("pistola").recarga and not _arma("pistola").duas_maos, "Zarabatana 1, Mosquete 1d12, Pistola numa mão")
+	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
+	var agil := Ficha.new(guerreiro, {Atributos.FORCA: 8, Atributos.DESTREZA: 16})
+	var braco := Ficha.new(guerreiro, {Atributos.FORCA: 16, Atributos.DESTREZA: 10})
+	var fraco := Ficha.new(guerreiro, {Atributos.FORCA: 12, Atributos.DESTREZA: 16})
+	_checar(agil.texto_dano(longo) == "1d8+3" and agil.bonus_ataque(longo) == 5,
+		"arma à distância usa Destreza no ataque e no dano")
+	_checar(braco.texto_dano(longo) == "1d8" and not braco.golpe_com(longo).desvantagem,
+		"Força alta não soma no arco; FOR 16 não sofre a Pesada")
+	_checar(fraco.golpe_com(longo).desvantagem and fraco.texto_dano(longo) == "1d8+3",
+		"Arco Longo Pesada: FOR 12 dá desvantagem, o dano continua na Destreza")
+	var flecha: Municao = load("res://data/municoes/flecha.tres")
+	_checar(flecha.empilhavel and flecha.textura != null and flecha.icone.get_width() == 16,
+		"Flecha empilha e tem sprite de projétil e ícone 16x16")
+	_checar(longo.icone.get_width() == 16, "ícone da arma à distância em 16x16")
+
+
 func _testar_dados() -> void:
 	var arquivos := Array(ResourceLoader.list_directory(PASTA)).filter(func(a: String) -> bool: return a.ends_with(".tres"))
-	_checar(arquivos.size() == TOTAL_ARMAS, "29 armas corpo a corpo/arremesso do PHB (achou %d)" % arquivos.size())
+	_checar(arquivos.size() == TOTAL_CORPO + TOTAL_DISTANCIA, "38 armas do PHB, com as 9 à distância (achou %d)" % arquivos.size())
 	var todas_ok := true
 	for arquivo: String in arquivos:
 		var arma := load(PASTA + arquivo) as Arma
@@ -48,6 +79,7 @@ func _testar_dados() -> void:
 	_checar(_arma("azagaia").empilhavel and not _arma("espada_longa").empilhavel, "Azagaia empilha; Espada Longa não")
 	_checar(_arma("espada_curta").tipo_dano == TiposDano.PERFURANTE and _arma("cimitarra").tipo_dano == TiposDano.CORTANTE,
 		"Espada Curta perfurante, Cimitarra cortante")
+	_testar_distancia()
 
 
 func _testar_regras() -> void:
@@ -82,6 +114,8 @@ func _testar_alcance() -> void:
 	var ruins: PackedStringArray = []
 	for arquivo in ResourceLoader.list_directory(PASTA):
 		var arma := load(PASTA + arquivo) as Arma
+		if arma.disparavel():
+			continue
 		var alvo := PONTA_ALCANCE if arma.alcance_estendido else PONTA_NORMAL
 		var chega := arma.alcance_da_ponta() + arma.passo
 		if chega < alvo - 0.5 or arma.poses.size() < 3 or not arma.poses.any(func(p: PoseGolpe) -> bool: return p.acerta):
@@ -93,6 +127,8 @@ func _testar_alcance() -> void:
 	var movimentos := {}
 	for arquivo in ResourceLoader.list_directory(PASTA):
 		var arma := load(PASTA + arquivo) as Arma
+		if arma.disparavel():
+			continue
 		movimentos[str(arma.poses.map(func(p: PoseGolpe) -> Array: return [p.tempo, p.angulo, p.mao]))] = true
 	var flexiveis_ok := ["mangual", "chicote"].all(func(id: String) -> bool:
 		var arma := _arma(id)
@@ -103,7 +139,7 @@ func _testar_alcance() -> void:
 	_checar(_arma("espada_longa").efeito == Arma.EFEITO_CORTE and _arma("rapieira").efeito == Arma.EFEITO_RASTRO
 		and _arma("malho").efeito == Arma.EFEITO_IMPACTO and _arma("maca_estrela").efeito == Arma.EFEITO_IMPACTO
 		and _arma("chicote").efeito == &"", "efeitos: arco no corte, rastro na estocada, impacto no contundente")
-	_checar(movimentos.size() == TOTAL_ARMAS, "cada uma das 29 armas tem um movimento diferente (%d)" % movimentos.size())
+	_checar(movimentos.size() == TOTAL_CORPO, "cada uma das 29 armas de perto tem um movimento diferente (%d)" % movimentos.size())
 
 
 func _testar_inventario() -> void:
@@ -136,12 +172,15 @@ func _testar_pacotes() -> void:
 	_checar(a.arma().nome == "Espada Grande" and a.armadura().nome == "Cota de Malha"
 		and a.texto_itens() == "Cota de Malha, Espada Grande, Mangual, 8× Azagaia", "pacote A como no livro (%s)" % a.texto_itens())
 	_checar(b.arma().nome == "Cimitarra" and b.armadura().nome == "Couro Batido"
-		and b.texto_itens() == "Couro Batido, Cimitarra, Espada Curta", "pacote B (sem o Arco Longo, que vem depois)")
+		and b.texto_itens() == "Couro Batido, Cimitarra, Espada Curta, Arco Longo, 20× Flecha",
+		"pacote B com Arco Longo e 20 flechas na mochila (%s)" % b.texto_itens())
 
 
 func _testar_bau() -> void:
-	var itens := Bau.carregar_itens(["res://data/armas/", "res://data/armaduras/"])
-	_checar(itens.size() == TOTAL_ARMAS + TOTAL_ARMADURAS, "baú carrega as 29 armas e as 21 armaduras (%d)" % itens.size())
+	var itens := Bau.carregar_itens(["res://data/armas/", "res://data/armaduras/", "res://data/municoes/"])
+	var municoes := itens.filter(func(i: Item) -> bool: return i is Municao)
+	_checar(itens.size() == TOTAL_CORPO + TOTAL_DISTANCIA + TOTAL_ARMADURAS + TOTAL_MUNICOES
+		and municoes.size() == TOTAL_MUNICOES, "baú carrega armas, armaduras e as 5 munições (%d)" % itens.size())
 
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false

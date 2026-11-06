@@ -4,6 +4,8 @@
 [ext_resource type="Resource" path="res://data/armaduras/couro_batido.tres" id="2_couro"]
 [ext_resource type="Resource" path="res://data/armas/cimitarra.tres" id="3_cimitarra"]
 [ext_resource type="Resource" path="res://data/armas/espada_curta.tres" id="4_espada"]
+[ext_resource type="Resource" path="res://data/armas/arco_longo.tres" id="5_arco"]
+[ext_resource type="Resource" path="res://data/municoes/flecha.tres" id="7_flecha"]
 [ext_resource type="Script" path="res://core/dados/item.gd" id="6_item"]
 
 [resource]
@@ -12,6 +14,8 @@ nome = "Pacote B"
 itens = Dictionary[ExtResource("6_item"), int]({
 ExtResource("2_couro"): 1,
 ExtResource("3_cimitarra"): 1,
-ExtResource("4_espada"): 1
+ExtResource("4_espada"): 1,
+ExtResource("5_arco"): 1,
+ExtResource("7_flecha"): 20
 })
 equipar = Array[ExtResource("6_item")]([ExtResource("2_couro"), ExtResource("3_cimitarra"), ExtResource("4_espada")])

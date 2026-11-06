@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Municao" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/pedra_funda.png" id="1_cxq3t"]
+[ext_resource type="Script" path="res://core/dados/municao.gd" id="2_21ulw"]
+[ext_resource type="Texture2D" path="res://assets/armas/municoes/pedra_funda.png" id="3_a3rkp"]
+
+[resource]
+script = ExtResource("2_21ulw")
+textura = ExtResource("3_a3rkp")
+nome = "Pedra de Funda"
+descricao = "Munição. Empilha na mochila. (Sling Bullet)"
+icone = ExtResource("1_cxq3t")
+empilhavel = true

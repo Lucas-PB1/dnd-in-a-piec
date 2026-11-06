@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Municao" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/flecha.png" id="1_c0ead"]
+[ext_resource type="Script" path="res://core/dados/municao.gd" id="2_n8qut"]
+[ext_resource type="Texture2D" path="res://assets/armas/municoes/flecha.png" id="3_2wbpn"]
+
+[resource]
+script = ExtResource("2_n8qut")
+textura = ExtResource("3_2wbpn")
+angulo_arte = -45.0
+nome = "Flecha"
+descricao = "Munição. Empilha na mochila. (Arrow)"
+icone = ExtResource("1_c0ead")
+empilhavel = true

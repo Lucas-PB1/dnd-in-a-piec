@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="Arma" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/armas/icones/arco_longo.png" id="1_p85hn"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_cttmo"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_7epwb"]
+[ext_resource type="Texture2D" path="res://assets/armas/arco_longo.png" id="4_smkqg"]
+
+[resource]
+script = ExtResource("3_7epwb")
+dados_dano = "1d8"
+tipo_dano = &"perfurante"
+categoria = &"marcial"
+textura = ExtResource("4_smkqg")
+pegada = Vector2(6.1, 16)
+comprimento = 51.400000000000006
+pesada = true
+duas_maos = true
+disparo_normal_pes = 150.0
+disparo_longo_pes = 600.0
+municao = "Flecha"
+maestria = &"lentidao"
+nome_original = "Longbow"
+peso = "2 lb."
+preco = "50 GP"
+livro = "Player’s Handbook"
+efeito = &""
+nome = "Arco Longo"
+descricao = "Arma marcial. Pesada, Duas Mãos, Disparo (150/600), Munição. Maestria: Lentidão. (Longbow, Player’s Handbook)"
+icone = ExtResource("1_p85hn")
+espaco = &"mao"
