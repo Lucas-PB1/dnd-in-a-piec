@@ -47,6 +47,12 @@ static func _referencia(partes: PackedStringArray, peso: String, preco: String) 
 
 
 static func _avisos_arma(partes: PackedStringArray, arma: Arma, ficha: Ficha, inventario: Inventario) -> void:
+	if arma.maestria != &"":
+		var nome_maestria: String = Proficiencias.NOMES_MAESTRIAS[arma.maestria]
+		if ficha.domina(arma):
+			partes.append("Maestria %s: %s" % [nome_maestria, Proficiencias.DESCRICOES_MAESTRIAS[arma.maestria]])
+		else:
+			partes.append("Maestria %s: não domina esta arma" % nome_maestria)
 	if ficha.fraco_para(arma):
 		partes.append("Pesada: FOR abaixo de %d, desvantagem" % Ficha.FORCA_MINIMA_ARMA_PESADA)
 	if not ficha.proficiente_com(arma):

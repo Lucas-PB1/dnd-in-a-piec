@@ -15,3 +15,5 @@ extends Resource
 @export var treinamento_armaduras: Array[StringName] = []
 ## Pacotes de equipamento inicial à escolha na criação (Guerreiro: A ou B do livro).
 @export var pacotes_iniciais: Array[PacoteInicial] = []
+## Maestria em Armas: quantos tipos de arma a classe domina no nível 1 (Guerreiro: 3).
+@export var quantidade_maestrias: int = 0

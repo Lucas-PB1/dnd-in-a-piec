@@ -6,6 +6,8 @@ extends RefCounted
 const DANO_MINIMO := Combate.DANO_MINIMO
 ## Bônus de proficiência no nível 1.
 const BONUS_PROFICIENCIA := 2
+## Base da CD das maestrias (8 + modificador + proficiência).
+const CD_BASE_MAESTRIA := 8
 ## CA de quem não usa armadura (antes do modificador de Destreza).
 const CA_BASE := 10
 ## Deslocamento por rodada (pés). Ainda não há raças: todo mundo é "humano" (30 pés).
@@ -24,6 +26,9 @@ const TAMANHO_MAXIMO_NOME := 16
 var nome: String
 var classe: ClasseRPG
 var atributos: Dictionary[StringName, int] = {}
+## Maestria em Armas: nomes dos tipos de arma que o personagem domina (Guerreiro: 3,
+## escolhidos na criação). Só com elas a maestria da arma vale.
+var armas_dominadas: Array[String] = []
 
 
 func _init(classe_rpg: ClasseRPG, valores: Dictionary, nome_personagem: String = NOME_PADRAO) -> void:
@@ -104,7 +109,29 @@ func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null, duas_
 	var dado := dado_dano(arma, duas_maos, ataque_extra)
 	var golpe := Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado, arma.tipo_dano, arma.corroivel)
 	golpe.desvantagem = desvantagem_por_armadura(armadura) or fraco_para(arma)
+	golpe.maestria = maestria_de(arma)
+	golpe.cd_maestria = cd_maestria(arma)
+	if golpe.maestria == Proficiencias.RASPAO:
+		golpe.dano_raspao = maxi(bonus_dano(arma), 0)
+	if golpe.maestria == Proficiencias.TRESPASSAR and not ataque_extra:
+		# 2º alvo: mesmo ataque, mas o dano não soma o modificador positivo (como o ataque extra).
+		golpe.trespassar = golpe_com(arma, penalidade, armadura, duas_maos, true)
 	return golpe
+
+
+## Domina este tipo de arma (Maestria em Armas)? Só vale se a arma tem maestria.
+func domina(arma: Arma) -> bool:
+	return arma.maestria != &"" and arma.nome in armas_dominadas
+
+
+## A maestria que vale com esta arma (vazio = não domina).
+func maestria_de(arma: Arma) -> StringName:
+	return arma.maestria if domina(arma) else &""
+
+
+## CD da salvaguarda das maestrias (Derrubar): 8 + modificador do ataque + proficiência.
+func cd_maestria(arma: Arma) -> int:
+	return CD_BASE_MAESTRIA + bonus_dano(arma) + BONUS_PROFICIENCIA
 
 
 ## Arma Pesada pede FOR 13: abaixo disso, o ataque tem desvantagem.

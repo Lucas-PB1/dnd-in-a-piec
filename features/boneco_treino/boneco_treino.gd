@@ -1,7 +1,7 @@
 class_name BonecoTreino
 extends Node2D
 ## Boneco de treino: tem CA mas não perde vida. Mostra o resultado de cada golpe (dano,
-## "Errou!", "Crítico!") e, quando é acertado, pisca e balança para o lado do golpe.
+## "Errou!", "Crítico!") e as condições das maestrias (ícones e avisos) e, quando é acertado, pisca e balança para o lado do golpe.
 ## Não conhece quem bate: o DefesaComponent resolve e avisa.
 
 ## Emitido a cada golpe resolvido contra o boneco (acertou ou não).
@@ -20,10 +20,13 @@ var golpes_recebidos: int = 0
 @onready var _sprite: Sprite2D = $Sprite
 @onready var _defesa: DefesaComponent = $Defesa
 @onready var _texto: TextoFlutuanteComponent = $Texto
+@onready var _condicoes: CondicoesComponent = $Condicoes
 
 
 func _ready() -> void:
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
+	# Boneco não tem ficha: salvaguardas +0. Preso no chão, não sai do lugar com Empurrar.
+	_condicoes.aviso.connect(func(texto: String) -> void: _texto.mostrar(texto, TextoFlutuanteComponent.COR_CONDICAO))
 
 
 func _ao_resolver_golpe(resultado: Combate.Resultado, origem: Vector2) -> void:

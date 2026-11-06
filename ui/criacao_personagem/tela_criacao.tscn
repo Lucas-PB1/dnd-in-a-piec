@@ -156,7 +156,52 @@ custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "Sugestão"
 
-[node name="Comecar" type="Button" parent="Centro/Painel/Coluna/PassoAtributos/Botoes"]
+[node name="IrMaestrias" type="Button" parent="Centro/Painel/Coluna/PassoAtributos/Botoes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Maestrias"
+
+[node name="PassoMaestrias" type="VBoxContainer" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="ContagemMaestrias" type="Label" parent="Centro/Painel/Coluna/PassoMaestrias"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ListaMaestrias" type="ItemList" parent="Centro/Painel/Coluna/PassoMaestrias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+select_mode = 1
+max_columns = 3
+same_column_width = true
+fixed_icon_size = Vector2i(16, 16)
+
+[node name="DetalheMaestria" type="Label" parent="Centro/Painel/Coluna/PassoMaestrias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+horizontal_alignment = 1
+
+[node name="BotoesMaestrias" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoMaestrias"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="VoltarAtributos" type="Button" parent="Centro/Painel/Coluna/PassoMaestrias/BotoesMaestrias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Voltar"
+
+[node name="Comecar" type="Button" parent="Centro/Painel/Coluna/PassoMaestrias/BotoesMaestrias"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2

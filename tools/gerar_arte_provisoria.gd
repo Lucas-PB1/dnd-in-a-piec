@@ -14,6 +14,7 @@ const ARQ_LADRILHOS := "res://assets/tiles/ladrilhos.png"
 const ARQ_CORTE := "res://assets/efeitos/corte.png"
 const ARQ_RASTRO := "res://assets/efeitos/rastro.png"
 const ARQ_IMPACTO := "res://assets/efeitos/impacto.png"
+const ARQ_CONDICOES := "res://assets/efeitos/condicoes.png"
 const ARQ_BONECO := "res://features/boneco_treino/boneco_treino.png"
 const ARQ_ESCUDO := "res://assets/armaduras/escudo.png"
 const ARQ_TAMPA := "res://assets/armaduras/tampa_panela.png"
@@ -34,6 +35,7 @@ func _initialize() -> void:
 	_gerar_corte()
 	_gerar_rastro()
 	_gerar_impacto()
+	_gerar_condicoes()
 	_gerar_boneco()
 	_gerar_bau()
 	_gerar_escudo(ARQ_ESCUDO, 18, Color8(150, 92, 48), Color8(180, 184, 196), true)
@@ -123,6 +125,31 @@ func _gerar_impacto() -> void:
 					if Rect2i(0, 0, TAM_IMPACTO, TAM_IMPACTO).has_point(p):
 						img.set_pixel(q * TAM_IMPACTO + p.x, p.y, Color(1, 1, 1, alfa))
 	_salvar(img, ARQ_IMPACTO)
+
+
+## Ícones das condições (8x8, na ordem de CondicoesComponent.ORDEM): Caído (seta para
+## baixo), Lento (ampulheta), Enfraquecido (espada quebrada), Atormentado (alvo).
+## "#" = cor do ícone, "o" = contorno escuro.
+const ICONES_CONDICAO := [
+	[Color8(250, 210, 80), ["...oo...", "...##...", "...##...", "...##...", ".o####o.", "..o##o..", "...oo...", "oooooooo"]],
+	[Color8(110, 190, 255), ["o######o", ".o####o.", "..o##o..", "...oo...", "..o##o..", ".o####o.", "o######o", "........"]],
+	[Color8(190, 140, 230), ["......o#", ".....o#o", "....o#o.", "........", "..o#o...", ".o#o....", "o#o.....", "oo......"]],
+	[Color8(255, 90, 90), ["..####..", ".#....#.", "#..##..#", "#.#..#.#", "#.#..#.#", "#..##..#", ".#....#.", "..####.."]],
+]
+const TAM_ICONE_CONDICAO := 8
+
+
+func _gerar_condicoes() -> void:
+	var img := Image.create(TAM_ICONE_CONDICAO * ICONES_CONDICAO.size(), TAM_ICONE_CONDICAO, false, Image.FORMAT_RGBA8)
+	for i in ICONES_CONDICAO.size():
+		var cor: Color = ICONES_CONDICAO[i][0]
+		var linhas: Array = ICONES_CONDICAO[i][1]
+		for y in TAM_ICONE_CONDICAO:
+			for x in TAM_ICONE_CONDICAO:
+				match (linhas[y] as String)[x]:
+					"#": img.set_pixel(i * TAM_ICONE_CONDICAO + x, y, cor)
+					"o": img.set_pixel(i * TAM_ICONE_CONDICAO + x, y, CONTORNO)
+	_salvar(img, ARQ_CONDICOES)
 
 
 ## Boneco de treino: poste de madeira com um saco de palha e um alvo vermelho.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://features/gray_ooze/gray_ooze.gd" id="1_script"]
 [ext_resource type="Resource" path="res://data/gray_ooze.tres" id="2_criatura"]
@@ -14,6 +14,9 @@
 [ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_atacando.gd" id="12_atacando"]
 [ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_levando_dano.gd" id="13_dano"]
 [ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_morrendo.gd" id="14_morrendo"]
+[ext_resource type="Script" path="res://core/componentes/condicoes_component.gd" id="15_condicoes"]
+[ext_resource type="Texture2D" path="res://assets/efeitos/condicoes.png" id="16_icones"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_caido.gd" id="17_caido"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
 size = Vector2(40, 26)
@@ -54,14 +57,20 @@ script = ExtResource("5_hurtbox")
 position = Vector2(0, -15)
 shape = SubResource("FormaAlvo")
 
-[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "vida")]
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "vida", "condicoes")]
 script = ExtResource("6_defesa")
 hurtbox = NodePath("../Hurtbox")
 vida = NodePath("../Vida")
+condicoes = NodePath("../Condicoes")
 
 [node name="Texto" type="Node2D" parent="."]
 position = Vector2(0, -60)
 script = ExtResource("7_texto")
+
+[node name="Condicoes" type="Node2D" parent="."]
+position = Vector2(0, -50)
+script = ExtResource("15_condicoes")
+icones = ExtResource("16_icones")
 
 [node name="Pseudopode" type="Area2D" parent="."]
 collision_layer = 0
@@ -90,3 +99,6 @@ script = ExtResource("13_dano")
 
 [node name="Morrendo" type="Node" parent="MaquinaEstados"]
 script = ExtResource("14_morrendo")
+
+[node name="Caido" type="Node" parent="MaquinaEstados"]
+script = ExtResource("17_caido")

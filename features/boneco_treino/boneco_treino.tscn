@@ -1,10 +1,12 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://features/boneco_treino/boneco_treino.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://features/boneco_treino/boneco_treino.png" id="2_textura"]
 [ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="3_hurtbox"]
 [ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="4_defesa"]
 [ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="5_texto"]
+[ext_resource type="Script" path="res://core/componentes/condicoes_component.gd" id="6_condicoes"]
+[ext_resource type="Texture2D" path="res://assets/efeitos/condicoes.png" id="7_icones"]
 
 [sub_resource type="RectangleShape2D" id="FormaAlvo"]
 size = Vector2(20, 44)
@@ -26,10 +28,16 @@ script = ExtResource("3_hurtbox")
 position = Vector2(0, -28)
 shape = SubResource("FormaAlvo")
 
-[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox")]
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "condicoes")]
 script = ExtResource("4_defesa")
 classe_armadura = 10
 hurtbox = NodePath("../Hurtbox")
+condicoes = NodePath("../Condicoes")
+
+[node name="Condicoes" type="Node2D" parent="."]
+position = Vector2(0, -66)
+script = ExtResource("6_condicoes")
+icones = ExtResource("7_icones")
 
 [node name="Texto" type="Node2D" parent="."]
 position = Vector2(0, -76)

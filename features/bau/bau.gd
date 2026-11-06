@@ -37,10 +37,9 @@ func itens() -> Array[Item]:
 static func carregar_itens(lista_pastas: PackedStringArray) -> Array[Item]:
 	var achados: Array[Item] = []
 	for pasta in lista_pastas:
-		for arquivo in ResourceLoader.list_directory(pasta):
-			var item := load(pasta.path_join(arquivo)) as Item if arquivo.ends_with(".tres") else null
-			if item:
-				achados.append(item)
+		for recurso in Recursos.da_pasta(pasta):
+			if recurso is Item:
+				achados.append(recurso)
 	return achados
 
 

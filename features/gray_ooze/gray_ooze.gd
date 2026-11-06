@@ -13,6 +13,10 @@ signal morreu
 @export var altura_pseudopode: float = 24.0
 ## Metade da largura do corpo (px): o Pseudópode começa a partir daqui.
 @export var meia_largura_corpo: float = 20.0
+## Empurrar (maestria): velocidade com que o empurrão o desloca (px/s).
+@export var velocidade_empurrao: float = 320.0
+## Achatamento do sprite enquanto está Caído.
+@export var escala_caido: Vector2 = Vector2(1.25, 0.55)
 
 ## Alvo perseguido (ex.: o herói). Sem alvo, fica parado.
 var alvo: Node2D
@@ -22,6 +26,9 @@ var direcao_olhar: int = -1
 var _rng := RandomNumberGenerator.new()
 var _tempo_desde_ataque: float = INF
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
+## Quanto ainda falta do empurrão (px, com sinal).
+var _empurrao_restante: float = 0.0
+var _posicao_sprite: Vector2
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _vida: HealthComponent = $Vida
@@ -30,6 +37,7 @@ var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity"
 @onready var _pseudopode: HitboxComponent = $Pseudopode
 @onready var _forma_pseudopode: CollisionShape2D = $Pseudopode/Forma
 @onready var _maquina: MaquinaEstados = $MaquinaEstados
+@onready var _condicoes: CondicoesComponent = $Condicoes
 
 
 func _ready() -> void:
@@ -40,6 +48,8 @@ func _ready() -> void:
 	_defesa.resistencias = criatura.resistencias
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
+	_preparar_condicoes()
+	_posicao_sprite = _sprite.position
 	_preparar_pseudopode()
 	_maquina.iniciar(self)
 
@@ -49,6 +59,7 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y += _gravidade * delta
 	_maquina.processar_fisica(delta)
+	_aplicar_empurrao(delta)
 	move_and_slide()
 	_sprite.flip_h = direcao_olhar > 0  # a arte original olha para a esquerda
 	_pseudopode.scale.x = direcao_olhar
@@ -89,10 +100,12 @@ func virar_para_alvo() -> void:
 		direcao_olhar = 1 if alvo.global_position.x > global_position.x else -1
 
 
-## Anda na direção do alvo no deslocamento da ficha (pés por rodada -> px/s).
+## Anda na direção do alvo no deslocamento da ficha (pés por rodada -> px/s), menos a
+## Lentidão (maestria), se estiver Lento.
 func andar_para_alvo() -> void:
 	virar_para_alvo()
-	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes)
+	var pes := maxf(criatura.deslocamento_pes - _condicoes.reducao_deslocamento_pes(), 0.0)
+	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(pes)
 
 
 func parar() -> void:
@@ -118,12 +131,26 @@ func iniciar_ataque() -> void:
 	tocar(&"atacar")
 
 
+## Enfraquecido (maestria): este ataque sai com desvantagem e a condição se gasta.
 func ligar_pseudopode() -> void:
-	_pseudopode.ligar(criatura.golpe())
+	var golpe := criatura.golpe()
+	golpe.autor_id = get_instance_id()
+	golpe.desvantagem = _condicoes.consumir_desvantagem()
+	_pseudopode.ligar(golpe)
 
 
 func desligar_pseudopode() -> void:
 	_pseudopode.desligar()
+
+
+func esta_caido() -> bool:
+	return _condicoes.esta_caido()
+
+
+## Deitado (Caído) achata o sprite no chão; de pé, volta ao normal.
+func deitar(deitado: bool) -> void:
+	_sprite.scale = escala_caido if deitado else Vector2.ONE
+	_sprite.position = Vector2(_posicao_sprite.x, _posicao_sprite.y * escala_caido.y) if deitado else _posicao_sprite
 
 
 ## Some do jogo depois da animação de morte.
@@ -152,8 +179,30 @@ func _preparar_pseudopode() -> void:
 func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:
 	_texto.mostrar_resultado(resultado)
 	_corroer_arma_se_preciso(resultado)
-	if resultado.acertou and not _vida.esta_morto():
+	if _vida.esta_morto():
+		return
+	if _condicoes.esta_caido():
+		if nome_estado() != &"Caido":
+			_maquina.trocar(&"Caido")
+	elif resultado.acertou:
 		_maquina.trocar(&"LevandoDano")
+
+
+## A ficha diz as salvaguardas (Derrubar pede CON); avisos e empurrão vêm das condições.
+func _preparar_condicoes() -> void:
+	for atributo in Atributos.TODOS:
+		_condicoes.bonus_salvaguardas[atributo] = criatura.bonus_salvaguarda(atributo)
+	_condicoes.aviso.connect(func(texto: String) -> void: _texto.mostrar(texto, TextoFlutuanteComponent.COR_CONDICAO))
+	_condicoes.empurrado.connect(func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x)
+
+
+## Empurrar: desliza o que falta do empurrão (com colisão), por cima do que o estado mandou.
+func _aplicar_empurrao(delta: float) -> void:
+	if is_zero_approx(_empurrao_restante):
+		return
+	var passo := signf(_empurrao_restante) * minf(absf(_empurrao_restante), velocidade_empurrao * delta)
+	velocity.x = passo / delta
+	_empurrao_restante -= passo
 
 
 ## Forma Corrosiva: arma não mágica que CAUSA DANO no Ooze leva penalidade cumulativa no

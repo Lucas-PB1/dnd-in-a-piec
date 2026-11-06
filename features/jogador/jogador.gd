@@ -49,6 +49,8 @@ var _contador_buffer_arremesso: float = 0.0
 var _combo_pedido: bool = false
 ## O golpe atual já é o extra (não encadeia um terceiro).
 var _golpe_extra: bool = false
+## Tempo desde que a ação bônus foi gasta (golpe extra sem Corte Duplo).
+var _tempo_desde_acao_bonus: float = INF
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -240,12 +242,19 @@ func arma_secundaria() -> Arma:
 
 
 ## O 2º J durante o golpe pede o ataque extra, e as duas armas são leves.
+## Sem Corte Duplo, o extra é a ação bônus: no máximo 1 por rodada.
 func quer_golpe_extra() -> bool:
 	if not _combo_pedido or _golpe_extra:
 		return false
 	var principal := inventario.equipado(Item.ESPACO_MAO) as Arma
 	var segunda := arma_secundaria()
-	return principal != null and principal.leve and segunda != null and segunda.leve
+	var leves := principal != null and principal.leve and segunda != null and segunda.leve
+	return leves and (_tem_corte_duplo() or acao_bonus_livre())
+
+
+## A ação bônus da rodada já voltou (o golpe extra sem Corte Duplo a gasta).
+func acao_bonus_livre() -> bool:
+	return _tempo_desde_acao_bonus >= EscalaDnd.RODADA_SEGUNDOS
 
 
 ## Começa um golpe com a arma atual, para o lado em que o herói olha.
@@ -266,6 +275,7 @@ func lancar_arma() -> void:
 		return
 	var pen := inventario.penalidade(arma)
 	var golpe := Equipamento.golpe(ficha, inventario, arma)
+	_assinar(golpe)
 	var extraida := inventario.extrair_uma(arma)
 	_tempo_desde_golpe = 0.0
 	_contador_buffer_arremesso = 0.0
@@ -347,6 +357,7 @@ func _atualizar_contadores(delta: float) -> void:
 	_contador_buffer = stats.tempo_buffer if Input.is_action_just_pressed("pular") else _contador_buffer - delta
 	# Ritmo de ataque (iniciativa) e buffer do botão de atacar.
 	_tempo_desde_golpe += delta
+	_tempo_desde_acao_bonus += delta
 	if Input.is_action_just_pressed("atacar"):
 		_contador_buffer_ataque = stats.tempo_buffer_ataque
 		if nome_estado() == &"Atacando" and not _golpe_extra:
@@ -438,11 +449,13 @@ func _corroer_armadura() -> void:
 		_texto.mostrar("%s corroída -%d" % [armadura.nome, inventario.penalidade(armadura)], TextoFlutuanteComponent.COR_ERRO)
 
 
-## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão
-## e é destruída no limite.
+## Começa o golpe da arma da mão (ou o extra, da outra mão). O extra sem Corte Duplo gasta
+## a ação bônus: o próximo só depois de 1 rodada.
 func _comecar_golpe(extra: bool) -> void:
 	if not extra:
 		_tempo_desde_golpe = 0.0
+	elif not _tem_corte_duplo():
+		_tempo_desde_acao_bonus = 0.0
 	_contador_buffer_ataque = 0.0
 	_combo_pedido = false
 	_golpe_extra = extra
@@ -452,9 +465,28 @@ func _comecar_golpe(extra: bool) -> void:
 
 func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
 	var golpe := Equipamento.golpe(ficha, inventario, arma, extra)
+	_assinar(golpe)
 	if inventario.esta_equipado(arma):
 		golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
 	return golpe
+
+
+## Marca o herói como autor do golpe (e do 2º ataque do Trespassar): Atormentar dá vantagem
+## só a quem marcou o alvo.
+func _assinar(golpe: Golpe) -> void:
+	golpe.autor_id = get_instance_id()
+	if golpe.trespassar:
+		golpe.trespassar.autor_id = golpe.autor_id
+
+
+## Corte Duplo (maestria) numa das armas leves: o golpe extra faz parte da ação de Ataque,
+## sem gastar a ação bônus (sai em todo combo).
+func _tem_corte_duplo() -> bool:
+	var principal := inventario.equipado(Item.ESPACO_MAO) as Arma
+	var segunda := arma_secundaria()
+	var na_principal := principal != null and ficha.maestria_de(principal) == Proficiencias.CORTE_DUPLO
+	var na_segunda := segunda != null and ficha.maestria_de(segunda) == Proficiencias.CORTE_DUPLO
+	return na_principal or na_segunda
 
 
 func _arma_arremessavel() -> Arma:
@@ -464,6 +496,8 @@ func _arma_arremessavel() -> Arma:
 	return null
 
 
+## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão
+## e é destruída no limite.
 func _ao_corroer_arma(penalidade: int, limite: int, arma: Arma) -> void:
 	if inventario.desgastar(arma, penalidade, limite):
 		_texto.mostrar("%s derreteu!" % arma.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)

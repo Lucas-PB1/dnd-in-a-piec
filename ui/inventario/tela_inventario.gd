@@ -166,6 +166,8 @@ func _atualizar_ficha() -> void:
 	]
 	var ataque := Equipamento.bonus_ataque(_ficha, _inventario, arma)
 	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(ataque), Equipamento.texto_dano(_ficha, _inventario, arma)])
+	if not _ficha.armas_dominadas.is_empty():
+		linhas.append("Maestrias: %s" % ", ".join(_ficha.armas_dominadas))
 	_texto_ficha.text = "\n".join(linhas)
 
 
