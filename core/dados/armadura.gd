@@ -24,14 +24,8 @@ enum Padrao { LISO, MALHA, TACHAS, PLACAS, ACOLCHOADO, ESCAMAS }
 ## Cor principal pintada na roupa do herói (o shader mantém a luz e sombra da arte).
 @export var cor: Color = Color(0.6, 0.6, 0.65)
 @export var padrao: Padrao = Padrao.LISO
-## Ladrilho de textura (anéis, placas com rebites, costuras...) repetido na roupa pelo shader,
-## já nas cores da armadura (gerado por tools/gerar_armaduras.gd).
+## Ladrilho repetido na túnica pelo shader (couro, anéis, placas, escamas, acolchoado).
 @export var detalhe: Texture2D
-## Peças desenhadas por cima do corpo (null = não tem): ombreira no ombro da frente, saiote
-## na cintura (médias e pesadas) e elmo (só pesadas). Geradas com o mesmo ladrilho.
-@export var ombreira: Texture2D
-@export var saiote: Texture2D
-@export var elmo: Texture2D
 ## Imagem do escudo (só escudos).
 @export var textura: Texture2D
 

@@ -1,29 +1,23 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/cota_aneis.png" id="1_pk83j"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/cota_aneis_elmo.png" id="2_m7wpk"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/icones/cota_aneis.png" id="3_ty0nk"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/cota_aneis_ombreira.png" id="4_1q575"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/cota_aneis_saiote.png" id="5_oe5te"]
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="6_jtac8"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/cota_aneis.png" id="1_k171f"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/cota_aneis.png" id="2_kw162"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="3_715rm"]
 
 [resource]
-script = ExtResource("6_jtac8")
+script = ExtResource("3_715rm")
 categoria = &"pesada"
 ca_base = 14
 soma_destreza = false
 desvantagem_furtividade = true
 cor = Color(0.6, 0.6, 0.63, 1)
 padrao = 1
-detalhe = ExtResource("1_pk83j")
-ombreira = ExtResource("4_1q575")
-saiote = ExtResource("5_oe5te")
-elmo = ExtResource("2_m7wpk")
+detalhe = ExtResource("1_k171f")
 nome_original = "Ring Mail"
 peso = "40 lb."
 preco = "30 GP"
 livro = "Player’s Handbook"
 nome = "Cota de Anéis"
 descricao = "Armadura pesada. CA 14. Desvantagem em Furtividade. (Ring Mail, Player’s Handbook)"
-icone = ExtResource("3_ty0nk")
+icone = ExtResource("2_kw162")
 espaco = &"corpo"

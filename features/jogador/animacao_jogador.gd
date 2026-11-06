@@ -67,19 +67,6 @@ func ponto_da_mao() -> Vector2:
 	return _espelhar(pontos_mao.ponto(animation, frame))
 
 
-## Ombro da frente, cintura e topo da cabeça no quadro atual (onde vão as peças da armadura).
-func ponto_do_ombro() -> Vector2:
-	return _espelhar(pontos_mao.ombro(animation, frame)) if pontos_mao else Vector2.ZERO
-
-
-func ponto_da_cintura() -> Vector2:
-	return _espelhar(pontos_mao.cintura(animation, frame)) if pontos_mao else Vector2.ZERO
-
-
-func ponto_da_cabeca() -> Vector2:
-	return _espelhar(pontos_mao.cabeca(animation, frame)) if pontos_mao else Vector2.ZERO
-
-
 ## Ponto da mão de trás (a do escudo) no quadro atual.
 func ponto_da_mao_de_tras() -> Vector2:
 	if pontos_mao == null:

@@ -1,26 +1,22 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/camisao_malha.png" id="1_oby6h"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/icones/camisao_malha.png" id="2_5etck"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/camisao_malha_ombreira.png" id="3_joauh"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/camisao_malha_saiote.png" id="4_jtwr1"]
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="5_t5x1s"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/camisao_malha.png" id="1_bi8c3"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/camisao_malha.png" id="2_xtvok"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="3_oby6h"]
 
 [resource]
-script = ExtResource("5_t5x1s")
+script = ExtResource("3_oby6h")
 categoria = &"media"
 ca_base = 13
 max_destreza = 2
 cor = Color(0.7, 0.72, 0.76, 1)
 padrao = 1
-detalhe = ExtResource("1_oby6h")
-ombreira = ExtResource("3_joauh")
-saiote = ExtResource("4_jtwr1")
+detalhe = ExtResource("1_bi8c3")
 nome_original = "Chain Shirt"
 peso = "20 lb."
 preco = "50 GP"
 livro = "Player’s Handbook"
 nome = "Camisão de Malha"
 descricao = "Armadura média. CA 13 + DES (máx. 2). (Chain Shirt, Player’s Handbook)"
-icone = ExtResource("2_5etck")
+icone = ExtResource("2_xtvok")
 espaco = &"corpo"

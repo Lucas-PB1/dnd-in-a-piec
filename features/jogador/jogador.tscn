@@ -29,7 +29,6 @@
 [ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="23_texto"]
 [ext_resource type="Script" path="res://features/jogador/estados/estado_levando_dano.gd" id="24_levando_dano"]
 [ext_resource type="SpriteFrames" path="res://features/jogador/sprites/maos_frente_frames.tres" id="40_maos"]
-[ext_resource type="Script" path="res://features/jogador/pecas_armadura.gd" id="42_pecas"]
 
 [sub_resource type="ShaderMaterial" id="MaterialRoupa"]
 resource_local_to_scene = true
@@ -97,9 +96,6 @@ pontos_mao = ExtResource("20_pontos_mao")
 z_index = 1
 sprite_frames = ExtResource("40_maos")
 animation = &"idle"
-
-[node name="Pecas" type="Node2D" parent="."]
-script = ExtResource("42_pecas")
 
 [node name="Escudo" type="Sprite2D" parent="."]
 script = ExtResource("25_escudo")

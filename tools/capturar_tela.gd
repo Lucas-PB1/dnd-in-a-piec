@@ -32,7 +32,9 @@ func _rodar() -> void:
 		jogador.inventario.equipar(jogador.inventario.itens[0])
 	for opcao in opcoes:
 		if opcao.begins_with("vestir:"):
-			jogador.vestir_armadura_inicial(load("res://data/armaduras/%s.tres" % opcao.trim_prefix("vestir:")))
+			var armadura := load("res://data/armaduras/%s.tres" % opcao.trim_prefix("vestir:")).duplicate() as Armadura
+			jogador.inventario.adicionar(armadura)
+			jogador.inventario.equipar(armadura)
 	for i in ESPERA_INICIAL:
 		await physics_frame
 	for acao in acoes:

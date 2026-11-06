@@ -1,25 +1,21 @@
 [gd_resource type="Resource" script_class="Armadura" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/couro_morsa.png" id="1_lh5lb"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/icones/couro_morsa.png" id="2_pccc6"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/couro_morsa_ombreira.png" id="3_jlear"]
-[ext_resource type="Texture2D" path="res://assets/armaduras/pecas/couro_morsa_saiote.png" id="4_hbj2e"]
-[ext_resource type="Script" path="res://core/dados/armadura.gd" id="5_f4vtq"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/texturas/couro_morsa.png" id="1_sueen"]
+[ext_resource type="Texture2D" path="res://assets/armaduras/icones/couro_morsa.png" id="2_54rft"]
+[ext_resource type="Script" path="res://core/dados/armadura.gd" id="3_lh5lb"]
 
 [resource]
-script = ExtResource("5_f4vtq")
+script = ExtResource("3_lh5lb")
 categoria = &"media"
 ca_base = 13
 max_destreza = 2
 cor = Color(0.52, 0.43, 0.35, 1)
-detalhe = ExtResource("1_lh5lb")
-ombreira = ExtResource("3_jlear")
-saiote = ExtResource("4_hbj2e")
+detalhe = ExtResource("1_sueen")
 nome_original = "Walrus Hide"
 peso = "20 lb."
 preco = "75 GP"
 livro = "Northlands Worldbook"
 nome = "Couro de Morsa"
 descricao = "Armadura média. CA 13 + DES (máx. 2). (Walrus Hide, Northlands Worldbook)"
-icone = ExtResource("2_pccc6")
+icone = ExtResource("2_54rft")
 espaco = &"corpo"

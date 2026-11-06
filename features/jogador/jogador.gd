@@ -65,7 +65,6 @@ var _toque_duplo: ToqueDuplo
 @onready var _defesa: DefesaComponent = $Defesa
 @onready var _texto: TextoFlutuanteComponent = $Texto
 @onready var _escudo: EscudoJogador = $Escudo
-@onready var _pecas: PecasArmadura = $Pecas
 @onready var _arma_tras: ArmaTras = $ArmaTras
 
 
@@ -102,7 +101,6 @@ func _physics_process(delta: float) -> void:
 	var na_tras: Arma = null if _ataque.golpe_da_secundaria() else arma_secundaria()
 	_arma_tras.mostrar(na_tras, _animacao.ponto_da_mao_de_tras(), direcao_olhar)
 	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar)
-	_pecas.seguir(_animacao.ponto_do_ombro(), _animacao.ponto_da_cintura(), _animacao.ponto_da_cabeca(), direcao_olhar)
 	_camera.olhar_para(direcao_olhar)
 	if global_position.y > limite_queda:
 		reaparecer()
@@ -448,7 +446,6 @@ func _atualizar_equipamento() -> void:
 		return
 	_defesa.classe_armadura = classe_armadura()
 	_animacao.vestir(armadura_atual())
-	_pecas.vestir(armadura_atual())
 	_escudo.equipar(escudo_atual())
 
 

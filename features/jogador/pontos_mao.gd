@@ -15,8 +15,8 @@ const ANGULO_PADRAO := 60.0
 @export var pontos_de_tras: Dictionary[StringName, PackedVector2Array] = {}
 ## animação -> ângulo de descanso da arma (graus).
 @export var angulos: Dictionary[StringName, float] = {}
-## animação -> ombro da frente (ombreira), cintura (saiote, na linha do cinto) e topo da
-## cabeça (elmo; x = meio da cabeça), um por quadro.
+## animação -> ombro da frente, cintura (na linha do cinto) e topo da cabeça, um por quadro.
+## O marcador grava o corpo; nenhuma peça de armadura usa estes pontos.
 @export var ombros: Dictionary[StringName, PackedVector2Array] = {}
 @export var cinturas: Dictionary[StringName, PackedVector2Array] = {}
 @export var cabecas: Dictionary[StringName, PackedVector2Array] = {}
