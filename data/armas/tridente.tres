@@ -40,6 +40,7 @@ comprimento = 46.900000000000006
 dados_versatil = "1d10"
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
+arremesso_de_ponta = true
 maestria = &"derrubar"
 nome_original = "Trident"
 peso = "4 lb."

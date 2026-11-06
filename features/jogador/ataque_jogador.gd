@@ -22,6 +22,14 @@ const COMPRIMENTO_DO_RASTRO := 48.0
 const TAMANHO_DO_IMPACTO := 40.0
 ## O impacto cresce com a arma, entre estes limites.
 const ESCALA_IMPACTO := Vector2(0.8, 1.4)
+## Golpe extra de duas armas, cruzado (X): poses da 2ª arma [tempo, ângulo, mão x, mão y,
+## acerta]. A principal faz o espelho (de baixo para cima), e as duas se cruzam no meio.
+const POSES_CRUZADO := [[0.0, -70, -2, -4, false], [0.06, -100, -4, -6, true],
+	[0.15, 60, 8, 2, false], [0.28, 35, 0, 0, false]]
+## Carregando o arremesso: a mão sobe e recua (braço armado acima do ombro) e a arma vai
+## de quase deitada a apontando para cima. Tudo à vista, para o jogador ver a força subir.
+const ANGULOS_CARGA := Vector2(-15.0, -60.0)
+const RECUO_CARGA := Vector2(-13.0, -7.0)
 
 var _arma: Arma
 var _golpe: Golpe
@@ -30,8 +38,14 @@ var _golpeando: bool = false
 var _direcao: int = 1
 var _golpe_secundario: bool = false
 var _mao: Vector2 = Vector2.ZERO
+## Arma principal no golpe cruzado (null fora dele) e a soma dos ângulos do espelho.
+var _cruzada: Arma
+var _soma_cruzado: float = 0.0
+## Carga do arremesso (0 a 1); negativo = não está carregando.
+var _carga: float = -1.0
 
 @onready var _espada: Sprite2D = $Espada
+@onready var _espada_cruzada: Sprite2D = $EspadaCruzada
 @onready var _efeito: AnimatedSprite2D = $Efeito
 @onready var _hitbox: HitboxComponent = $Hitbox
 @onready var _forma: CollisionShape2D = $Hitbox/Forma
@@ -55,13 +69,20 @@ func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
 	_espada.position = Vector2.ZERO
 	_espada.scale = Vector2.ONE
 	DesenhoArma.preparar(_espada, arma)
-	_espada.rotation_degrees = DesenhoArma.rotacao(arma, _angulo_sem_tocar_chao(angulo, mao.y, arma))
+	if _carga >= 0.0:
+		position = mao + RECUO_CARGA * _carga
+		_espada.rotation_degrees = DesenhoArma.rotacao(arma, lerpf(ANGULOS_CARGA.x, ANGULOS_CARGA.y, _carga))
+		return
+	_espada.rotation_degrees = DesenhoArma.rotacao(arma, DesenhoArma.angulo_sem_tocar_chao(angulo, mao.y, arma, FOLGA_DO_CHAO))
 
 
-## Começa um golpe com a `arma`. `secundaria` = o 2º golpe, da arma da outra mão.
+## Começa um golpe com a `arma`. `secundaria` = o 2º golpe, da arma da outra mão: com a
+## `principal`, as duas cruzam em X (a área de acerto segue a da outra mão).
 ## Quem for atingido resolve o `golpe` contra a própria CA.
-func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false) -> void:
-	_arma = arma
+func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false, principal: Arma = null) -> void:
+	_arma = _versao_cruzada(arma) if principal else arma
+	_cruzada = principal
+	DesenhoArma.preparar(_espada_cruzada, principal)
 	_golpe = golpe
 	_tempo = 0.0
 	_golpeando = true
@@ -70,6 +91,16 @@ func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false) -> void:
 	_efeito.modulate = arma.cor_corte
 	_efeito.hide()
 	_aplicar_pose()
+
+
+## Pose de carregar o arremesso (`fracao` 0 a 1; negativo = volta ao repouso).
+func carregar_arremesso(fracao: float) -> void:
+	_carga = fracao
+
+
+## A mão saiu do lugar da animação (golpe ou carga): a camada da mão não deve cobrir a arma.
+func mao_fora_do_lugar() -> bool:
+	return _golpeando or _carga >= 0.0
 
 
 func esta_golpeando() -> bool:
@@ -128,6 +159,8 @@ func _aplicar_pose() -> void:
 		_espada.rotation_degrees = DesenhoArma.rotacao(_arma, pose.angulo)
 	else:
 		_mostrar_quadro(_arma.indice_da_pose(_tempo))
+	if _cruzada:
+		_espada_cruzada.rotation_degrees = DesenhoArma.rotacao(_cruzada, _soma_cruzado - pose.angulo)
 	var comprimento := _arma.comprimento * pose.escala + FOLGA_PONTA
 	var retangulo := _forma.shape as RectangleShape2D
 	retangulo.size = Vector2(comprimento, ESPESSURA_ACERTO)
@@ -135,20 +168,25 @@ func _aplicar_pose() -> void:
 	_forma.position = Vector2.from_angle(deg_to_rad(pose.angulo)) * comprimento / 2.0
 
 
+## Cópia da arma da outra mão com o movimento cruzado (e o passo para chegar a 5 pés).
+func _versao_cruzada(arma: Arma) -> Arma:
+	var versao := arma.duplicate() as Arma
+	versao.quadros = []
+	versao.poses = []
+	for p: Array in POSES_CRUZADO:
+		versao.poses.append(PoseGolpe.criar(p[0], p[1], Vector2(p[2], p[3]), 1.0, p[4]))
+	versao.passo = maxf(EscalaDnd.PONTA_5_PES - versao.alcance_da_ponta(), 0.0)
+	versao.efeito = Arma.EFEITO_CORTE
+	var acerto := versao.poses.filter(func(pose: PoseGolpe) -> bool: return pose.acerta)[0] as PoseGolpe
+	_soma_cruzado = acerto.angulo + versao.poses[versao.poses.find(acerto) + 1].angulo
+	return versao
+
+
 ## Arma flexível (mangual, chicote): mostra o quadro desenhado da pose, sem girar.
 func _mostrar_quadro(indice: int) -> void:
 	_espada.texture = _arma.quadros[mini(indice, _arma.quadros.size() - 1)]
 	_espada.offset = -_arma.pegada_quadros
 	_espada.rotation = 0.0
-
-
-## Limita o ângulo para baixo: a ponta não passa dos pés. `altura_mao` = y da mão
-## (negativo = acima dos pés).
-func _angulo_sem_tocar_chao(angulo: float, altura_mao: float, arma: Arma) -> float:
-	if arma.comprimento <= 0.0:
-		return angulo
-	var seno_maximo := clampf((-altura_mao - FOLGA_DO_CHAO) / arma.comprimento, -1.0, 1.0)
-	return minf(angulo, rad_to_deg(asin(seno_maximo)))
 
 
 func _atualizar_acerto() -> void:
@@ -202,4 +240,6 @@ func _tocar_efeito(animacao: StringName, posicao: Vector2, angulo: float, escala
 func _terminar() -> void:
 	_golpeando = false
 	_golpe_secundario = false
+	_cruzada = null
+	_espada_cruzada.hide()
 	_hitbox.desligar()

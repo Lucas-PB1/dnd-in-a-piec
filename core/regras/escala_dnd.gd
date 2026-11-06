@@ -18,6 +18,9 @@ const TIQUES_BASE_ATAQUE := 10
 const TIQUES_MINIMOS_ATAQUE := 3
 ## Disparada (Dash) do D&D: correndo, o deslocamento dobra.
 const MULTIPLICADOR_DISPARADA := 2.0
+## Até onde a ponta da arma tem de chegar à frente da mão num golpe de 5 pés (px). Com
+## Alcance (Reach), 1 ladrilho a mais. Armas curtas dão um passo para chegar lá.
+const PONTA_5_PES := 44.0
 
 
 static func pes_para_pixels(pes: float) -> float:

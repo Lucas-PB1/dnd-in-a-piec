@@ -17,7 +17,7 @@ signal vida_mudou(atual: int, maxima: int)
 signal caiu
 ## Emitido ao arremessar a arma da mão. Quem monta o jogo cria o projétil.
 ## Sem ninguém escutando (cena aberta sozinha), a arma continua na mão.
-signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int)
+signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float)
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
@@ -95,11 +95,12 @@ func _physics_process(delta: float) -> void:
 	_maquina.processar_fisica(delta)
 	move_and_slide()
 	_checar_aterrissagem()
+	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
 	var na_tras: Arma = null if _ataque.golpe_da_secundaria() else arma_secundaria()
 	_arma_tras.mostrar(na_tras, _animacao.ponto_da_mao_de_tras(), direcao_olhar)
-	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar)
+	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar, esta_golpeando(), delta)
 	_camera.olhar_para(direcao_olhar)
 	if global_position.y > limite_queda:
 		reaparecer()
@@ -268,8 +269,19 @@ func iniciar_golpe_extra() -> void:
 	_comecar_golpe(true)
 
 
+## K ainda está apertado (carregando o arremesso)?
+func segurando_arremesso() -> bool:
+	return Input.is_action_pressed("arremessar")
+
+
+## Pose de carregar o arremesso: `fracao` de 0 a 1 (quanto mais, mais para trás). -1 = sai da pose.
+func carregar_arremesso(fracao: float) -> void:
+	_ataque.carregar_arremesso(fracao)
+
+
 ## Solta a arma da mão. Sem ninguém escutando o sinal, ela continua equipada.
-func lancar_arma() -> void:
+## `forca` de 0 (alcance normal) a 1 (alcance longo).
+func lancar_arma(forca: float = 0.0) -> void:
 	var arma := _arma_arremessavel()
 	if arma == null or arma_arremessada.get_connections().is_empty():
 		return
@@ -279,7 +291,8 @@ func lancar_arma() -> void:
 	var extraida := inventario.extrair_uma(arma)
 	_tempo_desde_golpe = 0.0
 	_contador_buffer_arremesso = 0.0
-	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar)
+	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar, forca)
+	_ataque.carregar_arremesso(-1.0)
 
 
 ## Arma caída volta para a mochila (e para a mão, se ela estiver vazia). false = mochila cheia.
@@ -460,7 +473,7 @@ func _comecar_golpe(extra: bool) -> void:
 	_combo_pedido = false
 	_golpe_extra = extra
 	var arma := arma_secundaria() if extra else arma_atual()
-	_ataque.golpear(arma, _criar_golpe_de(arma, extra), extra)
+	_ataque.golpear(arma, _criar_golpe_de(arma, extra), extra, arma_atual() if extra else null)
 
 
 func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:

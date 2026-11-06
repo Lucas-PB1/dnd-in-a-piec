@@ -7,7 +7,7 @@ const PASTA := "res://data/armas/"
 const TOTAL_ARMAS := 29
 const TOTAL_ARMADURAS := 21
 ## Até onde a ponta tem de chegar (px à frente da mão): 5 pés; com Alcance, 10 pés.
-const PONTA_NORMAL := 44.0
+const PONTA_NORMAL := EscalaDnd.PONTA_5_PES
 const PONTA_ALCANCE := PONTA_NORMAL + EscalaDnd.PIXELS_POR_LADRILHO
 
 var _falhas := 0

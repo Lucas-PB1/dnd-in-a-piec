@@ -37,6 +37,8 @@ extends Item
 ## Arremesso: distância normal e longa (pés). 0 = não arremessa. Tecla K; a arma cai e se pega com E.
 @export var arremesso_normal_pes: float = 0.0
 @export var arremesso_longo_pes: float = 0.0
+## Arremessada, voa de ponta (Azagaia, Lança, Tridente, Dardo) e finca no chão; senão, gira.
+@export var arremesso_de_ponta: bool = false
 ## Maestria (Proficiencias.MAESTRIAS): só vale se a classe dominar a arma (fatia 11c).
 @export var maestria: StringName = &""
 

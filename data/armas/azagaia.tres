@@ -37,6 +37,7 @@ pegada = Vector2(4.3284273, 32.671574)
 comprimento = 45.5
 arremesso_normal_pes = 30.0
 arremesso_longo_pes = 120.0
+arremesso_de_ponta = true
 maestria = &"lentidao"
 nome_original = "Javelin"
 peso = "2 lb."

@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://features/jogador/jogador.gd" id="1_script"]
 [ext_resource type="Resource" path="res://data/jogador_padrao.tres" id="2_stats"]
@@ -28,6 +28,7 @@
 [ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="22_defesa"]
 [ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="23_texto"]
 [ext_resource type="Script" path="res://features/jogador/estados/estado_levando_dano.gd" id="24_levando_dano"]
+[ext_resource type="SpriteFrames" path="res://features/jogador/sprites/maos_frente_frames.tres" id="40_maos"]
 
 [sub_resource type="ShaderMaterial" id="MaterialRoupa"]
 resource_local_to_scene = true
@@ -91,11 +92,20 @@ autoplay = "idle"
 script = ExtResource("4_animacao")
 pontos_mao = ExtResource("20_pontos_mao")
 
+[node name="MaoFrente" type="AnimatedSprite2D" parent="Sprite"]
+z_index = 1
+sprite_frames = ExtResource("40_maos")
+animation = &"idle"
+
 [node name="Escudo" type="Sprite2D" parent="."]
 script = ExtResource("25_escudo")
 
 [node name="Ataque" type="Node2D" parent="."]
 script = ExtResource("13_ataque")
+
+[node name="EspadaCruzada" type="Sprite2D" parent="Ataque"]
+visible = false
+centered = false
 
 [node name="Espada" type="Sprite2D" parent="Ataque"]
 visible = false

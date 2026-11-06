@@ -125,13 +125,13 @@ func _abrir_inventario() -> void:
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
 
 
-func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int) -> void:
+func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float) -> void:
 	var voo: ArmaArremessada = CENA_ARREMESSO.instantiate()
 	voo.recolhida.connect(_ao_recolher_arma.bind(voo))
 	voo.derreteu.connect(_jogador.avisar)
 	add_child(voo)
 	voo.global_position = origem
-	voo.lancar(arma, golpe, penalidade, direcao)
+	voo.lancar(arma, golpe, penalidade, direcao, forca)
 
 
 func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> void:

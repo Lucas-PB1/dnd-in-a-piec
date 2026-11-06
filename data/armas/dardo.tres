@@ -38,6 +38,7 @@ pegada = Vector2(4.3284273, 13.671573)
 comprimento = 18.6
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
+arremesso_de_ponta = true
 maestria = &"atormentar"
 nome_original = "Dart"
 peso = "1/4 lb."

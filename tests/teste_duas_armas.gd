@@ -65,6 +65,8 @@ func _testar_no_jogo() -> void:
 	await _testar_combo(jogador, boneco)
 	await _testar_alcance(cena)
 	await _testar_arremesso(cena, jogador)
+	await _testar_distancias_e_pouso(cena)
+	await _testar_camada_da_mao(jogador)
 	cena.queue_free()
 
 
@@ -133,6 +135,64 @@ func _testar_arremesso(cena: Node, jogador: Jogador) -> void:
 	_checar(not is_instance_valid(voo) or not voo.is_inside_tree(), "E recolhe a arma do chão")
 	_checar(jogador.inventario.equipado(Item.ESPACO_MAO) == adaga, "a mão vazia equipa a arma recolhida")
 
+
+## Toque rápido: cai perto do alcance normal; carga cheia: perto do longo. De ponta finca;
+## a que gira cai deitada. Acertou um alvo: cai ali, não atravessa.
+func _testar_distancias_e_pouso(cena: Node) -> void:
+	var chao_y := (cena.get_node("Jogador") as Jogador).global_position.y
+	var azagaia: Arma = load("res://data/armas/azagaia.tres")
+	var normal := EscalaDnd.pes_para_pixels(azagaia.arremesso_normal_pes)
+	var longo := EscalaDnd.pes_para_pixels(azagaia.arremesso_longo_pes)
+	var perto := await _distancia_do_pouso(cena, azagaia, 0.0, chao_y)
+	var longe := await _distancia_do_pouso(cena, azagaia, 1.0, chao_y)
+	_checar(absf(perto[0] - normal) < 40.0, "toque rápido: cai perto do alcance normal (%d de %d px)" % [perto[0], normal])
+	_checar(absf(longe[0] - longo) < 80.0, "carga cheia: cai perto do alcance longo (%d de %d px)" % [longe[0], longo])
+	var fincada: float = perto[1] + azagaia.angulo_arte
+	_checar(fincada > 15.0 and fincada < 90.0, "Azagaia voa de ponta e finca no chão (ponta a %d°)" % fincada)
+	var machadinha: Arma = load("res://data/armas/machadinha.tres")
+	var deitada := await _distancia_do_pouso(cena, machadinha, 0.0, chao_y)
+	_checar(is_equal_approx(deitada[1], DesenhoArma.rotacao(machadinha, 0.0)), "Machadinha gira no ar e cai deitada")
+	var boneco: BonecoTreino = cena.get_node("BonecoTreino")
+	(boneco.get_node("Defesa") as DefesaComponent).classe_armadura = -100
+	var voo: ArmaArremessada = load(CENA_VOO).instantiate()
+	cena.add_child(voo)
+	voo.global_position = Vector2(boneco.global_position.x - 60.0, chao_y - ArmaArremessada.ALTURA_DA_MAO)
+	voo.lancar(azagaia, Golpe.new(azagaia.nome, 0, Dado.new(1, 6)), 0, 1, 1.0)
+	for i in 120:
+		if voo.esta_no_chao():
+			break
+		await physics_frame
+	_checar(voo.global_position.x < boneco.global_position.x + 30.0, "acertou o boneco: cai ali, não atravessa")
+	voo.free()
+
+
+## Lança a `arma` com a `forca` a partir da altura da mão; devolve [distância do pouso, giro do sprite].
+func _distancia_do_pouso(cena: Node, arma: Arma, forca: float, chao_y: float) -> Array:
+	var voo: ArmaArremessada = load(CENA_VOO).instantiate()
+	cena.add_child(voo)
+	var origem := Vector2(1200.0, chao_y - ArmaArremessada.ALTURA_DA_MAO)  # longe do boneco e do baú
+	voo.global_position = origem
+	voo.lancar(arma, Golpe.new(arma.nome, 0, Dado.new(1, 4)), 0, 1, forca)
+	for i in 180:
+		if voo.esta_no_chao():
+			break
+		await physics_frame
+	var resultado := [voo.global_position.x - origem.x, (voo.get_node("Sprite") as Sprite2D).rotation_degrees]
+	voo.free()
+	return resultado
+
+
+## A mão da frente é uma camada por cima da arma: segue o quadro do herói e some no golpe.
+func _testar_camada_da_mao(jogador: Jogador) -> void:
+	var sprite: AnimatedSprite2D = jogador.get_node("Sprite")
+	var mao: AnimatedSprite2D = jogador.get_node("Sprite/MaoFrente")
+	await _esperar(10)
+	_checar(mao.visible and mao.animation == sprite.animation and mao.frame == sprite.frame and mao.z_index > 0,
+		"camada da mão segue o quadro do herói, por cima da arma")
+	jogador.iniciar_golpe()
+	await _esperar(2)
+	_checar(not mao.visible, "no golpe a mão sai do lugar: a camada some")
+	await _esperar(40)
 
 func _achar_voo(cena: Node) -> ArmaArremessada:
 	for filho in cena.get_children():

@@ -10,6 +10,9 @@ extends Area2D
 ## espaço + 5 pés do tamanho de uma criatura Média = 10 pés (px).
 const DISTANCIA_TRESPASSAR := 10.0 * EscalaDnd.PIXELS_POR_LADRILHO / EscalaDnd.PES_POR_LADRILHO
 
+## Emitido quando o golpe é entregue a um alvo (ex.: a arma arremessada cai ali).
+signal alvo_atingido(alvo: HurtboxComponent)
+
 var _golpe: Golpe
 var _ligada: bool = false
 var _atingidos: Array[HurtboxComponent] = []
@@ -69,3 +72,4 @@ func _tentar_trespassar(candidatos: Array[HurtboxComponent]) -> void:
 func _entregar(alvo: HurtboxComponent, golpe: Golpe) -> void:
 	_atingidos.append(alvo)
 	alvo.receber_golpe(golpe, global_position)
+	alvo_atingido.emit(alvo)

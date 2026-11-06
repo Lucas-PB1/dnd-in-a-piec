@@ -22,7 +22,7 @@ const B := TiposDano.CONTUNDENTE
 
 ## Até onde a ponta tem de chegar (px à frente da mão) no golpe: 5 pés; com Alcance (Reach),
 ## 10 pés (+1 ladrilho). Se a arma não chega lá com as poses, o herói dá um passo à frente.
-const PONTA_NORMAL := 44.0
+const PONTA_NORMAL := EscalaDnd.PONTA_5_PES
 const PONTA_ALCANCE := PONTA_NORMAL + EscalaDnd.PIXELS_POR_LADRILHO
 const ARQ_DESARMADO := "res://data/ataque_desarmado.tres"
 
@@ -61,6 +61,9 @@ const TABELA := {
 	"martelo_guerra": ["Martelo de Guerra", "Warhammer", M, "1d8", B, "", "1d10", "", Proficiencias.EMPURRAR, "5 lb.", "15 GP", "hammer1", 40],
 	"chicote": ["Chicote", "Whip", M, "1d4", C, "FR", "", "", Proficiencias.LENTIDAO, "3 lb.", "2 GP", "", 70],
 }
+
+## Armas de arremesso que voam de ponta (as outras giram no ar).
+const DE_PONTA := ["azagaia", "lanca", "tridente", "dardo"]
 
 ## Movimento de cada arma: poses-chave [tempo (s), ângulo (graus), mão x, mão y, acerta, escala].
 ## Ângulo com o herói olhando para a direita: 0 = à frente, -90 = para cima, positivo = para
@@ -153,6 +156,7 @@ func _criar(id: String, d: Array) -> Arma:
 	a.alcance_estendido = "R" in props
 	a.empilhavel = "E" in props
 	a.dados_versatil = d[6]
+	a.arremesso_de_ponta = id in DE_PONTA
 	if d[7] != "":
 		var partes: PackedStringArray = (d[7] as String).split("/")
 		a.arremesso_normal_pes = float(partes[0])

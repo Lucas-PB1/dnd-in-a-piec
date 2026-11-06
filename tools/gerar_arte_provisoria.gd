@@ -38,8 +38,8 @@ func _initialize() -> void:
 	_gerar_condicoes()
 	_gerar_boneco()
 	_gerar_bau()
-	_gerar_escudo(ARQ_ESCUDO, 18, Color8(150, 92, 48), Color8(180, 184, 196), true)
-	_gerar_escudo(ARQ_TAMPA, 14, Color8(120, 124, 134), Color8(170, 174, 186), false)
+	_gerar_escudo(ARQ_ESCUDO, Vector2i(8, 20), Color8(150, 92, 48), Color8(180, 184, 196), true)
+	_gerar_escudo(ARQ_TAMPA, Vector2i(7, 15), Color8(120, 124, 134), Color8(170, 174, 186), false)
 	print("Arte provisória gerada.")
 	quit()
 
@@ -181,22 +181,24 @@ func _gerar_bau() -> void:
 	_salvar(img, ARQ_BAU)
 
 
-## Escudo redondo visto de frente: madeira (ou metal) com aro e, se `com_bossa`, o centro de metal.
-func _gerar_escudo(caminho: String, diametro: int, cor_centro: Color, cor_aro: Color, com_bossa: bool) -> void:
-	var img := Image.create(diametro + 2, diametro + 2, false, Image.FORMAT_RGBA8)
-	var centro := Vector2(diametro / 2.0 + 1.0, diametro / 2.0 + 1.0)
-	var raio := diametro / 2.0
+## Escudo redondo VISTO DE LADO (o herói segura de perfil): um oval estreito, com o aro
+## mais claro na borda da frente (direita) e a bossa de metal saltando dela.
+func _gerar_escudo(caminho: String, tamanho: Vector2i, cor_centro: Color, cor_aro: Color, com_bossa: bool) -> void:
+	var img := Image.create(tamanho.x + 3, tamanho.y + 2, false, Image.FORMAT_RGBA8)
+	var centro := Vector2(tamanho.x / 2.0 + 1.0, tamanho.y / 2.0 + 1.0)
+	var raios := Vector2(tamanho) / 2.0
 	for y in img.get_height():
 		for x in img.get_width():
-			var d := (Vector2(x, y) + Vector2(0.5, 0.5)).distance_to(centro)
-			if d > raio:
+			var v := (Vector2(x, y) + Vector2(0.5, 0.5) - centro) / raios
+			if v.length() > 1.0:
 				continue
-			var cor := cor_aro if d > raio - 2.0 else cor_centro
-			if com_bossa and d < 2.5:
-				cor = cor_aro
-			if d <= raio - 2.0 and (x + y) % 5 == 0:
-				cor = cor.darkened(0.15)  # veios / amassados
+			var na_borda := v.length() > 0.75 or v.x > 0.55  # aro, mais grosso na frente
+			var cor := cor_aro if na_borda else cor_centro
+			if not na_borda and y % 4 == 0:
+				cor = cor.darkened(0.15)  # tábuas / amassados
 			img.set_pixel(x, y, cor)
+	if com_bossa:  # o miolo de metal saltando da frente
+		img.fill_rect(Rect2i(int(centro.x + raios.x) - 1, int(centro.y) - 2, 2, 4), cor_aro.lightened(0.2))
 	_contornar(img, Rect2i(0, 0, img.get_width(), img.get_height()))
 	_salvar(img, caminho)
 

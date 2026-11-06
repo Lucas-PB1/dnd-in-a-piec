@@ -16,6 +16,16 @@ extends AnimatedSprite2D
 
 ## Enquanto true, o herói pisca (invencível depois de apanhar). O dono liga e desliga.
 var piscando: bool = false
+## Mão da frente desenhada por cima da arma e do escudo (os dedos ficam sobre o cabo).
+## O dono desliga quando a mão sai do lugar (golpe, carga do arremesso).
+var mao_por_cima: bool = true
+
+@onready var _mao_frente: AnimatedSprite2D = get_node_or_null("MaoFrente")
+
+
+func _ready() -> void:
+	frame_changed.connect(_sincronizar_mao)
+	animation_changed.connect(_sincronizar_mao)
 
 
 ## Escolhe a animação para o `estado` atual da máquina do herói.
@@ -37,6 +47,17 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 			play(&"ataque")
 		_:
 			_animar_parado()
+	_sincronizar_mao()
+
+
+## A camada da mão acompanha o quadro e o lado do herói.
+func _sincronizar_mao() -> void:
+	if _mao_frente == null:
+		return
+	_mao_frente.animation = animation
+	_mao_frente.frame = frame
+	_mao_frente.flip_h = flip_h
+	_mao_frente.visible = mao_por_cima
 
 
 ## Ponto da mão da frente no quadro atual, relativo aos pés e já espelhado se virado.

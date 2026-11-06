@@ -38,6 +38,7 @@ comprimento = 49.7
 dados_versatil = "1d8"
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
+arremesso_de_ponta = true
 maestria = &"enfraquecer"
 nome_original = "Spear"
 peso = "3 lb."

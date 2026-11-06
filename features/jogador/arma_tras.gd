@@ -5,8 +5,11 @@ extends Sprite2D
 
 ## Empurra a arma para trás do tronco, para não entrar no corpo na passada.
 const AFASTAMENTO := 6.0
-## Ponta para baixo e para trás (graus, herói olhando para a direita).
-const ANGULO := 100.0
+## Inclinada para baixo e para trás (graus, herói olhando para a direita). Arma comprida
+## inclina menos, para a ponta não entrar no chão.
+const ANGULO := 125.0
+## A ponta fica pelo menos isto (px) acima do chão.
+const FOLGA_DO_CHAO := 2.0
 
 
 func _ready() -> void:
@@ -20,5 +23,7 @@ func mostrar(arma: Arma, mao: Vector2, direcao: int) -> void:
 	if not visible:
 		return
 	position = Vector2(mao.x - AFASTAMENTO * direcao, mao.y)
-	rotation_degrees = DesenhoArma.rotacao(arma, ANGULO)
+	var angulo := DesenhoArma.angulo_sem_tocar_chao(ANGULO, mao.y, arma, FOLGA_DO_CHAO)
+	# Espelhado (scale.x = -1) o Godot gira depois de inverter: o giro também inverte.
+	rotation_degrees = DesenhoArma.rotacao(arma, angulo) * direcao
 	scale = Vector2(direcao, 1.0)

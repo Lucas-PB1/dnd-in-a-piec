@@ -1,6 +1,8 @@
 extends SceneTree
 ## Marca a MÃO DA FRENTE do herói em cada quadro de cada animação do heroi_frames.tres e
-## salva em features/jogador/sprites/pontos_mao.tres. Rodar depois de trocar a arte do herói:
+## salva em features/jogador/sprites/pontos_mao.tres. Também recorta essa mão numa camada
+## própria (folhas *_mao.png + maos_frente_frames.tres), desenhada por cima da arma e do
+## escudo: os dedos ficam sobre o cabo e a arma parece segurada de verdade. Rodar depois de trocar a arte do herói:
 ##   godot --headless --path . --script res://tools/marcar_pontos_mao.gd -- [revisao.png]
 ## Com o argumento, salva também uma folha ampliada com os pontos marcados, para conferir.
 ##
@@ -10,6 +12,13 @@ extends SceneTree
 
 const FRAMES := "res://features/jogador/sprites/heroi_frames.tres"
 const DESTINO := "res://features/jogador/sprites/pontos_mao.tres"
+## Camada só com a mão da frente: as folhas do herói com o resto apagado.
+const DESTINO_FRAMES_MAO := "res://features/jogador/sprites/maos_frente_frames.tres"
+const SUFIXO_MAO := "_mao"
+## Em volta da mão entram também os pixels escuros (o contorno), para a mão ter borda.
+const LUZ_CONTORNO := 0.35
+const VIZINHOS: Array[Vector2i] = [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0),
+	Vector2i(1, 0), Vector2i(-1, 1), Vector2i(0, 1), Vector2i(1, 1)]
 ## Tamanho do quadro do herói e onde ficam os pés (centro de baixo).
 const TAMANHO_QUADRO := 80
 const PES := Vector2(40, 80)
@@ -39,6 +48,7 @@ func _initialize() -> void:
 		resultado.angulos[animacao] = ANGULOS.get(animacao, PontosMao.ANGULO_PADRAO)
 	ResourceSaver.save(resultado, DESTINO)
 	print("Pontos da mão salvos em ", DESTINO)
+	_salvar_camada_da_mao(frames)
 	var args := OS.get_cmdline_user_args()
 	if not args.is_empty():
 		_salvar_revisao(frames, resultado, args[0])
@@ -58,9 +68,15 @@ func _imagem_do_quadro(frames: SpriteFrames, animacao: StringName, i: int) -> Im
 	return atlas.atlas.get_image().get_region(Rect2i(atlas.region))
 
 
-## Centro da mancha de pele (relativo aos pés), ou null. Mão da frente = a mais à direita
-## depois de X_MINIMO_FRENTE; mão de trás = a mais à esquerda antes dele.
+## Centro da mancha de pele da mão (relativo aos pés), ou null se ela não aparece.
 func _achar_mao(img: Image, da_frente: bool) -> Variant:
+	var mancha := _mancha_da_mao(img, da_frente)
+	return null if mancha.is_empty() else (_centro(mancha) - PES).round()
+
+
+## Pixels da mancha de pele da mão. Mão da frente = a mais à direita depois de
+## X_MINIMO_FRENTE; mão de trás = a mais à esquerda antes dele. Vazio = não aparece.
+func _mancha_da_mao(img: Image, da_frente: bool) -> Array[Vector2i]:
 	var melhor: Array[Vector2i] = []
 	var melhor_x := -INF if da_frente else INF
 	for mancha in _manchas_de_pele(img):
@@ -72,9 +88,7 @@ func _achar_mao(img: Image, da_frente: bool) -> Variant:
 		if do_lado_certo and mais_na_ponta:
 			melhor = mancha
 			melhor_x = x
-	if melhor.is_empty():
-		return null
-	return (_centro(melhor) - PES).round()
+	return melhor
 
 
 func _manchas_de_pele(img: Image) -> Array[Array]:
@@ -146,6 +160,48 @@ func _vizinho_achado(achados: Array, i: int, passo: int) -> Variant:
 			return v
 	return null
 
+
+## Copia as folhas do herói deixando só a mão da frente (e o contorno dela) e escreve a
+## SpriteFrames gêmea: o mesmo heroi_frames.tres apontando para as folhas *_mao.png.
+func _salvar_camada_da_mao(frames: SpriteFrames) -> void:
+	var folhas := {}  # caminho da folha do herói -> Image só com as mãos
+	for animacao in frames.get_animation_names():
+		for i in frames.get_frame_count(animacao):
+			var atlas := frames.get_frame_texture(animacao, i) as AtlasTexture
+			var caminho := atlas.atlas.resource_path
+			if not folhas.has(caminho):
+				folhas[caminho] = Image.create(atlas.atlas.get_width(), atlas.atlas.get_height(), false, Image.FORMAT_RGBA8)
+			var quadro := _imagem_do_quadro(frames, animacao, i)
+			for p in _pixels_da_mao(quadro):
+				(folhas[caminho] as Image).set_pixelv(Vector2i(atlas.region.position) + p, quadro.get_pixelv(p))
+	for caminho: String in folhas:
+		(folhas[caminho] as Image).save_png(ProjectSettings.globalize_path(_caminho_da_mao(caminho)))
+	var texto := FileAccess.get_file_as_string(FRAMES)
+	# Sem os uid: senão o Godot acharia as folhas ORIGINAIS pelo uid (e o recurso duplicaria o uid).
+	texto = RegEx.create_from_string(" uid=\"uid://[a-z0-9]+\"").sub(texto, "", true)
+	for caminho: String in folhas:
+		texto = texto.replace(caminho, _caminho_da_mao(caminho))
+	var arquivo := FileAccess.open(DESTINO_FRAMES_MAO, FileAccess.WRITE)
+	arquivo.store_string(texto)
+	print("Camada da mão salva em ", DESTINO_FRAMES_MAO)
+
+
+func _caminho_da_mao(caminho: String) -> String:
+	return caminho.get_basename() + SUFIXO_MAO + ".png"
+
+
+## A mancha da mão da frente mais o contorno escuro encostado nela.
+func _pixels_da_mao(img: Image) -> Array[Vector2i]:
+	var mao := _mancha_da_mao(img, true)
+	var com_borda: Array[Vector2i] = mao.duplicate()
+	for p in mao:
+		for d in VIZINHOS:
+			var v := p + d
+			if Rect2i(Vector2i.ZERO, img.get_size()).has_point(v) and v not in com_borda:
+				var cor := img.get_pixelv(v)
+				if cor.a > 0.5 and cor.get_luminance() < LUZ_CONTORNO:
+					com_borda.append(v)
+	return com_borda
 
 ## Folha ampliada com cada quadro e um X vermelho na mão, para revisar.
 func _salvar_revisao(frames: SpriteFrames, resultado: PontosMao, caminho: String) -> void:
