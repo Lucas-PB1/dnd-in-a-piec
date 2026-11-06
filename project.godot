@@ -68,6 +68,8 @@ inventario={
 2d_physics/layer_1="mundo"
 2d_physics/layer_2="jogador"
 2d_physics/layer_3="hurtbox_inimigo"
+2d_physics/layer_4="hurtbox_jogador"
+2d_physics/layer_5="inimigo"
 
 [physics]
 

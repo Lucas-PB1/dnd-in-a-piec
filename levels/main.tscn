@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://ui/inventario/tela_inventario.tscn" id="6_inventario"]
 [ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="7_guerreiro"]
 [ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="8_classe_rpg"]
+[ext_resource type="PackedScene" path="res://features/gray_ooze/gray_ooze.tscn" id="9_ooze"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -17,6 +18,9 @@ classes_disponiveis = Array[ExtResource("8_classe_rpg")]([ExtResource("7_guerrei
 
 [node name="BonecoTreino" parent="." instance=ExtResource("4_boneco")]
 position = Vector2(240, 288)
+
+[node name="GrayOoze" parent="." groups=["monstros"] instance=ExtResource("9_ooze")]
+position = Vector2(720, 288)
 
 [node name="Jogador" parent="." instance=ExtResource("3_jogador")]
 

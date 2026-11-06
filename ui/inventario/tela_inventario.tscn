@@ -55,11 +55,11 @@ text = "Inventário"
 
 [node name="Lista" type="ItemList" parent="Centro/Painel/Margem/Coluna/Colunas/Itens"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 210)
+custom_minimum_size = Vector2(170, 210)
 layout_mode = 2
 
 [node name="Detalhes" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
-custom_minimum_size = Vector2(190, 0)
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 
 [node name="Nome" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
@@ -69,7 +69,7 @@ theme_override_colors/font_color = Color(1, 0.9, 0.55, 1)
 
 [node name="Descricao" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Detalhes"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 0)
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 autowrap_mode = 3
 
@@ -93,7 +93,7 @@ layout_mode = 2
 text = "Jogar fora"
 
 [node name="Ficha" type="VBoxContainer" parent="Centro/Painel/Margem/Coluna/Colunas"]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(185, 0)
 layout_mode = 2
 
 [node name="TituloFicha" type="Label" parent="Centro/Painel/Margem/Coluna/Colunas/Ficha"]

@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://features/boneco_treino/boneco_treino.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://features/boneco_treino/boneco_treino.png" id="2_textura"]
 [ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="3_hurtbox"]
+[ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="4_defesa"]
+[ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="5_texto"]
 
 [sub_resource type="RectangleShape2D" id="FormaAlvo"]
 size = Vector2(20, 44)
@@ -24,5 +26,11 @@ script = ExtResource("3_hurtbox")
 position = Vector2(0, -28)
 shape = SubResource("FormaAlvo")
 
-[node name="PontoNumero" type="Marker2D" parent="."]
-position = Vector2(-6, -76)
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox")]
+script = ExtResource("4_defesa")
+classe_armadura = 10
+hurtbox = NodePath("../Hurtbox")
+
+[node name="Texto" type="Node2D" parent="."]
+position = Vector2(0, -76)
+script = ExtResource("5_texto")

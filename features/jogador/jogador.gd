@@ -32,7 +32,10 @@ var ficha: Ficha
 ## Itens carregados e equipados.
 var inventario := Inventario.new()
 
-var _rng := RandomNumberGenerator.new()
+## De onde veio o último golpe que acertou o herói (o estado LevandoDano recua para longe dele).
+var origem_ultimo_golpe: Vector2
+
+var _contador_invencivel: float = 0.0
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -44,6 +47,8 @@ var _toque_duplo: ToqueDuplo
 @onready var _camera: CameraJogador = $Camera
 @onready var _ataque: AtaqueJogador = $Ataque
 @onready var _vida: HealthComponent = $Vida
+@onready var _defesa: DefesaComponent = $Defesa
+@onready var _texto: TextoFlutuanteComponent = $Texto
 
 
 func _ready() -> void:
@@ -60,12 +65,15 @@ func _ready() -> void:
 	_toque_duplo = ToqueDuplo.new(stats.janela_toque_duplo)
 	aterrissou.connect(_animacao.tocar_aterrissagem)
 	_vida.vida_mudou.connect(vida_mudou.emit)
+	_vida.morreu.connect(_morrer, CONNECT_DEFERRED)  # depois que o golpe terminar de ser tratado
+	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	configurar_ficha(Ficha.new(classe, classe.atributos_sugeridos))
 	_maquina.iniciar(self)
 
 
 func _physics_process(delta: float) -> void:
 	_atualizar_contadores(delta)
+	_atualizar_invencibilidade(delta)
 	_maquina.processar_fisica(delta)
 	move_and_slide()
 	_checar_aterrissagem()
@@ -85,11 +93,16 @@ func posicionar_no_inicio(posicao: Vector2) -> void:
 	reset_physics_interpolation()
 
 
-## Troca a ficha de D&D (ex.: vinda da tela de criação) e recalcula a vida.
+## Troca a ficha de D&D (ex.: vinda da tela de criação) e recalcula a vida e a CA.
 func configurar_ficha(nova: Ficha) -> void:
 	ficha = nova
 	classe = nova.classe
 	_vida.configurar(ficha.vida_maxima())
+	_defesa.classe_armadura = ficha.classe_armadura()
+
+
+func esta_invencivel() -> bool:
+	return _contador_invencivel > 0.0
 
 
 func vida_atual() -> int:
@@ -144,10 +157,10 @@ func arma_atual() -> Arma:
 
 
 ## Começa um golpe com a arma atual, para o lado em que o herói olha.
-## O dano é rolado no início de cada golpe (dados da arma + modificador da ficha).
+## Quem for atingido rola o ataque (d20 + bônus da ficha) contra a própria CA.
 func iniciar_golpe() -> void:
 	var arma := arma_atual()
-	_ataque.golpear(arma, ficha.rolar_dano(arma, _rng))
+	_ataque.golpear(arma, ficha.golpe_com(arma))
 
 
 func esta_golpeando() -> bool:
@@ -214,3 +227,34 @@ func _checar_aterrissagem() -> void:
 	if is_on_floor() and not _estava_no_chao:
 		aterrissou.emit()
 	_estava_no_chao = is_on_floor()
+
+
+# --- Levar dano -----------------------------------------------------------------
+
+func _ao_resolver_golpe(resultado: Combate.Resultado, origem: Vector2) -> void:
+	_texto.mostrar_resultado(resultado, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
+	if not resultado.acertou:
+		return
+	origem_ultimo_golpe = origem
+	_ataque.cancelar()
+	_contador_invencivel = stats.tempo_invencibilidade
+	_defesa.invulneravel = true
+	_maquina.trocar(&"LevandoDano")
+
+
+func _atualizar_invencibilidade(delta: float) -> void:
+	if _contador_invencivel <= 0.0:
+		return
+	_contador_invencivel -= delta
+	if _contador_invencivel <= 0.0:
+		_defesa.invulneravel = false
+	_animacao.piscando = esta_invencivel()
+
+
+## Vida zerou: volta para o início com a vida cheia (por enquanto não há "fim de jogo").
+func _morrer() -> void:
+	_contador_invencivel = 0.0
+	_defesa.invulneravel = false
+	_animacao.piscando = false
+	_vida.curar_tudo()
+	reaparecer()

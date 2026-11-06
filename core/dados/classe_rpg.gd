@@ -7,3 +7,5 @@ extends Resource
 @export var dado_vida: int = 10
 ## Distribuição sugerida na compra de pontos (atributo -> valor, total 27 pontos).
 @export var atributos_sugeridos: Dictionary[StringName, int] = {}
+## Salvaguardas em que a classe é proficiente (Guerreiro: Força e Constituição).
+@export var salvaguardas_proficientes: Array[StringName] = []

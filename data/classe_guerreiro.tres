@@ -14,3 +14,4 @@ atributos_sugeridos = Dictionary[StringName, int]({
 &"inteligencia": 8,
 &"sabedoria": 12
 })
+salvaguardas_proficientes = Array[StringName]([&"forca", &"constituicao"])

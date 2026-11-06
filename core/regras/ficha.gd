@@ -3,7 +3,11 @@ extends RefCounted
 ## Ficha de personagem de D&D (nível 1): nome, classe e atributos. Calcula vida e dano. Regra pura.
 
 ## Dano mínimo de um acerto (com modificador negativo o total poderia dar 0).
-const DANO_MINIMO := 1
+const DANO_MINIMO := Combate.DANO_MINIMO
+## Bônus de proficiência no nível 1.
+const BONUS_PROFICIENCIA := 2
+## CA de quem não usa armadura (antes do modificador de Destreza).
+const CA_BASE := 10
 ## Vida mínima no nível 1, mesmo com Constituição muito baixa.
 const VIDA_MINIMA := 1
 ## Nome usado quando nenhum foi escolhido.
@@ -52,17 +56,45 @@ func bonus_dano(arma: Arma) -> int:
 	return mod_forca
 
 
-## Rola o dano de um acerto com a arma: dados da arma + bônus (mínimo DANO_MINIMO).
-func rolar_dano(arma: Arma, rng: RandomNumberGenerator) -> int:
-	return maxi(arma.dado().rolar(rng) + bonus_dano(arma), DANO_MINIMO)
+## Dados de dano da arma já com o modificador (ex.: espada curta + 2 = "1d6+2").
+func dado_dano(arma: Arma) -> Dado:
+	return arma.dado().com_bonus(bonus_dano(arma))
+
+
+## Rola o dano de um acerto com a arma (mínimo DANO_MINIMO). Crítico rola os dados em dobro.
+func rolar_dano(arma: Arma, rng: RandomNumberGenerator, critico: bool = false) -> int:
+	return maxi(dado_dano(arma).rolar(rng, critico), DANO_MINIMO)
 
 
 ## Texto do dano para a ficha, ex.: "1d6+2". Dano fixo (dado de 1 face, como o soco) vira o total: "3".
 func texto_dano(arma: Arma) -> String:
-	var bonus := bonus_dano(arma)
-	if arma.dado().faces == 1:
-		return str(maxi(arma.dado().quantidade + bonus, DANO_MINIMO))
-	if bonus == 0:
-		return arma.dado().texto()
-	var sinal := "+" if bonus > 0 else ""  # negativo já vem com "-"
-	return "%s%s%d" % [arma.dado().texto(), sinal, bonus]
+	var dado := dado_dano(arma)
+	if dado.faces == 1:
+		return str(maxi(dado.minimo(), DANO_MINIMO))
+	return dado.texto()
+
+
+## Bônus para acertar: proficiência + o mesmo modificador do dano (o Guerreiro é proficiente
+## com todas as armas e com o ataque desarmado).
+func bonus_ataque(arma: Arma) -> int:
+	return BONUS_PROFICIENCIA + bonus_dano(arma)
+
+
+## O ataque com a arma, pronto para ser resolvido contra a CA do alvo.
+func golpe_com(arma: Arma) -> Golpe:
+	return Golpe.new(arma.nome, bonus_ataque(arma), dado_dano(arma))
+
+
+## Classe de Armadura sem armadura: 10 + modificador de Destreza.
+func classe_armadura() -> int:
+	return CA_BASE + modificador(Atributos.DESTREZA)
+
+
+func proficiente_em_salvaguarda(atributo: StringName) -> bool:
+	return atributo in classe.salvaguardas_proficientes
+
+
+## Bônus da salvaguarda: modificador + proficiência (se a classe for proficiente nela).
+func bonus_salvaguarda(atributo: StringName) -> int:
+	var extra := BONUS_PROFICIENCIA if proficiente_em_salvaguarda(atributo) else 0
+	return modificador(atributo) + extra

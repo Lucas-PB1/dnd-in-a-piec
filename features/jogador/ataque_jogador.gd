@@ -9,7 +9,7 @@ extends Node2D
 const CURVA_GOLPE := 0.4
 
 var _arma: Arma
-var _dano: int = 0
+var _golpe: Golpe
 var _tempo: float = 0.0
 var _golpeando: bool = false
 var _direcao: int = 1
@@ -37,10 +37,10 @@ func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
 	_espada.visible = arma.textura != null
 
 
-## Começa um golpe com a `arma`, causando `dano` em quem acertar.
-func golpear(arma: Arma, dano: int) -> void:
+## Começa um golpe com a `arma`; quem for atingido resolve o `golpe` contra a própria CA.
+func golpear(arma: Arma, golpe: Golpe) -> void:
 	_arma = arma
-	_dano = dano
+	_golpe = golpe
 	_tempo = 0.0
 	_golpeando = true
 	_preparar_visual()
@@ -49,6 +49,12 @@ func golpear(arma: Arma, dano: int) -> void:
 
 func esta_golpeando() -> bool:
 	return _golpeando
+
+
+## Interrompe o golpe no meio (ex.: o herói apanhou).
+func cancelar() -> void:
+	if _golpeando:
+		_terminar()
 
 
 func _physics_process(delta: float) -> void:
@@ -95,7 +101,7 @@ func _girar_arma() -> void:
 func _atualizar_acerto() -> void:
 	var na_janela := _tempo >= _arma.inicio_acerto and _tempo < _arma.fim_acerto
 	if na_janela and not _hitbox.esta_ligada():
-		_hitbox.ligar(_dano)
+		_hitbox.ligar(_golpe)
 		_corte.show()
 		_corte.play(&"corte")
 	elif not na_janela and _hitbox.esta_ligada():

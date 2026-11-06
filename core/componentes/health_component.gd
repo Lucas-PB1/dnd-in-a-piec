@@ -1,10 +1,11 @@
 class_name HealthComponent
 extends Node
-## Pontos de vida de uma entidade. Por enquanto só guarda e avisa a vida;
-## dano e morte entram com o primeiro inimigo que machuca o herói.
+## Pontos de vida de uma entidade: recebe dano, avisa quando muda e quando chega a zero.
 
 ## Emitido quando a vida (atual ou máxima) muda.
 signal vida_mudou(atual: int, maxima: int)
+## Emitido uma vez, quando a vida chega a zero.
+signal morreu
 
 var vida_maxima: int = 1
 var vida_atual: int = 1
@@ -13,5 +14,23 @@ var vida_atual: int = 1
 ## Define a vida máxima e enche a vida.
 func configurar(maxima: int) -> void:
 	vida_maxima = maxima
-	vida_atual = maxima
+	curar_tudo()
+
+
+func curar_tudo() -> void:
+	vida_atual = vida_maxima
 	vida_mudou.emit(vida_atual, vida_maxima)
+
+
+## Tira `quantidade` de vida (nunca abaixo de zero). Ao zerar, emite `morreu`.
+func receber_dano(quantidade: int) -> void:
+	if esta_morto() or quantidade <= 0:
+		return
+	vida_atual = maxi(vida_atual - quantidade, 0)
+	vida_mudou.emit(vida_atual, vida_maxima)
+	if esta_morto():
+		morreu.emit()
+
+
+func esta_morto() -> bool:
+	return vida_atual <= 0

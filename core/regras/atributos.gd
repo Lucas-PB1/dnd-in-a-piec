@@ -32,5 +32,9 @@ static func modificador(valor: int) -> int:
 
 ## Modificador com sinal, para mostrar na tela: "+2", "-1", "+0".
 static func texto_modificador(valor: int) -> String:
-	var mod := modificador(valor)
-	return ("+%d" % mod) if mod >= 0 else str(mod)
+	return texto_bonus(modificador(valor))
+
+
+## Qualquer bônus com sinal: 4 -> "+4", -1 -> "-1", 0 -> "+0".
+static func texto_bonus(bonus: int) -> String:
+	return ("+%d" % bonus) if bonus >= 0 else str(bonus)

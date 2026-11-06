@@ -34,8 +34,14 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Mudar balanceamento | Edite `data/jogador_padrao.tres` no Inspector (velocidade, pulo, toque duplo). | Dados separados do código. |
 | Classe do herói | **Guerreiro (estilo D&D)**: espada (e futuramente escudo/outras armas). | Pedido do usuário. |
 | Regras de D&D 5e | Classes puras em `core/regras/`: `Dado` ("1d6"), `Atributos` (mod = (valor-10)/2 p/ baixo), `CompraDePontos` (27 pts, 8 a 15, custos do livro), `Ficha` (vida e dano). Testes em `tests/teste_regras_dnd.gd`. | Testável sem abrir o jogo. |
-| Vida | Nível 1 = **dado de vida máximo da classe + mod. CON** (Guerreiro d10, `data/classe_guerreiro.tres`). Mínimo 1. `HealthComponent` guarda a vida (sem dano ainda). | Regra do livro; usuário escolheu d10. |
-| Dano | **Dados da arma + mod.** a cada golpe. Arma com `acuidade` usa o maior entre FOR e DES (espada curta: 1d6, acuidade). **Mínimo 1** por acerto. | Regra do livro; mínimo 1 é regra da casa. |
+| Vida | Nível 1 = **dado de vida máximo da classe + mod. CON** (Guerreiro d10, `data/classe_guerreiro.tres`). Mínimo 1. `HealthComponent`: dano, `vida_mudou`, `morreu`. | Regra do livro; usuário escolheu d10. |
+| Dano | **Dados da arma + mod.** (`Dado` aceita "2d8+1"). Arma com `acuidade` usa o maior entre FOR e DES (espada curta: 1d6, acuidade). **Mínimo 1** por acerto. | Regra do livro; mínimo 1 é regra da casa. |
+| Combate (D&D) | **d20 + bônus de ataque >= CA do alvo** acerta (`Combate.resolver_ataque`). **20 natural** = crítico (acerta sempre, dados de dano em dobro, bônus não). **1 natural** erra sempre. Quem ataca monta um `Golpe` (nome, bônus, dado); quem é atingido resolve contra a própria CA no `DefesaComponent`. Herói: ataque = +2 proficiência + mod da arma; **CA = 10 + DES** (sem armadura). Textos flutuantes: dano, "Errou!", "Crítico X!" (`TextoFlutuanteComponent`). | Escolha do usuário (fiel ao D&D). |
+| Salvaguarda | `Combate.passou_salvaguarda(bonus, cd)`: d20 + bônus >= CD. Bônus = mod + proficiência se a classe/criatura for proficiente (Guerreiro: FOR e CON, em `ClasseRPG.salvaguardas_proficientes`). **Por enquanto só aparece na ficha** (nenhum efeito pede salvaguarda ainda). | Pedido do usuário. |
+| Criaturas | Bloco de estatísticas do livro em `CriaturaRPG` (`core/dados/`), ex.: `data/gray_ooze.tres` (CA 9, PV 22 = média de 3d8+9, atributos, Pseudópode +3 / 2d8+1 / 5 pés, 10 pés de deslocamento, Visão às Cegas 60 pés). Resistências, Corrosão e Amorfo **ainda não** (precisam de tipos de dano e armadura). | Usar as criaturas do D&D em vez de inventar números. |
+| Escala D&D | `EscalaDnd`: **5 pés = 1 ladrilho (32 px)**; **1 rodada = 1,5 s**. Ex.: 10 pés/rodada ≈ 43 px/s. Criaturas atacam **1 vez por rodada**. | Ritmo de ação com regras de D&D. |
+| Gray Ooze | `features/gray_ooze/`: estados Parado -> Perseguindo -> Atacando (janela 0,2-0,35 s) -> LevandoDano -> Morrendo. Arte: slime CC0 de **rvros**, recolorida de cinza por `tools/gerar_gray_ooze.gd` (créditos em `assets/CREDITOS.md`). Fica no grupo `monstros`; a `main` chama `definir_alvo(herói)` em todo monstro do grupo. | |
+| Herói apanhando | Acerto -> estado `LevandoDano` (recuo `recuo_dano`, `tempo_recuo`) + **invencível piscando** por `tempo_invencibilidade` (dados em `StatsJogador`). Vida zerou -> **reaparece no início com vida cheia** (ainda não há "fim de jogo"). | |
 | Nome do jogo | **"DnD in a Piece"**, em `project.godot` (`application/config/name`); a tela de título lê de lá. "D&D" é marca da Wizards of the Coast: trocar o nome se um dia for publicar. | Pedido do usuário. |
 | Início do jogo | `main`: **tela de título** (`ui/titulo/`: Novo Jogo, Sair) -> **criação** -> jogo. Título e criação pausam o jogo e escondem o HUD. `mostrar_inicio = false` pula tudo (testes). | Pedido do usuário. |
 | Criação | `ui/criacao_personagem/`: **nome** (até 16 letras, obrigatório), **classe** (lista `classes_disponiveis` da `main`; hoje só Guerreiro) e atributos por **compra de pontos**. Botão com a sugestão da classe. INT, SAB e CAR ainda não fazem nada. | Pedido do usuário. |
@@ -46,7 +52,7 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | Desarmado | Mão vazia = `data/ataque_desarmado.tres` ("1d1" + FOR = soco de D&D, alcance curto, sem sprite de arma). | Regra do livro. |
 | Ataque | Tecla **J** -> estado `Atacando`. No chão freia e fica firme; no ar continua caindo; não vira durante o golpe. | Peso de Guerreiro. |
 | Arma = equipamento | `Arma` (`core/dados/arma.gd`) em `data/arma_*.tres`: dano, alcance, tempos da janela de acerto, ângulos e **textura**. A espada é um **sprite separado** girado pelo `AtaqueJogador`, então trocar de arma aparece na tela. | Equipamento visível sem redesenhar o herói. |
-| Dano | `HitboxComponent` (quem bate, acerta cada alvo 1x por golpe) e `HurtboxComponent` (quem apanha, só emite `golpe_recebido`) em `core/componentes/`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`. `HealthComponent` só quando houver o primeiro inimigo que morre. | Reutilizável por herói e inimigos. |
+| Componentes de combate | `core/componentes/`: `HitboxComponent` (entrega um `Golpe`, 1x por alvo por golpe), `HurtboxComponent` (só emite `golpe_recebido`), `DefesaComponent` (CA, resolve, tira vida, `invulneravel`), `HealthComponent`, `TextoFlutuanteComponent`. Camadas: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`, 4 `hurtbox_jogador`, 5 `inimigo`. | Reutilizável por herói, inimigos e boneco. |
 | Pacotes prontos de personagem | **Não usar** para o herói (decisão do usuário: o equipamento fica "pintado" no sprite). Talvez em outros casos. | Equipamento visível. |
 | Arte do golpe | Provisória por script: `assets/armas/espada_curta.png`, `assets/efeitos/corte.png` (+ `corte_frames.tres`). Pose do herói = quadros 2 e 3 do jump. | Grátis; trocar depois. |
 | Arma na mão | A arma equipada fica **sempre na mão da frente**. `features/jogador/sprites/pontos_mao.tres` (`PontosMao`) guarda o ponto da mão em cada quadro de cada animação + o ângulo de descanso por animação. Gerado por `tools/marcar_pontos_mao.gd` (acha a mancha cor de pele mais à frente; quadros em que a mão some usam a média dos vizinhos). **Rode de novo sempre que mudar a arte do herói.** `AnimacaoJogador.ponto_da_mao()` -> `AtaqueJogador.seguir_mao()` todo quadro; o golpe gira a partir da mão. | Pedido do usuário. |
@@ -75,9 +81,9 @@ Regras de uso:
 Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
-core/componentes/        HitboxComponent, HurtboxComponent, HealthComponent
-core/dados/              Item, Arma, ClasseRPG (Resources)
-core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario (regras puras)
+core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante (componentes de combate)
+core/dados/              Item, Arma, ClasseRPG, CriaturaRPG (Resources)
+core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd
 ui/titulo/               tela de título (DnD in a Piece)
 ui/criacao_personagem/   tela de criação (nome, classe, compra de pontos)
 ui/inventario/           tela de inventário (tecla I)
@@ -85,12 +91,13 @@ ui/hud/                  HUD (vida)
 core/utilitarios/        ToqueDuplo
 features/jogador/        jogador.tscn/.gd, stats_jogador.gd, animacao_jogador.gd,
 						 camera_jogador.gd, ataque_jogador.gd, estados/, sprites/
-features/boneco_treino/  boneco de treino (leva golpe, pisca, balança, mostra dano)
+features/boneco_treino/  boneco de treino (CA 10, mostra dano/Errou!, pisca e balança)
+features/gray_ooze/      Gray Ooze (D&D): cena, estados/, sprites/
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-data/                    jogador_padrao.tres, arma_espada_curta.tres, ataque_desarmado.tres, classe_guerreiro.tres
+data/                    jogador_padrao, arma_espada_curta, ataque_desarmado, classe_guerreiro, gray_ooze (.tres)
 assets/tiles/            ladrilhos e TileSet (compartilhado)
 assets/armas/, efeitos/  sprites de armas e efeitos (compartilhados)
-tools/                   gerar_arte_provisoria.gd, gerar_fase_teste.gd, marcar_pontos_mao.gd, capturar_tela.gd
+tools/                   gerar_arte_provisoria, gerar_fase_teste, marcar_pontos_mao, gerar_gray_ooze, capturar_tela
 tests/                   teste_*.gd, rodar_testes.ps1
 ```
 
@@ -171,4 +178,6 @@ Um teste só:
 - Fatia 6b: inventário (Item, Inventario, tela com I), espada começa na mochila, soco desarmado.
 - Fatia 6c: espada equipada sempre na mão (ponto da mão por quadro), golpe girando a partir da mão.
 - Fatia 7: tela de título "DnD in a Piece", criação com nome e classe, nome no HUD e no inventário.
+- Fatia 8: combate de D&D (d20 contra CA, crítico, salvaguardas na ficha), Gray Ooze com a ficha do livro, herói leva dano/recua/pisca/reaparece.
+- Próximas ideias: aviso de morte ("Você caiu!"); resistências e tipos de dano; armadura (CA); usar salvaguarda em algum efeito.
 - Pendências pequenas: sinais `pulou`/`reapareceu` do herói sem ouvinte; "arma na mão ou desarmado" está em 2 lugares (Jogador e TelaInventario) — extrair se aparecer um 3º.

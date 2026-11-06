@@ -16,6 +16,7 @@ func _rodar() -> void:
 	cena.mostrar_inicio = false  # joga direto com a sugestão da classe
 	root.add_child(cena)
 	_jogador = cena.get_node("Jogador")
+	cena.get_node("GrayOoze").free()  # o Ooze tem o próprio teste
 	_sprite = _jogador.get_node("Sprite")
 	var camera: Camera2D = _jogador.get_node("Camera")
 

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Gray Ooze"
+tipo = "Medium Ooze, Unaligned"
+classe_armadura = 9
+dados_vida = "3d8+9"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 2,
+&"constituicao": 16,
+&"destreza": 6,
+&"forca": 12,
+&"inteligencia": 1,
+&"sabedoria": 6
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+deslocamento_pes = 10.0
+percepcao_pes = 60.0
+ataque_nome = "Pseudópode"
+ataque_bonus = 3
+ataque_dano = "2d8+1"
+ataque_tipo_dano = "ácido"
+ataque_alcance_pes = 5.0

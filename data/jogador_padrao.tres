@@ -17,3 +17,6 @@ corte_pulo = 0.45
 velocidade_max_queda = 700.0
 tempo_coyote = 0.1
 tempo_buffer = 0.12
+tempo_invencibilidade = 1.0
+recuo_dano = Vector2(150, -180)
+tempo_recuo = 0.3

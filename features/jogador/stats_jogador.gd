@@ -33,6 +33,14 @@ extends Resource
 ## Apertar pular um pouco antes de tocar o chão também vale (s).
 @export var tempo_buffer: float = 0.12
 
+@export_group("Levar dano")
+## Depois de levar um golpe, fica invencível (piscando) por este tempo (s).
+@export var tempo_invencibilidade: float = 1.0
+## Empurrão ao levar um golpe (px/s): x = para longe de quem bateu, y = para cima (negativo).
+@export var recuo_dano: Vector2 = Vector2(150.0, -180.0)
+## Tempo sem controle depois do golpe (s).
+@export var tempo_recuo: float = 0.3
+
 
 # A gravidade e a força do pulo saem da altura e do tempo desejados:
 # você ajusta "quão alto" e "quão rápido", e a física se ajusta sozinha.

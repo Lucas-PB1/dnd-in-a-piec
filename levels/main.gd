@@ -27,6 +27,7 @@ func _ready() -> void:
 	_jogador.vida_mudou.connect(_hud.mostrar_vida)
 	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
+	_apontar_monstros_para(_jogador)
 	if mostrar_inicio:
 		_abrir_titulo()
 
@@ -68,6 +69,12 @@ func _abrir_inventario() -> void:
 
 
 ## Título e criação pausam o jogo e escondem o HUD (o personagem ainda não existe).
+## Todo nó do grupo "monstros" persegue o herói (cada monstro tem definir_alvo()).
+func _apontar_monstros_para(alvo: Node2D) -> void:
+	for monstro in get_tree().get_nodes_in_group(&"monstros"):
+		monstro.definir_alvo(alvo)
+
+
 func _pausar_inicio(pausar: bool) -> void:
 	_no_inicio = pausar
 	get_tree().paused = pausar

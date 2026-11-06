@@ -20,6 +20,13 @@
 [ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="15_hitbox"]
 [ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="16_classe"]
 [ext_resource type="Script" path="res://core/componentes/health_component.gd" id="17_vida"]
+[ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="21_hurtbox"]
+[ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="22_defesa"]
+[ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="23_texto"]
+[ext_resource type="Script" path="res://features/jogador/estados/estado_levando_dano.gd" id="24_levando_dano"]
+
+[sub_resource type="RectangleShape2D" id="FormaCorpo"]
+size = Vector2(18, 50)
 
 [sub_resource type="RectangleShape2D" id="Forma"]
 size = Vector2(22, 56)
@@ -36,6 +43,25 @@ stats = ExtResource("2_stats")
 itens_iniciais = Array[ExtResource("19_item")]([ExtResource("12_arma")])
 ataque_desarmado = ExtResource("18_desarmado")
 classe = ExtResource("16_classe")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("21_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -26)
+shape = SubResource("FormaCorpo")
+
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "vida")]
+script = ExtResource("22_defesa")
+hurtbox = NodePath("../Hurtbox")
+vida = NodePath("../Vida")
+
+[node name="Texto" type="Node2D" parent="."]
+position = Vector2(0, -84)
+script = ExtResource("23_texto")
 
 [node name="Vida" type="Node" parent="."]
 script = ExtResource("17_vida")
@@ -100,3 +126,6 @@ script = ExtResource("10_no_ar")
 
 [node name="Atacando" type="Node" parent="MaquinaEstados"]
 script = ExtResource("11_atacando")
+
+[node name="LevandoDano" type="Node" parent="MaquinaEstados"]
+script = ExtResource("24_levando_dano")

@@ -14,6 +14,7 @@ func _rodar() -> void:
 	cena.mostrar_inicio = false
 	root.add_child(cena)
 	var jogador: Jogador = cena.get_node("Jogador")
+	cena.get_node("GrayOoze").free()  # o Ooze tem o próprio teste
 	var tela: TelaInventario = cena.get_node("Interface/TelaInventario")
 	var lista: ItemList = tela.get_node("%Lista")
 	var texto_ficha: Label = tela.get_node("%TextoFicha")
@@ -28,7 +29,9 @@ func _rodar() -> void:
 	tela.equipar_selecionado()
 	_checar(jogador.arma_atual().nome == "Espada Curta", "Equipar coloca a espada na mão do herói")
 	_checar(lista.get_item_text(0).begins_with(TelaInventario.MARCA_EQUIPADO), "lista marca o item equipado")
-	_checar("Dano: 1d6+2" in texto_ficha.text, "ficha mostra o dano da espada (1d6+2)")
+	_checar("Ataque +4   Dano 1d6+2" in texto_ficha.text, "ficha mostra ataque +4 e dano 1d6+2 da espada")
+	_checar("CA 12" in texto_ficha.text and "FOR 15 (+2) salv +4*" in texto_ficha.text and "DES 14 (+2) salv +2" in texto_ficha.text,
+		"ficha mostra CA e salvaguardas (FOR proficiente, DES não)")
 
 	tela.desequipar_selecionado()
 	_checar(jogador.arma_atual() == jogador.ataque_desarmado, "Desequipar volta para o ataque desarmado")

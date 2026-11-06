@@ -9,13 +9,23 @@ extends AnimatedSprite2D
 @export var escala_minima_passos: float = 0.5
 ## Onde fica a mão em cada quadro (gerado por tools/marcar_pontos_mao.gd).
 @export var pontos_mao: PontosMao
+## Transparência nos quadros "apagados" do piscar de invencibilidade.
+@export var alfa_piscar: float = 0.3
+## A cada quantos passos de física o piscar alterna.
+@export var passos_por_piscada: int = 4
+
+## Enquanto true, o herói pisca (invencível depois de apanhar). O dono liga e desliga.
+var piscando: bool = false
 
 
 ## Escolhe a animação para o `estado` atual da máquina do herói.
 func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, stats: StatsJogador) -> void:
 	flip_h = direcao_olhar < 0
 	speed_scale = 1.0
+	_atualizar_piscar()
 	match estado:
+		&"LevandoDano":
+			play(&"pulo_caindo")
 		&"NoAr":
 			_animar_no_ar(velocidade.y)
 		&"Andando":
@@ -44,6 +54,12 @@ func angulo_descanso() -> float:
 ## Toca a agachadinha de aterrissagem (ligado ao sinal `aterrissou` do dono).
 func tocar_aterrissagem() -> void:
 	play(&"aterrissar")
+
+
+func _atualizar_piscar() -> void:
+	# Alterna a cada `passos_por_piscada` passos: apagado na 1ª metade de cada ciclo.
+	var apagado := piscando and Engine.get_physics_frames() % (2 * passos_por_piscada) < passos_por_piscada
+	modulate.a = alfa_piscar if apagado else 1.0
 
 
 func _animar_no_ar(velocidade_vertical: float) -> void:

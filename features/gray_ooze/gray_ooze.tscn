@@ -1,0 +1,92 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://features/gray_ooze/gray_ooze.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/gray_ooze.tres" id="2_criatura"]
+[ext_resource type="SpriteFrames" path="res://features/gray_ooze/sprites/gray_ooze_frames.tres" id="3_frames"]
+[ext_resource type="Script" path="res://core/componentes/health_component.gd" id="4_vida"]
+[ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="5_hurtbox"]
+[ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="6_defesa"]
+[ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="7_texto"]
+[ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="8_hitbox"]
+[ext_resource type="Script" path="res://core/estados/maquina_estados.gd" id="9_maquina"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_parado.gd" id="10_parado"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_perseguindo.gd" id="11_perseguindo"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_atacando.gd" id="12_atacando"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_levando_dano.gd" id="13_dano"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_morrendo.gd" id="14_morrendo"]
+
+[sub_resource type="RectangleShape2D" id="FormaCorpo"]
+size = Vector2(40, 26)
+
+[sub_resource type="RectangleShape2D" id="FormaAlvo"]
+size = Vector2(44, 30)
+
+[sub_resource type="RectangleShape2D" id="FormaPseudopode"]
+resource_local_to_scene = true
+size = Vector2(32, 24)
+
+[node name="GrayOoze" type="CharacterBody2D"]
+collision_layer = 16
+script = ExtResource("1_script")
+criatura = ExtResource("2_criatura")
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+position = Vector2(0, -13)
+shape = SubResource("FormaCorpo")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -25)
+scale = Vector2(2, 2)
+sprite_frames = ExtResource("3_frames")
+animation = &"parado"
+autoplay = "parado"
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("4_vida")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("5_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -15)
+shape = SubResource("FormaAlvo")
+
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "vida")]
+script = ExtResource("6_defesa")
+hurtbox = NodePath("../Hurtbox")
+vida = NodePath("../Vida")
+
+[node name="Texto" type="Node2D" parent="."]
+position = Vector2(0, -60)
+script = ExtResource("7_texto")
+
+[node name="Pseudopode" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("8_hitbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Pseudopode"]
+position = Vector2(36, -12)
+shape = SubResource("FormaPseudopode")
+
+[node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]
+script = ExtResource("9_maquina")
+estado_inicial = NodePath("Parado")
+
+[node name="Parado" type="Node" parent="MaquinaEstados"]
+script = ExtResource("10_parado")
+
+[node name="Perseguindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("11_perseguindo")
+
+[node name="Atacando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("12_atacando")
+
+[node name="LevandoDano" type="Node" parent="MaquinaEstados"]
+script = ExtResource("13_dano")
+
+[node name="Morrendo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("14_morrendo")

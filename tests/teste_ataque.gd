@@ -3,6 +3,7 @@ extends SceneTree
 ## godot --headless --debug --path . --script res://tests/teste_ataque.gd
 
 const DISTANCIA_DO_BONECO := 30.0
+const CA_BONECO := 10
 
 var _falhas := 0
 var _jogador: Jogador
@@ -19,6 +20,7 @@ func _rodar() -> void:
 	root.add_child(cena)
 	_jogador = cena.get_node("Jogador")
 	_boneco = cena.get_node("BonecoTreino")
+	cena.get_node("GrayOoze").free()  # o Ooze tem o próprio teste
 	await _esperar(20)
 
 	await _testar_soco_desarmado()
@@ -38,21 +40,15 @@ func _rodar() -> void:
 	quit(1 if _falhas > 0 else 0)
 
 
-## Sem arma na mão: soco de D&D = 1 + mod. de Força (FOR 15 da sugestão -> 3), sem espada visível.
+## Sem arma na mão: soco de D&D = 1 + mod. de Força, sem espada visível. O golpe rola d20 contra a CA.
 func _testar_soco_desarmado() -> void:
 	_checar(_jogador.inventario.equipado(Item.ESPACO_MAO) == null, "começa com a espada na mochila, mão vazia")
 	_checar(_jogador.arma_atual() == _jogador.ataque_desarmado, "mão vazia = ataque desarmado")
-	var danos: Array[int] = []
-	var registrar := func(dano: int) -> void: danos.append(dano)
-	_boneco.atingido.connect(registrar)
-	await _colocar_ao_lado_do_boneco()
-	await _apertar("atacar")
-	_checar(not (_jogador.get_node("Ataque/Espada") as Node2D).visible or \
-		(_jogador.get_node("Ataque/Espada") as Sprite2D).texture == null, "soco não mostra espada")
-	await _esperar_golpe_acabar()
-	var esperado := 1 + _jogador.ficha.modificador(Atributos.FORCA)
-	_checar(danos == [esperado], "soco acerta com dano %d (deu %s)" % [esperado, str(danos)])
-	_boneco.atingido.disconnect(registrar)
+	var resultados := await _golpear_e_coletar(1)
+	_checar(not (_jogador.get_node("Ataque/Espada") as Sprite2D).visible, "soco não mostra espada")
+	var mod := _jogador.ficha.modificador(Atributos.FORCA)
+	_checar(resultados.size() == 1 and _resultado_coerente(resultados[0], 1 + mod, 2 + mod),
+		"soco resolvido pela regra (dano 1 + FOR = %d, crítico %d)" % [1 + mod, 2 + mod])
 	await _esperar(2)
 
 
@@ -131,26 +127,40 @@ func _testar_golpe_no_ar() -> void:
 	_checar(_jogador.nome_estado() == &"Parado", "pousa depois do golpe no ar")
 
 
-## Cada golpe rola 1d6 + modificador (FOR ou DES, o maior, porque a espada curta tem acuidade).
+## Cada golpe rola d20 + ataque contra a CA 10 do boneco; acertou = 1d6 + mod (crítico: 2d6 + mod).
 func _testar_dano_rolado() -> void:
 	const GOLPES := 12
-	var arma := _jogador.arma_atual()
-	var bonus := _jogador.ficha.bonus_dano(arma)
-	var minimo := arma.dado().minimo() + bonus
-	var maximo := arma.dado().maximo() + bonus
-	var danos: Array[int] = []
-	_boneco.atingido.connect(func(dano: int) -> void: danos.append(dano))
+	var dado := _jogador.ficha.dado_dano(_jogador.arma_atual())
+	var maximo_critico := dado.quantidade * 2 * dado.faces + dado.bonus
+	var resultados := await _golpear_e_coletar(GOLPES)
+	var coerentes := resultados.all(func(r: Combate.Resultado) -> bool: return _resultado_coerente(r, dado.minimo(), maximo_critico))
+	var danos := {}
+	for r in resultados:
+		if r.acertou:
+			danos[r.dano] = true
+	_checar(resultados.size() == GOLPES and coerentes, "%d golpes resolvidos pela regra (acerto: dano %d a %d)" % [GOLPES, dado.minimo(), maximo_critico])
+	_checar(danos.size() > 1, "o dano varia de um acerto para outro")
+
+
+## Golpeia `vezes` e devolve os resultados resolvidos pelo boneco.
+func _golpear_e_coletar(vezes: int) -> Array[Combate.Resultado]:
+	var resultados: Array[Combate.Resultado] = []
+	var registrar := func(r: Combate.Resultado) -> void: resultados.append(r)
+	_boneco.atingido.connect(registrar)
 	await _colocar_ao_lado_do_boneco()
-	for i in GOLPES:
+	for i in vezes:
 		await _apertar("atacar")
 		await _esperar_golpe_acabar()
 		await _esperar(2)
-	var dentro := danos.all(func(d: int) -> bool: return d >= minimo and d <= maximo)
-	var diferentes := {}
-	for d in danos:
-		diferentes[d] = true
-	_checar(danos.size() == GOLPES and dentro, "dano de cada golpe entre %d e %d (%s)" % [minimo, maximo, str(danos)])
-	_checar(diferentes.size() > 1, "o dano varia de um golpe para outro")
+	_boneco.atingido.disconnect(registrar)
+	return resultados
+
+
+## Acertou: dano entre `minimo` e `maximo`. Errou: só com 1 natural ou total abaixo da CA 10.
+func _resultado_coerente(r: Combate.Resultado, minimo: int, maximo: int) -> bool:
+	if r.acertou:
+		return r.dano >= minimo and r.dano <= maximo and (r.critico or r.total >= CA_BONECO)
+	return r.d20 == Combate.FALHA_AUTOMATICA or r.total < CA_BONECO
 
 
 ## A cena do boneco roda sozinha (como no F6) e reage a um golpe.
@@ -158,10 +168,15 @@ func _testar_boneco_sozinho() -> void:
 	var boneco: BonecoTreino = load("res://features/boneco_treino/boneco_treino.tscn").instantiate()
 	root.add_child(boneco)
 	await _esperar(2)
-	var recebido := [0]
-	boneco.atingido.connect(func(dano: int) -> void: recebido[0] = dano)
-	(boneco.get_node("Hurtbox") as HurtboxComponent).receber_golpe(5, boneco.global_position + Vector2.LEFT)
-	_checar(boneco.golpes_recebidos == 1 and recebido[0] == 5, "boneco sozinho recebe golpe e avisa o dano")
+	var acertos: Array[int] = []
+	boneco.atingido.connect(func(r: Combate.Resultado) -> void:
+		if r.acertou:
+			acertos.append(r.dano))
+	var golpe := Golpe.new("Teste", 100, Dado.new(1, 1, 4))  # +100: só erra com 1 natural
+	for i in 5:
+		(boneco.get_node("Hurtbox") as HurtboxComponent).receber_golpe(golpe, boneco.global_position + Vector2.LEFT)
+	_checar(boneco.golpes_recebidos == 5 and not acertos.is_empty() and acertos[0] in [5, 6],
+		"boneco sozinho resolve golpes contra a CA e avisa o dano (%s)" % str(acertos))
 	boneco.queue_free()
 
 

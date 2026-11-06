@@ -8,6 +8,7 @@ extends Control
 signal abrir_pedido
 
 const MARCA_EQUIPADO := "[E] "
+const MARCA_PROFICIENTE := "*"
 
 var _inventario: Inventario
 var _ficha: Ficha
@@ -133,12 +134,18 @@ func _atualizar_detalhes() -> void:
 func _atualizar_ficha() -> void:
 	var linhas: PackedStringArray = ["%s, %s" % [_ficha.nome, _ficha.classe.nome]]
 	for atributo in Atributos.TODOS:
-		var valor: int = _ficha.atributos[atributo]
-		linhas.append("%s %d (%s)" % [Atributos.SIGLAS[atributo], valor, Atributos.texto_modificador(valor)])
-	linhas.append("")
-	linhas.append(_texto_vida)
+		linhas.append(_linha_atributo(atributo))
+	linhas.append("%s   CA %d" % [_texto_vida, _ficha.classe_armadura()])
 	var na_mao := _inventario.equipado(Item.ESPACO_MAO) as Arma
 	var arma := na_mao if na_mao else _desarmado
 	linhas.append("Mão: %s" % arma.nome)
-	linhas.append("Dano: %s" % _ficha.texto_dano(arma))
+	linhas.append("Ataque %s   Dano %s" % [Atributos.texto_bonus(_ficha.bonus_ataque(arma)), _ficha.texto_dano(arma)])
 	_texto_ficha.text = "\n".join(linhas)
+
+
+## "FOR 15 (+2) salv +4*" — o * marca salvaguarda em que a classe é proficiente.
+func _linha_atributo(atributo: StringName) -> String:
+	var valor: int = _ficha.atributos[atributo]
+	var marca := MARCA_PROFICIENTE if _ficha.proficiente_em_salvaguarda(atributo) else ""
+	return "%s %d (%s) salv %s%s" % [Atributos.SIGLAS[atributo], valor, Atributos.texto_modificador(valor),
+		Atributos.texto_bonus(_ficha.bonus_salvaguarda(atributo)), marca]
