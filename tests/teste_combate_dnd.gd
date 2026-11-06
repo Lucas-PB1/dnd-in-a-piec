@@ -97,6 +97,13 @@ func _testar_gray_ooze() -> void:
 		"Pseudópode: +3 para acertar, 2d8+1")
 	_checar(is_equal_approx(EscalaDnd.pes_para_pixels(5.0), 32.0), "5 pés = 1 ladrilho (32 px)")
 	_checar(is_equal_approx(EscalaDnd.deslocamento_para_velocidade(10.0), 64.0 / 1.5), "10 pés por rodada = 64 px em 1,5 s")
+	_checar(is_equal_approx(EscalaDnd.deslocamento_para_velocidade(30.0), 128.0), "30 pés por rodada (herói) = 128 px/s")
+	_checar(is_equal_approx(EscalaDnd.intervalo_ataque(0), 1.0) and is_equal_approx(EscalaDnd.intervalo_ataque(2), 0.8)
+		and is_equal_approx(EscalaDnd.intervalo_ataque(-2), 1.2), "ritmo: (10 - iniciativa) tiques de 0,1 s (0 -> 1,0 s, +2 -> 0,8 s, -2 -> 1,2 s)")
+	_checar(is_equal_approx(EscalaDnd.intervalo_ataque(20), 0.3), "iniciativa altíssima tem limite (mínimo 3 tiques)")
+	var guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
+	var ficha := Ficha.new(guerreiro, guerreiro.atributos_sugeridos)
+	_checar(ficha.iniciativa() == 2 and ooze.iniciativa == -2, "iniciativa: herói = mod. DES (+2), Ooze = -2 da ficha")
 
 
 func _checar(condicao: bool, descricao: String) -> void:

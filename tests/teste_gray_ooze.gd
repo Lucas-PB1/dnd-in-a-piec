@@ -71,8 +71,8 @@ func _testar_ataques_contra_o_heroi() -> void:
 		_jogador.posicionar_no_inicio(Vector2(_ooze.global_position.x - AO_ALCANCE, _jogador.global_position.y))
 		viu_dano_no_heroi = viu_dano_no_heroi or _jogador.nome_estado() == &"LevandoDano"
 	_checar(not resultados.is_empty(), "ao alcance, o Ooze ataca o herói com o Pseudópode")
-	var esperado_max := ceili(5.0 / EscalaDnd.RODADA_SEGUNDOS) + 1
-	_checar(resultados.size() <= esperado_max, "no máximo um ataque por rodada (%d em 5 s)" % resultados.size())
+	var esperado_max := ceili(5.0 / EscalaDnd.intervalo_ataque(_ooze.criatura.iniciativa)) + 1
+	_checar(resultados.size() <= esperado_max, "ritmo da iniciativa -2: no máximo 1 ataque a cada 1,2 s (%d em 5 s)" % resultados.size())
 	var acertos := resultados.filter(func(r: Combate.Resultado) -> bool: return r.acertou)
 	var coerentes := resultados.all(func(r: Combate.Resultado) -> bool:
 		return r.acertou == (r.d20 == 20 or (r.d20 != 1 and r.d20 + 3 >= _jogador.ficha.classe_armadura())))

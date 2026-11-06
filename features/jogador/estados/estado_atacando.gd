@@ -9,11 +9,11 @@ func entrar() -> void:
 
 func processar_fisica(delta: float) -> void:
 	if jogador.is_on_floor():
-		jogador.mover_horizontal(0.0, jogador.stats.velocidade, delta, false)
+		jogador.mover_horizontal(0.0, jogador.velocidade_andar(), delta, false)
 	else:
 		jogador.aplicar_gravidade(delta)
 		jogador.cortar_pulo_se_soltou()
-		jogador.mover_horizontal(jogador.direcao(), jogador.stats.velocidade, delta, false)
+		jogador.mover_horizontal(jogador.direcao(), jogador.velocidade_andar(), delta, false)
 	if not jogador.esta_golpeando():
 		trocar_para.emit(_proximo_estado())
 

@@ -15,6 +15,8 @@ extends Resource
 ## Salvaguardas em que a criatura soma a proficiência (o Gray Ooze não tem nenhuma).
 @export var salvaguardas_proficientes: Array[StringName] = []
 @export var bonus_proficiencia: int = 2
+## Iniciativa da ficha (ex.: "Initiative -2"). Define o ritmo dos ataques (EscalaDnd).
+@export var iniciativa: int = 0
 ## Deslocamento por rodada (pés).
 @export var deslocamento_pes: float = 30.0
 ## Até onde percebe o alvo (pés). Gray Ooze: Visão às Cegas 60 pés.

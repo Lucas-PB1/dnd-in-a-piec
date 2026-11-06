@@ -8,6 +8,8 @@ const DANO_MINIMO := Combate.DANO_MINIMO
 const BONUS_PROFICIENCIA := 2
 ## CA de quem não usa armadura (antes do modificador de Destreza).
 const CA_BASE := 10
+## Deslocamento por rodada (pés). Ainda não há raças: todo mundo é "humano" (30 pés).
+const DESLOCAMENTO_PADRAO_PES := 30.0
 ## Vida mínima no nível 1, mesmo com Constituição muito baixa.
 const VIDA_MINIMA := 1
 ## Nome usado quando nenhum foi escolhido.
@@ -83,6 +85,15 @@ func bonus_ataque(arma: Arma) -> int:
 ## O ataque com a arma, pronto para ser resolvido contra a CA do alvo.
 func golpe_com(arma: Arma) -> Golpe:
 	return Golpe.new(arma.nome, bonus_ataque(arma), dado_dano(arma))
+
+
+## Iniciativa = modificador de Destreza. Define o ritmo dos ataques (EscalaDnd).
+func iniciativa() -> int:
+	return modificador(Atributos.DESTREZA)
+
+
+func deslocamento_pes() -> float:
+	return DESLOCAMENTO_PADRAO_PES
 
 
 ## Classe de Armadura sem armadura: 10 + modificador de Destreza.

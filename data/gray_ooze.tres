@@ -19,6 +19,7 @@ atributos = Dictionary[StringName, int]({
 })
 salvaguardas_proficientes = Array[StringName]([])
 bonus_proficiencia = 2
+iniciativa = -2
 deslocamento_pes = 10.0
 percepcao_pes = 60.0
 ataque_nome = "Pseudópode"

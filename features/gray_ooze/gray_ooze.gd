@@ -1,7 +1,7 @@
 class_name GrayOoze
 extends CharacterBody2D
 ## Gray Ooze (D&D 5e): gosma lenta que persegue o alvo que percebe e ataca com o Pseudópode
-## uma vez por rodada. Números em data/gray_ooze.tres (CriaturaRPG). Comportamento nos
+## no ritmo da iniciativa. Números em data/gray_ooze.tres (CriaturaRPG). Comportamento nos
 ## estados (estados/). Não conhece o herói: recebe um alvo qualquer por definir_alvo().
 
 ## Emitido quando termina de morrer (antes de sumir).
@@ -78,9 +78,9 @@ func alvo_ao_alcance() -> bool:
 	return alvo != null and _distancia_horizontal() <= meia_largura_corpo + _alcance_px()
 
 
-## Uma vez por rodada (EscalaDnd.RODADA_SEGUNDOS).
+## Ritmo pela iniciativa da ficha (Gray Ooze: -2 -> um ataque a cada 1,2 s).
 func pode_atacar() -> bool:
-	return _tempo_desde_ataque >= EscalaDnd.RODADA_SEGUNDOS
+	return _tempo_desde_ataque >= EscalaDnd.intervalo_ataque(criatura.iniciativa)
 
 
 func virar_para_alvo() -> void:

@@ -6,8 +6,8 @@ var _velocidade_maxima: float = 0.0
 
 
 func entrar() -> void:
-	_veio_correndo = absf(jogador.velocity.x) > jogador.stats.velocidade + VELOCIDADE_PARADO
-	_velocidade_maxima = jogador.stats.velocidade_corrida if _veio_correndo else jogador.stats.velocidade
+	_veio_correndo = absf(jogador.velocity.x) > jogador.velocidade_andar() + VELOCIDADE_PARADO
+	_velocidade_maxima = jogador.velocidade_corrida() if _veio_correndo else jogador.velocidade_andar()
 
 
 func processar_fisica(delta: float) -> void:

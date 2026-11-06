@@ -36,6 +36,8 @@ var inventario := Inventario.new()
 var origem_ultimo_golpe: Vector2
 
 var _contador_invencivel: float = 0.0
+var _tempo_desde_golpe: float = INF
+var _contador_buffer_ataque: float = 0.0
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -77,7 +79,7 @@ func _physics_process(delta: float) -> void:
 	_maquina.processar_fisica(delta)
 	move_and_slide()
 	_checar_aterrissagem()
-	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, stats)
+	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
 	_camera.olhar_para(direcao_olhar)
 	if global_position.y > limite_queda:
@@ -146,8 +148,34 @@ func pediu_corrida() -> int:
 	return _pedido_corrida
 
 
+## Velocidade andando (px/s): o deslocamento de D&D da ficha (30 pés -> ~128 px/s).
+func velocidade_andar() -> float:
+	return EscalaDnd.deslocamento_para_velocidade(ficha.deslocamento_pes())
+
+
+## Correndo = Disparada (Dash) do D&D: o dobro do deslocamento.
+func velocidade_corrida() -> float:
+	return velocidade_andar() * EscalaDnd.MULTIPLICADOR_DISPARADA
+
+
+## Segundos entre golpes, pela iniciativa (ex.: +2 -> 0,8 s).
+func intervalo_entre_golpes() -> float:
+	return EscalaDnd.intervalo_ataque(ficha.iniciativa())
+
+
+## Já passou o intervalo da iniciativa desde o último golpe?
+func pode_golpear() -> bool:
+	return tempo_para_proximo_golpe() <= 0.0
+
+
+## Quanto falta (s) para poder golpear de novo (0 = já pode).
+func tempo_para_proximo_golpe() -> float:
+	return maxf(intervalo_entre_golpes() - _tempo_desde_golpe, 0.0)
+
+
+## Apertou atacar há pouco (buffer) e já pode golpear.
 func pediu_ataque() -> bool:
-	return Input.is_action_just_pressed("atacar")
+	return _contador_buffer_ataque > 0.0 and pode_golpear()
 
 
 ## Arma na mão, ou o ataque desarmado se a mão estiver vazia.
@@ -159,6 +187,8 @@ func arma_atual() -> Arma:
 ## Começa um golpe com a arma atual, para o lado em que o herói olha.
 ## Quem for atingido rola o ataque (d20 + bônus da ficha) contra a própria CA.
 func iniciar_golpe() -> void:
+	_tempo_desde_golpe = 0.0
+	_contador_buffer_ataque = 0.0
 	var arma := arma_atual()
 	_ataque.golpear(arma, ficha.golpe_com(arma))
 
@@ -203,6 +233,12 @@ func _atualizar_contadores(delta: float) -> void:
 	_contador_coyote = stats.tempo_coyote if is_on_floor() else _contador_coyote - delta
 	# Buffer: guarda o aperto do botão de pulo por um instante.
 	_contador_buffer = stats.tempo_buffer if Input.is_action_just_pressed("pular") else _contador_buffer - delta
+	# Ritmo de ataque (iniciativa) e buffer do botão de atacar.
+	_tempo_desde_golpe += delta
+	if Input.is_action_just_pressed("atacar"):
+		_contador_buffer_ataque = stats.tempo_buffer_ataque
+	else:
+		_contador_buffer_ataque -= delta
 	# Toque duplo para correr.
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()

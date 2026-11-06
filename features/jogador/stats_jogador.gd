@@ -1,13 +1,10 @@
 class_name StatsJogador
 extends Resource
-## Números de balanceamento do herói. Edite em data/jogador_padrao.tres (Inspector).
+## Números de "sensação" do herói. Edite em data/jogador_padrao.tres (Inspector).
 ## O jogo só LÊ este recurso; nunca altera em tempo de jogo.
+## A velocidade NÃO fica aqui: vem do deslocamento de D&D da ficha (EscalaDnd).
 
 @export_group("Andar e correr")
-## Velocidade máxima andando (pixels por segundo).
-@export var velocidade: float = 160.0
-## Velocidade máxima correndo (px/s). Corre com dois toques rápidos na direção.
-@export var velocidade_corrida: float = 290.0
 ## Tempo máximo entre os dois toques para começar a correr (s).
 @export var janela_toque_duplo: float = 0.25
 ## Quão rápido chega na velocidade máxima no chão (px/s²).
@@ -32,6 +29,10 @@ extends Resource
 @export var tempo_coyote: float = 0.1
 ## Apertar pular um pouco antes de tocar o chão também vale (s).
 @export var tempo_buffer: float = 0.12
+
+@export_group("Ataque")
+## Apertar atacar um pouco antes de poder golpear de novo também vale (s).
+@export var tempo_buffer_ataque: float = 0.2
 
 @export_group("Levar dano")
 ## Depois de levar um golpe, fica invencível (piscando) por este tempo (s).

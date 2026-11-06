@@ -30,6 +30,7 @@ func _rodar() -> void:
 	await _testar_golpe_de_costas()
 	await _testar_golpe_no_ar()
 	await _testar_dano_rolado()
+	await _testar_ritmo_de_ataque()
 	cena.queue_free()
 	await _testar_boneco_sozinho()
 
@@ -56,7 +57,7 @@ func _testar_golpe_no_chao() -> void:
 	await _colocar_ao_lado_do_boneco()
 	var espada: Node2D = _jogador.get_node("Ataque/Espada")
 	var antes := _boneco.golpes_recebidos
-	await _apertar("atacar")
+	await _golpear()
 	_checar(_jogador.nome_estado() == &"Atacando", "J = estado Atacando")
 	_checar(espada.visible, "espada aparece no golpe")
 	_checar(_boneco.golpes_recebidos == antes, "não acerta antes da janela de acerto")
@@ -70,7 +71,7 @@ func _testar_golpe_no_chao() -> void:
 	_checar(absf(_jogador.velocity.x) < 1.0, "no chão o herói fica parado golpeando")
 	await _esperar(2)
 	_checar(_jogador.nome_estado() == &"Parado", "depois do golpe volta para Parado")
-	await _apertar("atacar")
+	await _golpear()
 	await _esperar_golpe_acabar()
 	_checar(_boneco.golpes_recebidos == antes + 2, "segundo golpe acerta de novo")
 
@@ -105,7 +106,7 @@ func _testar_golpe_de_costas() -> void:
 	await _apertar("mover_esquerda")  # vira de costas para o boneco
 	await _esperar(10)
 	var antes := _boneco.golpes_recebidos
-	await _apertar("atacar")
+	await _golpear()
 	await _esperar_golpe_acabar()
 	_checar(_boneco.golpes_recebidos == antes, "golpe de costas não acerta o boneco")
 
@@ -114,7 +115,7 @@ func _testar_golpe_no_ar() -> void:
 	await _colocar_ao_lado_do_boneco()
 	Input.action_press("pular")
 	await _esperar(8)
-	await _apertar("atacar")
+	await _golpear()
 	_checar(_jogador.nome_estado() == &"Atacando" and not _jogador.is_on_floor(), "golpeia no ar")
 	Input.action_release("pular")
 	await _esperar_golpe_acabar()
@@ -149,7 +150,7 @@ func _golpear_e_coletar(vezes: int) -> Array[Combate.Resultado]:
 	_boneco.atingido.connect(registrar)
 	await _colocar_ao_lado_do_boneco()
 	for i in vezes:
-		await _apertar("atacar")
+		await _golpear()
 		await _esperar_golpe_acabar()
 		await _esperar(2)
 	_boneco.atingido.disconnect(registrar)
@@ -185,6 +186,8 @@ func _colocar_ao_lado_do_boneco() -> void:
 		if _jogador.is_on_floor() and not _jogador.esta_golpeando():
 			break
 		await physics_frame
+	while not _jogador.pode_golpear():
+		await physics_frame
 	var y_chao := _jogador.global_position.y
 	_jogador.posicionar_no_inicio(Vector2(_boneco.global_position.x - DISTANCIA_DO_BONECO, y_chao))
 	_jogador.velocity = Vector2.ZERO
@@ -217,3 +220,33 @@ func _checar(condicao: bool, descricao: String) -> void:
 	else:
 		_falhas += 1
 		print("  ERRO - ", descricao)
+
+
+## Espera o ritmo da iniciativa liberar e aperta atacar.
+func _golpear() -> void:
+	for i in 120:
+		if _jogador.pode_golpear():
+			break
+		await physics_frame
+	await _apertar("atacar")
+
+
+## Iniciativa +2 (DES 14): um golpe a cada 0,8 s. Apertar antes não golpeia; apertar logo
+## antes de liberar fica guardado (buffer) e sai na hora.
+func _testar_ritmo_de_ataque() -> void:
+	await _colocar_ao_lado_do_boneco()
+	var intervalo := _jogador.intervalo_entre_golpes()
+	_checar(is_equal_approx(intervalo, 0.8), "iniciativa +2: golpe a cada 0,8 s (deu %.2f)" % intervalo)
+	await _golpear()
+	await _esperar_golpe_acabar()
+	await _apertar("atacar")  # cedo demais: ainda no intervalo
+	_checar(_jogador.nome_estado() != &"Atacando", "apertar antes do intervalo não golpeia")
+	while _jogador.tempo_para_proximo_golpe() > 0.1:
+		await physics_frame
+	await _apertar("atacar")  # 0,1 s antes de liberar: fica no buffer
+	for i in 12:
+		await physics_frame
+	_checar(_jogador.nome_estado() == &"Atacando", "apertar logo antes de liberar golpeia assim que pode (buffer)")
+	await _esperar_golpe_acabar()
+
+

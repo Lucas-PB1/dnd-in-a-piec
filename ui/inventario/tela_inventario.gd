@@ -136,6 +136,8 @@ func _atualizar_ficha() -> void:
 	for atributo in Atributos.TODOS:
 		linhas.append(_linha_atributo(atributo))
 	linhas.append("%s   CA %d" % [_texto_vida, _ficha.classe_armadura()])
+	linhas.append("Inic. %s (%.1fs)   %d pés" % [Atributos.texto_bonus(_ficha.iniciativa()),
+		EscalaDnd.intervalo_ataque(_ficha.iniciativa()), _ficha.deslocamento_pes()])
 	var na_mao := _inventario.equipado(Item.ESPACO_MAO) as Arma
 	var arma := na_mao if na_mao else _desarmado
 	linhas.append("Mão: %s" % arma.nome)

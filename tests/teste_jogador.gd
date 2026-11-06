@@ -53,8 +53,8 @@ func _rodar() -> void:
 	Input.action_press("mover_direita")
 	await _esperar(40)
 	_checar(_jogador.esta_correndo(), "dois toques na direção = corre")
-	_checar(_jogador.velocity.x > _jogador.stats.velocidade * 1.3,
-		"correndo é mais rápido que andando (%.0f px/s)" % _jogador.velocity.x)
+	_checar(is_equal_approx(_jogador.velocity.x, _jogador.velocidade_andar() * EscalaDnd.MULTIPLICADOR_DISPARADA),
+		"correndo = Disparada do D&D, 2x o deslocamento (%.0f px/s)" % _jogador.velocity.x)
 	_checar(_sprite.animation == &"correr", "correndo toca correr")
 	Input.action_release("mover_direita")
 	await _esperar(3)
@@ -65,7 +65,8 @@ func _rodar() -> void:
 	Input.action_press("mover_direita")
 	await _esperar(40)
 	_checar(not _jogador.esta_correndo(), "um toque só = anda")
-	_checar(_jogador.velocity.x <= _jogador.stats.velocidade + 0.1, "andando não passa da velocidade de andar")
+	_checar(is_equal_approx(_jogador.velocity.x, EscalaDnd.deslocamento_para_velocidade(30.0)),
+		"andando = deslocamento de 30 pés da ficha (%.0f px/s)" % _jogador.velocity.x)
 	Input.action_release("mover_direita")
 	await _esperar(30)
 

@@ -19,7 +19,8 @@ var piscando: bool = false
 
 
 ## Escolhe a animação para o `estado` atual da máquina do herói.
-func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, stats: StatsJogador) -> void:
+## `vel_andar` e `vel_corrida` (px/s) servem para os passos acompanharem a velocidade.
+func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_andar: float, vel_corrida: float) -> void:
 	flip_h = direcao_olhar < 0
 	speed_scale = 1.0
 	_atualizar_piscar()
@@ -29,9 +30,9 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, stat
 		&"NoAr":
 			_animar_no_ar(velocidade.y)
 		&"Andando":
-			_animar_passos(&"walk", absf(velocidade.x) / stats.velocidade)
+			_animar_passos(&"walk", absf(velocidade.x) / vel_andar)
 		&"Correndo":
-			_animar_passos(&"correr", absf(velocidade.x) / stats.velocidade_corrida)
+			_animar_passos(&"correr", absf(velocidade.x) / vel_corrida)
 		&"Atacando":
 			play(&"ataque")
 		_:
