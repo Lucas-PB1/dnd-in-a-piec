@@ -15,6 +15,8 @@ func _initialize() -> void:
 	_testar_compra_de_pontos()
 	_testar_ficha()
 	_testar_pericias()
+	_testar_armadilhas()
+	_testar_fases()
 	if _falhas == 0:
 		print("PASSOU: todos os testes das regras de D&D")
 	else:
@@ -111,6 +113,50 @@ func _testar_pericias() -> void:
 		"Atletismo com FOR 15: +4")
 	_checar(Pericia.furtividade_passa(13, 13) and not Pericia.furtividade_passa(12, 13),
 		"Furtividade igual à passiva continua escondido; abaixo, percebe")
+
+
+func _testar_armadilhas() -> void:
+	var pontos: Array[Vector2] = [Vector2(0, 0), Vector2(100, 0), Vector2(200, 0)]
+	var tipos: Array[StringName] = [&"ooze", &"minion"]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1
+	var primeira := Armadilha.sortear(pontos, 2, tipos, rng)
+	rng.seed = 1
+	var de_novo := Armadilha.sortear(pontos, 2, tipos, rng)
+	_checar(primeira.size() == 2 and _sorteios_iguais(primeira, de_novo), "a mesma semente repete pontos e tipos")
+	var mudou := false
+	for semente in range(2, 40):
+		rng.seed = semente
+		if not _sorteios_iguais(primeira, Armadilha.sortear(pontos, 2, tipos, rng)):
+			mudou = true
+			break
+	_checar(mudou, "outra semente muda alguém")
+	var dentro := true
+	for escolha in primeira:
+		dentro = dentro and escolha.posicao in pontos and escolha.tipo in tipos
+	_checar(dentro, "só sai ponto e tipo que a fase ofereceu")
+
+
+func _sorteios_iguais(um: Array[Dictionary], outro: Array[Dictionary]) -> bool:
+	if um.size() != outro.size():
+		return false
+	for i in um.size():
+		if um[i].posicao != outro[i].posicao or um[i].tipo != outro[i].tipo:
+			return false
+	return true
+
+
+func _testar_fases() -> void:
+	var quantidades: Array[int] = [1, 2, 3, 3, 4]
+	for i in quantidades.size():
+		var fase: Fase = load("res://levels/fase_%d.tscn" % [i + 1]).instantiate()
+		root.add_child(fase)
+		var pode_warrior := &"warrior" in fase.tipos_permitidos
+		_checar(fase.quantidade == quantidades[i] and fase.pontos_armadilha().size() > fase.quantidade,
+			"fase %d ocupa %d e sobra ponto de armadilha" % [i + 1, fase.quantidade])
+		_checar(pode_warrior == (i >= 3), "Warrior só entra no sorteio a partir da ruína")
+		_checar(fase.indice == i + 1 and fase.ultima == (i == 4), "a última fase é a fortaleza")
+		fase.free()
 
 
 func _checar(condicao: bool, descricao: String) -> void:

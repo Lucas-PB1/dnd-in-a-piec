@@ -60,7 +60,8 @@ func _testar_no_jogo() -> void:
 	root.add_child(cena)
 	var jogador: Jogador = cena.get_node("Jogador")
 	var boneco: BonecoTreino = cena.get_node("BonecoTreino")
-	cena.get_node("GrayOoze").free()
+	for monstro in get_nodes_in_group(&"monstros"):
+		monstro.free()
 	await _esperar(20)
 	await _testar_combo(jogador, boneco)
 	await _testar_alcance(cena)

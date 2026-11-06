@@ -76,6 +76,20 @@ text = "Classe"
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="EscolhaNivel" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoQuem"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="RotuloNivel" type="Label" parent="Centro/Painel/Coluna/PassoQuem/EscolhaNivel"]
+layout_mode = 2
+text = "Nível inicial"
+
+[node name="Nivel" type="OptionButton" parent="Centro/Painel/Coluna/PassoQuem/EscolhaNivel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+
 [node name="Equipamento" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoQuem"]
 layout_mode = 2
 theme_override_constants/separation = 8

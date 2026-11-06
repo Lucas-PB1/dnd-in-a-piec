@@ -13,13 +13,15 @@ data/ (.tres)        números e itens: armas, armaduras, munição, classe, cria
    ▲ lidos por
 core/dados/          Resources: Arma, Armadura, Municao, Item, ClasseRPG, CriaturaRPG, PacoteInicial, PoseGolpe
 core/regras/         regras puras (RefCounted, testáveis sem cena): Dado, Atributos, Ficha, Combate,
-                     Golpe, Inventario, Equipamento, Proficiencias, TiposDano, EscalaDnd, CompraDePontos
+                     Golpe, Inventario, Equipamento, Proficiencias, TiposDano, EscalaDnd,
+                     CompraDePontos, Armadilha
 core/componentes/    nós reutilizáveis: Hitbox, Hurtbox, Defesa, Health, Condicoes, TextoFlutuante
 core/estados/        Estado, MaquinaEstados (genéricos)
 core/utilitarios/    ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
    ▲ usados por
 features/<nome>/     entidades: jogador, gray_ooze, goblin, boneco_treino, bau, arremesso
-ui/<tela>/           telas: titulo, criacao_personagem, hud, inventario, bau, comandos, derrota, controles_toque
+ui/<tela>/           telas: titulo, criacao_personagem, hud, inventario, bau, comandos,
+                     derrota, vitoria, controles_toque
    ▲ montados por
 levels/main.gd       a ÚNICA peça que conhece todas as outras: liga sinais e chama APIs públicas
 ```
@@ -34,28 +36,39 @@ Regras de dependência (skill `godot-estrutura-pastas`):
 
 ```
 Main (main.gd)
-├── FaseTeste          (Fase: posicao_inicio(), area_jogavel(), limite_queda())
+├── Fase               (Fase atual; início, limites, pontos de armadilha e porta)
 ├── Bau                (abrir_pedido(itens) -> main abre TelaBau)
 ├── BonecoTreino       (CA 10, só mostra o resultado)
-├── GrayOoze           (grupo "monstros"; main chama definir_alvo(herói))
-├── Jogador            (sinais: vida_mudou, folego_mudou, caiu, arma_arremessada...)
+├── Jogador            (sinais: vida_mudou, folego_mudou, progressao_mudou, surto_acao_pedido...)
 ├── Hud
 ├── ControlesToque     (CanvasLayer 5: analógico/setas/botões; edição do layout)
 └── Interface          (CanvasLayer 10)
     ├── TelaInventario (I)
     ├── TelaBau
-    └── TelaComandos   (C: teclas, trazer criatura, opções e ajuste do toque)
+    ├── TelaComandos   (C: teclas, trazer criatura, opções e ajuste do toque)
+    └── Telas de título, derrota e vitória (abertas conforme o fluxo)
 ```
 
-Fluxo do jogo: `Main._ready` -> título -> criação -> jogo. Título, criação e derrota usam
-`_pausar(true)`, que pausa a árvore, esconde o HUD e os controles de toque. Inventário, baú e
-comandos pausam por conta própria (`get_tree().paused`).
+Fluxo do jogo: `Main._ready` -> título -> criação -> cinco fases -> vitória. Título, criação,
+derrota e vitória usam `_pausar(true)`, que pausa a árvore, esconde o HUD e os controles de toque.
+Inventário, baú e comandos pausam por conta própria (`get_tree().paused`).
 
-Monstros: todo nó do grupo `monstros` precisa de `definir_alvo(alvo: Node2D)`. A main guarda os
-do mapa para recriá-los no "Tentar de novo"; os trazidos pela tela de comandos (`trazer_criatura`)
-não voltam.
+## 3. Campanha e encontros
 
-## 3. O caminho de um golpe
+`levels/fase_1..5.tscn` compartilham `Fase`: cada uma expõe o início, a área jogável, o limite de
+queda, os pontos do grupo `armadilha`, o índice, a cota e os tipos permitidos. A porta emite
+`porta_tocada` e `porta_liberada`; a `main` avança quando todos os inimigos da cota morreram.
+`core/regras/armadilha.gd` escolhe pontos sem repetição e tipos com uma semente controlável. O
+nível soma inimigos à cota e libera tipos mais fortes; derrotas concedem XP. Uma fase nova repõe
+PV e recursos como descanso longo. "Tentar de novo" repõe a vida e sorteia a fase atual outra vez;
+a quinta porta abre a vitória.
+O botão de vitória recomeça na Clareira. Baú e boneco de treino só funcionam na primeira fase.
+
+Todo inimigo pertence ao grupo `monstros` e precisa expor `definir_alvo(alvo: Node2D)`. A `main`
+define também a Percepção passiva para quem se esconde. Criaturas trazidas pela tela de comandos
+ficam fora da cota; "Tirar da arena" apaga todas e deixa a porta livre.
+
+## 4. O caminho de um golpe
 
 ```
 Atacante                         Alvo
@@ -83,7 +96,7 @@ HitboxComponent.ligar(golpe)
 - Camadas de física: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo` (valor 4), 4 `hurtbox_jogador`
   (valor 8), 5 `inimigo` (valor 16). Hitbox de inimigo: máscara 8. Hitbox do herói: máscara 4.
 
-## 4. O herói (`features/jogador/`)
+## 5. O herói (`features/jogador/`)
 
 - `jogador.gd` (`Jogador`): **ferramentas de física e API pública**. Não decide comportamento.
 - `estados/` (máquina de estados): `Parado`, `Andando`, `Correndo`, `NoAr`, `Atacando`,
@@ -94,8 +107,10 @@ HitboxComponent.ligar(golpe)
   ataque vêm da ficha** (deslocamento e iniciativa, via `EscalaDnd`).
 - Ficha (`Ficha`) + inventário (`Inventario`) -> `Equipamento` calcula arma na mão, CA,
   deslocamento e o `Golpe` (o inventário da tela usa a mesma conta).
+- `Ficha` acompanha XP e nível 1–3; `Jogador` resolve testes de perícia e aplica Mente Tática
+  quando ativada. A `main` entrega XP de inimigos, escala as cotas e aplica o Surto de Ação.
 
-## 5. Criaturas (`features/gray_ooze/`, `features/goblin/`)
+## 6. Criaturas (`features/gray_ooze/`, `features/goblin/`)
 
 Mesmo molde (copie o Goblin, que é o mais completo):
 - Script raiz (`Goblin`): lê a `CriaturaRPG` (`data/*.tres`), configura Vida/Defesa/Condições,
@@ -107,7 +122,7 @@ Mesmo molde (copie o Goblin, que é o mais completo):
 - Ritmo: `EscalaDnd.intervalo_ataque(criatura.iniciativa)`. Movimento:
   `EscalaDnd.deslocamento_para_velocidade(pés)`. Percepção: `percepcao_pes`.
 
-## 6. Itens e equipamento
+## 7. Itens e equipamento
 
 - `Item` (base): nome, descrição, ícone, `espaco` (`mao`, `mao_secundaria`, `corpo`), `empilhavel`.
 - `Arma` e `Armadura` são `Item`; `Municao` também (empilhável, não equipa).
@@ -115,7 +130,7 @@ Mesmo molde (copie o Goblin, que é o mais completo):
   `tools/gerar_armas.gd` / `tools/gerar_armaduras.gd` e rode o gerador (ver `docs/receitas.md`).
 - `Inventario` guarda **cópias** e o desgaste (corrosão) por item; o `.tres` nunca muda no jogo.
 
-## 7. Entrada (teclado e toque)
+## 8. Entrada (teclado e toque)
 
 - Ações do InputMap (`project.godot`): `mover_esquerda`, `mover_direita`, `mover_baixo`, `pular`,
   `atacar`, `arremessar`, `folego`, `inventario`, `interagir`, `comandos`, `correr`, `mirar_cima`.
@@ -124,7 +139,7 @@ Mesmo molde (copie o Goblin, que é o mais completo):
 - `Comandos` (`core/utilitarios/`): troca de tecla e `user://comandos.cfg`.
   `OpcoesToque`: modo, quando aparecer, layout e transparência em `user://toque.cfg`.
 
-## 8. Escala D&D (`EscalaDnd`)
+## 9. Escala D&D (`EscalaDnd`)
 
 | Livro | Jogo |
 |---|---|
@@ -134,7 +149,7 @@ Mesmo molde (copie o Goblin, que é o mais completo):
 | Iniciativa | intervalo entre ataques = (10 − iniciativa) × 0,1 s, mínimo 0,3 s |
 | Alcance longo de tiro/arremesso | velocidade de saída = raiz(g × alcance) (`velocidade_para_alcance`) |
 
-## 9. Persistência
+## 10. Persistência
 
 Só configurações (sem save de jogo ainda): `user://comandos.cfg` (teclas) e `user://toque.cfg`
 (toque). Testes que mexem nelas guardam e devolvem o arquivo do jogador (`tests/teste_toque.gd`).

@@ -17,6 +17,15 @@ func configurar(maxima: int) -> void:
 	curar_tudo()
 
 
+## Aumenta o máximo e os PV atuais pelo mesmo valor, como ao ganhar um nível.
+func aumentar_maximo(novo_maximo: int) -> void:
+	var aumento := maxi(novo_maximo - vida_maxima, 0)
+	vida_maxima = maxi(novo_maximo, 1)
+	if not esta_morto():
+		vida_atual = mini(vida_atual + aumento, vida_maxima)
+	vida_mudou.emit(vida_atual, vida_maxima)
+
+
 func curar_tudo() -> void:
 	vida_atual = vida_maxima
 	vida_mudou.emit(vida_atual, vida_maxima)

@@ -4,6 +4,8 @@ extends Resource
 ## Distâncias em pés, como no livro (EscalaDnd converte para o jogo).
 
 @export var nome: String = "Criatura"
+## XP concedido ao derrotar esta criatura da cota da fase.
+@export var experiencia: int = 0
 ## Tamanho e tipo, só para mostrar (ex.: "Medium Ooze, Unaligned").
 @export var tipo: String = ""
 @export var classe_armadura: int = 10
@@ -77,6 +79,8 @@ extends Resource
 @export_group("Ações bônus")
 ## Fuga Ágil (Goblin): Desengajar depois de atacar (salta para longe do alvo).
 @export var fuga_agil: bool = false
+## Depois do recuo, esconde de novo e rola Furtividade outra vez (Goblin Warrior).
+@export var esconde_de_novo: bool = false
 
 
 func dado_vida() -> Dado:

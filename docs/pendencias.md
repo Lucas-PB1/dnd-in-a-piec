@@ -10,9 +10,10 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 
 | # | Fatia | Tam. | Onde mexe | Observação |
 |---|---|---|---|---|
-| 1 | **Exportar o APK (Android)** | M | `export_presets.cfg`, guia em `docs/` | Precisa do JDK, Android SDK e modelos de exportação do Godot (o usuário instala; a IA guia). Testar os controles de toque com o dedo. |
-| 2 | **Fase com plataformas e buracos** | M | `tools/gerar_fase_teste.gd` | Os tipos `=` (plataforma) e `P` já existem no gerador; a fase está reta por pedido antigo. |
-| 3 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |
+| 1 | **Exportar o APK (Android)** | M | `export_presets.cfg`, `docs/exportar_android.md` | O preset está pronto; faltam JDK, Android SDK e modelos de exportação do Godot nesta máquina. Testar os controles de toque com o dedo. |
+| 2 | **Subclasse do Guerreiro** | M | `core/dados/`, criação, combate | O nível 3 ainda não oferece a escolha de subclasse nem seus recursos. |
+| 3 | **Testes de habilidade nas fases** | M | `levels/`, interações e perícias | A regra e o toggle de Mente Tática estão prontos; falta uma interação que peça um teste de habilidade do herói. |
+| 4 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |
 
 ## 2. Regras do livro que ainda não existem
 
@@ -25,10 +26,9 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 | Esconder de novo | M | O goblin começa escondido. A Fuga Ágil ainda não o esconde outra vez depois do golpe. |
 | Desvantagem de armadura em Furtividade | P | A marca existe na armadura. O herói não rola Furtividade, então ela ainda não entra num teste. |
 | Magia | G | Abrir o bloco de talentos de magia em `docs/talentos.md` na fatia dela. |
-| Descanso curto | P | Second Wind recarrega no "Tentar de novo" (regra da casa) em vez de descanso. |
+| Descanso curto | P | Second Wind recarrega ao entrar na fase seguinte (descanso longo) e no "Tentar de novo" (regra da casa); descanso curto ainda não existe. |
 | Limite de tamanho do Empurrar e do Derrubar | P | Hoje vale para qualquer tamanho (o livro: Grande ou menor). |
 | Amorfo (Gray Ooze) | P | Sem efeito no jogo. |
-| Níveis acima do 1 | G | Tudo é nível 1 (vida, Second Wind 1d10+1). |
 | Salvar e carregar o jogo | M | Só as configurações são salvas (`user://comandos.cfg`, `user://toque.cfg`). Decisão grande: propor 2 opções. |
 
 ## 3. Arte provisória (trocar quando der)

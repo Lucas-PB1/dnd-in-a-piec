@@ -7,6 +7,12 @@ extends CharacterBody2D
 ## Emitido quando termina de morrer (antes de sumir).
 signal morreu
 
+## Igual à beira do goblin; extrair se uma terceira criatura precisar.
+const DISTANCIA_BEIRA := 14.0
+const FOLGA_PE := 6.0
+const PROFUNDIDADE_BEIRA := 20.0
+const MASCARA_MUNDO := 1
+
 ## Bloco de estatísticas. Padrão: data/gray_ooze.tres.
 @export var criatura: CriaturaRPG
 ## Altura do corpo usada na área do Pseudópode (px).
@@ -107,12 +113,26 @@ func virar_para_alvo() -> void:
 ## Lentidão (maestria), se estiver Lento.
 func andar_para_alvo() -> void:
 	virar_para_alvo()
+	if not _tem_chao_na(float(direcao_olhar)):
+		parar()
+		return
 	var pes := maxf(criatura.deslocamento_pes - _condicoes.reducao_deslocamento_pes(), 0.0)
 	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(pes)
 
 
 func parar() -> void:
 	velocity.x = 0.0
+
+
+## False na beira: o próximo passo não tem chão. Empurrão ainda pode derrubar.
+func _tem_chao_na(direcao: float) -> bool:
+	var mundo := get_world_2d()
+	if mundo == null:
+		return true
+	var origem := global_position + Vector2(direcao * DISTANCIA_BEIRA, -FOLGA_PE)
+	var consulta := PhysicsRayQueryParameters2D.create(origem, origem + Vector2(0.0, PROFUNDIDADE_BEIRA + FOLGA_PE))
+	consulta.collision_mask = MASCARA_MUNDO
+	return not mundo.direct_space_state.intersect_ray(consulta).is_empty()
 
 
 ## Toca a animação desde o primeiro quadro (se já estiver tocando ela, não reinicia).

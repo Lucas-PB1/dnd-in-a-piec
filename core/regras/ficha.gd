@@ -1,11 +1,17 @@
 class_name Ficha
 extends RefCounted
-## Ficha de personagem de D&D (nível 1): nome, classe e atributos. Calcula vida e dano. Regra pura.
+## Ficha de personagem de D&D: identidade, progressão e contas de combate. Regra pura.
 
 ## Dano mínimo de um acerto (com modificador negativo o total poderia dar 0).
 const DANO_MINIMO := Combate.DANO_MINIMO
-## Bônus de proficiência no nível 1.
+## Bônus de proficiência nos níveis 1 a 3.
 const BONUS_PROFICIENCIA := 2
+## Nível que libera as habilidades de segundo nível do Guerreiro.
+const NIVEL_HABILIDADES_GUERREIRO := 2
+## Limite de nível desta campanha.
+const NIVEL_MAXIMO := 3
+## XP total necessário para cada nível desta fatia.
+const XP_POR_NIVEL := {1: 0, 2: 300, 3: 900}
 ## Base da CD das maestrias (8 + modificador + proficiência).
 const CD_BASE_MAESTRIA := 8
 ## CA de quem não usa armadura (antes do modificador de Destreza).
@@ -25,6 +31,8 @@ const TAMANHO_MAXIMO_NOME := 16
 
 var nome: String
 var classe: ClasseRPG
+var nivel: int = 1
+var experiencia: int = 0
 var atributos: Dictionary[StringName, int] = {}
 ## Maestria em Armas: nomes dos tipos de arma que o personagem domina (Guerreiro: 3,
 ## escolhidos na criação). Só com elas a maestria da arma vale.
@@ -72,9 +80,37 @@ func modificador(atributo: StringName) -> int:
 	return Atributos.modificador(atributos[atributo])
 
 
-## Nível 1: valor máximo do dado de vida da classe + modificador de Constituição.
+## Define o nível inicial escolhido na criação e o XP correspondente ao marco oficial.
+func definir_nivel_inicial(novo_nivel: int) -> void:
+	nivel = clampi(novo_nivel, 1, NIVEL_MAXIMO)
+	experiencia = XP_POR_NIVEL[nivel]
+
+
+## Soma XP e devolve quantos níveis ganhou, até o limite da campanha.
+func adicionar_experiencia(quantidade: int) -> int:
+	if quantidade <= 0:
+		return 0
+	var nivel_anterior := nivel
+	experiencia += quantidade
+	while nivel < NIVEL_MAXIMO and experiencia >= XP_POR_NIVEL[nivel + 1]:
+		nivel += 1
+	return nivel - nivel_anterior
+
+
+## XP necessário para o próximo nível; 0 quando chegou ao limite.
+func xp_proximo_nivel() -> int:
+	if nivel >= NIVEL_MAXIMO:
+		return 0
+	return XP_POR_NIVEL[nivel + 1]
+
+
+## PV no nível 1 usa o máximo do dado. Cada nível seguinte usa o valor fixo médio do livro.
 func vida_maxima() -> int:
-	return maxi(classe.dado_vida + modificador(Atributos.CONSTITUICAO), VIDA_MINIMA)
+	var constituicao := modificador(Atributos.CONSTITUICAO)
+	var vida_inicial := maxi(classe.dado_vida + constituicao, VIDA_MINIMA)
+	var media_dado := floori(float(classe.dado_vida) / 2.0) + 1
+	var vida_por_nivel := maxi(media_dado + constituicao, VIDA_MINIMA)
+	return vida_inicial + (nivel - 1) * vida_por_nivel
 
 
 ## Atributo do ataque e do dano. À distância usa Destreza. Acuidade usa o maior entre

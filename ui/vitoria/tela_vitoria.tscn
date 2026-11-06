@@ -1,0 +1,55 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/vitoria/tela_vitoria.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/tema_menu.tres" id="2_tema"]
+
+[node name="TelaVitoria" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+script = ExtResource("1_script")
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.08, 0.06, 0.8)
+
+[node name="Centro" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Painel" type="PanelContainer" parent="Centro"]
+layout_mode = 2
+
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Titulo" type="Label" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_type_variation = &"TituloGrande"
+text = "Fase concluída"
+horizontal_alignment = 1
+
+[node name="Espaco" type="Control" parent="Centro/Painel/Coluna"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+
+[node name="JogarDeNovo" type="Button" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Jogar de novo"

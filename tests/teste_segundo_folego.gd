@@ -18,6 +18,7 @@ func _rodar() -> void:
 	_testar_cura()
 	_principal = load("res://levels/main.tscn").instantiate()
 	_principal.mostrar_inicio = false
+	_principal.semente_armadilhas = 1
 	root.add_child(_principal)
 	_jogador = _principal.get_node("Jogador")
 	await _esperar(10)
@@ -46,6 +47,13 @@ func _testar_cura() -> void:
 			_checar(false, "rolagem %d fora de 2 a 11" % cura)
 			return
 	_checar(true, "30 rolagens ficaram entre 2 e 11")
+	var menor_nivel_2 := 12
+	var maior_nivel_2 := 2
+	for i in 30:
+		var cura_nivel_2 := classe.cura_do_folego(rng, 2)
+		menor_nivel_2 = mini(menor_nivel_2, cura_nivel_2)
+		maior_nivel_2 = maxi(maior_nivel_2, cura_nivel_2)
+	_checar(menor_nivel_2 >= 3 and maior_nivel_2 <= 12, "Second Wind no nível 2 cura 1d10+2")
 
 	var vida := HealthComponent.new()
 	vida.configurar(10)
@@ -126,9 +134,10 @@ func _testar_teclas() -> void:
 
 
 func _testar_criatura() -> void:
-	var mapa: Node2D = _principal.get_node("GrayOoze")
-	var posicao_mapa := mapa.position
-	var antes := _principal.get_tree().get_nodes_in_group(&"monstros").size()
+	var da_cota := _principal.get_tree().get_nodes_in_group(&"monstros")
+	var mapa: Node2D = da_cota[0]
+	var posicao_mapa := mapa.position.x
+	var antes := da_cota.size()
 	_principal.trazer_criatura(load("res://features/gray_ooze/gray_ooze.tscn"))
 	var novo := _trazido(mapa)
 	var distancia := EscalaDnd.pes_para_pixels(Main.DISTANCIA_CRIATURA_PES) * _jogador.direcao_olhar
@@ -152,12 +161,12 @@ func _testar_criatura() -> void:
 	derrota.get_node("Centro/Painel/Coluna/TentarDeNovo").pressed.emit()
 	await process_frame
 	var voltaram := _principal.get_tree().get_nodes_in_group(&"monstros")
-	var ooze_no_lugar := false
+	var no_lugar := false
 	for monstro in voltaram:
-		if monstro is GrayOoze and is_equal_approx((monstro as Node2D).position.x, posicao_mapa.x):
-			ooze_no_lugar = true
-	_checar(voltaram.size() == 3, "tentar de novo recria Ooze, Minion e Warrior, sem o trazido")
-	_checar(ooze_no_lugar, "o Ooze recriado volta na posição do mapa")
+		if is_equal_approx((monstro as Node2D).position.x, posicao_mapa):
+			no_lugar = true
+	_checar(voltaram.size() == antes, "tentar de novo recria a cota da fase, sem o trazido")
+	_checar(no_lugar, "com a mesma semente a armadilha volta no mesmo ponto")
 
 
 func _trazido(mapa: Node) -> GrayOoze:

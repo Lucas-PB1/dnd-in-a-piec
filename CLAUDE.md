@@ -30,6 +30,7 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | `docs/pendencias.md` | **O que falta**, com tamanho e prioridade. Escolha a próxima fatia daqui. |
 | `docs/historico.md` | O que já foi feito, fatia por fatia. |
 | `docs/artes_prontas.md` | Arte de terceiros: onde buscar, licença, como usar. |
+| `docs/exportar_android.md` | Requisitos do SDK/JDK e comando para exportar o APK. |
 | `docs/talentos.md` | Talentos do livro anotados. |
 
 ## Decisões que valem para tudo
@@ -142,7 +143,9 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
 
 ## Estado atual
 Últimas fatias (lista completa em `docs/historico.md`; o que falta em `docs/pendencias.md`):
+- Campanha de cinco fases com terrenos variados, encontros sorteados, portas com cota de inimigos e tela de vitória.
 - Armas à distância com a arte do Aerial Arsenal e força do tiro por arma.
-- Goblin Minion (arremessa adagas, golpeia, Fuga Ágil) e Goblin Warrior (cimitarra, arco curto), na tela de comandos (Trazer) e fixos na fase depois do Ooze.
+- Goblin Minion (arremessa adagas, golpeia, Fuga Ágil) e Goblin Warrior (cimitarra, arco curto), na tela de comandos (Trazer) e nos encontros da campanha.
 - Celular: tela larga, controles de toque (analógico ou setas + botões) e ajuste do layout.
+- Progressão do Guerreiro níveis 1–3: XP, PV por nível, dificuldade aleatória escalada; Surto de Ação e Mente Tática no nível 2; descanso longo entre fases.
 - Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.

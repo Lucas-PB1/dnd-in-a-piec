@@ -1,41 +1,29 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://levels/main.gd" id="1_main"]
-[ext_resource type="PackedScene" path="res://levels/fase_teste.tscn" id="2_fase"]
+[ext_resource type="PackedScene" path="res://levels/fase_1.tscn" id="2_fase"]
 [ext_resource type="PackedScene" path="res://features/jogador/jogador.tscn" id="3_jogador"]
 [ext_resource type="PackedScene" path="res://features/boneco_treino/boneco_treino.tscn" id="4_boneco"]
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://ui/inventario/tela_inventario.tscn" id="6_inventario"]
 [ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="7_guerreiro"]
 [ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="8_classe_rpg"]
-[ext_resource type="PackedScene" path="res://features/gray_ooze/gray_ooze.tscn" id="9_ooze"]
 [ext_resource type="PackedScene" path="res://features/bau/bau.tscn" id="10_bau"]
 [ext_resource type="PackedScene" path="res://ui/bau/tela_bau.tscn" id="11_tela_bau"]
 [ext_resource type="PackedScene" path="res://ui/comandos/tela_comandos.tscn" id="12_comandos"]
 [ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
-[ext_resource type="PackedScene" path="res://features/goblin/goblin.tscn" id="14_minion"]
-[ext_resource type="PackedScene" path="res://features/goblin/goblin_guerreiro.tscn" id="15_warrior"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
 classes_disponiveis = Array[ExtResource("8_classe_rpg")]([ExtResource("7_guerreiro")])
 
-[node name="FaseTeste" parent="." instance=ExtResource("2_fase")]
+[node name="Fase" parent="." instance=ExtResource("2_fase")]
 
 [node name="Bau" parent="." instance=ExtResource("10_bau")]
 position = Vector2(150, 288)
 
 [node name="BonecoTreino" parent="." instance=ExtResource("4_boneco")]
 position = Vector2(240, 288)
-
-[node name="GrayOoze" parent="." groups=["monstros"] instance=ExtResource("9_ooze")]
-position = Vector2(720, 288)
-
-[node name="GoblinMinion" parent="." groups=["monstros"] instance=ExtResource("14_minion")]
-position = Vector2(2176, 288)
-
-[node name="GoblinWarrior" parent="." groups=["monstros"] instance=ExtResource("15_warrior")]
-position = Vector2(2752, 288)
 
 [node name="Jogador" parent="." instance=ExtResource("3_jogador")]
 

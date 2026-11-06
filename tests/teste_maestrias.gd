@@ -144,7 +144,8 @@ func _testar_alvos_e_trespassar() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false
 	root.add_child(cena)
-	cena.get_node("GrayOoze").free()
+	for monstro in get_nodes_in_group(&"monstros"):
+		monstro.free()
 	var jogador: Jogador = cena.get_node("Jogador")
 	var primeiro: BonecoTreino = cena.get_node("BonecoTreino")
 	var segundo: BonecoTreino = load("res://features/boneco_treino/boneco_treino.tscn").instantiate()
@@ -206,7 +207,8 @@ func _testar_corte_duplo() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false
 	root.add_child(cena)
-	cena.get_node("GrayOoze").free()
+	for monstro in get_nodes_in_group(&"monstros"):
+		monstro.free()
 	var jogador: Jogador = cena.get_node("Jogador")
 	await _esperar(10)
 	jogador.inventario.limpar()

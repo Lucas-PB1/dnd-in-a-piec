@@ -26,10 +26,9 @@ extends Resource
 ## Second Wind: usos por luta. 0 = a classe não tem o poder. Guerreiro nível 1 = 2.
 @export var usos_segundo_folego: int = 0
 
-## Cura do Second Wind no nível 1: 1d10 + nível (o +1). De 2 a 11.
-const DADO_SEGUNDO_FOLEGO := "1d10+1"
+## Cura do Second Wind: 1d10 + nível. Quem chama confere se ainda há usos.
+const DADO_SEGUNDO_FOLEGO := "1d10+1"  # rolagem de referência no nível 1.
 
 
-## Rolagem da cura do Second Wind. Quem chama confere se ainda há usos.
-func cura_do_folego(rng: RandomNumberGenerator) -> int:
-	return Dado.de_texto(DADO_SEGUNDO_FOLEGO).rolar(rng)
+func cura_do_folego(rng: RandomNumberGenerator, nivel: int = 1) -> int:
+	return Dado.new(1, 10, nivel).rolar(rng)

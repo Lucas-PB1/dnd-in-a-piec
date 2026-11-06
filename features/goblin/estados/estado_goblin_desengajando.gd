@@ -16,4 +16,8 @@ func processar_fisica(delta: float) -> void:
 	goblin.recuar()
 	if _tempo >= goblin.tempo_de_fuga() or goblin.is_on_wall():
 		goblin.parar()
-		trocar_para.emit(&"Perseguindo")
+		if goblin.esconde_de_novo():
+			goblin.reiniciar_furtividade()
+			trocar_para.emit(&"Escondido")
+		else:
+			trocar_para.emit(&"Perseguindo")

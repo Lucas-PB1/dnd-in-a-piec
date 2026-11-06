@@ -1,61 +1,172 @@
 extends SceneTree
-## Gera o TileSet (assets/tiles/ladrilhos.tres) e a fase de teste (levels/fase_teste.tscn)
-## a partir do MAPA em texto abaixo. Mude o desenho e rode de novo:
+## Gera o TileSet e as fases a partir dos mapas abaixo.
 ##   godot --headless --path . --script res://tools/gerar_fase_teste.gd
-## Cada caractere = 1 ladrilho de 32x32 px. Linha terminada em "*" repete o último caractere.
-##   #  chão (vira grama no topo e terra embaixo, automaticamente)
-##   P  bloco de pedra
-##   =  plataforma de madeira (dá para atravessar por baixo e subir nela)
-##   S  onde o herói começa
+## Cada caractere = 1 ladrilho de 32 px. O gerador monta o texto a partir dos números
+## de cada fase (buraco, plataforma, armadilha, porta, muro), para não errar a conta.
+##   #  chão (grama no topo, terra embaixo)
+##   P  pedra
+##   =  plataforma (atravessa por baixo)
+##   S  início do herói
+##   A  ponto de armadilha (no chão, ou na fileira de cima quando está numa plataforma)
+##   D  porta
 ##   .  vazio
-## Paredes de pedra são colocadas automaticamente nas duas pontas.
+## Paredes de pedra fecham as duas pontas. A fase reta de teste não tem buraco nem porta.
 
 const TAM := 32
 const CAMINHO_TILESET := "res://assets/tiles/ladrilhos.tres"
-const CAMINHO_FASE := "res://levels/fase_teste.tscn"
 const SCRIPT_FASE := "res://levels/fase.gd"
-## Altura da parede das pontas acima do topo do mapa (ladrilhos).
 const ALTURA_EXTRA_PAREDE := 6
-## Altura da prancha da plataforma (px a partir do topo do ladrilho).
 const ALTURA_PRANCHA := 10
+## Fileira do "S": os pés ficam na base dela, em y = 288.
+const LINHA_ACAO := 8
+const PROFUNDIDADE_CHAO := 3
+const LINHAS := LINHA_ACAO + 1 + PROFUNDIDADE_CHAO
+## O pulo (~104 px) não passa de um muro desta altura acima do chão.
+const ALTURA_MURO := 4
+const LARGURA_TESTE := 120
+## A porta detecta o corpo do herói (camada 2).
+const MASCARA_JOGADOR := 2
+const LARGURA_PORTA := 28.0
+const ALTURA_PORTA := 72.0
 
-enum { GRAMA, TERRA, PLATAFORMA, PEDRA }  # mesma ordem do gerar_arte_provisoria.gd
+enum { GRAMA, TERRA, PLATAFORMA, PEDRA }
 
-## Fase reta (sem plataformas por enquanto): só chão, comprida para testar a corrida.
-## As linhas vazias de cima são o céu; o chão tem 3 ladrilhos de profundidade.
-const LARGURA_FASE := 120
-const MAPA := [
-	".",
-	".",
-	".",
-	".",
-	".",
-	".",
-	".",
-	".",
-	"..S",
-	"#*",
-	"#*",
-	"#*",
+const OOZE := &"ooze"
+const MINION := &"minion"
+const WARRIOR := &"warrior"
+const TIPOS_SEM_ARCO: Array[StringName] = [OOZE, MINION]
+const TIPOS_TODOS: Array[StringName] = [OOZE, MINION, WARRIOR]
+
+const CEU := [
+	Color(0.53, 0.78, 0.95),
+	Color(0.64, 0.78, 0.9),
+	Color(0.40, 0.50, 0.36),
+	Color(0.30, 0.24, 0.40),
+	Color(0.26, 0.09, 0.11),
 ]
 
 
 func _initialize() -> void:
 	ResourceSaver.save(_criar_tileset(), CAMINHO_TILESET)
+	_gravar(_fase_reta(), _mapa_reto(), 0, -1)
+	for definicao in _fases():
+		_gravar(definicao, _mapa_de(definicao), definicao.tema, definicao.muro)
+	quit()
 
+
+## Fase reta de 120 ladrilhos, para abrir sozinha. O jogo usa as cinco da campanha.
+func _fase_reta() -> Dictionary:
+	var sem_tipos: Array[StringName] = []
+	return {
+		"nome": "Teste", "arquivo": "res://levels/fase_teste.tscn", "no": "FaseTeste",
+		"tema": 0, "indice": 0, "ultima": false, "quantidade": 0,
+		"tipos": sem_tipos, "largura": LARGURA_TESTE, "inicio": 2,
+	}
+
+
+## Clareira 1, Trilha 2, Pântano 3, Ruína 3, Fortaleza 4. Há mais pontos do que a quantidade.
+func _fases() -> Array[Dictionary]:
+	var fases: Array[Dictionary] = [
+		{
+			"nome": "Clareira", "arquivo": "res://levels/fase_1.tscn", "no": "Fase",
+			"tema": 0, "indice": 1, "ultima": false, "quantidade": 1, "tipos": TIPOS_SEM_ARCO,
+			"largura": LARGURA_TESTE, "inicio": 2,
+			"buracos": [Vector2i(31, 2)], "plataformas": [],
+			"chao": [33, 34], "plataforma": [], "porta": 35, "muro": 36,
+		},
+		{
+			"nome": "Trilha", "arquivo": "res://levels/fase_2.tscn", "no": "Fase",
+			"tema": 1, "indice": 2, "ultima": false, "quantidade": 2, "tipos": TIPOS_SEM_ARCO,
+			"largura": 46, "inicio": 2,
+			"buracos": [Vector2i(8, 2), Vector2i(21, 2), Vector2i(34, 2)], "plataformas": [],
+			"chao": [10, 23, 36], "plataforma": [], "porta": 39, "muro": 40,
+		},
+		{
+			"nome": "Pântano", "arquivo": "res://levels/fase_3.tscn", "no": "Fase",
+			"tema": 2, "indice": 3, "ultima": false, "quantidade": 3, "tipos": TIPOS_SEM_ARCO,
+			"largura": 48, "inicio": 2,
+			"buracos": [Vector2i(8, 2), Vector2i(30, 2)], "plataformas": [Vector2i(16, 3)],
+			"chao": [10, 33, 40], "plataforma": [17], "porta": 43, "muro": 44,
+		},
+		{
+			"nome": "Ruína", "arquivo": "res://levels/fase_4.tscn", "no": "Fase",
+			"tema": 3, "indice": 4, "ultima": false, "quantidade": 3, "tipos": TIPOS_TODOS,
+			"largura": 48, "inicio": 2,
+			"buracos": [Vector2i(6, 2), Vector2i(18, 2)], "plataformas": [Vector2i(30, 3)],
+			"chao": [8, 38], "plataforma": [31], "arco": [25], "porta": 42, "muro": 43,
+		},
+		{
+			"nome": "Fortaleza", "arquivo": "res://levels/fase_5.tscn", "no": "Fase",
+			"tema": 4, "indice": 5, "ultima": true, "quantidade": 4, "tipos": TIPOS_TODOS,
+			"largura": 50, "inicio": 2,
+			"buracos": [Vector2i(8, 2), Vector2i(26, 2)], "plataformas": [Vector2i(19, 3)],
+			"chao": [10, 12, 40], "plataforma": [21], "arco": [33], "porta": 44, "muro": 45,
+		},
+	]
+	return fases
+
+
+func _mapa_reto() -> Array[String]:
+	var linhas: Array[String] = []
+	for y in LINHAS:
+		if y < LINHA_ACAO:
+			linhas.append(".".repeat(LARGURA_TESTE))
+		elif y == LINHA_ACAO:
+			linhas.append(_trocar(".".repeat(LARGURA_TESTE), 2, "S"))
+		else:
+			linhas.append("#".repeat(LARGURA_TESTE))
+	return linhas
+
+
+func _mapa_de(definicao: Dictionary) -> Array[String]:
+	var largura: int = definicao.largura
+	var linhas: Array[String] = []
+	for y in LINHAS:
+		var linha := ".".repeat(largura)
+		if y > LINHA_ACAO:
+			linha = "#".repeat(largura)
+			for buraco: Vector2i in definicao.buracos:
+				for x in buraco.y:
+					linha = _trocar(linha, buraco.x + x, ".")
+		elif y == LINHA_ACAO:
+			linha = _trocar(linha, definicao.inicio, "S")
+			linha = _trocar(linha, definicao.porta, "D")
+			for x: int in definicao.chao:
+				linha = _trocar(linha, x, "A")
+			for plataforma: Vector2i in definicao.plataformas:
+				for x in plataforma.y:
+					linha = _trocar(linha, plataforma.x + x, "=")
+			for x: int in definicao.get("arco", []):
+				linha = _trocar(linha, x, "A")
+		elif y == LINHA_ACAO - 1:
+			for x: int in definicao.plataforma:
+				linha = _trocar(linha, x, "A")
+		linhas.append(linha)
+	return linhas
+
+
+func _gravar(definicao: Dictionary, mapa: Array[String], tema: int, muro: int) -> void:
 	var fase := Node2D.new()
-	fase.name = "FaseTeste"
+	# Dentro da árvore o grupo da armadilha é gravado na cena.
+	root.add_child(fase)
+	fase.name = definicao.no
 	fase.set_script(load(SCRIPT_FASE))
+	fase.indice = definicao.indice
+	fase.ultima = definicao.ultima
+	fase.nome_ambiente = definicao.nome
+	fase.quantidade = definicao.quantidade
+	fase.tipos_permitidos = definicao.tipos
 	var terreno := _criar_terreno(fase)
-	_pintar_mapa(fase, terreno)
-	_colocar_paredes(terreno)
-
+	_pintar_mapa(fase, terreno, mapa, tema)
+	_colocar_paredes(terreno, mapa, tema)
+	if muro >= 0:
+		_colocar_muro(terreno, muro, mapa, tema)
+	_colocar_ceu(fase, mapa, CEU[tema])
 	var cena := PackedScene.new()
 	cena.pack(fase)
-	ResourceSaver.save(cena, CAMINHO_FASE)
-	print("Fase gerada: %dx%d ladrilhos -> %s" % [_largura(), MAPA.size(), CAMINHO_FASE])
+	ResourceSaver.save(cena, definicao.arquivo)
+	print("Fase gerada: %s (%s)" % [definicao.nome, definicao.arquivo])
 	fase.free()
-	quit()
 
 
 func _criar_terreno(fase: Node2D) -> TileMapLayer:
@@ -66,68 +177,119 @@ func _criar_terreno(fase: Node2D) -> TileMapLayer:
 	return terreno
 
 
-func _pintar_mapa(fase: Node2D, terreno: TileMapLayer) -> void:
-	for y in MAPA.size():
-		for x in _largura():
+func _pintar_mapa(fase: Node2D, terreno: TileMapLayer, mapa: Array[String], tema: int) -> void:
+	for y in mapa.size():
+		for x in _largura(mapa):
 			var celula := Vector2i(x, y)
-			match _char(x, y):
+			match _char(mapa, x, y):
 				"#":
-					_pintar(terreno, celula, _tipo_do_chao(x, y))
+					_pintar(terreno, celula, _tipo_do_chao(mapa, x, y), tema)
 				"P":
-					_pintar(terreno, celula, PEDRA)
+					_pintar(terreno, celula, PEDRA, tema)
 				"=":
-					_pintar(terreno, celula, PLATAFORMA)
+					_pintar(terreno, celula, PLATAFORMA, tema)
 				"S":
 					_colocar_inicio(fase, celula)
+				"A":
+					_colocar_armadilha(fase, celula)
+				"D":
+					_colocar_porta(fase, celula)
 
 
-## Grama no topo; terra quando tem chão ou pedra em cima.
-func _tipo_do_chao(x: int, y: int) -> int:
-	var acima := _char(x, y - 1)
+func _tipo_do_chao(mapa: Array[String], x: int, y: int) -> int:
+	var acima := _char(mapa, x, y - 1)
 	return TERRA if acima == "#" or acima == "P" else GRAMA
 
 
 func _colocar_inicio(fase: Node2D, celula: Vector2i) -> void:
 	var inicio := Marker2D.new()
 	inicio.name = "InicioJogador"
-	# Pés do herói no chão: base do ladrilho "S".
-	inicio.position = Vector2(celula.x * TAM + TAM / 2.0, (celula.y + 1) * TAM)
+	inicio.position = _pes(celula)
 	_adicionar(fase, inicio)
 
 
-## Paredes de pedra nas duas pontas, da altura toda (o herói não sai pelos lados).
-func _colocar_paredes(terreno: TileMapLayer) -> void:
-	for y in range(-ALTURA_EXTRA_PAREDE, MAPA.size()):
-		_pintar(terreno, Vector2i(-1, y), PEDRA)
-		_pintar(terreno, Vector2i(_largura(), y), PEDRA)
+func _colocar_armadilha(fase: Node2D, celula: Vector2i) -> void:
+	var marca := Marker2D.new()
+	marca.name = "Armadilha%d" % (fase.get_child_count() + 1)
+	marca.position = _pes(celula)
+	marca.add_to_group(&"armadilha", true)
+	_adicionar(fase, marca)
 
 
-func _pintar(terreno: TileMapLayer, celula: Vector2i, tipo: int) -> void:
-	terreno.set_cell(celula, 0, Vector2i(tipo, 0))
+func _colocar_porta(fase: Node2D, celula: Vector2i) -> void:
+	var porta := Area2D.new()
+	porta.name = "Porta"
+	porta.position = _pes(celula)
+	porta.collision_layer = 0
+	porta.collision_mask = MASCARA_JOGADOR
+	porta.monitorable = false
+	var forma := CollisionShape2D.new()
+	var retangulo := RectangleShape2D.new()
+	retangulo.size = Vector2(LARGURA_PORTA, ALTURA_PORTA)
+	forma.shape = retangulo
+	forma.position = Vector2(0.0, -ALTURA_PORTA / 2.0)
+	porta.add_child(forma)
+	_adicionar(fase, porta)
 
 
-## Adiciona um nó à fase e marca o dono, senão ele não é salvo na cena.
+## Pés no chão: base do ladrilho. Numa plataforma, a letra fica na fileira de cima.
+func _pes(celula: Vector2i) -> Vector2:
+	return Vector2(celula.x * TAM + TAM / 2.0, (celula.y + 1) * TAM)
+
+
+func _colocar_paredes(terreno: TileMapLayer, mapa: Array[String], tema: int) -> void:
+	var largura := _largura(mapa)
+	for y in range(-ALTURA_EXTRA_PAREDE, mapa.size()):
+		_pintar(terreno, Vector2i(-1, y), PEDRA, tema)
+		_pintar(terreno, Vector2i(largura, y), PEDRA, tema)
+
+
+func _colocar_muro(terreno: TileMapLayer, x: int, mapa: Array[String], tema: int) -> void:
+	for y in range(LINHA_ACAO - ALTURA_MURO, mapa.size()):
+		_pintar(terreno, Vector2i(x, y), PEDRA, tema)
+
+
+func _colocar_ceu(fase: Node2D, mapa: Array[String], cor: Color) -> void:
+	var ceu := Polygon2D.new()
+	ceu.name = "Ceu"
+	ceu.color = cor
+	ceu.z_index = -10
+	var largura := float(_largura(mapa) * TAM)
+	var fundo := float(mapa.size() * TAM)
+	ceu.polygon = PackedVector2Array([
+		Vector2(-TAM, -ALTURA_EXTRA_PAREDE * TAM), Vector2(largura + TAM, -ALTURA_EXTRA_PAREDE * TAM),
+		Vector2(largura + TAM, fundo), Vector2(-TAM, fundo),
+	])
+	_adicionar(fase, ceu)
+
+
+func _pintar(terreno: TileMapLayer, celula: Vector2i, tipo: int, tema: int) -> void:
+	terreno.set_cell(celula, 0, Vector2i(tipo, tema))
+
+
 func _adicionar(fase: Node2D, no: Node) -> void:
 	fase.add_child(no)
 	no.owner = fase
+	for filho in no.find_children("*", "", true, false):
+		filho.owner = fase
 
 
-func _largura() -> int:
-	var largura := LARGURA_FASE
-	for linha in MAPA:
-		largura = maxi(largura, (linha as String).trim_suffix("*").length())
+func _largura(mapa: Array[String]) -> int:
+	var largura := 0
+	for linha in mapa:
+		largura = maxi(largura, (linha as String).length())
 	return largura
 
 
-## Caractere do mapa em (x, y). Fora do desenho = vazio. "#*" repete "#" até o fim da linha.
-func _char(x: int, y: int) -> String:
-	if y < 0 or y >= MAPA.size():
+func _char(mapa: Array[String], x: int, y: int) -> String:
+	if y < 0 or y >= mapa.size():
 		return "."
-	var linha: String = MAPA[y]
-	if linha.ends_with("*"):
-		var base := linha.trim_suffix("*")
-		return base[x] if x < base.length() else base[base.length() - 1]
+	var linha: String = mapa[y]
 	return linha[x] if x < linha.length() else "."
+
+
+func _trocar(linha: String, x: int, caractere: String) -> String:
+	return linha.substr(0, x) + caractere + linha.substr(x + 1)
 
 
 func _criar_tileset() -> TileSet:
@@ -135,23 +297,22 @@ func _criar_tileset() -> TileSet:
 	tileset.tile_size = Vector2i(TAM, TAM)
 	tileset.add_physics_layer()
 	tileset.set_physics_layer_collision_layer(0, 1)
-
 	var fonte := TileSetAtlasSource.new()
 	fonte.texture = load("res://assets/tiles/ladrilhos.png")
 	fonte.texture_region_size = Vector2i(TAM, TAM)
 	tileset.add_source(fonte, 0)
-
-	for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA]:
-		fonte.create_tile(Vector2i(tipo, 0))
-		var dados := fonte.get_tile_data(Vector2i(tipo, 0), 0)
-		dados.add_collision_polygon(0)
-		var e_plataforma: bool = tipo == PLATAFORMA
-		dados.set_collision_polygon_points(0, 0, _retangulo_colisao(ALTURA_PRANCHA if e_plataforma else TAM))
-		dados.set_collision_polygon_one_way(0, 0, e_plataforma)
+	for tema in CEU.size():
+		for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA]:
+			var coord := Vector2i(tipo, tema)
+			fonte.create_tile(coord)
+			var dados := fonte.get_tile_data(coord, 0)
+			dados.add_collision_polygon(0)
+			var e_plataforma: bool = tipo == PLATAFORMA
+			dados.set_collision_polygon_points(0, 0, _retangulo_colisao(ALTURA_PRANCHA if e_plataforma else TAM))
+			dados.set_collision_polygon_one_way(0, 0, e_plataforma)
 	return tileset
 
 
-## Retângulo de colisão do topo do ladrilho até `altura` px para baixo.
 func _retangulo_colisao(altura: float) -> PackedVector2Array:
 	var meio := TAM / 2.0
 	return PackedVector2Array([

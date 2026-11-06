@@ -23,7 +23,8 @@ func _rodar() -> void:
 	root.add_child(cena)
 	_jogador = cena.get_node("Jogador")
 	_boneco = cena.get_node("BonecoTreino")
-	cena.get_node("GrayOoze").free()  # o Ooze tem o próprio teste
+	for monstro in get_nodes_in_group(&"monstros"):
+		monstro.free()
 	await _esperar(20)
 
 	await _testar_soco_desarmado()

@@ -14,7 +14,8 @@ func _rodar() -> void:
 	cena.mostrar_inicio = false
 	root.add_child(cena)
 	var jogador: Jogador = cena.get_node("Jogador")
-	cena.get_node("GrayOoze").free()  # o Ooze tem o próprio teste
+	for monstro in get_nodes_in_group(&"monstros"):
+		monstro.free()
 	var tela: TelaInventario = cena.get_node("Interface/TelaInventario")
 	var lista: ItemList = tela.get_node("%Lista")
 	var texto_ficha: Label = tela.get_node("%TextoFicha")
@@ -24,6 +25,7 @@ func _rodar() -> void:
 	await _apertar_inventario()
 	_checar(tela.visible and paused, "I abre o inventário e pausa o jogo")
 	_checar(lista.item_count == 1 and lista.get_item_text(0) == "Espada Curta", "espada curta está na mochila, sem equipar")
+	_checar("Nível 1 · XP 0/300" in texto_ficha.text, "ficha mostra o nível e o XP do personagem")
 	_checar("Mão: Desarmado" in texto_ficha.text, "ficha mostra a mão vazia (desarmado)")
 
 	tela.equipar_selecionado()

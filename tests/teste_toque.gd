@@ -67,6 +67,8 @@ func _testar_opcoes() -> void:
 func _testar_botao() -> void:
 	_checar(_controles.esta_visivel() and _controles.analogico().is_visible_in_tree()
 		and not _controles.botao(&"mover_esquerda").is_visible_in_tree(), "modo analógico: aparece o analógico, não as setas")
+	_checar(_controles.botao(&"surto_acao") != null,
+		"os controles de toque incluem o botão do Surto de Ação")
 	var pular := _controles.botao(&"pular")
 	_tocar(DEDO_BOTAO, _centro(pular), true)
 	_checar(Input.is_action_pressed(&"pular"), "dedo no botão Pular aperta a ação pular")

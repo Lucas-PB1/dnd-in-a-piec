@@ -156,8 +156,10 @@ func _ajustar_botao_equipar(item: Item) -> void:
 
 func _atualizar_ficha() -> void:
 	var arma := Equipamento.arma(_inventario, _desarmado)
+	var proximo_nivel := str(_ficha.xp_proximo_nivel()) if _ficha.xp_proximo_nivel() > 0 else "máx."
 	var linhas: PackedStringArray = [
 		"%s, %s" % [_ficha.nome, _ficha.classe.nome],
+		"Nível %d · XP %d/%s" % [_ficha.nivel, _ficha.experiencia, proximo_nivel],
 		"%s   CA %d   %d pés" % [_texto_vida, Equipamento.classe_armadura(_ficha, _inventario),
 			int(Equipamento.deslocamento_pes(_ficha, _inventario))],
 		_atributos_entre(0, 3),

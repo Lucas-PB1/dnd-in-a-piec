@@ -184,6 +184,13 @@ func _testar_emboscada(cena: Main) -> void:
 	_checar(golpe != null and golpe.nome == "Cimitarra" and golpe.vantagem
 		and golpe.dano_extra != null and golpe.dano_extra.texto() == "1d4",
 		"no corpo a corpo aparece atacando; o primeiro golpe tem vantagem e leva o 1d4")
+	var escondeu := false
+	for i in 120:
+		await physics_frame
+		if is_instance_valid(_goblin) and _goblin.nome_estado() == &"Escondido" and _goblin.esta_escondido():
+			escondeu = true
+			break
+	_checar(escondeu, "depois da cimitarra, com passiva 0, esconde de novo")
 	if is_instance_valid(_goblin):
 		_goblin.queue_free()
 

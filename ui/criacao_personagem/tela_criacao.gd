@@ -27,6 +27,7 @@ const TITULOS := {
 
 var _classe: ClasseRPG
 var _pacote: PacoteInicial
+var _nivel_inicial: int = 1
 var _compra := CompraDePontos.new()
 var _rotulos_valor: Dictionary[StringName, Label] = {}
 var _rotulos_mod: Dictionary[StringName, Label] = {}
@@ -37,6 +38,7 @@ var _armas: Array[Arma] = []
 
 @onready var _campo_nome: LineEdit = %Nome
 @onready var _escolha_classe: OptionButton = %Classe
+@onready var _escolha_nivel: OptionButton = %Nivel
 @onready var _escolha_pacote: OptionButton = %Pacote
 @onready var _pontos: Label = %Pontos
 @onready var _grade: GridContainer = %Grade
@@ -84,6 +86,12 @@ func escolher_classe(indice: int) -> void:
 	_preencher_pericias()
 	_preencher_armas()
 	_preencher_pacotes()
+	_atualizar()
+
+
+func escolher_nivel(indice: int) -> void:
+	_nivel_inicial = clampi(indice + 1, 1, Ficha.NIVEL_MAXIMO)
+	_escolha_nivel.select(_nivel_inicial - 1)
 	_atualizar()
 
 
@@ -152,6 +160,11 @@ func _preparar_campos() -> void:
 	for classe in classes:
 		_escolha_classe.add_item(classe.nome)
 	_escolha_classe.item_selected.connect(escolher_classe)
+	_escolha_nivel.add_item("Nível 1 · %d XP" % Ficha.XP_POR_NIVEL[1])
+	_escolha_nivel.add_item("Nível 2 · %d XP" % Ficha.XP_POR_NIVEL[2])
+	_escolha_nivel.add_item("Nível 3 · %d XP" % Ficha.XP_POR_NIVEL[3])
+	_escolha_nivel.select(0)
+	_escolha_nivel.item_selected.connect(escolher_nivel)
 	_escolha_pacote.item_selected.connect(escolher_pacote)
 	_escolha_classe.disabled = classes.size() == 1  # só uma classe por enquanto
 	_botao_sugestao.pressed.connect(aplicar_sugestao)
@@ -242,6 +255,7 @@ func _preencher_pacotes() -> void:
 
 func _ficha_atual() -> Ficha:
 	var ficha := Ficha.new(_classe, _compra.valores, _campo_nome.text)
+	ficha.definir_nivel_inicial(_nivel_inicial)
 	ficha.armas_dominadas = armas_marcadas()
 	ficha.pericias = pericias_marcadas()
 	return ficha
@@ -302,7 +316,7 @@ func _atualizar() -> void:
 func _texto_previa(ficha: Ficha) -> String:
 	var armadura := _pacote.armadura() if _pacote else null
 	var arma := _pacote.arma() if _pacote and _pacote.arma() else arma_previa
-	return "Vida %d · CA %d · %d pés · Dano %s" % [ficha.vida_maxima(), ficha.classe_armadura(armadura),
+	return "Nível %d · Vida %d · CA %d · %d pés · Dano %s" % [ficha.nivel, ficha.vida_maxima(), ficha.classe_armadura(armadura),
 		int(ficha.deslocamento_pes(armadura)), ficha.texto_dano(arma, arma.e_versatil())]
 
 

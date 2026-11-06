@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_criatura")
 nome = "Gray Ooze"
+experiencia = 100
 tipo = "Medium Ooze, Unaligned"
 classe_armadura = 9
 dados_vida = "3d8+9"

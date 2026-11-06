@@ -39,6 +39,9 @@ func _testar_tela_sozinha() -> void:
 	tela.confirmada.connect(func(f: Ficha, _p: PacoteInicial) -> void: recebida.append(f))
 	var escolha: OptionButton = tela.get_node("%Classe")
 	_checar(escolha.item_count == 1 and escolha.get_item_text(0) == "Guerreiro", "classe: só Guerreiro por enquanto")
+	var escolha_nivel: OptionButton = tela.get_node("%Nivel")
+	_checar(escolha_nivel.item_count == 3, "criação permite escolher do nível 1 ao 3")
+	tela.escolher_nivel(2)
 	var lista: ItemList = tela.get_node("%ListaMaestrias")
 	_checar(lista.select_mode == ItemList.SELECT_TOGGLE, "clique marca e desmarca a maestria")
 	_checar(tela.armas_marcadas().size() == 3, "o pacote já marca 3 armas")
@@ -74,6 +77,8 @@ func _testar_tela_sozinha() -> void:
 		"confirma com nome e sugestão e devolve a ficha")
 	_checar(recebida[0].pericias.has(Pericia.PERCEPCAO) and recebida[0].pericias.has(Pericia.ATLETISMO)
 		and recebida[0].percepcao_passiva() == 13, "a ficha guarda as perícias; SAB 12 treinada: passiva 13")
+	_checar(recebida[0].nivel == 3 and recebida[0].experiencia == 900,
+		"o nível inicial escolhido e o XP correspondente vão para a ficha")
 	tela.queue_free()
 
 

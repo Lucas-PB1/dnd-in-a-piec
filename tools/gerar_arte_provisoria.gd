@@ -40,15 +40,62 @@ func _initialize() -> void:
 	quit()
 
 
+## Uma fileira do atlas por ambiente. A ordem das colunas é o enum do topo.
+const PALETAS: Array[Dictionary] = [
+	{
+		"terra": Color8(122, 82, 54), "terra_escura": Color8(98, 64, 44), "terra_clara": Color8(146, 104, 70),
+		"grama": Color8(84, 168, 64), "grama_topo": Color8(132, 206, 92), "grama_sombra": Color8(52, 116, 48),
+		"madeira": Color8(168, 112, 62), "madeira_topo": Color8(206, 148, 88), "madeira_fundo": Color8(110, 70, 40),
+		"madeira_emenda": Color8(130, 84, 48), "prego": Color8(60, 50, 50),
+		"pedra": Color8(120, 124, 140), "pedra_topo": Color8(160, 164, 180), "pedra_lado": Color8(150, 154, 170),
+		"pedra_fundo": Color8(80, 82, 98), "pedra_lado_escuro": Color8(88, 90, 106), "pedra_mancha": Color8(98, 100, 116),
+	},
+	{
+		"terra": Color8(140, 96, 58), "terra_escura": Color8(110, 72, 40), "terra_clara": Color8(168, 124, 74),
+		"grama": Color8(150, 140, 62), "grama_topo": Color8(190, 176, 90), "grama_sombra": Color8(100, 90, 40),
+		"madeira": Color8(150, 96, 52), "madeira_topo": Color8(190, 130, 74), "madeira_fundo": Color8(96, 60, 32),
+		"madeira_emenda": Color8(120, 74, 40), "prego": Color8(60, 50, 50),
+		"pedra": Color8(150, 130, 100), "pedra_topo": Color8(186, 166, 130), "pedra_lado": Color8(170, 150, 116),
+		"pedra_fundo": Color8(100, 84, 62), "pedra_lado_escuro": Color8(110, 92, 68), "pedra_mancha": Color8(120, 100, 74),
+	},
+	{
+		"terra": Color8(70, 78, 48), "terra_escura": Color8(48, 56, 34), "terra_clara": Color8(96, 104, 64),
+		"grama": Color8(48, 110, 58), "grama_topo": Color8(80, 146, 72), "grama_sombra": Color8(28, 70, 40),
+		"madeira": Color8(90, 100, 58), "madeira_topo": Color8(120, 132, 74), "madeira_fundo": Color8(54, 62, 36),
+		"madeira_emenda": Color8(70, 80, 44), "prego": Color8(40, 48, 36),
+		"pedra": Color8(90, 104, 90), "pedra_topo": Color8(120, 136, 116), "pedra_lado": Color8(104, 120, 100),
+		"pedra_fundo": Color8(52, 64, 52), "pedra_lado_escuro": Color8(60, 72, 58), "pedra_mancha": Color8(70, 84, 66),
+	},
+	{
+		"terra": Color8(100, 96, 104), "terra_escura": Color8(72, 68, 78), "terra_clara": Color8(128, 124, 132),
+		"grama": Color8(110, 112, 100), "grama_topo": Color8(150, 150, 136), "grama_sombra": Color8(72, 74, 66),
+		"madeira": Color8(120, 110, 100), "madeira_topo": Color8(156, 144, 128), "madeira_fundo": Color8(78, 70, 64),
+		"madeira_emenda": Color8(96, 88, 80), "prego": Color8(50, 48, 52),
+		"pedra": Color8(132, 132, 140), "pedra_topo": Color8(170, 170, 178), "pedra_lado": Color8(154, 154, 162),
+		"pedra_fundo": Color8(84, 84, 94), "pedra_lado_escuro": Color8(92, 92, 102), "pedra_mancha": Color8(104, 104, 114),
+	},
+	{
+		"terra": Color8(78, 40, 38), "terra_escura": Color8(52, 26, 26), "terra_clara": Color8(110, 58, 50),
+		"grama": Color8(90, 36, 36), "grama_topo": Color8(130, 56, 48), "grama_sombra": Color8(56, 22, 24),
+		"madeira": Color8(96, 52, 44), "madeira_topo": Color8(130, 74, 58), "madeira_fundo": Color8(58, 30, 28),
+		"madeira_emenda": Color8(74, 40, 36), "prego": Color8(40, 28, 28),
+		"pedra": Color8(70, 64, 72), "pedra_topo": Color8(100, 92, 100), "pedra_lado": Color8(86, 78, 86),
+		"pedra_fundo": Color8(40, 36, 44), "pedra_lado_escuro": Color8(48, 42, 50), "pedra_mancha": Color8(58, 50, 58),
+	},
+]
+
+
 func _gerar_ladrilhos() -> void:
-	var img := Image.create(TAM * 4, TAM, false, Image.FORMAT_RGBA8)
+	var img := Image.create(TAM * 4, TAM * PALETAS.size(), false, Image.FORMAT_RGBA8)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
-	_terra(img, TERRA, rng)
-	_terra(img, GRAMA, rng)
-	_grama_no_topo(img, GRAMA, rng)
-	_plataforma(img, PLATAFORMA)
-	_pedra(img, PEDRA, rng)
+	for linha in PALETAS.size():
+		var paleta: Dictionary = PALETAS[linha]
+		_terra(img, TERRA, linha, rng, paleta)
+		_terra(img, GRAMA, linha, rng, paleta)
+		_grama_no_topo(img, GRAMA, linha, rng, paleta)
+		_plataforma(img, PLATAFORMA, linha, paleta)
+		_pedra(img, PEDRA, linha, rng, paleta)
 	img.save_png(ARQ_LADRILHOS)
 
 
@@ -202,49 +249,51 @@ func _tem_vizinho_opaco(img: Image, area: Rect2i, p: Vector2i) -> bool:
 	return false
 
 
-func _terra(img: Image, coluna: int, rng: RandomNumberGenerator) -> void:
-	var ox := coluna * TAM
-	img.fill_rect(Rect2i(ox, 0, TAM, TAM), Color8(122, 82, 54))
-	# Pedrinhas e manchas
+func _terra(img: Image, coluna: int, linha: int, rng: RandomNumberGenerator, paleta: Dictionary) -> void:
+	var origem := _origem(coluna, linha)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, TAM), paleta.terra)
 	for i in 26:
-		var cor := Color8(98, 64, 44) if rng.randf() < 0.7 else Color8(146, 104, 70)
+		var cor: Color = paleta.terra_escura if rng.randf() < 0.7 else paleta.terra_clara
 		var x := rng.randi_range(0, TAM - 2)
 		var y := rng.randi_range(0, TAM - 2)
-		img.fill_rect(Rect2i(ox + x, y, 2, 1 + rng.randi_range(0, 1)), cor)
+		img.fill_rect(Rect2i(origem.x + x, origem.y + y, 2, 1 + rng.randi_range(0, 1)), cor)
 
 
-func _grama_no_topo(img: Image, coluna: int, rng: RandomNumberGenerator) -> void:
-	var ox := coluna * TAM
-	img.fill_rect(Rect2i(ox, 0, TAM, 8), Color8(84, 168, 64))
-	img.fill_rect(Rect2i(ox, 0, TAM, 2), Color8(132, 206, 92))  # brilho no topo
-	# Franja irregular de grama caindo sobre a terra
+func _grama_no_topo(img: Image, coluna: int, linha: int, rng: RandomNumberGenerator, paleta: Dictionary) -> void:
+	var origem := _origem(coluna, linha)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, 8), paleta.grama)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, 2), paleta.grama_topo)
 	for x in TAM:
 		var altura := 8 + rng.randi_range(0, 3)
-		img.fill_rect(Rect2i(ox + x, 8, 1, altura - 8), Color8(84, 168, 64))
-		img.set_pixel(ox + x, altura, Color8(52, 116, 48))
+		img.fill_rect(Rect2i(origem.x + x, origem.y + 8, 1, altura - 8), paleta.grama)
+		img.set_pixel(origem.x + x, origem.y + altura, paleta.grama_sombra)
 
 
-func _plataforma(img: Image, coluna: int) -> void:
-	# Prancha de madeira fina: só os 10 px de cima (o resto é transparente)
-	var ox := coluna * TAM
-	img.fill_rect(Rect2i(ox, 0, TAM, 10), Color8(168, 112, 62))
-	img.fill_rect(Rect2i(ox, 0, TAM, 2), Color8(206, 148, 88))
-	img.fill_rect(Rect2i(ox, 8, TAM, 2), Color8(110, 70, 40))
-	for x in [7, 23]:  # pregos
-		img.set_pixel(ox + x, 4, Color8(60, 50, 50))
-	img.fill_rect(Rect2i(ox + 15, 2, 1, 6), Color8(130, 84, 48))  # emenda da tábua
+func _plataforma(img: Image, coluna: int, linha: int, paleta: Dictionary) -> void:
+	# Prancha fina: só os 10 px de cima (o resto é transparente, para atravessar por baixo).
+	var origem := _origem(coluna, linha)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, 10), paleta.madeira)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, 2), paleta.madeira_topo)
+	img.fill_rect(Rect2i(origem.x, origem.y + 8, TAM, 2), paleta.madeira_fundo)
+	for x in [7, 23]:
+		img.set_pixel(origem.x + x, origem.y + 4, paleta.prego)
+	img.fill_rect(Rect2i(origem.x + 15, origem.y + 2, 1, 6), paleta.madeira_emenda)
 
 
-func _pedra(img: Image, coluna: int, rng: RandomNumberGenerator) -> void:
-	var ox := coluna * TAM
-	img.fill_rect(Rect2i(ox, 0, TAM, TAM), Color8(120, 124, 140))
-	img.fill_rect(Rect2i(ox, 0, TAM, 2), Color8(160, 164, 180))
-	img.fill_rect(Rect2i(ox, 0, 2, TAM), Color8(150, 154, 170))
-	img.fill_rect(Rect2i(ox, TAM - 2, TAM, 2), Color8(80, 82, 98))
-	img.fill_rect(Rect2i(ox + TAM - 2, 0, 2, TAM), Color8(88, 90, 106))
+func _pedra(img: Image, coluna: int, linha: int, rng: RandomNumberGenerator, paleta: Dictionary) -> void:
+	var origem := _origem(coluna, linha)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, TAM), paleta.pedra)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, 2), paleta.pedra_topo)
+	img.fill_rect(Rect2i(origem.x, origem.y, 2, TAM), paleta.pedra_lado)
+	img.fill_rect(Rect2i(origem.x, origem.y + TAM - 2, TAM, 2), paleta.pedra_fundo)
+	img.fill_rect(Rect2i(origem.x + TAM - 2, origem.y, 2, TAM), paleta.pedra_lado_escuro)
 	for i in 10:
-		img.set_pixel(ox + rng.randi_range(3, TAM - 4), rng.randi_range(3, TAM - 4), Color8(98, 100, 116))
-	img.fill_rect(Rect2i(ox, 0, TAM, 1), CONTORNO)
-	img.fill_rect(Rect2i(ox, TAM - 1, TAM, 1), CONTORNO)
-	img.fill_rect(Rect2i(ox, 0, 1, TAM), CONTORNO)
-	img.fill_rect(Rect2i(ox + TAM - 1, 0, 1, TAM), CONTORNO)
+		img.set_pixel(origem.x + rng.randi_range(3, TAM - 4), origem.y + rng.randi_range(3, TAM - 4), paleta.pedra_mancha)
+	img.fill_rect(Rect2i(origem.x, origem.y, TAM, 1), CONTORNO)
+	img.fill_rect(Rect2i(origem.x, origem.y + TAM - 1, TAM, 1), CONTORNO)
+	img.fill_rect(Rect2i(origem.x, origem.y, 1, TAM), CONTORNO)
+	img.fill_rect(Rect2i(origem.x + TAM - 1, origem.y, 1, TAM), CONTORNO)
+
+
+func _origem(coluna: int, linha: int) -> Vector2i:
+	return Vector2i(coluna * TAM, linha * TAM)

@@ -16,9 +16,10 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	_testar_mao_da_besta()
-	var cena: Node = load("res://levels/main.tscn").instantiate()
+	var cena: Main = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false
 	root.add_child(cena)
+	cena.tirar_criaturas()
 	await physics_frame
 	var jogador: Jogador = cena.get_node("Jogador")
 	jogador.global_position = Vector2(200, jogador.global_position.y)
@@ -119,9 +120,11 @@ func _testar_alcance(cena: Node) -> void:
 
 
 func _testar_perto_e_talentos(cena: Node, jogador: Jogador) -> void:
-	var ooze: Node2D = cena.get_node("GrayOoze")
+	var ooze: Node2D = load("res://features/gray_ooze/gray_ooze.tscn").instantiate()
+	ooze.add_to_group(&"monstros")
+	cena.add_child(ooze)
+	ooze.global_position = jogador.global_position
 	(jogador.get_node("Defesa") as DefesaComponent).invulneravel = true
-	jogador.global_position = ooze.global_position
 	jogador.ficha.talentos.clear()
 	var golpes: Array[Golpe] = []
 	jogador.arma_arremessada.connect(func(_a: Arma, g: Golpe, _p: int, _o: Vector2, _d: int, _f: float, _m: float, _mu: Municao, _i: bool, _des: int) -> void: golpes.append(g))

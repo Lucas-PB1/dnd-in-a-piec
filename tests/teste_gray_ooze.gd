@@ -21,13 +21,18 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	await _testar_ooze_sozinho()
-	var cena: Node = load("res://levels/main.tscn").instantiate()
+	var cena: Main = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false
+	cena.semente_armadilhas = 1
 	root.add_child(cena)
 	_jogador = cena.get_node("Jogador")
-	_ooze = cena.get_node("GrayOoze")
+	cena.tirar_criaturas()
+	_ooze = load("res://features/gray_ooze/gray_ooze.tscn").instantiate()
+	_ooze.add_to_group(&"monstros")
+	cena.add_child(_ooze)
+	_ooze.global_position = Vector2(720, 288)
+	_ooze.definir_alvo(_jogador)
 	await _esperar(10)
-	_testar_goblins_no_mapa(cena)
 
 	await _testar_percepcao_e_perseguicao()
 	await _testar_ataques_contra_o_heroi()
@@ -35,6 +40,7 @@ func _rodar() -> void:
 	await _testar_morte_do_ooze()
 	await _testar_voce_caiu(cena)
 	cena.queue_free()
+	await _testar_porta()
 
 	if _falhas == 0:
 		print("PASSOU: todos os testes do Gray Ooze")
@@ -164,31 +170,34 @@ func _testar_voce_caiu(cena: Node) -> void:
 	tela.tentar_de_novo_escolhido.emit()
 	await process_frame
 	await physics_frame
-	var monstros := cena.get_tree().get_nodes_in_group(&"monstros")
-	var ooze := _ooze_do_grupo(cena)
+	var monstros := get_nodes_in_group(&"monstros")
 	_checar(not paused and _jogador.vida_atual() == _jogador.vida_maxima(), "Tentar de novo: despausa com a vida cheia")
-	_checar(monstros.size() == 3 and ooze != null and ooze.vida_atual() == 22,
-		"o Gray Ooze volta à vida; Minion e Warrior do mapa também")
+	_checar(monstros.size() == 1, "Tentar de novo recria a cota da fase, sem o Ooze colocado no teste")
 
 
-## Minion e Warrior ficam no chão, cada um além dos 60 pés de visão de quem está antes.
-func _testar_goblins_no_mapa(cena: Node) -> void:
-	var minion := cena.get_node("GoblinMinion") as Goblin
-	var guerreiro := cena.get_node("GoblinWarrior") as Goblin
-	var visao := EscalaDnd.pes_para_pixels(60.0)
-	_checar(minion != null and guerreiro != null, "o mapa tem um Goblin Minion e um Goblin Warrior")
-	_checar(minion.position.x > _ooze.position.x + visao, "o Minion fica além da visão do Ooze")
-	_checar(guerreiro.position.x > minion.position.x + visao, "o Warrior fica além da visão do Minion")
-	_checar(minion.nome_estado() == &"Escondido" and guerreiro.nome_estado() == &"Escondido"
-		and minion.esta_escondido() and guerreiro.esta_escondido(),
-		"longe do herói, os dois ficam escondidos")
-
-
-func _ooze_do_grupo(cena: Node) -> GrayOoze:
-	for monstro in cena.get_tree().get_nodes_in_group(&"monstros"):
-		if monstro is GrayOoze:
-			return monstro
-	return null
+## Com a cota viva a porta não muda de fase. Cumprida, abre a seguinte.
+func _testar_porta() -> void:
+	var cena: Main = load("res://levels/main.tscn").instantiate()
+	cena.mostrar_inicio = false
+	cena.semente_armadilhas = 1
+	root.add_child(cena)
+	var jogador: Jogador = cena.get_node("Jogador")
+	var fase: Fase = cena.get_node("Fase")
+	await _esperar(5)
+	_checar(get_nodes_in_group(&"monstros").size() == fase.quantidade,
+		"a clareira nasce a cota dela")
+	jogador.global_position = fase.posicao_porta()
+	await _esperar(5)
+	_checar((cena.get_node("Fase") as Fase).indice == 1, "com a cota viva, a porta não troca de fase")
+	for monstro in get_nodes_in_group(&"monstros"):
+		(monstro.get_node("Vida") as HealthComponent).receber_dano(999)
+	for i in 180:
+		await physics_frame
+		if get_nodes_in_group(&"monstros").is_empty():
+			break
+	await _esperar(5)
+	_checar((cena.get_node("Fase") as Fase).indice == 2, "cota cumprida em cima da porta: abre a fase 2")
+	cena.queue_free()
 
 
 func _colocar_heroi_a(distancia: float) -> void:

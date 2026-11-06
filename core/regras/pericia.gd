@@ -87,3 +87,26 @@ static func passiva(bonus: int) -> int:
 ## Furtividade que alcança a passiva continua escondida. Abaixo dela, foi percebida.
 static func furtividade_passa(rolagem: int, passiva_do_alvo: int) -> bool:
 	return rolagem >= passiva_do_alvo
+
+
+## Resolve um teste de habilidade; Mente Tática tenta o d10 só após uma falha e só gasta
+## Second Wind quando o bônus muda a falha para sucesso.
+static func resolver_teste(bonus: int, cd: int, mente_tatica_ligada: bool,
+		pode_usar_folego: bool, rng: RandomNumberGenerator) -> Dictionary:
+	var d20 := rng.randi_range(1, 20)
+	var total := d20 + bonus
+	var passou := total >= cd
+	var d10 := 0
+	var usou_mente_tatica := false
+	if not passou and mente_tatica_ligada and pode_usar_folego:
+		d10 = rng.randi_range(1, 10)
+		total += d10
+		passou = total >= cd
+		usou_mente_tatica = passou
+	return {
+		"d20": d20,
+		"d10": d10,
+		"total": total,
+		"passou": passou,
+		"usou_mente_tatica": usou_mente_tatica,
+	}

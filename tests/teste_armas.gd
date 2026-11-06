@@ -218,7 +218,8 @@ func _testar_bau() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false
 	root.add_child(cena)
-	cena.get_node("GrayOoze").free()
+	for monstro in get_nodes_in_group(&"monstros"):
+		monstro.free()
 	await physics_frame
 	var jogador: Jogador = cena.get_node("Jogador")
 	var bau: Bau = cena.get_node("Bau")

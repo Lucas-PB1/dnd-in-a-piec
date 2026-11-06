@@ -104,7 +104,8 @@ func _testar_heroi_vestido() -> void:
 	cena.mostrar_inicio = false
 	root.add_child(cena)
 	var jogador: Jogador = cena.get_node("Jogador")
-	cena.get_node("GrayOoze").free()
+	for monstro in get_nodes_in_group(&"monstros"):
+		monstro.free()
 	await physics_frame
 	var material := (jogador.get_node("Sprite") as CanvasItem).material as ShaderMaterial
 	_checar(jogador.classe_armadura() == 12 and not material.get_shader_parameter(&"vestida"), "sem armadura: CA 12, túnica normal")

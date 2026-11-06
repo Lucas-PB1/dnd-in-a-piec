@@ -1,0 +1,19 @@
+---
+name: revisar-codigo
+description: Revisa scripts GDScript e cenas do projeto (ou só os arquivos mudados) contra as skills godot-* e propõe correções. Use quando o usuário pedir revisão ou refatoração, e ao fechar cada tarefa para a checagem "Conforme as skills".
+---
+
+# Revisar código contra as skills godot-*
+
+1. **Carregue as regras:** leia os `SKILL.md` de `godot-estrutura-pastas`, `godot-cenas-e-sinais`, `godot-componentes-e-dados`, `godot-maquina-de-estados` e `godot-estilo-gdscript`.
+2. **Escolha o alvo:**
+   - Sem argumento: arquivos mudados desde o último commit (`git diff --name-only HEAD` + `git status --short`), só `.gd`, `.tscn` e `.tres`.
+   - Com argumento (`tudo`, uma pasta ou um arquivo): esse alvo.
+3. **Leia cada arquivo inteiro** e anote cada violação com a skill e a regra.
+   Procure também repetição pelo projeto (Grep) para a regra de três.
+4. **Relatório em português, curto:**
+   - Tabela `Arquivo | Problema | Skill/regra | Sugestão`, do mais grave para o menos (máx. 8 itens, agrupe os parecidos).
+   - 1 a 3 linhas do que está **bom**.
+   - Termine com a linha de checagem: `Conforme as skills` ou `Violações: <regras> — porquê`.
+5. **Não aplique mudanças sem o "ok"** do usuário, a menos que ele já tenha pedido para corrigir.
+6. Ao aplicar: um grupo de mudanças por vez, rodando `tests/rodar_testes.ps1` depois de cada grupo.

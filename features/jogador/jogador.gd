@@ -14,6 +14,10 @@ signal reapareceu
 signal vida_mudou(atual: int, maxima: int)
 ## Emitido quando os usos do Second Wind mudam (restantes e o total da classe).
 signal folego_mudou(restantes: int, total: int)
+## A main decide o alcance do Surto de Ação na fase atual.
+signal surto_acao_pedido
+## Atualização de nível e XP para o HUD.
+signal progressao_mudou(nivel: int, experiencia: int, proximo_nivel: int)
 ## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
 ## depois reviver()). Se ninguém escutar (cena aberta sozinha), o herói revive sozinho.
 signal caiu
@@ -57,6 +61,8 @@ var _tempo_desde_acao_bonus: float = INF
 ## Usos de Second Wind que ainda restam nesta luta.
 var _usos_folego: int = 0
 var _rng_folego := RandomNumberGenerator.new()
+var _rng_habilidades := RandomNumberGenerator.new()
+var _mente_tatica_ligada: bool = false
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -129,6 +135,7 @@ func configurar_ficha(nova: Ficha) -> void:
 	_vida.configurar(ficha.vida_maxima())
 	_atualizar_equipamento()
 	_repor_folego()
+	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
 
 
 ## Troca a mochila pelo pacote escolhido na criação (cópias próprias: cada uma com seu
@@ -307,6 +314,51 @@ func usos_folego_total() -> int:
 	return classe.usos_segundo_folego
 
 
+## Atribui XP da cota. PV atuais sobem junto com o máximo ao ganhar nível.
+func ganhar_experiencia(quantidade: int) -> int:
+	if ficha == null:
+		return 0
+	var nivel_anterior := ficha.nivel
+	var novos_niveis := ficha.adicionar_experiencia(quantidade)
+	if novos_niveis > 0:
+		_vida.aumentar_maximo(ficha.vida_maxima())
+		_texto.mostrar("Nível %d!" % ficha.nivel, TextoFlutuanteComponent.COR_CURA)
+	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
+	return ficha.nivel - nivel_anterior
+
+
+## Mente Tática só é ativa a partir do nível 2.
+func definir_mente_tatica(ligada: bool) -> void:
+	_mente_tatica_ligada = ligada and ficha != null and ficha.nivel >= Ficha.NIVEL_HABILIDADES_GUERREIRO
+
+
+func mente_tatica_ligada() -> bool:
+	return _mente_tatica_ligada
+
+
+## Rola um teste de perícia e aplica Mente Tática automaticamente se estiver ligada.
+func rolar_teste_pericia(pericia: StringName, cd: int,
+		rng: RandomNumberGenerator = null) -> Dictionary:
+	if ficha == null or Pericia.atributo_de(pericia) == &"":
+		return {}
+	var fonte := _rng_habilidades if rng == null else rng
+	var pode_usar_mente := _mente_tatica_ligada and ficha.nivel >= Ficha.NIVEL_HABILIDADES_GUERREIRO
+	var resultado := Pericia.resolver_teste(ficha.bonus_pericia(pericia), cd, pode_usar_mente,
+		pode_usar_mente and _usos_folego > 0, fonte)
+	if resultado.usou_mente_tatica:
+		_usos_folego -= 1
+		_avisar_folego()
+		_texto.mostrar("Mente Tática +%d" % resultado.d10, TextoFlutuanteComponent.COR_CURA)
+	return resultado
+
+
+## Descanso longo ao entrar numa fase nova: vida, Fôlego e ação bônus recuperados.
+func descansar_longo() -> void:
+	_tempo_desde_acao_bonus = INF
+	_vida.curar_tudo()
+	_repor_folego()
+
+
 ## Second Wind: ação bônus, cura 1d10+nível, gasta um uso mesmo com a vida cheia.
 ## Devolve false se não havia uso, se a ação bônus já foi gasta ou se a classe não tem o poder.
 func usar_folego() -> bool:
@@ -314,7 +366,7 @@ func usar_folego() -> bool:
 		return false
 	_usos_folego -= 1
 	_tempo_desde_acao_bonus = 0.0
-	var ganho := _vida.curar(classe.cura_do_folego(_rng_folego))
+	var ganho := _vida.curar(classe.cura_do_folego(_rng_folego, ficha.nivel))
 	_animacao.pulso_cura()
 	_texto.mostrar_cura("Fôlego +%d" % ganho)
 	_avisar_folego()
@@ -493,6 +545,8 @@ func _atualizar_contadores(delta: float) -> void:
 		_contador_buffer_arremesso -= delta
 	if Input.is_action_just_pressed("folego"):
 		usar_folego()
+	if Input.is_action_just_pressed("surto_acao"):
+		surto_acao_pedido.emit()
 	# Toque duplo para correr, ou segurar "correr" (Shift; o analógico na borda).
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()

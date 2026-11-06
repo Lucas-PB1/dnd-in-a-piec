@@ -151,6 +151,9 @@ func _testar_emboscada(cena: Main) -> void:
 	var golpe: Golpe = null if resultados.is_empty() else resultados[0].golpe
 	_checar(golpe != null and golpe.nome == "Adaga" and golpe.vantagem and golpe.dano_extra == null,
 		"no corpo a corpo aparece atacando; o primeiro golpe tem vantagem e não soma dado extra")
+	await _esperar(40)
+	_checar(is_instance_valid(_goblin) and _goblin.nome_estado() != &"Escondido",
+		"o Minion não se esconde de novo")
 	if is_instance_valid(_goblin):
 		_goblin.queue_free()
 

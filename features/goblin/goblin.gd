@@ -12,6 +12,12 @@ signal morreu
 const CENA_ADAGA := preload("res://features/goblin/adaga_goblin.tscn")
 const CENA_FLECHA := preload("res://features/goblin/flecha_goblin.tscn")
 const FLECHA := preload("res://data/municoes/flecha.tres")
+## Quanto à frente (px) o raio procura chão antes de descer do penhasco.
+const DISTANCIA_BEIRA := 14.0
+const FOLGA_PE := 6.0
+const PROFUNDIDADE_BEIRA := 20.0
+## Camada "mundo" do chão.
+const MASCARA_MUNDO := 1
 
 ## Bloco de estatísticas. Padrão: data/goblin_minion.tres.
 @export var criatura: CriaturaRPG
@@ -219,6 +225,17 @@ func tem_fuga_agil() -> bool:
 	return criatura.fuga_agil
 
 
+## O Warrior, depois do recuo, rola Furtividade de novo. O Minion não.
+func esconde_de_novo() -> bool:
+	return criatura.esconde_de_novo
+
+
+## Zera o teste secreto para a próxima vez que entrar em Escondido.
+func reiniciar_furtividade() -> void:
+	_rolou_furtividade = false
+	_foi_percebido = false
+
+
 func virar_para_alvo() -> void:
 	if alvo:
 		direcao_olhar = 1 if alvo.global_position.x > global_position.x else -1
@@ -227,11 +244,17 @@ func virar_para_alvo() -> void:
 ## Anda na direção do alvo no deslocamento da ficha, menos a Lentidão (maestria).
 func andar_para_alvo() -> void:
 	virar_para_alvo()
+	if not _tem_chao_na(float(direcao_olhar)):
+		parar()
+		return
 	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes())
 
 
 ## Fuga Ágil: corre de costas para longe do alvo (Disparada), ainda olhando para ele.
 func recuar() -> void:
+	if not _tem_chao_na(-float(direcao_olhar)):
+		parar()
+		return
 	velocity.x = -direcao_olhar * _velocidade_fuga()
 
 
@@ -243,6 +266,17 @@ func tempo_de_fuga() -> float:
 
 func parar() -> void:
 	velocity.x = 0.0
+
+
+## False na beira: o próximo passo não tem chão. Empurrão ainda pode derrubar.
+func _tem_chao_na(direcao: float) -> bool:
+	var mundo := get_world_2d()
+	if mundo == null:
+		return true
+	var origem := global_position + Vector2(direcao * DISTANCIA_BEIRA, -FOLGA_PE)
+	var consulta := PhysicsRayQueryParameters2D.create(origem, origem + Vector2(0.0, PROFUNDIDADE_BEIRA + FOLGA_PE))
+	consulta.collision_mask = MASCARA_MUNDO
+	return not mundo.direct_space_state.intersect_ray(consulta).is_empty()
 
 
 ## Toca a animação desde o primeiro quadro (se já estiver tocando ela, não reinicia).

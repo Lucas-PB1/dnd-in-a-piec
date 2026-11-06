@@ -1,0 +1,20 @@
+---
+name: "source-command-proxima-fatia"
+description: "Propõe a próxima fatia do jogo com 3 opções, a partir de docs/pendencias.md, sem começar nada."
+---
+
+# source-command-proxima-fatia
+
+Use this skill when the user asks to run the migrated source command `proxima-fatia`.
+
+## Command Template
+
+Proponha a próxima fatia de trabalho. **Não escreva código nesta etapa.**
+
+1. Leia `docs/pendencias.md` (o que falta, tamanho, prioridade) e o fim de `docs/historico.md` (o que acabou de ser feito).
+2. Se houver mudanças sem commit (`git status --short`), diga isso primeiro: o ideal é fechar a fatia anterior (`/fechar-fatia`) antes.
+3. Escolha **3 opções** que façam sentido agora (a recomendada primeiro), cada uma com:
+   - o que o jogador vai ver de diferente;
+   - tamanho (P/M/G) e arquivos/pastas que vai mexer (use `docs/arquitetura.md` e `docs/receitas.md`);
+   - o que precisa decidir ou instalar antes (créditos do SpriteCook, download de arte, ferramentas).
+4. Pergunte qual seguir (com as 3 opções como escolha). Só comece depois do "ok".
