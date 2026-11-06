@@ -1,21 +1,35 @@
-[gd_resource type="Resource" script_class="Arma" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="Arma" format=3]
 
 [ext_resource type="Script" path="res://core/dados/arma.gd" id="1_arma"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="1_js0le"]
+
+[sub_resource type="Resource" id="Resource_js0le"]
+script = ExtResource("1_js0le")
+mao = Vector2(-3, 0)
+
+[sub_resource type="Resource" id="Resource_ho72m"]
+script = ExtResource("1_js0le")
+tempo = 0.05
+mao = Vector2(-6, 0)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_ort7o"]
+script = ExtResource("1_js0le")
+tempo = 0.11
+mao = Vector2(10, 0)
+
+[sub_resource type="Resource" id="Resource_50crk"]
+script = ExtResource("1_js0le")
+tempo = 0.22
 
 [resource]
 script = ExtResource("1_arma")
+dados_dano = "1d1"
+corroivel = false
+comprimento = 8.0
+cor_corte = Color(1, 0.9, 0.7, 0.5)
+poses = Array[ExtResource("1_js0le")]([SubResource("Resource_js0le"), SubResource("Resource_ho72m"), SubResource("Resource_ort7o"), SubResource("Resource_50crk")])
+passo = 26.0
 nome = "Desarmado"
 descricao = "Soco (D&D): 1 + modificador de Força."
 espaco = &"mao"
-dados_dano = "1d1"
-tipo_dano = &"contundente"
-acuidade = false
-corroivel = false
-cor_corte = Color(1, 0.9, 0.7, 0.5)
-alcance = 24.0
-altura = 28.0
-duracao = 0.26
-inicio_acerto = 0.05
-fim_acerto = 0.12
-angulo_inicial = 0.0
-angulo_final = 0.0

@@ -1,24 +1,56 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/foice.png" id="1_hux41"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_tiuvw"]
+[ext_resource type="Texture2D" path="res://assets/armas/foice.png" id="1_tiuvw"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_mk65e"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_ex4p7"]
+
+[sub_resource type="Resource" id="Resource_pkrkv"]
+script = ExtResource("2_mk65e")
+angulo = -40.0
+mao = Vector2(0, -2)
+
+[sub_resource type="Resource" id="Resource_v6uo1"]
+script = ExtResource("2_mk65e")
+tempo = 0.07
+angulo = -95.0
+mao = Vector2(-2, -4)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_jjopm"]
+script = ExtResource("2_mk65e")
+tempo = 0.13
+angulo = 25.0
+mao = Vector2(7, 0)
+
+[sub_resource type="Resource" id="Resource_1oev8"]
+script = ExtResource("2_mk65e")
+tempo = 0.19
+angulo = 50.0
+mao = Vector2(-3, 1)
+
+[sub_resource type="Resource" id="Resource_44xxh"]
+script = ExtResource("2_mk65e")
+tempo = 0.28
+angulo = 35.0
 
 [resource]
-script = ExtResource("2_tiuvw")
+script = ExtResource("3_ex4p7")
 dados_dano = "1d4"
 tipo_dano = &"cortante"
 categoria = &"simples"
-textura = ExtResource("1_hux41")
+textura = ExtResource("1_tiuvw")
+angulo_arte = -45.0
+pegada = Vector2(4.1617603, 27.504908)
+comprimento = 29.900000000000002
 leve = true
 maestria = &"corte_duplo"
 nome_original = "Sickle"
 peso = "2 lb."
 preco = "1 GP"
 livro = "Player’s Handbook"
-duracao = 0.26
-inicio_acerto = 0.05
-fim_acerto = 0.13
+poses = Array[ExtResource("2_mk65e")]([SubResource("Resource_pkrkv"), SubResource("Resource_v6uo1"), SubResource("Resource_jjopm"), SubResource("Resource_1oev8"), SubResource("Resource_44xxh")])
+passo = 8.5
 nome = "Foice"
 descricao = "Arma simples. Leve. Maestria: Corte Duplo. (Sickle, Player’s Handbook)"
-icone = ExtResource("1_hux41")
+icone = ExtResource("1_tiuvw")
 espaco = &"mao"

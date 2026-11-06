@@ -304,6 +304,11 @@ func esta_golpeando() -> bool:
 	return _ataque.esta_golpeando()
 
 
+## Velocidade horizontal (px/s, já com o lado) do passo à frente do golpe; 0 fora dele.
+func velocidade_do_passo() -> float:
+	return _ataque.velocidade_do_passo() * direcao_olhar
+
+
 func aplicar_gravidade(delta: float) -> void:
 	var g := stats.gravidade() if velocity.y < 0.0 else stats.gravidade() * stats.multiplicador_queda
 	velocity.y = minf(velocity.y + g * delta, stats.velocidade_max_queda)

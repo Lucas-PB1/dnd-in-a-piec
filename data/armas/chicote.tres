@@ -1,23 +1,53 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/chicote.png" id="1_ytuad"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_trmwu"]
+[ext_resource type="Texture2D" path="res://assets/armas/chicote.png" id="1_trmwu"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_8r805"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_780xb"]
+
+[sub_resource type="Resource" id="Resource_0i0p7"]
+script = ExtResource("2_8r805")
+angulo = -120.0
+mao = Vector2(-3, -6)
+escala = 0.35
+
+[sub_resource type="Resource" id="Resource_0t88i"]
+script = ExtResource("2_8r805")
+tempo = 0.1
+angulo = -145.0
+mao = Vector2(-6, -8)
+escala = 0.4
+acerta = true
+
+[sub_resource type="Resource" id="Resource_5hva7"]
+script = ExtResource("2_8r805")
+tempo = 0.18
+angulo = -5.0
+mao = Vector2(6, -2)
+
+[sub_resource type="Resource" id="Resource_reus3"]
+script = ExtResource("2_8r805")
+tempo = 0.34
+angulo = 30.0
+escala = 0.6
 
 [resource]
-script = ExtResource("2_trmwu")
+script = ExtResource("3_780xb")
 dados_dano = "1d4"
 tipo_dano = &"cortante"
 categoria = &"marcial"
 acuidade = true
-textura = ExtResource("1_ytuad")
+textura = ExtResource("1_trmwu")
+pegada = Vector2(5, 3.5)
+comprimento = 68.5
 alcance_estendido = true
 maestria = &"lentidao"
 nome_original = "Whip"
 peso = "3 lb."
 preco = "2 GP"
 livro = "Player’s Handbook"
-alcance = 76.0
+poses = Array[ExtResource("2_8r805")]([SubResource("Resource_0i0p7"), SubResource("Resource_0t88i"), SubResource("Resource_5hva7"), SubResource("Resource_reus3")])
+passo = 2.0
 nome = "Chicote"
 descricao = "Arma marcial. Acuidade, Alcance. Maestria: Lentidão. (Whip, Player’s Handbook)"
-icone = ExtResource("1_ytuad")
+icone = ExtResource("1_trmwu")
 espaco = &"mao"

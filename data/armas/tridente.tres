@@ -1,14 +1,41 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/tridente.png" id="1_7homo"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_dvbvr"]
+[ext_resource type="Texture2D" path="res://assets/armas/tridente.png" id="1_dvbvr"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_0jeua"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_xhitb"]
+
+[sub_resource type="Resource" id="Resource_fkxn6"]
+script = ExtResource("2_0jeua")
+angulo = 12.0
+mao = Vector2(-5, -2)
+
+[sub_resource type="Resource" id="Resource_oe4gv"]
+script = ExtResource("2_0jeua")
+tempo = 0.09
+angulo = 6.0
+mao = Vector2(-10, -2)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_f4c2d"]
+script = ExtResource("2_0jeua")
+tempo = 0.17
+angulo = 4.0
+mao = Vector2(12, 0)
+
+[sub_resource type="Resource" id="Resource_7g4gt"]
+script = ExtResource("2_0jeua")
+tempo = 0.33
+angulo = 25.0
 
 [resource]
-script = ExtResource("2_dvbvr")
+script = ExtResource("3_xhitb")
 dados_dano = "1d8"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("1_7homo")
+textura = ExtResource("1_dvbvr")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 33.671574)
+comprimento = 46.900000000000006
 dados_versatil = "1d10"
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
@@ -17,7 +44,8 @@ nome_original = "Trident"
 peso = "4 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
+poses = Array[ExtResource("2_0jeua")]([SubResource("Resource_fkxn6"), SubResource("Resource_oe4gv"), SubResource("Resource_f4c2d"), SubResource("Resource_7g4gt")])
 nome = "Tridente"
 descricao = "Arma marcial. Versátil (1d10), Arremesso (20/60). Maestria: Derrubar. (Trident, Player’s Handbook)"
-icone = ExtResource("1_7homo")
+icone = ExtResource("1_dvbvr")
 espaco = &"mao"

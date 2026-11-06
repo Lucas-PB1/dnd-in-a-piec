@@ -1,15 +1,41 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/adaga.png" id="1_uw5t1"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_bf7xo"]
+[ext_resource type="Texture2D" path="res://assets/armas/adaga.png" id="1_bf7xo"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_0t26k"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_yw3yb"]
+
+[sub_resource type="Resource" id="Resource_p2wsy"]
+script = ExtResource("2_0t26k")
+angulo = 20.0
+mao = Vector2(-2, 0)
+
+[sub_resource type="Resource" id="Resource_wchd7"]
+script = ExtResource("2_0t26k")
+tempo = 0.05
+angulo = 10.0
+mao = Vector2(-6, 1)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_o8qq5"]
+script = ExtResource("2_0t26k")
+tempo = 0.11
+mao = Vector2(8, 0)
+
+[sub_resource type="Resource" id="Resource_hvbkm"]
+script = ExtResource("2_0t26k")
+tempo = 0.22
+angulo = 30.0
 
 [resource]
-script = ExtResource("2_bf7xo")
+script = ExtResource("3_yw3yb")
 dados_dano = "1d4"
 tipo_dano = &"perfurante"
 categoria = &"simples"
 acuidade = true
-textura = ExtResource("1_uw5t1")
+textura = ExtResource("1_bf7xo")
+angulo_arte = -135.0
+pegada = Vector2(16.671574, 16.671574)
+comprimento = 22.900000000000002
 leve = true
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
@@ -18,10 +44,9 @@ nome_original = "Dagger"
 peso = "1 lb."
 preco = "2 GP"
 livro = "Player’s Handbook"
-duracao = 0.26
-inicio_acerto = 0.05
-fim_acerto = 0.13
+poses = Array[ExtResource("2_0t26k")]([SubResource("Resource_p2wsy"), SubResource("Resource_wchd7"), SubResource("Resource_o8qq5"), SubResource("Resource_hvbkm")])
+passo = 13.0
 nome = "Adaga"
 descricao = "Arma simples. Acuidade, Leve, Arremesso (20/60). Maestria: Corte Duplo. (Dagger, Player’s Handbook)"
-icone = ExtResource("1_uw5t1")
+icone = ExtResource("1_bf7xo")
 espaco = &"mao"

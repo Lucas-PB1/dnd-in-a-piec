@@ -1,6 +1,7 @@
 extends EstadoJogador
-## Golpe de espada. No chão o herói freia e fica firme (peso de Guerreiro); no ar ele
-## continua caindo. Não vira de lado durante o golpe. Quando o golpe acaba, volta a se mexer.
+## Golpe da arma. No chão o herói freia e fica firme (peso de Guerreiro), mas armas curtas
+## dão um passo à frente para a ponta chegar ao alcance; no ar ele continua caindo.
+## Não vira de lado durante o golpe. Quando o golpe acaba, volta a se mexer.
 
 
 func entrar() -> void:
@@ -8,7 +9,9 @@ func entrar() -> void:
 
 
 func processar_fisica(delta: float) -> void:
-	if jogador.is_on_floor():
+	if jogador.is_on_floor() and jogador.velocidade_do_passo() != 0.0:
+		jogador.velocity.x = jogador.velocidade_do_passo()
+	elif jogador.is_on_floor():
 		jogador.mover_horizontal(0.0, jogador.velocidade_andar(), delta, false)
 	else:
 		jogador.aplicar_gravidade(delta)

@@ -1,14 +1,41 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/glaive.png" id="1_6bpf6"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_poxiv"]
+[ext_resource type="Texture2D" path="res://assets/armas/glaive.png" id="1_poxiv"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_vhtfv"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_mkrgr"]
+
+[sub_resource type="Resource" id="Resource_33kos"]
+script = ExtResource("2_vhtfv")
+angulo = -25.0
+mao = Vector2(-4, -2)
+
+[sub_resource type="Resource" id="Resource_wwfhn"]
+script = ExtResource("2_vhtfv")
+tempo = 0.15
+angulo = -150.0
+mao = Vector2(-6, -6)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_pno72"]
+script = ExtResource("2_vhtfv")
+tempo = 0.29
+angulo = 25.0
+mao = Vector2(6, 0)
+
+[sub_resource type="Resource" id="Resource_w64ar"]
+script = ExtResource("2_vhtfv")
+tempo = 0.47
+angulo = 20.0
 
 [resource]
-script = ExtResource("2_poxiv")
+script = ExtResource("3_mkrgr")
 dados_dano = "1d10"
 tipo_dano = &"cortante"
 categoria = &"marcial"
-textura = ExtResource("1_6bpf6")
+textura = ExtResource("1_poxiv")
+angulo_arte = -45.0
+pegada = Vector2(3.828427, 52.171574)
+comprimento = 75.2
 pesada = true
 duas_maos = true
 alcance_estendido = true
@@ -17,11 +44,8 @@ nome_original = "Glaive"
 peso = "6 lb."
 preco = "20 GP"
 livro = "Player’s Handbook"
-alcance = 76.0
-duracao = 0.42
-inicio_acerto = 0.08
-fim_acerto = 0.21
+poses = Array[ExtResource("2_vhtfv")]([SubResource("Resource_33kos"), SubResource("Resource_wwfhn"), SubResource("Resource_pno72"), SubResource("Resource_w64ar")])
 nome = "Glaive"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Raspão. (Glaive, Player’s Handbook)"
-icone = ExtResource("1_6bpf6")
+icone = ExtResource("1_poxiv")
 espaco = &"mao"

@@ -1,13 +1,40 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/machadinha.png" id="1_spyd8"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_wmaer"]
+[ext_resource type="Texture2D" path="res://assets/armas/machadinha.png" id="1_wmaer"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_yvhv0"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_rdy38"]
+
+[sub_resource type="Resource" id="Resource_i5eha"]
+script = ExtResource("2_yvhv0")
+angulo = -70.0
+mao = Vector2(-2, -3)
+
+[sub_resource type="Resource" id="Resource_fw158"]
+script = ExtResource("2_yvhv0")
+tempo = 0.07
+angulo = -105.0
+mao = Vector2(-4, -5)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_fkl6u"]
+script = ExtResource("2_yvhv0")
+tempo = 0.14
+angulo = 45.0
+mao = Vector2(3, 1)
+
+[sub_resource type="Resource" id="Resource_l2wtw"]
+script = ExtResource("2_yvhv0")
+tempo = 0.27
+angulo = 35.0
 
 [resource]
-script = ExtResource("2_wmaer")
+script = ExtResource("3_rdy38")
 tipo_dano = &"cortante"
 categoria = &"simples"
-textura = ExtResource("1_spyd8")
+textura = ExtResource("1_wmaer")
+angulo_arte = -45.0
+pegada = Vector2(4.8284273, 19.171574)
+comprimento = 25.700000000000003
 leve = true
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
@@ -16,10 +43,9 @@ nome_original = "Handaxe"
 peso = "2 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
-duracao = 0.26
-inicio_acerto = 0.05
-fim_acerto = 0.13
+poses = Array[ExtResource("2_yvhv0")]([SubResource("Resource_i5eha"), SubResource("Resource_fw158"), SubResource("Resource_fkl6u"), SubResource("Resource_l2wtw")])
+passo = 17.5
 nome = "Machadinha"
 descricao = "Arma simples. Leve, Arremesso (20/60). Maestria: Atormentar. (Handaxe, Player’s Handbook)"
-icone = ExtResource("1_spyd8")
+icone = ExtResource("1_wmaer")
 espaco = &"mao"

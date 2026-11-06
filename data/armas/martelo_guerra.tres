@@ -1,13 +1,40 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/martelo_guerra.png" id="1_54my2"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_y2ddq"]
+[ext_resource type="Texture2D" path="res://assets/armas/martelo_guerra.png" id="1_y2ddq"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_1cf3r"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_0uak7"]
+
+[sub_resource type="Resource" id="Resource_fgf7a"]
+script = ExtResource("2_1cf3r")
+angulo = -85.0
+mao = Vector2(-4, -4)
+
+[sub_resource type="Resource" id="Resource_fwr5w"]
+script = ExtResource("2_1cf3r")
+tempo = 0.12
+angulo = -135.0
+mao = Vector2(-6, -9)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_ycjf5"]
+script = ExtResource("2_1cf3r")
+tempo = 0.22
+angulo = 65.0
+mao = Vector2(4, 3)
+
+[sub_resource type="Resource" id="Resource_qb0wi"]
+script = ExtResource("2_1cf3r")
+tempo = 0.37
+angulo = 40.0
 
 [resource]
-script = ExtResource("2_y2ddq")
+script = ExtResource("3_0uak7")
 dados_dano = "1d8"
 categoria = &"marcial"
-textura = ExtResource("1_54my2")
+textura = ExtResource("1_y2ddq")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 28.671574)
+comprimento = 39.800000000000004
 dados_versatil = "1d10"
 maestria = &"empurrar"
 nome_original = "Warhammer"
@@ -15,7 +42,9 @@ peso = "5 lb."
 preco = "15 GP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
+poses = Array[ExtResource("2_1cf3r")]([SubResource("Resource_fgf7a"), SubResource("Resource_fwr5w"), SubResource("Resource_ycjf5"), SubResource("Resource_qb0wi")])
+passo = 4.0
 nome = "Martelo de Guerra"
 descricao = "Arma marcial. Versátil (1d10). Maestria: Empurrar. (Warhammer, Player’s Handbook)"
-icone = ExtResource("1_54my2")
+icone = ExtResource("1_y2ddq")
 espaco = &"mao"

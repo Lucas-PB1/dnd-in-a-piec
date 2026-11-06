@@ -1,15 +1,40 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/dardo.png" id="1_prkjb"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_splw1"]
+[ext_resource type="Texture2D" path="res://assets/armas/dardo.png" id="1_splw1"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_b1b5d"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_tuot5"]
+
+[sub_resource type="Resource" id="Resource_6uvhs"]
+script = ExtResource("2_b1b5d")
+angulo = 15.0
+mao = Vector2(-2, 0)
+
+[sub_resource type="Resource" id="Resource_1dm02"]
+script = ExtResource("2_b1b5d")
+tempo = 0.05
+mao = Vector2(-5, 0)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_ry677"]
+script = ExtResource("2_b1b5d")
+tempo = 0.1
+mao = Vector2(7, 0)
+
+[sub_resource type="Resource" id="Resource_ll2x3"]
+script = ExtResource("2_b1b5d")
+tempo = 0.2
+angulo = 30.0
 
 [resource]
-script = ExtResource("2_splw1")
+script = ExtResource("3_tuot5")
 dados_dano = "1d4"
 tipo_dano = &"perfurante"
 categoria = &"simples"
 acuidade = true
-textura = ExtResource("1_prkjb")
+textura = ExtResource("1_splw1")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 13.671573)
+comprimento = 18.6
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
 maestria = &"atormentar"
@@ -17,8 +42,10 @@ nome_original = "Dart"
 peso = "1/4 lb."
 preco = "5 CP"
 livro = "Player’s Handbook"
+poses = Array[ExtResource("2_b1b5d")]([SubResource("Resource_6uvhs"), SubResource("Resource_1dm02"), SubResource("Resource_ry677"), SubResource("Resource_ll2x3")])
+passo = 18.5
 nome = "Dardo"
 descricao = "Arma simples. Acuidade, Arremesso (20/60). Maestria: Atormentar. (Dart, Player’s Handbook)"
-icone = ExtResource("1_prkjb")
+icone = ExtResource("1_splw1")
 espaco = &"mao"
 empilhavel = true

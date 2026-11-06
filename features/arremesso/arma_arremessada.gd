@@ -14,7 +14,6 @@ const GRAVIDADE := 980.0
 const TEMPO_DE_VOO := 0.45
 ## Impulso para cima no lançamento (px/s).
 const IMPULSO := -90.0
-const PEGADA := 4.0
 const AVISO_PEGAR := "E: pegar"
 const AVISO_CHEIA := "Mochila cheia"
 
@@ -87,10 +86,9 @@ func avisar_cheia() -> void:
 
 
 func _preparar_sprite(arma: Arma, direcao: int) -> void:
-	_sprite.texture = arma.textura
+	DesenhoArma.preparar(_sprite, arma)
 	_sprite.scale = Vector2(direcao, 1.0)
-	if arma.textura:
-		_sprite.offset = Vector2(-PEGADA, -arma.textura.get_height() / 2.0)
+	_sprite.rotation_degrees = DesenhoArma.rotacao(arma, 0.0)
 
 
 ## Além da distância normal, o ataque (já rolado no acerto) tem desvantagem.

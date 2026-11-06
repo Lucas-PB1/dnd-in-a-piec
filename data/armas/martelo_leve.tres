@@ -1,13 +1,40 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/martelo_leve.png" id="1_pm0e2"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_mgwtx"]
+[ext_resource type="Texture2D" path="res://assets/armas/martelo_leve.png" id="1_mgwtx"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_vfwn1"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_vsuep"]
+
+[sub_resource type="Resource" id="Resource_j87e7"]
+script = ExtResource("2_vfwn1")
+angulo = -60.0
+mao = Vector2(-2, -2)
+
+[sub_resource type="Resource" id="Resource_f0o8s"]
+script = ExtResource("2_vfwn1")
+tempo = 0.06
+angulo = -100.0
+mao = Vector2(-3, -4)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_eq0yi"]
+script = ExtResource("2_vfwn1")
+tempo = 0.13
+angulo = 40.0
+mao = Vector2(3, 0)
+
+[sub_resource type="Resource" id="Resource_xhc45"]
+script = ExtResource("2_vfwn1")
+tempo = 0.24
+angulo = 35.0
 
 [resource]
-script = ExtResource("2_mgwtx")
+script = ExtResource("3_vsuep")
 dados_dano = "1d4"
 categoria = &"simples"
-textura = ExtResource("1_pm0e2")
+textura = ExtResource("1_mgwtx")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 18.671574)
+comprimento = 25.700000000000003
 leve = true
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
@@ -17,10 +44,9 @@ peso = "2 lb."
 preco = "2 GP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
-duracao = 0.26
-inicio_acerto = 0.05
-fim_acerto = 0.13
+poses = Array[ExtResource("2_vfwn1")]([SubResource("Resource_j87e7"), SubResource("Resource_f0o8s"), SubResource("Resource_eq0yi"), SubResource("Resource_xhc45")])
+passo = 17.0
 nome = "Martelo Leve"
 descricao = "Arma simples. Leve, Arremesso (20/60). Maestria: Corte Duplo. (Light Hammer, Player’s Handbook)"
-icone = ExtResource("1_pm0e2")
+icone = ExtResource("1_mgwtx")
 espaco = &"mao"

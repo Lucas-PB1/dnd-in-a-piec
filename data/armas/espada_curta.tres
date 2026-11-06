@@ -1,24 +1,49 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/espada_curta.png" id="1_htgky"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_lbhkc"]
+[ext_resource type="Texture2D" path="res://assets/armas/espada_curta.png" id="1_lbhkc"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_l61lv"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_0r335"]
+
+[sub_resource type="Resource" id="Resource_umjys"]
+script = ExtResource("2_l61lv")
+angulo = 10.0
+mao = Vector2(-3, 0)
+
+[sub_resource type="Resource" id="Resource_5s420"]
+script = ExtResource("2_l61lv")
+tempo = 0.07
+mao = Vector2(-8, 0)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_txu2f"]
+script = ExtResource("2_l61lv")
+tempo = 0.14
+angulo = -3.0
+mao = Vector2(10, -1)
+
+[sub_resource type="Resource" id="Resource_1g71h"]
+script = ExtResource("2_l61lv")
+tempo = 0.28
+angulo = 30.0
 
 [resource]
-script = ExtResource("2_lbhkc")
+script = ExtResource("3_0r335")
 tipo_dano = &"perfurante"
 categoria = &"marcial"
 acuidade = true
-textura = ExtResource("1_htgky")
+textura = ExtResource("1_lbhkc")
+angulo_arte = -135.0
+pegada = Vector2(22.560463, 22.560463)
+comprimento = 31.200000000000003
 leve = true
 maestria = &"atormentar"
 nome_original = "Shortsword"
 peso = "2 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
-duracao = 0.26
-inicio_acerto = 0.05
-fim_acerto = 0.13
+poses = Array[ExtResource("2_l61lv")]([SubResource("Resource_umjys"), SubResource("Resource_5s420"), SubResource("Resource_txu2f"), SubResource("Resource_1g71h")])
+passo = 3.0
 nome = "Espada Curta"
 descricao = "Arma marcial. Acuidade, Leve. Maestria: Atormentar. (Shortsword, Player’s Handbook)"
-icone = ExtResource("1_htgky")
+icone = ExtResource("1_lbhkc")
 espaco = &"mao"

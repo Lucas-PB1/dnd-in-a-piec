@@ -69,7 +69,7 @@ func _testar_golpe_no_chao() -> void:
 		"acerta o boneco UMA vez por golpe (deu %d)" % (_boneco.golpes_recebidos - antes))
 	await _esperar(1)
 	var animacao: AnimacaoJogador = _jogador.get_node("Sprite")
-	var angulo := (espada as Sprite2D).rotation_degrees
+	var angulo := (espada as Sprite2D).rotation_degrees + _jogador.arma_atual().angulo_arte  # direção da lâmina
 	_checar(espada.visible and angulo <= animacao.angulo_descanso() + 0.01 and angulo > animacao.angulo_descanso() - MARGEM_DESCANSO,
 		"no fim do golpe a espada volta para a mão em repouso (%.1f°; sem a ponta entrar no chão)" % angulo)
 	_checar(absf(_jogador.velocity.x) < 1.0, "no chão o herói fica parado golpeando")

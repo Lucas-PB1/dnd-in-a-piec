@@ -1,20 +1,49 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/maca_estrela.png" id="1_tdalf"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_bt2mw"]
+[ext_resource type="Texture2D" path="res://assets/armas/maca_estrela.png" id="1_bt2mw"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_s7kxx"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_vkbdk"]
+
+[sub_resource type="Resource" id="Resource_267hq"]
+script = ExtResource("2_s7kxx")
+angulo = -85.0
+mao = Vector2(-3, -3)
+
+[sub_resource type="Resource" id="Resource_1o0uu"]
+script = ExtResource("2_s7kxx")
+tempo = 0.11
+angulo = -130.0
+mao = Vector2(-6, -7)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_7piro"]
+script = ExtResource("2_s7kxx")
+tempo = 0.2
+angulo = 60.0
+mao = Vector2(4, 2)
+
+[sub_resource type="Resource" id="Resource_om332"]
+script = ExtResource("2_s7kxx")
+tempo = 0.35
+angulo = 35.0
 
 [resource]
-script = ExtResource("2_bt2mw")
+script = ExtResource("3_vkbdk")
 dados_dano = "1d8"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("1_tdalf")
+textura = ExtResource("1_bt2mw")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 30.671574)
+comprimento = 39.800000000000004
 maestria = &"enfraquecer"
 nome_original = "Morningstar"
 peso = "4 lb."
 preco = "15 GP"
 livro = "Player’s Handbook"
+poses = Array[ExtResource("2_s7kxx")]([SubResource("Resource_267hq"), SubResource("Resource_1o0uu"), SubResource("Resource_7piro"), SubResource("Resource_om332")])
+passo = 3.5
 nome = "Maça Estrela"
 descricao = "Arma marcial. Maestria: Enfraquecer. (Morningstar, Player’s Handbook)"
-icone = ExtResource("1_tdalf")
+icone = ExtResource("1_bt2mw")
 espaco = &"mao"

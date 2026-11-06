@@ -14,8 +14,14 @@ extends Item
 @export var acuidade: bool = false
 ## Arma não mágica: sofre Corrosão (ex.: tocar o Gray Ooze). Falso para soco e armas mágicas.
 @export var corroivel: bool = true
-## Imagem da arma, desenhada apontando para a DIREITA com o cabo na origem.
+## Imagem da arma (pode estar na diagonal: veja angulo_arte e pegada).
 @export var textura: Texture2D
+## Para onde a lâmina aponta NA IMAGEM (graus; 0 = direita, -45 = para cima e à direita).
+@export var angulo_arte: float = 0.0
+## Ponto da imagem (px) onde a mão segura.
+@export var pegada: Vector2 = Vector2(4.0, 3.5)
+## Distância (px) da pegada até a ponta: é o que a ponta alcança a partir da mão.
+@export var comprimento: float = 0.0
 
 @export_group("Propriedades (D&D)")
 ## Leve: dá para usar uma 2ª arma leve na outra mão (combo com J de novo durante o golpe).
@@ -26,7 +32,7 @@ extends Item
 @export var duas_maos: bool = false
 ## Versátil: dado de dano usando as duas mãos (mão secundária vazia). Vazio = não é versátil.
 @export var dados_versatil: String = ""
-## Alcance (Reach): +5 pés no golpe (a área do golpe já inclui isso).
+## Alcance (Reach): a ponta chega a 10 pés em vez de 5 (poses + passo; ver tools/gerar_armas.gd).
 @export var alcance_estendido: bool = false
 ## Arremesso: distância normal e longa (pés). 0 = não arremessa. Tecla K; a arma cai e se pega com E.
 @export var arremesso_normal_pes: float = 0.0
@@ -43,25 +49,13 @@ extends Item
 ## Cor do arco de corte.
 @export var cor_corte: Color = Color(0.85, 0.95, 1.0, 0.9)
 
-@export_group("Área do golpe")
-## Até onde o golpe alcança à frente do herói (px).
-@export var alcance: float = 44.0
-## Altura da área do golpe (px).
-@export var altura: float = 40.0
-
-@export_group("Tempos (s)")
-## Duração total do golpe (o herói não pode golpear de novo antes disso).
-@export var duracao: float = 0.32
-## Quando o corte começa a acertar.
-@export var inicio_acerto: float = 0.06
-## Quando o corte para de acertar.
-@export var fim_acerto: float = 0.16
-
-@export_group("Movimento da arma (graus)")
-## Ângulo da arma no começo do golpe (negativo = levantada para trás).
-@export var angulo_inicial: float = -110.0
-## Ângulo da arma no fim do golpe (positivo = abaixada à frente).
-@export var angulo_final: float = 35.0
+@export_group("Golpe")
+## Poses-chave do golpe desta arma, em ordem de tempo (gerado por tools/gerar_armas.gd).
+## A última pose marca o fim do golpe. A área de acerto acompanha a arma (pegada até a ponta).
+@export var poses: Array[PoseGolpe] = []
+## Passo à frente (px) que o herói dá no golpe para a ponta chegar ao alcance da regra
+## (5 pés; 10 com Alcance). Armas curtas dão um passo maior.
+@export var passo: float = 0.0
 
 
 func _init() -> void:
@@ -104,3 +98,63 @@ func texto_propriedades() -> String:
 	if arremessavel():
 		partes.append("Arremesso (%d/%d)" % [arremesso_normal_pes, arremesso_longo_pes])
 	return ", ".join(partes)
+
+
+# --- Golpe (poses no tempo) -----------------------------------------------------------
+
+## Curva do trecho que acerta (< 1 = rápido no começo e freia no fim, como um golpe de verdade).
+const CURVA_ACERTO := 0.4
+
+
+## Duração do golpe (s): o tempo da última pose.
+func duracao() -> float:
+	return poses[poses.size() - 1].tempo if not poses.is_empty() else 0.0
+
+
+## Pose no instante `t` (s), interpolada entre as poses-chave.
+func pose_em(t: float) -> PoseGolpe:
+	var i := _trecho(t)
+	if i >= poses.size() - 1:
+		return poses[poses.size() - 1]
+	var a := poses[i]
+	var b := poses[i + 1]
+	var fracao := clampf((t - a.tempo) / maxf(b.tempo - a.tempo, 0.001), 0.0, 1.0)
+	return PoseGolpe.entre(a, b, ease(fracao, CURVA_ACERTO) if a.acerta else smoothstep(0.0, 1.0, fracao))
+
+
+## O golpe está acertando no instante `t`?
+func acertando(t: float) -> bool:
+	var i := _trecho(t)
+	return i < poses.size() - 1 and poses[i].acerta
+
+
+## Fim do último trecho que acerta (s): até lá o herói dá o passo à frente.
+func fim_do_acerto() -> float:
+	for i in range(poses.size() - 2, -1, -1):
+		if poses[i].acerta:
+			return poses[i + 1].tempo
+	return 0.0
+
+
+## Índice da pose em que o instante `t` está (a última com tempo <= t).
+func _trecho(t: float) -> int:
+	var i := 0
+	while i < poses.size() - 1 and poses[i + 1].tempo <= t:
+		i += 1
+	return i
+
+
+## Amostras por trecho que acerta, para medir até onde a ponta vai.
+const AMOSTRAS_ALCANCE := 12
+
+
+## Até onde a ponta chega à frente da mão (px) nos trechos que acertam, sem o passo.
+func alcance_da_ponta() -> float:
+	var mais_longe := 0.0
+	for i in poses.size() - 1:
+		if not poses[i].acerta:
+			continue
+		for s in AMOSTRAS_ALCANCE + 1:
+			var pose := pose_em(lerpf(poses[i].tempo, poses[i + 1].tempo, float(s) / AMOSTRAS_ALCANCE))
+			mais_longe = maxf(mais_longe, pose.mao.x + comprimento * pose.escala * cos(deg_to_rad(pose.angulo)))
+	return mais_longe

@@ -1,14 +1,39 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/pique.png" id="1_fjymh"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_pe0vi"]
+[ext_resource type="Texture2D" path="res://assets/armas/pique.png" id="1_pe0vi"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_x6kuj"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_gdygf"]
+
+[sub_resource type="Resource" id="Resource_70vj3"]
+script = ExtResource("2_x6kuj")
+angulo = 2.0
+mao = Vector2(-6, -2)
+
+[sub_resource type="Resource" id="Resource_4sd5t"]
+script = ExtResource("2_x6kuj")
+tempo = 0.13
+mao = Vector2(-12, -2)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_6m52l"]
+script = ExtResource("2_x6kuj")
+tempo = 0.23
+mao = Vector2(14, -2)
+
+[sub_resource type="Resource" id="Resource_w24fw"]
+script = ExtResource("2_x6kuj")
+tempo = 0.43
+angulo = 15.0
 
 [resource]
-script = ExtResource("2_pe0vi")
+script = ExtResource("3_gdygf")
 dados_dano = "1d10"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("1_fjymh")
+textura = ExtResource("1_pe0vi")
+angulo_arte = -45.0
+pegada = Vector2(4.1617603, 56.504906)
+comprimento = 78.7
 pesada = true
 duas_maos = true
 alcance_estendido = true
@@ -17,11 +42,8 @@ nome_original = "Pike"
 peso = "18 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
-alcance = 76.0
-duracao = 0.42
-inicio_acerto = 0.08
-fim_acerto = 0.21
+poses = Array[ExtResource("2_x6kuj")]([SubResource("Resource_70vj3"), SubResource("Resource_4sd5t"), SubResource("Resource_6m52l"), SubResource("Resource_w24fw")])
 nome = "Pique"
 descricao = "Arma marcial. Pesada, Duas Mãos, Alcance. Maestria: Empurrar. (Pike, Player’s Handbook)"
-icone = ExtResource("1_fjymh")
+icone = ExtResource("1_pe0vi")
 espaco = &"mao"

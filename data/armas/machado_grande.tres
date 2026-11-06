@@ -1,14 +1,42 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/machado_grande.png" id="1_ow5u1"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_t0dcy"]
+[ext_resource type="Texture2D" path="res://assets/armas/machado_grande.png" id="1_t0dcy"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_lnmog"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_oxryt"]
+
+[sub_resource type="Resource" id="Resource_7e3on"]
+script = ExtResource("2_lnmog")
+angulo = -55.0
+mao = Vector2(-4, 0)
+
+[sub_resource type="Resource" id="Resource_xj1li"]
+script = ExtResource("2_lnmog")
+tempo = 0.17
+angulo = -160.0
+mao = Vector2(-8, -10)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_t3lol"]
+script = ExtResource("2_lnmog")
+tempo = 0.31
+angulo = 70.0
+mao = Vector2(6, 4)
+
+[sub_resource type="Resource" id="Resource_1fdkj"]
+script = ExtResource("2_lnmog")
+tempo = 0.5
+angulo = 45.0
+mao = Vector2(2, 0)
 
 [resource]
-script = ExtResource("2_t0dcy")
+script = ExtResource("3_oxryt")
 dados_dano = "1d12"
 tipo_dano = &"cortante"
 categoria = &"marcial"
-textura = ExtResource("1_ow5u1")
+textura = ExtResource("1_t0dcy")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 36.671574)
+comprimento = 51.2
 pesada = true
 duas_maos = true
 maestria = &"trespassar"
@@ -16,10 +44,8 @@ nome_original = "Greataxe"
 peso = "7 lb."
 preco = "30 GP"
 livro = "Player’s Handbook"
-duracao = 0.42
-inicio_acerto = 0.08
-fim_acerto = 0.21
+poses = Array[ExtResource("2_lnmog")]([SubResource("Resource_7e3on"), SubResource("Resource_xj1li"), SubResource("Resource_t3lol"), SubResource("Resource_1fdkj")])
 nome = "Machado Grande"
 descricao = "Arma marcial. Pesada, Duas Mãos. Maestria: Trespassar. (Greataxe, Player’s Handbook)"
-icone = ExtResource("1_ow5u1")
+icone = ExtResource("1_t0dcy")
 espaco = &"mao"

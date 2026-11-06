@@ -1,13 +1,41 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/malho.png" id="1_tpko5"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_gt3au"]
+[ext_resource type="Texture2D" path="res://assets/armas/malho.png" id="1_gt3au"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_lfix5"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_runad"]
+
+[sub_resource type="Resource" id="Resource_i47k0"]
+script = ExtResource("2_lfix5")
+angulo = -40.0
+mao = Vector2(-4, 0)
+
+[sub_resource type="Resource" id="Resource_sltyn"]
+script = ExtResource("2_lfix5")
+tempo = 0.19
+angulo = -170.0
+mao = Vector2(-8, -12)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_k8gmm"]
+script = ExtResource("2_lfix5")
+tempo = 0.33
+angulo = 80.0
+mao = Vector2(6, 6)
+
+[sub_resource type="Resource" id="Resource_xkr1r"]
+script = ExtResource("2_lfix5")
+tempo = 0.55
+angulo = 55.0
+mao = Vector2(2, 0)
 
 [resource]
-script = ExtResource("2_gt3au")
+script = ExtResource("3_runad")
 dados_dano = "2d6"
 categoria = &"marcial"
-textura = ExtResource("1_tpko5")
+textura = ExtResource("1_gt3au")
+angulo_arte = -45.0
+pegada = Vector2(4.1617603, 39.504906)
+comprimento = 51.900000000000006
 pesada = true
 duas_maos = true
 maestria = &"derrubar"
@@ -16,10 +44,8 @@ peso = "10 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
-duracao = 0.42
-inicio_acerto = 0.08
-fim_acerto = 0.21
+poses = Array[ExtResource("2_lfix5")]([SubResource("Resource_i47k0"), SubResource("Resource_sltyn"), SubResource("Resource_k8gmm"), SubResource("Resource_xkr1r")])
 nome = "Malho"
 descricao = "Arma marcial. Pesada, Duas Mãos. Maestria: Derrubar. (Maul, Player’s Handbook)"
-icone = ExtResource("1_tpko5")
+icone = ExtResource("1_gt3au")
 espaco = &"mao"

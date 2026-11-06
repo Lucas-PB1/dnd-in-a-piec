@@ -1,16 +1,26 @@
 class_name AtaqueJogador
 extends Node2D
 ## Arma na mão do herói. Fora do golpe, a arma equipada fica na mão, no ângulo de
-## descanso da animação. No golpe, gira a partir da mão, mostra o arco de corte e liga a
-## Hitbox só na janela de acerto da Arma. O dono chama seguir_mao() todo quadro e
-## golpear() para golpear (call down).
+## descanso da animação. No golpe, toca as poses da Arma (cada arma tem o seu movimento),
+## a área de acerto acompanha a arma (da pegada até a ponta) e liga só nos trechos que
+## acertam. O dono chama seguir_mao() todo quadro e golpear() para golpear (call down).
 
-## Curva do giro da arma (< 1 = rápido no começo e freia no fim, como um golpe de verdade).
-const CURVA_GOLPE := 0.4
-## A mão segura o cabo a esta distância (px) da ponta de trás da arma.
-const PEGADA := 4.0
 ## Em repouso, a ponta da arma fica pelo menos isto (px) acima do chão (os pés).
 const FOLGA_DO_CHAO := 2.0
+## Grossura da área de acerto em volta da arma (px).
+const ESPESSURA_ACERTO := 14.0
+## A área passa um pouco da ponta (px): o golpe "pega" quem está encostando nela.
+const FOLGA_PONTA := 6.0
+## Abaixo deste giro (graus) no trecho que acerta, é estocada: sem o arco de corte.
+const GIRO_MINIMO_CORTE := 60.0
+## Tamanho do arco de corte para uma arma deste comprimento (px); escala com a arma.
+const COMPRIMENTO_DO_CORTE := 40.0
+## Com a lâmina mais para trás que isto (graus; -90 = para cima), o golpe ainda está sendo
+## armado atrás da cabeça e não acerta: só acerta quem está à frente.
+const ANGULO_ATRAS := -100.0
+## O arco de corte aparece a esta fração do comprimento da arma, e nunca menor que ESCALA_MINIMA_CORTE.
+const POSICAO_DO_CORTE := 0.6
+const ESCALA_MINIMA_CORTE := 0.6
 
 var _arma: Arma
 var _golpe: Golpe
@@ -18,6 +28,7 @@ var _tempo: float = 0.0
 var _golpeando: bool = false
 var _direcao: int = 1
 var _golpe_secundario: bool = false
+var _mao: Vector2 = Vector2.ZERO
 
 @onready var _espada: Sprite2D = $Espada
 @onready var _corte: AnimatedSprite2D = $Corte
@@ -34,12 +45,15 @@ func _ready() -> void:
 ## Fora do golpe, mostra a `arma` em repouso no `angulo` (graus), menos inclinada se for
 ## comprida demais e a ponta fosse entrar no chão. Arma sem imagem (soco) some.
 func seguir_mao(mao: Vector2, angulo: float, direcao: int, arma: Arma) -> void:
-	position = mao
+	_mao = mao
 	_virar(direcao)
 	if _golpeando:
 		return
-	_mostrar_arma(arma.textura)
-	_espada.rotation_degrees = _angulo_sem_tocar_chao(angulo, mao.y, arma.textura)
+	position = mao
+	_espada.position = Vector2.ZERO
+	_espada.scale = Vector2.ONE
+	DesenhoArma.preparar(_espada, arma)
+	_espada.rotation_degrees = DesenhoArma.rotacao(arma, _angulo_sem_tocar_chao(angulo, mao.y, arma))
 
 
 ## Começa um golpe com a `arma`. `secundaria` = o 2º golpe, da arma da outra mão.
@@ -50,8 +64,10 @@ func golpear(arma: Arma, golpe: Golpe, secundaria: bool = false) -> void:
 	_tempo = 0.0
 	_golpeando = true
 	_golpe_secundario = secundaria
-	_preparar_visual()
-	_preparar_area()
+	DesenhoArma.preparar(_espada, arma)
+	_corte.modulate = arma.cor_corte
+	_corte.hide()
+	_aplicar_pose()
 
 
 func esta_golpeando() -> bool:
@@ -61,6 +77,18 @@ func esta_golpeando() -> bool:
 ## O golpe atual é o da arma da outra mão (o sprite de trás deve sumir para não duplicar).
 func golpe_da_secundaria() -> bool:
 	return _golpeando and _golpe_secundario
+
+
+## Velocidade (px/s; positivo = para a frente) do passo do golpe, como uma estocada de
+## esgrima: avança até o fim do trecho que acerta e volta na recuperação (golpear várias
+## vezes não faz o herói sair andando). 0 fora do golpe ou se a arma não precisa de passo.
+func velocidade_do_passo() -> float:
+	if not _golpeando or _arma.passo <= 0.0:
+		return 0.0
+	var fim_ida := _arma.fim_do_acerto()
+	if _tempo < fim_ida:
+		return _arma.passo / fim_ida
+	return -_arma.passo / maxf(_arma.duracao() - fim_ida, 0.001)
 
 
 ## Interrompe o golpe no meio (ex.: o herói apanhou).
@@ -73,9 +101,9 @@ func _physics_process(delta: float) -> void:
 	if not _golpeando:
 		return
 	_tempo += delta
-	_girar_arma()
+	_aplicar_pose()
 	_atualizar_acerto()
-	if _tempo >= _arma.duracao:
+	if _tempo >= _arma.duracao():
 		_terminar()
 
 
@@ -89,53 +117,50 @@ func _virar(direcao: int) -> void:
 	reset_physics_interpolation()
 
 
-func _preparar_visual() -> void:
-	_mostrar_arma(_arma.textura)
-	_espada.rotation_degrees = _arma.angulo_inicial
-	_corte.modulate = _arma.cor_corte
-	_corte.hide()
+## Põe a arma e a área de acerto na pose do instante atual.
+func _aplicar_pose() -> void:
+	var pose := _arma.pose_em(_tempo)
+	position = _mao + pose.mao
+	_espada.rotation_degrees = DesenhoArma.rotacao(_arma, pose.angulo)
+	# Só arte na horizontal (o chicote) encolhe sem distorcer: estica ao longo da lâmina.
+	_espada.scale = Vector2(pose.escala, 1.0) if _arma.angulo_arte == 0.0 else Vector2.ONE
+	var comprimento := _arma.comprimento * pose.escala + FOLGA_PONTA
+	var retangulo := _forma.shape as RectangleShape2D
+	retangulo.size = Vector2(comprimento, ESPESSURA_ACERTO)
+	_forma.rotation_degrees = pose.angulo
+	_forma.position = Vector2.from_angle(deg_to_rad(pose.angulo)) * comprimento / 2.0
 
 
-## Põe a imagem da arma na mão, centrada na altura. Sem imagem (soco), esconde.
-func _mostrar_arma(textura: Texture2D) -> void:
-	_espada.visible = textura != null
-	if textura == null or textura == _espada.texture:
-		return
-	_espada.texture = textura
-	_espada.offset = Vector2(-PEGADA, -textura.get_height() / 2.0)
-
-
-## Limita o ângulo para baixo: a ponta (comprimento após a pegada) não passa dos pés.
-## `altura_mao` = y da mão (negativo = acima dos pés).
-func _angulo_sem_tocar_chao(angulo: float, altura_mao: float, textura: Texture2D) -> float:
-	if textura == null:
+## Limita o ângulo para baixo: a ponta não passa dos pés. `altura_mao` = y da mão
+## (negativo = acima dos pés).
+func _angulo_sem_tocar_chao(angulo: float, altura_mao: float, arma: Arma) -> float:
+	if arma.comprimento <= 0.0:
 		return angulo
-	var comprimento := textura.get_width() - PEGADA
-	var seno_maximo := clampf((-altura_mao - FOLGA_DO_CHAO) / comprimento, -1.0, 1.0)
+	var seno_maximo := clampf((-altura_mao - FOLGA_DO_CHAO) / arma.comprimento, -1.0, 1.0)
 	return minf(angulo, rad_to_deg(asin(seno_maximo)))
 
 
-func _preparar_area() -> void:
-	var retangulo := _forma.shape as RectangleShape2D
-	retangulo.size = Vector2(_arma.alcance, _arma.altura)
-	_forma.position = Vector2(_arma.alcance / 2.0, 0.0)
-
-
-## A arma desce do ângulo inicial ao final até o fim da janela de acerto, depois fica parada.
-func _girar_arma() -> void:
-	var progresso := clampf(_tempo / _arma.fim_acerto, 0.0, 1.0)
-	var suave := ease(progresso, CURVA_GOLPE)
-	_espada.rotation_degrees = lerpf(_arma.angulo_inicial, _arma.angulo_final, suave)
-
-
 func _atualizar_acerto() -> void:
-	var na_janela := _tempo >= _arma.inicio_acerto and _tempo < _arma.fim_acerto
-	if na_janela and not _hitbox.esta_ligada():
+	var acertando := _arma.acertando(_tempo) and _arma.pose_em(_tempo).angulo > ANGULO_ATRAS
+	if acertando and not _hitbox.esta_ligada():
 		_hitbox.ligar(_golpe)
-		_corte.show()
-		_corte.play(&"corte")
-	elif not na_janela and _hitbox.esta_ligada():
+		_mostrar_corte()
+	elif not acertando and _hitbox.esta_ligada():
 		_hitbox.desligar()
+
+
+## Arco de corte no meio do giro do trecho que acerta, do tamanho da arma.
+## Estocada (quase sem giro) não mostra arco.
+func _mostrar_corte() -> void:
+	var inicio := _arma.pose_em(_tempo)
+	var fim := _arma.pose_em(_arma.fim_do_acerto())
+	if absf(fim.angulo - inicio.angulo) < GIRO_MINIMO_CORTE:
+		return
+	var meio := deg_to_rad((inicio.angulo + fim.angulo) / 2.0)
+	_corte.position = Vector2.from_angle(meio) * _arma.comprimento * POSICAO_DO_CORTE
+	_corte.scale = Vector2.ONE * maxf(_arma.comprimento / COMPRIMENTO_DO_CORTE, ESCALA_MINIMA_CORTE)
+	_corte.show()
+	_corte.play(&"corte")
 
 
 ## Fim do golpe: a arma volta para o repouso no próximo seguir_mao().

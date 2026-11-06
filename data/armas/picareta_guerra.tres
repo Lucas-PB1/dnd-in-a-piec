@@ -1,21 +1,50 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/picareta_guerra.png" id="1_53fpx"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_f084r"]
+[ext_resource type="Texture2D" path="res://assets/armas/picareta_guerra.png" id="1_f084r"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_ttrgl"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_2cs3t"]
+
+[sub_resource type="Resource" id="Resource_ajkys"]
+script = ExtResource("2_ttrgl")
+angulo = -80.0
+mao = Vector2(-3, -4)
+
+[sub_resource type="Resource" id="Resource_72rk0"]
+script = ExtResource("2_ttrgl")
+tempo = 0.1
+angulo = -135.0
+mao = Vector2(-5, -8)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_tgdb1"]
+script = ExtResource("2_ttrgl")
+tempo = 0.19
+angulo = 70.0
+mao = Vector2(4, 4)
+
+[sub_resource type="Resource" id="Resource_ibrlg"]
+script = ExtResource("2_ttrgl")
+tempo = 0.35
+angulo = 40.0
 
 [resource]
-script = ExtResource("2_f084r")
+script = ExtResource("3_2cs3t")
 dados_dano = "1d8"
 tipo_dano = &"perfurante"
 categoria = &"marcial"
-textura = ExtResource("1_53fpx")
+textura = ExtResource("1_f084r")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 27.671574)
+comprimento = 37.0
 dados_versatil = "1d10"
 maestria = &"enfraquecer"
 nome_original = "War Pick"
 peso = "2 lb."
 preco = "5 GP"
 livro = "Player’s Handbook"
+poses = Array[ExtResource("2_ttrgl")]([SubResource("Resource_ajkys"), SubResource("Resource_72rk0"), SubResource("Resource_tgdb1"), SubResource("Resource_ibrlg")])
+passo = 6.5
 nome = "Picareta de Guerra"
 descricao = "Arma marcial. Versátil (1d10). Maestria: Enfraquecer. (War Pick, Player’s Handbook)"
-icone = ExtResource("1_53fpx")
+icone = ExtResource("1_f084r")
 espaco = &"mao"

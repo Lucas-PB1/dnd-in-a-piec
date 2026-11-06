@@ -1,20 +1,54 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/mangual.png" id="1_bl1jx"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_invu5"]
+[ext_resource type="Texture2D" path="res://assets/armas/mangual.png" id="1_invu5"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_x4tbb"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_ec865"]
+
+[sub_resource type="Resource" id="Resource_pduhp"]
+script = ExtResource("2_x4tbb")
+angulo = 30.0
+
+[sub_resource type="Resource" id="Resource_bans3"]
+script = ExtResource("2_x4tbb")
+tempo = 0.08
+angulo = -70.0
+mao = Vector2(-2, -4)
+
+[sub_resource type="Resource" id="Resource_4ekwc"]
+script = ExtResource("2_x4tbb")
+tempo = 0.15
+angulo = -210.0
+mao = Vector2(-4, -6)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_r4b0s"]
+script = ExtResource("2_x4tbb")
+tempo = 0.25
+angulo = 55.0
+mao = Vector2(4, 2)
+
+[sub_resource type="Resource" id="Resource_ta5t0"]
+script = ExtResource("2_x4tbb")
+tempo = 0.39
+angulo = 35.0
 
 [resource]
-script = ExtResource("2_invu5")
+script = ExtResource("3_ec865")
 dados_dano = "1d8"
 categoria = &"marcial"
-textura = ExtResource("1_bl1jx")
+textura = ExtResource("1_invu5")
+angulo_arte = -45.0
+pegada = Vector2(9.328427, 26.671574)
+comprimento = 29.900000000000002
 maestria = &"enfraquecer"
 nome_original = "Flail"
 peso = "2 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
 cor_corte = Color(1, 0.92, 0.7, 0.85)
+poses = Array[ExtResource("2_x4tbb")]([SubResource("Resource_pduhp"), SubResource("Resource_bans3"), SubResource("Resource_4ekwc"), SubResource("Resource_r4b0s"), SubResource("Resource_ta5t0")])
+passo = 12.0
 nome = "Mangual"
 descricao = "Arma marcial. Maestria: Enfraquecer. (Flail, Player’s Handbook)"
-icone = ExtResource("1_bl1jx")
+icone = ExtResource("1_invu5")
 espaco = &"mao"

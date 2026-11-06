@@ -6,6 +6,9 @@ extends SceneTree
 const PASTA := "res://data/armas/"
 const TOTAL_ARMAS := 29
 const TOTAL_ARMADURAS := 21
+## Até onde a ponta tem de chegar (px à frente da mão): 5 pés; com Alcance, 10 pés.
+const PONTA_NORMAL := 44.0
+const PONTA_ALCANCE := PONTA_NORMAL + EscalaDnd.PIXELS_POR_LADRILHO
 
 var _falhas := 0
 
@@ -59,10 +62,7 @@ func _testar_regras() -> void:
 	_checar(not forte.golpe_com(grande).desvantagem and fraco.golpe_com(grande).desvantagem,
 		"Pesada: FOR 15 normal, FOR 12 ataca com desvantagem")
 	_checar(not fraco.golpe_com(longa).desvantagem, "arma não Pesada não liga para FOR")
-	_checar(_arma("glaive").alcance > _arma("machado_grande").alcance and _arma("chicote").alcance_estendido,
-		"Alcance (Glaive, Chicote) bate mais longe que arma comum")
-	_checar(is_equal_approx(_arma("glaive").alcance - _arma("machado_grande").alcance, EscalaDnd.PIXELS_POR_LADRILHO),
-		"Alcance = +5 pés (1 ladrilho)")
+	_testar_alcance()
 
 	var inv := Inventario.new()
 	var escudo: Armadura = load("res://data/armaduras/escudo.tres")
@@ -73,6 +73,28 @@ func _testar_regras() -> void:
 	inv.equipar(escudo)
 	_checar(Equipamento.texto_dano(forte, inv, longa) == "1d8+2" and Equipamento.golpe(forte, inv, longa).dano.faces == 8,
 		"Espada Longa com escudo volta a 1d8 (no texto e no golpe)")
+
+
+## Regra do livro: toda arma comum alcança 5 pés e com Alcance 10 pés (a ponta + o passo).
+## Armas curtas dão um passo; as compridas não precisam.
+func _testar_alcance() -> void:
+	var ok := true
+	var ruins: PackedStringArray = []
+	for arquivo in ResourceLoader.list_directory(PASTA):
+		var arma := load(PASTA + arquivo) as Arma
+		var alvo := PONTA_ALCANCE if arma.alcance_estendido else PONTA_NORMAL
+		var chega := arma.alcance_da_ponta() + arma.passo
+		if chega < alvo - 0.5 or arma.poses.size() < 3 or not arma.poses.any(func(p: PoseGolpe) -> bool: return p.acerta):
+			ok = false
+			ruins.append(arma.nome)
+	_checar(ok, "toda arma tem golpe próprio e a ponta chega a 5 pés (10 com Alcance) %s" % str(ruins))
+	_checar(_arma("adaga").passo > 0.0 and _arma("pique").passo == 0.0, "Adaga dá passo à frente; Pique não precisa")
+	_checar(_arma("pique").alcance_da_ponta() > _arma("espada_grande").alcance_da_ponta(), "Pique (Alcance) chega mais longe que a Espada Grande")
+	var movimentos := {}
+	for arquivo in ResourceLoader.list_directory(PASTA):
+		var arma := load(PASTA + arquivo) as Arma
+		movimentos[str(arma.poses.map(func(p: PoseGolpe) -> Array: return [p.tempo, p.angulo, p.mao]))] = true
+	_checar(movimentos.size() == TOTAL_ARMAS, "cada uma das 29 armas tem um movimento diferente (%d)" % movimentos.size())
 
 
 func _testar_inventario() -> void:

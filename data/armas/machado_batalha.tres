@@ -1,21 +1,50 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/machado_batalha.png" id="1_wf5pi"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_m5tnk"]
+[ext_resource type="Texture2D" path="res://assets/armas/machado_batalha.png" id="1_m5tnk"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_lmqpg"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_cafc2"]
+
+[sub_resource type="Resource" id="Resource_kxcrp"]
+script = ExtResource("2_lmqpg")
+angulo = -75.0
+mao = Vector2(-3, -4)
+
+[sub_resource type="Resource" id="Resource_r7f25"]
+script = ExtResource("2_lmqpg")
+tempo = 0.11
+angulo = -130.0
+mao = Vector2(-6, -8)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_gr27g"]
+script = ExtResource("2_lmqpg")
+tempo = 0.21
+angulo = 60.0
+mao = Vector2(4, 3)
+
+[sub_resource type="Resource" id="Resource_0jkpu"]
+script = ExtResource("2_lmqpg")
+tempo = 0.37
+angulo = 40.0
 
 [resource]
-script = ExtResource("2_m5tnk")
+script = ExtResource("3_cafc2")
 dados_dano = "1d8"
 tipo_dano = &"cortante"
 categoria = &"marcial"
-textura = ExtResource("1_wf5pi")
+textura = ExtResource("1_m5tnk")
+angulo_arte = -45.0
+pegada = Vector2(4.2034273, 28.421574)
+comprimento = 39.800000000000004
 dados_versatil = "1d10"
 maestria = &"derrubar"
 nome_original = "Battleaxe"
 peso = "4 lb."
 preco = "10 GP"
 livro = "Player’s Handbook"
+poses = Array[ExtResource("2_lmqpg")]([SubResource("Resource_kxcrp"), SubResource("Resource_r7f25"), SubResource("Resource_gr27g"), SubResource("Resource_0jkpu")])
+passo = 3.5
 nome = "Machado de Batalha"
 descricao = "Arma marcial. Versátil (1d10). Maestria: Derrubar. (Battleaxe, Player’s Handbook)"
-icone = ExtResource("1_wf5pi")
+icone = ExtResource("1_m5tnk")
 espaco = &"mao"

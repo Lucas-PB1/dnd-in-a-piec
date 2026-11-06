@@ -1,13 +1,39 @@
 [gd_resource type="Resource" script_class="Arma" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/armas/lanca.png" id="1_ppo7n"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="2_hly1w"]
+[ext_resource type="Texture2D" path="res://assets/armas/lanca.png" id="1_hly1w"]
+[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_da4tj"]
+[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_4ccw3"]
+
+[sub_resource type="Resource" id="Resource_2xlum"]
+script = ExtResource("2_da4tj")
+angulo = 5.0
+mao = Vector2(-4, -2)
+
+[sub_resource type="Resource" id="Resource_76uiq"]
+script = ExtResource("2_da4tj")
+tempo = 0.08
+mao = Vector2(-10, -2)
+acerta = true
+
+[sub_resource type="Resource" id="Resource_iums3"]
+script = ExtResource("2_da4tj")
+tempo = 0.16
+angulo = -2.0
+mao = Vector2(12, -2)
+
+[sub_resource type="Resource" id="Resource_3xant"]
+script = ExtResource("2_da4tj")
+tempo = 0.31
+angulo = 20.0
 
 [resource]
-script = ExtResource("2_hly1w")
+script = ExtResource("3_4ccw3")
 tipo_dano = &"perfurante"
 categoria = &"simples"
-textura = ExtResource("1_ppo7n")
+textura = ExtResource("1_hly1w")
+angulo_arte = -45.0
+pegada = Vector2(4.3284273, 35.671574)
+comprimento = 49.7
 dados_versatil = "1d8"
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0
@@ -16,7 +42,8 @@ nome_original = "Spear"
 peso = "3 lb."
 preco = "1 GP"
 livro = "Player’s Handbook"
+poses = Array[ExtResource("2_da4tj")]([SubResource("Resource_2xlum"), SubResource("Resource_76uiq"), SubResource("Resource_iums3"), SubResource("Resource_3xant")])
 nome = "Lança"
 descricao = "Arma simples. Versátil (1d8), Arremesso (20/60). Maestria: Enfraquecer. (Spear, Player’s Handbook)"
-icone = ExtResource("1_ppo7n")
+icone = ExtResource("1_hly1w")
 espaco = &"mao"
