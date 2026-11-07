@@ -46,3 +46,4 @@ bonus_furtividade = 6
 dano_extra_com_vantagem = "1d4"
 fuga_agil = true
 esconde_de_novo = true
+patrulha_pes = 15.0

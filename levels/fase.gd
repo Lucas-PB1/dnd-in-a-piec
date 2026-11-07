@@ -29,11 +29,23 @@ const PAREDES_POR_LADO := 1
 
 
 func _ready() -> void:
+	_criar_fundo()
 	var porta := get_node_or_null("Porta") as Area2D
 	if porta == null:
 		return
 	porta.body_entered.connect(_ao_tocar_porta)
 	porta.body_exited.connect(_ao_sair_da_porta)
+
+
+## Põe o fundo em camadas do ambiente (se tiver) e esconde o céu liso que ficava no lugar.
+func _criar_fundo() -> void:
+	var fundo := FundoParalaxe.para_ambiente(nome_ambiente)
+	if fundo == null:
+		return
+	add_child(fundo)
+	var ceu := get_node_or_null("Ceu") as CanvasItem
+	if ceu:
+		ceu.hide()
 
 
 func posicao_inicio() -> Vector2:

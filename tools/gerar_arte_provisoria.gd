@@ -96,7 +96,49 @@ func _gerar_ladrilhos() -> void:
 		_grama_no_topo(img, GRAMA, linha, rng, paleta)
 		_plataforma(img, PLATAFORMA, linha, paleta)
 		_pedra(img, PEDRA, linha, rng, paleta)
+	_ladrilhos_do_pacote(img)
 	img.save_png(ARQ_LADRILHOS)
+
+
+## Ladrilhos recortados dos pacotes CC0 do ansimuz (assets/fundos/), uma linha por ambiente, na
+## mesma ordem de FundoParalaxe.AMBIENTES e pintados com o mesmo tom. Os recortes são de 32x32
+## (a plataforma, de 32x16) e ficam numa lista na ordem do enum: GRAMA, TERRA, PLATAFORMA, PEDRA.
+const ALTURA_PLATAFORMA := 16
+const PACOTES_LADRILHO := {
+	&"floresta": {
+		"arquivo": "res://assets/fundos/floresta/tiles.png",
+		"recortes": [Vector2i(16, 12), Vector2i(48, 36), Vector2i(96, 12), Vector2i(16, 40)],
+	},
+	&"fortaleza": {
+		"arquivo": "res://assets/fundos/fortaleza/tileset.png",
+		"recortes": [Vector2i(48, 48), Vector2i(48, 80), Vector2i(0, 16), Vector2i(0, 48)],
+	},
+}
+
+
+func _ladrilhos_do_pacote(img: Image) -> void:
+	var ambientes := FundoParalaxe.AMBIENTES.keys()
+	for linha in mini(ambientes.size(), PALETAS.size()):
+		var dados: Array = FundoParalaxe.AMBIENTES[ambientes[linha]]
+		var pacote: Dictionary = PACOTES_LADRILHO[dados[0]]
+		var fonte := Image.load_from_file(ProjectSettings.globalize_path(pacote["arquivo"]))
+		fonte.convert(Image.FORMAT_RGBA8)
+		for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA]:
+			var altura := ALTURA_PLATAFORMA if tipo == PLATAFORMA else TAM
+			var origem: Vector2i = pacote["recortes"][tipo]
+			var bloco := fonte.get_region(Rect2i(origem, Vector2i(TAM, altura)))
+			_pintar(bloco, dados[1])
+			var destino := Vector2i(tipo * TAM, linha * TAM)
+			img.fill_rect(Rect2i(destino, Vector2i(TAM, TAM)), Color(0, 0, 0, 0))
+			img.blit_rect(bloco, Rect2i(Vector2i.ZERO, bloco.get_size()), destino)
+
+
+## Multiplica a cor de cada pixel pelo `tom` (a transparência não muda).
+func _pintar(img: Image, tom: Color) -> void:
+	for y in img.get_height():
+		for x in img.get_width():
+			var cor := img.get_pixel(x, y)
+			img.set_pixel(x, y, Color(cor.r * tom.r, cor.g * tom.g, cor.b * tom.b, cor.a))
 
 
 # --- Corte e boneco ----------------------------------------------------

@@ -18,6 +18,9 @@ const FOLGA_PE := 6.0
 const PROFUNDIDADE_BEIRA := 20.0
 ## Camada "mundo" do chão.
 const MASCARA_MUNDO := 1
+## Patrulha: anda nesta fração do deslocamento e considera que chegou a esta distância (px).
+const FRACAO_PATRULHA := 0.5
+const CHEGOU_PATRULHA := 6.0
 
 ## Bloco de estatísticas. Padrão: data/goblin_minion.tres.
 @export var criatura: CriaturaRPG
@@ -43,6 +46,8 @@ const MASCARA_MUNDO := 1
 @export var velocidade_empurrao: float = 320.0
 ## Pisca ao levar dano: cor do clarão.
 @export var cor_dano: Color = Color(1.0, 0.45, 0.45)
+## Cor do brilho do aviso antes do golpe.
+@export var cor_aviso: Color = Color(1.0, 0.9, 0.35)
 
 ## Alvo perseguido (ex.: o herói). Sem alvo, fica parado.
 var alvo: Node2D
@@ -53,6 +58,9 @@ var _rng := RandomNumberGenerator.new()
 var _tempo_desde_ataque: float = INF
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _empurrao_restante: float = 0.0
+## Patrulha: onde começou (X, sorteado ao 1º passo) e o lado do próximo extremo.
+var _base_x: float = INF
+var _lado_patrulha: int = 1
 var _adagas: int = 0
 ## Cópias do disparo da ficha. Menor que 0 = não acaba.
 var _flechas: int = 0
@@ -67,6 +75,8 @@ var _camada_corpo: int = 0
 var _camada_hurtbox: int = 0
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
+@onready var _sombra: Polygon2D = $Sombra
+@onready var _tremor: TremorComponent = $Tremor
 @onready var _hurtbox: Area2D = $Hurtbox
 @onready var _vida: HealthComponent = $Vida
 @onready var _defesa: DefesaComponent = $Defesa
@@ -159,6 +169,7 @@ func esconder() -> void:
 	collision_layer = 0
 	_hurtbox.collision_layer = 0
 	_sprite.visible = false
+	_sombra.visible = false
 
 
 func revelar() -> void:
@@ -168,6 +179,7 @@ func revelar() -> void:
 	collision_layer = _camada_corpo
 	_hurtbox.collision_layer = _camada_hurtbox
 	_sprite.visible = true
+	_sombra.visible = true
 
 
 ## Uma vez, contra a passiva. Sem texto: o jogador só vê o goblin aparecer ou não.
@@ -342,6 +354,58 @@ func atirar() -> void:
 	flecha.lancar(_golpe_do_disparo(), FLECHA, mao, destino,
 		EscalaDnd.pes_para_pixels(criatura.disparo_normal_pes),
 		EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes), _gravidade)
+
+
+## Levou dano: o sprite treme por `duracao` s.
+func tremer(duracao: float) -> void:
+	_tremor.tremer(duracao)
+
+
+func parar_tremor() -> void:
+	_tremor.parar()
+
+
+## Aviso antes do golpe: quanto tempo dura (0 na emboscada: o herói não viu o monstro).
+func tempo_aviso() -> float:
+	return 0.0 if _emboscada else criatura.aviso_ataque
+
+
+## Começa o aviso: para, olha para o alvo e brilha.
+func preparar_aviso() -> void:
+	parar()
+	virar_para_alvo()
+	tocar(&"parado")
+	_sprite.modulate = cor_aviso
+
+
+func encerrar_aviso() -> void:
+	_sprite.modulate = Color.WHITE
+
+
+func quer_patrulhar() -> bool:
+	return criatura.patrulha_pes > 0.0
+
+
+## Próximo extremo da patrulha: alterna os lados de onde a patrulha começou.
+func proximo_extremo_patrulha() -> float:
+	if _base_x == INF:
+		_base_x = global_position.x
+	_lado_patrulha = -_lado_patrulha
+	return _base_x + _lado_patrulha * EscalaDnd.pes_para_pixels(criatura.patrulha_pes)
+
+
+## Anda até `x` devagar, vigiando. True quando chegou, bateu numa parede ou acabou o chão.
+func andar_ate(x: float) -> bool:
+	var falta := x - global_position.x
+	if absf(falta) <= CHEGOU_PATRULHA:
+		parar()
+		return true
+	direcao_olhar = 1 if falta > 0.0 else -1
+	if is_on_wall() or not _tem_chao_na(float(direcao_olhar)):
+		parar()
+		return true
+	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes() * FRACAO_PATRULHA)
+	return false
 
 
 ## Levou dano: pisca na cor do dano.

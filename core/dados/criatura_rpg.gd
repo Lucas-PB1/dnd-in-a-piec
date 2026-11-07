@@ -76,6 +76,13 @@ extends Resource
 ## Dado extra quando o ataque tem vantagem (Goblin Warrior: "1d4"). Vazio = não tem.
 @export var dano_extra_com_vantagem: String = ""
 
+@export_group("Comportamento")
+## Tempo parado e brilhando antes do golpe ou do tiro (s): dá tempo de esquivar. Não vale
+## para o primeiro golpe de uma emboscada (o herói não viu o monstro).
+@export var aviso_ataque: float = 0.35
+## Até onde patrulha a partir de onde começou (pés). 0 = espera parado.
+@export var patrulha_pes: float = 0.0
+
 @export_group("Ações bônus")
 ## Fuga Ágil (Goblin): Desengajar depois de atacar (salta para longe do alvo).
 @export var fuga_agil: bool = false

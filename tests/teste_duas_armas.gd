@@ -58,6 +58,8 @@ func _testar_no_jogo() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false
 	root.add_child(cena)
+	await process_frame  # deixa a cena terminar de nascer antes de trocar a fase
+	cena.call(&"_entrar_fase", load("res://levels/fase_teste.tscn"))  # chão reto e aberto, sem degraus
 	var jogador: Jogador = cena.get_node("Jogador")
 	var boneco: BonecoTreino = cena.get_node("BonecoTreino")
 	for monstro in get_nodes_in_group(&"monstros"):

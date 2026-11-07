@@ -14,6 +14,11 @@ const DANO_QUE_MATA := 999
 const QUADROS_MORTE := 300
 const QUADROS_CURTOS := 20
 const ULTIMA := 4
+const ALTURA_LADRILHO := 32.0
+const ATLAS_PLATAFORMA := 2
+## Maior buraco (ladrilhos) que dá para atravessar pulando, e colunas ao lado de uma plataforma onde se pode subir.
+const MAIOR_BURACO := 3
+const VIZINHANCA := 2
 
 var _falhas := 0
 var _main: Main
@@ -26,6 +31,7 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	await _testar_fases_prontas()
+	await _testar_alcance_das_fases()
 	_main = load("res://levels/main.tscn").instantiate()
 	_main.mostrar_inicio = false
 	_main.semente_armadilhas = SEMENTE
@@ -57,8 +63,66 @@ func _testar_fases_prontas() -> void:
 		_checar(fase.quantidade > 0 and pontos > fase.quantidade and not fase.tipos_permitidos.is_empty(),
 			"fase %d: %d de %d pontos de armadilha, com tipos permitidos" % [i + 1, fase.quantidade, pontos])
 		_checar(fase.ultima == (i == ULTIMA), "fase %d: só a última conclui o jogo" % [i + 1])
+		_checar(fase.get_node_or_null("Fundo") != null and not (fase.get_node("Ceu") as CanvasItem).visible, "fase %d: fundo em camadas no lugar do céu liso" % [i + 1])
 		fase.queue_free()
 		await physics_frame
+
+
+## O herói alcança tudo: nenhuma subida passa do que o pulo vence, nenhum buraco é largo demais e
+## toda plataforma tem chão ou outra plataforma a uma altura que o pulo alcança.
+func _testar_alcance_das_fases() -> void:
+	var stats: StatsJogador = load("res://data/jogador_padrao.tres")
+	var pulo := int(stats.altura_pulo / ALTURA_LADRILHO)
+	var subida_maxima := pulo - 1
+	for i in CENAS_FASE.size():
+		var fase: Fase = load(CENAS_FASE[i]).instantiate()
+		root.add_child(fase)
+		await physics_frame
+		var terreno := fase.get_node("Terreno") as TileMapLayer
+		var primeira := int(fase.posicao_inicio().x / ALTURA_LADRILHO)
+		var porta := int(fase.posicao_porta().x / ALTURA_LADRILHO)
+		var subida := 0
+		var buraco := 0
+		var maior_buraco := 0
+		var anterior := -1
+		for x in range(primeira, porta + 1):
+			var topo := _topo_solido(terreno, x)
+			if topo < 0:
+				buraco += 1
+				maior_buraco = maxi(maior_buraco, buraco)
+				continue
+			buraco = 0
+			if anterior >= 0:
+				subida = maxi(subida, anterior - topo)
+			anterior = topo
+		_checar(subida <= subida_maxima, "fase %d: a maior subida é de %d ladrilho(s) (o pulo vence %d)" % [i + 1, subida, subida_maxima])
+		_checar(maior_buraco <= MAIOR_BURACO, "fase %d: o maior buraco tem %d ladrilho(s) (máximo %d)" % [i + 1, maior_buraco, MAIOR_BURACO])
+		var sem_acesso := 0
+		for celula in terreno.get_used_cells():
+			if terreno.get_cell_atlas_coords(celula).x == ATLAS_PLATAFORMA and not _plataforma_alcancavel(terreno, celula, pulo):
+				sem_acesso += 1
+		_checar(sem_acesso == 0, "fase %d: toda plataforma tem como subir com o pulo (%d sem acesso)" % [i + 1, sem_acesso])
+		fase.queue_free()
+		await physics_frame
+
+
+## Fileira do ladrilho sólido mais alto da coluna (a plataforma de atravessar não conta); -1 = buraco.
+func _topo_solido(terreno: TileMapLayer, x: int) -> int:
+	var topo := -1
+	for celula in terreno.get_used_cells():
+		if celula.x == x and terreno.get_cell_atlas_coords(celula).x != ATLAS_PLATAFORMA:
+			topo = celula.y if topo < 0 else mini(topo, celula.y)
+	return topo
+
+
+## Há chão (ou outra plataforma) até `pulo` ladrilhos abaixo, nesta coluna ou nas 2 de cada lado?
+func _plataforma_alcancavel(terreno: TileMapLayer, celula: Vector2i, pulo: int) -> bool:
+	for dx in range(-VIZINHANCA, VIZINHANCA + 1):
+		for dy in range(1, pulo + 1):
+			var abaixo := Vector2i(celula.x + dx, celula.y + dy)
+			if terreno.get_cell_source_id(abaixo) >= 0:
+				return true
+	return false
 
 
 func _testar_porta_barra_e_abre() -> void:

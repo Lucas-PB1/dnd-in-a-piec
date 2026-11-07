@@ -15,6 +15,7 @@ func _rodar() -> void:
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false  # joga direto com a sugestão da classe
 	root.add_child(cena)
+	cena.call(&"_entrar_fase", load("res://levels/fase_teste.tscn"))  # chão reto e aberto, sem degraus
 	_jogador = cena.get_node("Jogador")
 	for monstro in get_nodes_in_group(&"monstros"):
 		monstro.free()

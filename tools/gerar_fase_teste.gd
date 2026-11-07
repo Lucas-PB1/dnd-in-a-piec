@@ -6,6 +6,9 @@ extends SceneTree
 ##   #  chão (grama no topo, terra embaixo)
 ##   P  pedra
 ##   =  plataforma (atravessa por baixo)
+##  Relevo de cada fase (opcional): "degraus" [x, largura, altura] = chão elevado; "altas"
+##  [x, largura, fileiras acima do chão] = plataforma que se atravessa por baixo; "pontos"
+##  [x, fileira] = ponto de armadilha extra (em cima de um degrau ou de uma plataforma).
 ##   S  início do herói
 ##   A  ponto de armadilha (no chão, ou na fileira de cima quando está numa plataforma)
 ##   D  porta
@@ -70,9 +73,10 @@ func _fases() -> Array[Dictionary]:
 		{
 			"nome": "Clareira", "arquivo": "res://levels/fase_1.tscn", "no": "Fase",
 			"tema": 0, "indice": 1, "ultima": false, "quantidade": 1, "tipos": TIPOS_SEM_ARCO,
-			"largura": LARGURA_TESTE, "inicio": 2,
+			"largura": 40, "inicio": 2,
 			"buracos": [Vector2i(31, 2)], "plataformas": [],
 			"chao": [33, 34], "plataforma": [], "porta": 35, "muro": 36,
+			"degraus": [[12, 3, 1]], "altas": [[18, 4, 2], [25, 3, 2]], "pontos": [[19, 6]],
 		},
 		{
 			"nome": "Trilha", "arquivo": "res://levels/fase_2.tscn", "no": "Fase",
@@ -80,6 +84,7 @@ func _fases() -> Array[Dictionary]:
 			"largura": 46, "inicio": 2,
 			"buracos": [Vector2i(8, 2), Vector2i(21, 2), Vector2i(34, 2)], "plataformas": [],
 			"chao": [10, 23, 36], "plataforma": [], "porta": 39, "muro": 40,
+			"degraus": [[13, 2, 1], [15, 2, 2], [17, 2, 1]], "altas": [[27, 4, 2]], "pontos": [[15, 6], [28, 6]],
 		},
 		{
 			"nome": "Pântano", "arquivo": "res://levels/fase_3.tscn", "no": "Fase",
@@ -87,6 +92,7 @@ func _fases() -> Array[Dictionary]:
 			"largura": 48, "inicio": 2,
 			"buracos": [Vector2i(8, 2), Vector2i(30, 2)], "plataformas": [Vector2i(16, 3)],
 			"chao": [10, 33, 40], "plataforma": [17], "porta": 43, "muro": 44,
+			"degraus": [[22, 3, 2]], "altas": [[34, 3, 2], [38, 3, 3]], "pontos": [[23, 6], [35, 6], [39, 5]],
 		},
 		{
 			"nome": "Ruína", "arquivo": "res://levels/fase_4.tscn", "no": "Fase",
@@ -94,6 +100,7 @@ func _fases() -> Array[Dictionary]:
 			"largura": 48, "inicio": 2,
 			"buracos": [Vector2i(6, 2), Vector2i(18, 2)], "plataformas": [Vector2i(30, 3)],
 			"chao": [8, 38], "plataforma": [31], "arco": [25], "porta": 42, "muro": 43,
+			"degraus": [[10, 2, 1], [12, 3, 2], [15, 2, 1]], "altas": [[34, 3, 2]], "pontos": [[13, 6], [35, 6]],
 		},
 		{
 			"nome": "Fortaleza", "arquivo": "res://levels/fase_5.tscn", "no": "Fase",
@@ -101,6 +108,7 @@ func _fases() -> Array[Dictionary]:
 			"largura": 50, "inicio": 2,
 			"buracos": [Vector2i(8, 2), Vector2i(26, 2)], "plataformas": [Vector2i(19, 3)],
 			"chao": [10, 12, 40], "plataforma": [21], "arco": [33], "porta": 44, "muro": 45,
+			"degraus": [[14, 2, 1], [16, 2, 2], [36, 2, 1], [38, 1, 2]], "altas": [[25, 5, 2]], "pontos": [[16, 6], [27, 6], [38, 6]],
 		},
 	]
 	return fases
@@ -142,7 +150,24 @@ func _mapa_de(definicao: Dictionary) -> Array[String]:
 			for x: int in definicao.plataforma:
 				linha = _trocar(linha, x, "A")
 		linhas.append(linha)
+	_aplicar_relevo(linhas, definicao)
 	return linhas
+
+
+## Degraus (chão elevado), plataformas altas e pontos extras. O jogador sobe com o pulo de ~104 px:
+## degraus de até 2 ladrilhos e plataformas a 2 ladrilhos do chão (a 3 só a partir de outra).
+func _aplicar_relevo(linhas: Array[String], definicao: Dictionary) -> void:
+	for degrau: Array in definicao.get("degraus", []):
+		for altura in int(degrau[2]):
+			var fileira := LINHA_ACAO - altura
+			for x in int(degrau[1]):
+				linhas[fileira] = _trocar(linhas[fileira], int(degrau[0]) + x, "#")
+	for alta: Array in definicao.get("altas", []):
+		var fileira := LINHA_ACAO + 1 - int(alta[2])
+		for x in int(alta[1]):
+			linhas[fileira] = _trocar(linhas[fileira], int(alta[0]) + x, "=")
+	for ponto: Array in definicao.get("pontos", []):
+		linhas[int(ponto[1])] = _trocar(linhas[int(ponto[1])], int(ponto[0]), "A")
 
 
 func _gravar(definicao: Dictionary, mapa: Array[String], tema: int, muro: int) -> void:

@@ -14,6 +14,9 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 | 2 | **Subclasse do Guerreiro** | M | `core/dados/`, criação, combate | O nível 3 ainda não oferece a escolha de subclasse nem seus recursos. |
 | 3 | **Testes de habilidade nas fases** | M | `levels/`, interações e perícias | A regra e o toggle de Mente Tática estão prontos; falta uma interação que peça um teste de habilidade do herói. |
 | 4 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |
+| 5 | **Sprites novos dos monstros** | M | `features/goblin/`, `tools/gerar_goblin*.gd` | Não há pacote CC0 melhor. Opção paga: [Rpg miniatures: The Goblins](https://ivoryred.itch.io/rpg-miniatures-the-goblins) (US$ 2,99, 4 goblins com dano e morte), só se o usuário comprar. |
+| 6 | **Arte própria do Pântano e da Ruína** | M | `levels/fundo_paralaxe.gd`, `assets/fundos/` | Hoje reusam floresta e fortaleza em outro tom. Faltam camadas de pântano e de ruína (não achei CC0). |
+| 7 | **Ataques novos dos monstros** | M | `core/dados/criatura_rpg.gd`, estados | Só com fonte no livro (ex.: criatura nova com ataques próprios). O Ooze, o Minion e o Warrior já usam todos os ataques das fichas. |
 
 ## 2. Regras do livro que ainda não existem
 

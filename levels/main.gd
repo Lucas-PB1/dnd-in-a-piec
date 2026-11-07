@@ -209,9 +209,9 @@ func _entrar_fase(cena: PackedScene) -> void:
 	_hud.mostrar_surto(_jogador.ficha.nivel, true)
 
 
-## Baú e boneco ficam na clareira. Nas outras fases não ocupam o caminho.
+## Baú e boneco ficam na clareira (e na fase reta de teste, índice 0). Nas outras fases não ocupam o caminho.
 func _atualizar_pecas_da_fase() -> void:
-	var na_primeira := _fase.indice == 1
+	var na_primeira := _fase.indice <= 1
 	_bau.visible = na_primeira
 	_boneco.visible = na_primeira
 	var modo := Node.PROCESS_MODE_INHERIT if na_primeira else Node.PROCESS_MODE_DISABLED

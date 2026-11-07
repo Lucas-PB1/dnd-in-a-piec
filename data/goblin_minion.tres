@@ -40,3 +40,4 @@ arma_arremesso = ExtResource("2_adaga")
 tem_furtividade = true
 bonus_furtividade = 6
 fuga_agil = true
+patrulha_pes = 15.0

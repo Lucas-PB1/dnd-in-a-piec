@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://features/goblin/goblin.gd" id="1_script"]
 [ext_resource type="Resource" path="res://data/goblin_warrior.tres" id="2_criatura"]
 [ext_resource type="SpriteFrames" path="res://features/goblin/sprites/goblin_guerreiro_frames.tres" id="3_frames"]
+[ext_resource type="Script" path="res://core/componentes/tremor_component.gd" id="22_tremor"]
 [ext_resource type="Script" path="res://core/componentes/health_component.gd" id="4_vida"]
 [ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="5_hurtbox"]
 [ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="6_defesa"]
@@ -19,6 +20,7 @@
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_caido.gd" id="17_caido"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_arremessando.gd" id="18_arremessando"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_desengajando.gd" id="19_desengajando"]
+[ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_patrulhando.gd" id="21_patrulhando"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_escondido.gd" id="20_escondido"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
@@ -42,6 +44,10 @@ altura_mao = 30.0
 [node name="Colisao" type="CollisionShape2D" parent="."]
 position = Vector2(0, -24)
 shape = SubResource("FormaCorpo")
+
+[node name="Sombra" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 0.3)
+polygon = PackedVector2Array(13.0, 0.0, 12.0, 1.1, 9.2, 2.1, 5.0, 2.8, 0.0, 3.0, -5.0, 2.8, -9.2, 2.1, -12.0, 1.1, -13.0, 0.0, -12.0, -1.1, -9.2, -2.1, -5.0, -2.8, -0.0, -3.0, 5.0, -2.8, 9.2, -2.1, 12.0, -1.1)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(1.6, 1.6)
@@ -117,3 +123,10 @@ script = ExtResource("14_morrendo")
 
 [node name="Caido" type="Node" parent="MaquinaEstados"]
 script = ExtResource("17_caido")
+
+[node name="Patrulhando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("21_patrulhando")
+
+[node name="Tremor" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("22_tremor")
+sprite = NodePath("../Sprite")

@@ -23,6 +23,8 @@ const MASCARA_MUNDO := 1
 @export var velocidade_empurrao: float = 320.0
 ## Achatamento do sprite enquanto está Caído (multiplica a escala da cena).
 @export var escala_caido: Vector2 = Vector2(1.25, 0.55)
+## Cor do brilho do aviso antes do Pseudópode.
+@export var cor_aviso: Color = Color(1.0, 0.9, 0.35)
 
 ## Alvo perseguido (ex.: o herói). Sem alvo, fica parado.
 var alvo: Node2D
@@ -39,6 +41,7 @@ var _posicao_sprite: Vector2
 var _escala_sprite: Vector2
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
+@onready var _tremor: TremorComponent = $Tremor
 @onready var _vida: HealthComponent = $Vida
 @onready var _defesa: DefesaComponent = $Defesa
 @onready var _texto: TextoFlutuanteComponent = $Texto
@@ -145,6 +148,32 @@ func tocar(animacao: StringName) -> void:
 
 func animacao_terminou() -> bool:
 	return not _sprite.is_playing()
+
+
+## Levou dano: o sprite treme por `duracao` s.
+func tremer(duracao: float) -> void:
+	_tremor.tremer(duracao)
+
+
+func parar_tremor() -> void:
+	_tremor.parar()
+
+
+## Aviso antes do Pseudópode: quanto dura (s), vindo da ficha.
+func tempo_aviso() -> float:
+	return criatura.aviso_ataque
+
+
+## Começa o aviso: para, olha para o alvo e brilha.
+func preparar_aviso() -> void:
+	parar()
+	virar_para_alvo()
+	tocar(&"parado")
+	_sprite.modulate = cor_aviso
+
+
+func encerrar_aviso() -> void:
+	_sprite.modulate = Color.WHITE
 
 
 func iniciar_ataque() -> void:
