@@ -1,7 +1,8 @@
 class_name BotaoToque
 extends Control
 ## Botão redondo na tela de toque: o dedo em cima aperta a `acao` do InputMap, como a tecla
-## (segurar = segurar; dois toques rápidos = toque duplo). Vários dedos ao mesmo tempo: cada
+## (segurar = segurar; dois toques rápidos = toque duplo). Os eventos também chegam às telas
+## que escutam `_unhandled_input`. Vários dedos ao mesmo tempo: cada
 ## botão guarda o dedo que o apertou. Com o jogo pausado não aperta (há um menu por cima),
 ## mas solta sempre, para nada ficar preso.
 
@@ -50,7 +51,7 @@ func _input(evento: InputEvent) -> void:
 		return
 	if toque.pressed and _dedo == SEM_DEDO and not editando and is_visible_in_tree() and not get_tree().paused and _contem(toque.position):
 		_dedo = toque.index
-		Input.action_press(acao)
+		_enviar_acao(true)
 		queue_redraw()
 		get_viewport().set_input_as_handled()
 	elif not toque.pressed and toque.index == _dedo:
@@ -66,8 +67,24 @@ func soltar() -> void:
 	if _dedo == SEM_DEDO:
 		return
 	_dedo = SEM_DEDO
-	Input.action_release(acao)
+	_enviar_acao(false)
 	queue_redraw()
+
+
+func _enviar_acao(apertada: bool) -> void:
+	if apertada:
+		Input.action_press(acao)
+	else:
+		Input.action_release(acao)
+	call_deferred("_propagar_evento_acao", apertada)
+
+
+func _propagar_evento_acao(apertada: bool) -> void:
+	var evento := InputEventAction.new()
+	evento.action = acao
+	evento.pressed = apertada
+	evento.strength = 1.0 if apertada else 0.0
+	Input.parse_input_event(evento)
 
 
 func _notification(qual: int) -> void:

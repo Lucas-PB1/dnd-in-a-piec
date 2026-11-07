@@ -69,11 +69,14 @@ func _ready() -> void:
 	_jogador.caiu.connect(_ao_cair)
 	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
+	_inventario.fechou.connect(_ao_fechar_modal)
 	_bau.abrir_pedido.connect(_abrir_bau)
+	_tela_bau.fechou.connect(_ao_fechar_modal)
 	_comandos.abrir_pedido.connect(_abrir_comandos)
+	_comandos.fechou.connect(_ao_fechar_modal)
 	_comandos.trazer_pedido.connect(trazer_criatura)
 	_comandos.tirar_pedido.connect(tirar_criaturas)
-	_comandos.opcoes_toque_mudaram.connect(_controles_toque.atualizar)
+	_comandos.opcoes_toque_mudaram.connect(_atualizar_controles_toque)
 	_comandos.editar_toque_pedido.connect(_editar_toque)
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
 	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior"]), _cenas_criaturas())
@@ -362,6 +365,7 @@ func _abrir_inventario() -> void:
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
+	_controles_toque.atualizar(true)
 
 
 func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool, destreza: int) -> void:
@@ -385,12 +389,22 @@ func _abrir_bau(itens: Array[Item]) -> void:
 	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible:
 		return
 	_tela_bau.abrir(itens, _jogador.inventario)
+	_controles_toque.atualizar(true)
 
 
 func _abrir_comandos() -> void:
 	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible:
 		return
 	_comandos.abrir()
+	_controles_toque.atualizar(true)
+
+
+func _ao_fechar_modal() -> void:
+	_atualizar_controles_toque()
+
+
+func _atualizar_controles_toque() -> void:
+	_controles_toque.atualizar(_em_tela_de_pausa or get_tree().paused)
 
 
 ## Ajustar os controles de toque: o jogo fica pausado até o Pronto.

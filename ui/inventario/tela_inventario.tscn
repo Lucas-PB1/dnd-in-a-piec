@@ -119,11 +119,21 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 13
 autowrap_mode = 3
 
-[node name="Dica" type="Label" parent="Centro/Painel/Coluna"]
+[node name="Rodape" type="HBoxContainer" parent="Centro/Painel/Coluna"]
 layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Dica" type="Label" parent="Centro/Painel/Coluna/Rodape"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"Dica"
 text = "I ou Esc: fechar"
 horizontal_alignment = 1
+
+[node name="Fechar" type="Button" parent="Centro/Painel/Coluna/Rodape"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fechar"
 
 [node name="Confirmacao" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true

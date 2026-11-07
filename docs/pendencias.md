@@ -10,7 +10,7 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 
 | # | Fatia | Tam. | Onde mexe | Observação |
 |---|---|---|---|---|
-| 1 | **Exportar o APK (Android)** | M | `export_presets.cfg`, `docs/exportar_android.md` | O preset está pronto; faltam JDK, Android SDK e modelos de exportação do Godot nesta máquina. Testar os controles de toque com o dedo. |
+| 1 | **Validar o APK num celular Android** | P | `builds/android/dnd_in_a_piece.apk`, controles de toque | APK exportável; falta conferir no aparelho o tamanho dos alvos, movimento durante o ataque e resposta do pulo. |
 | 2 | **Subclasse do Guerreiro** | M | `core/dados/`, criação, combate | O nível 3 ainda não oferece a escolha de subclasse nem seus recursos. |
 | 3 | **Testes de habilidade nas fases** | M | `levels/`, interações e perícias | A regra e o toggle de Mente Tática estão prontos; falta uma interação que peça um teste de habilidade do herói. |
 | 4 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |

@@ -6,6 +6,8 @@ extends Control
 
 ## Emitido quando o jogador aperta I com a tela fechada.
 signal abrir_pedido
+## Emitido ao fechar a tela para quem controla a interface de toque.
+signal fechou
 
 const MARCA_EQUIPADO := "[E] "
 const MARCA_PROFICIENTE := "*"
@@ -25,6 +27,7 @@ var _texto_vida: String = ""
 @onready var _painel_ficha: Control = %PainelFicha
 @onready var _aba_item: Button = %AbaItem
 @onready var _aba_ficha: Button = %AbaFicha
+@onready var _botao_fechar: Button = %Fechar
 @onready var _texto_ficha: Label = %TextoFicha
 @onready var _confirmacao: ConfirmationDialog = %Confirmacao
 
@@ -37,6 +40,7 @@ func _ready() -> void:
 	_botao_jogar_fora.pressed.connect(_perguntar_jogar_fora)
 	_aba_item.pressed.connect(_mostrar_item.bind(true))
 	_aba_ficha.pressed.connect(_mostrar_item.bind(false))
+	_botao_fechar.pressed.connect(fechar)
 	_confirmacao.confirmed.connect(jogar_fora_selecionado)
 
 
@@ -75,6 +79,7 @@ func fechar() -> void:
 		_inventario.mudou.disconnect(_atualizar)
 	hide()
 	get_tree().paused = false
+	fechou.emit()
 
 
 func equipar_selecionado() -> void:

@@ -83,3 +83,8 @@ text = "Trazer"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Tirar da arena"
+
+[node name="Fechar" type="Button" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Fechar"

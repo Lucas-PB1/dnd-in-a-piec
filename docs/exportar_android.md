@@ -31,5 +31,8 @@ Android SDK.
 3. Instale `builds/android/dnd_in_a_piece.apk` no celular e teste o analógico, pulo, ataque,
    Fôlego, Surto e o toggle de Mente Tática.
 
+O APK atual foi exportado e assinado para depuração. Os testes automatizados exercitam o toque,
+mas ainda é necessário conferir a sensação dos controles num aparelho físico.
+
 O preset habilita arm64 e arm32. Para publicar na Google Play, configure uma chave de lançamento
 própria e exporte um AAB; não compartilhe uma chave privada no repositório.

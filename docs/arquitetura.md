@@ -135,7 +135,8 @@ Mesmo molde (copie o Goblin, que é o mais completo):
 - Ações do InputMap (`project.godot`): `mover_esquerda`, `mover_direita`, `mover_baixo`, `pular`,
   `atacar`, `arremessar`, `folego`, `inventario`, `interagir`, `comandos`, `correr`, `mirar_cima`.
 - O código de jogo **só lê ações** (`Input.is_action_*`). Teclado e toque apertam as mesmas ações:
-  `ControlesToque` usa `Input.action_press/release`.
+  `BotaoToque` mantém a ação pressionada e propaga `InputEventAction` para telas que tratam
+  interações em `_unhandled_input`; `AnalogicoToque` mantém as ações direcionais.
 - `Comandos` (`core/utilitarios/`): troca de tecla e `user://comandos.cfg`.
   `OpcoesToque`: modo, quando aparecer, layout e transparência em `user://toque.cfg`.
 

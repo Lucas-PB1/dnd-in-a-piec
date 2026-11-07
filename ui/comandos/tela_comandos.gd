@@ -14,6 +14,8 @@ signal tirar_pedido
 signal opcoes_toque_mudaram
 ## Emitido ao escolher "Ajustar botões": quem monta o jogo abre a edição do layout de toque.
 signal editar_toque_pedido
+## Emitido ao fechar a tela para quem controla a interface de toque.
+signal fechou
 
 const TAMANHO_FONTE_LINHA := 12
 
@@ -27,6 +29,7 @@ var _lista_mostrar: OptionButton
 @onready var _lista_criaturas: ItemList = %ListaCriaturas
 @onready var _trazer: Button = %Trazer
 @onready var _tirar: Button = %Tirar
+@onready var _fechar: Button = %Fechar
 @onready var _coluna_combate: VBoxContainer = $Centro/Painel/Coluna/Miolo/Combate
 
 
@@ -42,6 +45,7 @@ func _ready() -> void:
 		_lista_acoes.add_child(botao)
 	_trazer.pressed.connect(_pedir_trazer)
 	_tirar.pressed.connect(tirar_pedido.emit)
+	_fechar.pressed.connect(fechar)
 	_criar_opcoes_toque()
 	set_process_input(false)
 	_atualizar_rotulos()
@@ -90,6 +94,7 @@ func fechar() -> void:
 	set_process_input(false)
 	hide()
 	get_tree().paused = false
+	fechou.emit()
 
 
 func _escolher_acao(acao: StringName) -> void:

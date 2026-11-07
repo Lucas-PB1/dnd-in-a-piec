@@ -7,6 +7,8 @@ extends SceneTree
 
 const DEDO_BOTAO := 1
 const DEDO_ANALOGICO := 0
+const DEDO_BOTAO_EXTRA := 2
+const ESPERA_SURTO_SEGUNDOS := 1.2
 ## Fração do raio do analógico: andar (antes da zona de corrida) e correr (na borda).
 const ANDAR := 0.5
 const CORRER := 1.0
@@ -45,6 +47,10 @@ func _rodar() -> void:
 	await _testar_analogico()
 	await _testar_setas()
 	await _testar_correr_segurado()
+	await _testar_ataque_em_movimento()
+	await _testar_botoes_de_acao()
+	await _testar_mente_tatica_no_toque()
+	await _testar_telas_no_toque()
 	_testar_pausa()
 	await _testar_edicao()
 	_main.queue_free()
@@ -72,13 +78,14 @@ func _testar_botao() -> void:
 	var pular := _controles.botao(&"pular")
 	_tocar(DEDO_BOTAO, _centro(pular), true)
 	_checar(Input.is_action_pressed(&"pular"), "dedo no botão Pular aperta a ação pular")
+	await _esperar(2)
+	_checar(_jogador.velocity.y < 0.0, "toque em Pular inicia o salto do personagem")
 	_tocar(DEDO_BOTAO, _centro(pular), false)
 	_checar(not Input.is_action_pressed(&"pular"), "tirar o dedo solta a ação")
+	await _no_chao()
 	_tocar(DEDO_BOTAO, Vector2(2, 2), true)
 	_checar(not Input.is_action_pressed(&"pular") and not Input.is_action_pressed(&"atacar"), "toque fora dos botões não aperta nada")
 	_tocar(DEDO_BOTAO, Vector2(2, 2), false)
-	await _esperar(10)  # o pulo pedido pelo botão sai no próximo quadro (buffer)
-	await _no_chao()
 
 
 func _testar_analogico() -> void:
@@ -132,6 +139,115 @@ func _testar_correr_segurado() -> void:
 	_checar(_jogador.nome_estado() == &"Andando", "largar o correr: volta a andar")
 	Input.action_release(&"mover_esquerda")
 	await _esperar(30)
+
+
+func _testar_ataque_em_movimento() -> void:
+	var analogico := _controles.analogico()
+	var centro := _centro(analogico)
+	var raio := analogico.size.x / 2.0
+	_tocar(DEDO_ANALOGICO, centro, true)
+	_arrastar(DEDO_ANALOGICO, centro + Vector2(raio * ANDAR, 0.0))
+	await _esperar(8)
+	var inicio := _jogador.global_position.x
+	var atacar := _controles.botao(&"atacar")
+	_tocar(DEDO_BOTAO, _centro(atacar), true)
+	await _esperar(4)
+	_checar(_jogador.nome_estado() == &"Atacando", "segundo dedo inicia o ataque enquanto o analógico anda")
+	_checar(_jogador.global_position.x > inicio + 1.0, "o personagem continua andando durante o ataque")
+	var pular := _controles.botao(&"pular")
+	_tocar(DEDO_BOTAO_EXTRA, _centro(pular), true)
+	await _esperar(2)
+	_checar(_jogador.velocity.y < 0.0, "terceiro dedo consegue pular durante o ataque")
+	_tocar(DEDO_BOTAO_EXTRA, _centro(pular), false)
+	_tocar(DEDO_BOTAO, _centro(atacar), false)
+	_tocar(DEDO_ANALOGICO, centro, false)
+	await _no_chao()
+
+
+func _testar_botoes_de_acao() -> void:
+	var usos_antes := _jogador.usos_folego()
+	var folego := _controles.botao(&"folego")
+	_tocar(DEDO_BOTAO, _centro(folego), true)
+	await _esperar(2)
+	_tocar(DEDO_BOTAO, _centro(folego), false)
+	await _esperar(2)
+	_checar(_jogador.usos_folego() == usos_antes - 1, "toque em Fôlego ativa a habilidade do Guerreiro")
+
+	for acao in [&"arremessar", &"surto_acao"]:
+		var botao := _controles.botao(acao)
+		_tocar(DEDO_BOTAO, _centro(botao), true)
+		await process_frame
+		_checar(Input.is_action_pressed(acao), "botão %s envia a ação ao InputMap" % acao)
+		_tocar(DEDO_BOTAO, _centro(botao), false)
+		await process_frame
+		_checar(not Input.is_action_pressed(acao), "botão %s solta a ação ao tirar o dedo" % acao)
+
+
+func _testar_mente_tatica_no_toque() -> void:
+	_jogador.ganhar_experiencia(Ficha.XP_POR_NIVEL[2])
+	var toggle: CheckButton = _main.get_node("Hud/Coluna/MenteTatica")
+	_checar(not toggle.disabled, "Mente Tática fica habilitada no nível 2")
+	await _tocar_interface(toggle)
+	_checar(_jogador.mente_tatica_ligada(), "toque liga Mente Tática")
+	await _tocar_interface(toggle)
+	_checar(not _jogador.mente_tatica_ligada(), "toque desliga Mente Tática")
+
+	_main.trazer_criatura(load("res://features/gray_ooze/gray_ooze.tscn"))
+	await _esperar(2)
+	var inimigos := get_nodes_in_group(&"monstros")
+	var surto := _controles.botao(&"surto_acao")
+	_tocar(DEDO_BOTAO, _centro(surto), true)
+	await _esperar(2)
+	_tocar(DEDO_BOTAO, _centro(surto), false)
+	await process_frame
+	_checar(_main._surto_usado and not inimigos.is_empty()
+		and inimigos[0].process_mode == Node.PROCESS_MODE_DISABLED,
+		"Surto pelo toque paralisa o inimigo e consome o uso da fase")
+	await create_timer(ESPERA_SURTO_SEGUNDOS).timeout
+	_checar(inimigos[0].process_mode == Node.PROCESS_MODE_INHERIT, "inimigo volta a agir depois do Surto")
+	_main.tirar_criaturas()
+
+
+func _testar_telas_no_toque() -> void:
+	var inventario: TelaInventario = _main.get_node("Interface/TelaInventario")
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"inventario")), true)
+	await process_frame
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"inventario")), false)
+	await process_frame
+	_checar(inventario.visible and paused and not _controles.esta_visivel(), "Bolsa abre pelo toque e esconde os controles pausados")
+	await _tocar_interface(inventario.get_node("%Fechar"))
+	_checar(not inventario.visible and not paused and _controles.esta_visivel(), "Fechar do inventário responde ao toque e restaura os controles")
+
+	var comandos: TelaComandos = _main.get_node("Interface/TelaComandos")
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"comandos")), true)
+	await process_frame
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"comandos")), false)
+	await process_frame
+	_checar(comandos.visible and paused and not _controles.esta_visivel(), "Menu abre pelo toque e esconde os controles pausados")
+	comandos.opcoes_toque_mudaram.emit()
+	_checar(not _controles.esta_visivel(), "atualizar opções não mostra controles sobre o menu pausado")
+	await _tocar_interface(comandos.get_node("%Fechar"))
+	_checar(not comandos.visible and not paused and _controles.esta_visivel(), "Fechar dos comandos responde ao toque e restaura os controles")
+
+	var bau: Node2D = _main.get_node("Bau")
+	_jogador.posicionar_no_inicio(bau.global_position + Vector2(-35.0, 0.0))
+	await _esperar(5)
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"interagir")), true)
+	await process_frame
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"interagir")), false)
+	await process_frame
+	var tela_bau: TelaBau = _main.get_node("Interface/TelaBau")
+	_checar(tela_bau.visible and paused and not _controles.esta_visivel(), "E abre o baú pelo toque e esconde os controles pausados")
+	await _tocar_interface(tela_bau.get_node("%Fechar"))
+	_checar(not tela_bau.visible and not paused and _controles.esta_visivel(), "Fechar do baú responde ao toque e restaura os controles")
+
+
+func _tocar_interface(controle: Control) -> void:
+	var centro := _centro(controle)
+	_tocar(DEDO_BOTAO_EXTRA, centro, true)
+	await process_frame
+	_tocar(DEDO_BOTAO_EXTRA, centro, false)
+	await process_frame
 
 
 func _testar_pausa() -> void:

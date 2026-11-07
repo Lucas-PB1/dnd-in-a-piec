@@ -1,6 +1,6 @@
 extends EstadoJogador
-## Golpe da arma. No chão o herói freia e fica firme (peso de Guerreiro), mas armas curtas
-## dão um passo à frente para a ponta chegar ao alcance; no ar ele continua caindo.
+## Golpe da arma. No chão, o herói mantém o deslocamento enquanto golpeia; armas curtas
+## ainda dão um passo à frente para a ponta chegar ao alcance. No ar continua caindo.
 ## Não vira de lado durante o golpe. Quando o golpe acaba, volta a se mexer.
 
 
@@ -9,10 +9,9 @@ func entrar() -> void:
 
 
 func processar_fisica(delta: float) -> void:
-	if jogador.is_on_floor() and jogador.velocidade_do_passo() != 0.0:
-		jogador.velocity.x = jogador.velocidade_do_passo()
-	elif jogador.is_on_floor():
-		jogador.mover_horizontal(0.0, jogador.velocidade_andar(), delta, false)
+	if jogador.is_on_floor():
+		jogador.tentar_pular()
+		_mover_no_chao(delta)
 	else:
 		jogador.aplicar_gravidade(delta)
 		jogador.cortar_pulo_se_soltou()
@@ -22,6 +21,18 @@ func processar_fisica(delta: float) -> void:
 			jogador.iniciar_golpe_extra()
 			return
 		trocar_para.emit(_proximo_estado())
+
+
+func _mover_no_chao(delta: float) -> void:
+	var direcao := jogador.direcao()
+	var manteve_disparada := jogador.correr_segurado() or jogador.pediu_corrida() != 0
+	var veio_correndo := absf(jogador.velocity.x) > jogador.velocidade_andar() + VELOCIDADE_PARADO
+	var maxima := jogador.velocidade_corrida() if manteve_disparada or veio_correndo else jogador.velocidade_andar()
+	var passo := jogador.velocidade_do_passo()
+	if passo != 0.0:
+		jogador.velocity.x = passo + direcao * maxima
+	else:
+		jogador.mover_horizontal(direcao, maxima, delta, false)
 
 
 func _proximo_estado() -> StringName:

@@ -9,6 +9,9 @@ const FILTRO_TUDO := 0
 const FILTRO_ARMAS := 1
 const FILTRO_ARMADURAS := 2
 
+## Emitido ao fechar a tela para quem controla a interface de toque.
+signal fechou
+
 var _itens: Array[Item] = []
 var _visiveis: Array[Item] = []
 var _inventario: Inventario
@@ -58,6 +61,7 @@ func abrir(itens: Array[Item], inventario: Inventario) -> void:
 func fechar() -> void:
 	hide()
 	get_tree().paused = false
+	fechou.emit()
 
 
 ## Põe uma cópia do item selecionado na mochila. Devolve false se não deu (mochila cheia).

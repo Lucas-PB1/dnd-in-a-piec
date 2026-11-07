@@ -146,6 +146,7 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
 - Campanha de cinco fases com terrenos variados, encontros sorteados, portas com cota de inimigos e tela de vitória.
 - Armas à distância com a arte do Aerial Arsenal e força do tiro por arma.
 - Goblin Minion (arremessa adagas, golpeia, Fuga Ágil) e Goblin Warrior (cimitarra, arco curto), na tela de comandos (Trazer) e nos encontros da campanha.
-- Celular: tela larga, controles de toque (analógico ou setas + botões) e ajuste do layout.
+- Celular: tela larga, controles de toque (analógico ou setas + botões) e ajuste do layout; Bolsa, Menu e E respondem ao toque, com fechamento visível; ataque em movimento e pulo durante o golpe.
 - Progressão do Guerreiro níveis 1–3: XP, PV por nível, dificuldade aleatória escalada; Surto de Ação e Mente Tática no nível 2; descanso longo entre fases.
+- APK Android de depuração em `builds/android/dnd_in_a_piece.apk`; falta validar o toque num aparelho físico.
 - Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.
