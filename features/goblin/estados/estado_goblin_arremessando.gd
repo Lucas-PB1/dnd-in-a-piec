@@ -24,7 +24,7 @@ func processar_fisica(delta: float) -> void:
 		if avisando(delta):
 			return
 		_comecou = true
-		goblin.iniciar_ataque()
+		goblin.iniciar_ataque(goblin.animacao_distancia)
 		return
 	_tempo += delta
 	if _tempo >= goblin.momento_soltura and not _soltou:

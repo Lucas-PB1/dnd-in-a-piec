@@ -1,0 +1,387 @@
+{
+  "versao": 1,
+  "regras_de_custo": {
+    "personagem_base": 12,
+    "primeira_animacao_da_rodada": 20,
+    "animacao_extra_na_rodada": 14,
+    "preparo_de_pose_andar_ou_correr": 12,
+    "imagem_pixel_engine": 6,
+    "imagem_modelo_padrao": 12,
+    "animar_imagem": 20
+  },
+  "ancoras": {
+    "heroi": "young adventurer in side view facing right, feet planted on the same ground line, same camera angle",
+    "monstro": "side view facing right, feet planted on the same ground line, same camera angle",
+    "esqueleto_do_personagem_base": "side profile facing right, cute chibi proportions, clean dark outline, readable silhouette, full body"
+  },
+  "rodadas": {
+    "heroi_essencial": {"personagem": "b484dd94-593b-4f7b-a97a-0786ac93147d", "descricao": "Herói: golpe de cima, dano e morte numa rodada só (a 1ª custa 20, as outras 14)."},
+    "heroi_extras": {"personagem": "b484dd94-593b-4f7b-a97a-0786ac93147d", "descricao": "Herói: poses de cura, Surto de Ação e rolar."},
+    "goblin_minion": {"personagem": "novo", "descricao": "Goblin Minion: personagem novo + animações numa rodada."},
+    "goblin_warrior": {"personagem": "novo", "descricao": "Goblin Warrior: personagem novo + animações numa rodada."},
+    "gray_ooze": {"personagem": "novo", "descricao": "Gray Ooze (opcional: o slime CC0 atual já tem as 5 animações)."}
+  },
+  "itens": [
+    {
+      "id": "h_corte_cima", "grupo": "heroi", "prioridade": 1, "rodada": "heroi_essencial",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Herói: corte de cima",
+      "prompt": "The young adventurer in side view facing right, feet planted on the same ground line, same camera angle. Frames 1-2: the right fist, gripping an invisible sword hilt, lifts up and back above the head while the torso leans back and the knees bend. Frames 3-4: the body snaps forward and the arm swings down in a heavy diagonal arc across the body, shoulders and hips driving the swing, the front foot pressing into the ground. Frames 5-6: a short follow-through with the arm extended low in front, the backpack and messy hair bouncing. Frames 7-8: recover smoothly to the starting standing pose. Hands only, nothing drawn in the hand, no effects. Keep the same outline, colors and proportions in every frame.",
+      "negativo": "weapon, sword, turning around, back view, facing the camera, extra limbs, motion lines, speed effects, text",
+      "conferir": ["Corpo sempre de lado, virado para a direita (nenhum quadro de costas ou de frente).", "Braço sobe atrás da cabeça nos quadros 1-2 e desce na diagonal nos 3-4 (o acerto do jogo cai nos quadros 3-5).", "Nada desenhado na mão, sem linhas de movimento.", "Último quadro volta à pose parada."],
+      "alerta": "O 1º teste (mãos vazias) saiu como soco. Aqui o pedido é 'segurando um cabo invisível'; se vier soco de novo, repetir com 'both hands gripping' no lugar."
+    },
+    {
+      "id": "h_dano", "grupo": "heroi", "prioridade": 1, "rodada": "heroi_essencial",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Herói: levar dano",
+      "prompt": "The young adventurer in side view facing right, feet planted on the same ground line, same camera angle. Frames 1-2: a sudden hit, the head and shoulders snap backward, the torso arches and the arms lift slightly from the hips. Frames 3-4: the knees bend and he staggers one small step backward while the backpack swings forward. Frames 5-6: he steadies his feet and straightens up. Frames 7-8: settle smoothly back into the starting standing pose. No effects, no impact stars, no text. Keep the same outline, colors and proportions in every frame.",
+      "negativo": "turning around, back view, facing the camera, extra limbs, impact stars, blood, motion lines, text",
+      "conferir": ["Cabeça e ombros para trás nos quadros 1-2.", "Um pequeno passo para trás (pés não deslizam).", "Sem estrelas nem sangue.", "Volta à pose parada no fim."],
+      "alerta": ""
+    },
+    {
+      "id": "h_morte", "grupo": "heroi", "prioridade": 1, "rodada": "heroi_essencial",
+      "tipo": "custom", "frames": 12, "source_view": "front_idle",
+      "titulo": "Herói: morte (cair)",
+      "prompt": "The young adventurer in side view facing right, same camera angle, on the same ground line. Frames 1-3: struck hard, the head snaps back, the arms fling outward and the torso arches. Frames 4-6: the knees buckle and he drops down onto his knees with his head hanging. Frames 7-9: he topples backward onto the ground, the backpack landing first. Frames 10-12: he lies flat on his back on the ground line, motionless, the last frame held perfectly still. No effects, no blood, no text. Keep the same outline, colors and proportions in every frame.",
+      "negativo": "turning around, facing the camera, extra limbs, blood, ghost, halo, motion lines, text",
+      "conferir": ["Cai para trás e termina deitado, imóvel, na linha do chão.", "O último quadro (12) é um quadro parado.", "Sem sangue, fantasma ou efeito.", "O corpo cabe no quadro de 80x80."],
+      "alerta": "12 quadros custam o mesmo que 8. Se o quadro 12 não ficar parado, o jogo segura o último quadro por código."
+    },
+    {
+      "id": "h_cura", "grupo": "heroi", "prioridade": 0, "rodada": "heroi_extras",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Herói: Fôlego (cura)",
+      "prompt": "The young adventurer in side view facing right, feet planted on the same ground line, same camera angle. Frames 1-2: he inhales deeply, the chest rises and the shoulders lift. Frames 3-5: both fists clench at the hips, the head tilts up and he exhales strongly while the body straightens with determination. Frames 6-8: he relaxes and settles back into the starting standing pose. No glow, no effects, no text. Keep the same outline, colors and proportions in every frame.",
+      "negativo": "turning around, back view, facing the camera, extra limbs, glow, sparkles, text",
+      "conferir": ["Respira fundo e solta, sem brilho (o brilho é feito por código).", "Sempre de lado, à direita."],
+      "alerta": ""
+    },
+    {
+      "id": "h_surto", "grupo": "heroi", "prioridade": 0, "rodada": "heroi_extras",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Herói: Surto de Ação",
+      "prompt": "The young adventurer in side view facing right, feet planted on the same ground line, same camera angle. Frames 1-2: he crouches slightly with both fists clenched and the jaw set. Frames 3-5: an explosive burst, the body leans hard forward, the arms pump back and the backpack swings, a fierce determined face. Frames 6-8: he holds an aggressive ready stance leaning forward, then eases back toward the starting pose. No effects, no aura, no text. Keep the same outline, colors and proportions in every frame.",
+      "negativo": "turning around, back view, facing the camera, extra limbs, aura, glow, motion lines, text",
+      "conferir": ["Agacha e explode para a frente nos quadros 3-5.", "Sem aura (a aura é por código)."],
+      "alerta": ""
+    },
+    {
+      "id": "h_rolar", "grupo": "heroi", "prioridade": 0, "rodada": "heroi_extras",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Herói: rolar / abaixar",
+      "prompt": "The young adventurer in side view facing right, on the same ground line, same camera angle. Frames 1-2: he crouches low and leans forward. Frames 3-6: he tucks into a forward roll along the ground, the body curled into a ball with the backpack on top, rotating once toward the right. Frames 7-8: he springs back up onto his feet into the starting standing pose. No effects, no dust, no text. Keep the same outline, colors and proportions in every frame.",
+      "negativo": "turning around, facing the camera, extra limbs, dust, motion lines, text",
+      "conferir": ["Rola uma vez para a direita e volta de pé.", "Sem poeira (a poeira é por código)."],
+      "alerta": ""
+    },
+    {
+      "id": "g_minion_base", "grupo": "goblin_minion", "prioridade": 1, "rodada": "goblin_minion",
+      "tipo": "personagem",
+      "titulo": "Goblin Minion: personagem base",
+      "prompt": "A small scrawny goblin, side profile facing right, large pointy ears, olive green skin, dirty brown rags, a rusty dagger in the right hand and a sly grin, cute chibi proportions, clean dark outline, readable silhouette, full body",
+      "negativo": "",
+      "conferir": ["Lado, virado para a direita, corpo inteiro.", "Menor que o herói (Pequeno no livro).", "Adaga na mão direita (ficha: adaga).", "Mesmo traço do herói: contorno escuro, proporções fofas."],
+      "alerta": "Gera 1 imagem base (12). As animações só valem se a base estiver boa: se não, refazer a base antes de animar."
+    },
+    {
+      "id": "g_minion_parado", "grupo": "goblin_minion", "prioridade": 1, "rodada": "goblin_minion",
+      "tipo": "preset", "preset": "idle", "frames": 8,
+      "titulo": "Goblin Minion: parado (preset)",
+      "prompt": "(preset 'idle' do SpriteCook, sem texto próprio)",
+      "negativo": "",
+      "conferir": ["Respira e balança as orelhas, sem sair do lugar."],
+      "alerta": "Usa o preset: já deu certo no herói."
+    },
+    {
+      "id": "g_minion_andar", "grupo": "goblin_minion", "prioridade": 1, "rodada": "goblin_minion",
+      "tipo": "preset", "preset": "walk", "frames": 8, "prep": true,
+      "titulo": "Goblin Minion: andar (preset, com pose de andar)",
+      "prompt": "(preset 'walk' do SpriteCook, sem texto próprio)",
+      "negativo": "",
+      "conferir": ["Passos alternados de lado, virado para a direita."],
+      "alerta": "O preparo da pose custa +12 (uma vez por rodada). Serve também de correr: o jogo acelera o andar."
+    },
+    {
+      "id": "g_minion_golpe", "grupo": "goblin_minion", "prioridade": 1, "rodada": "goblin_minion",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Goblin Minion: golpe de adaga",
+      "prompt": "The goblin in side view facing right, feet planted on the same ground line, same camera angle. Frames 1-2: the dagger hand pulls back beside the hip while the shoulders hunch. Frames 3-4: a quick stabbing lunge, the body snaps forward and the arm extends fully with the dagger pointing ahead. Frames 5-6: hold the extended pose briefly, then pull the arm back. Frames 7-8: return to the guarded stance. The dagger keeps the same size and color. No effects, no text.",
+      "negativo": "turning around, back view, facing the camera, extra weapons, extra limbs, motion lines, text",
+      "conferir": ["Braço estica nos quadros 3-4 (o acerto do jogo: 0,1 a 0,3 s).", "A adaga não muda de tamanho nem de cor."],
+      "alerta": ""
+    },
+    {
+      "id": "g_minion_arremesso", "grupo": "goblin_minion", "prioridade": 1, "rodada": "goblin_minion",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Goblin Minion: arremesso de adaga",
+      "prompt": "The goblin in side view facing right, feet planted on the same ground line, same camera angle. Frames 1-2: the throwing arm cocks back behind the head with the dagger raised, the body leaning back. Frames 3-4: an overhand throw, the arm whips forward and the hand opens at release, the body leaning into the throw. Frames 5-6: follow-through with the arm extended forward and the hand empty. Frames 7-8: return to the guarded stance. The thrown dagger is not drawn after release and nothing flies through the air. No effects, no text.",
+      "negativo": "turning around, back view, facing the camera, flying dagger, projectile, motion lines, extra limbs, text",
+      "conferir": ["A adaga sai da mão no quadro 3-4 e a mão fica vazia (a adaga voando é do jogo).", "Nada voando no quadro."],
+      "alerta": "Se a adaga continuar desenhada voando, recortar por código ou refazer."
+    },
+    {
+      "id": "g_minion_dano", "grupo": "goblin_minion", "prioridade": 1, "rodada": "goblin_minion",
+      "tipo": "preset", "preset": "hurt", "frames": 8,
+      "titulo": "Goblin Minion: levar dano (preset)",
+      "prompt": "(preset 'hurt' do SpriteCook, sem texto próprio)",
+      "negativo": "",
+      "conferir": ["Recua com o impacto e volta à pose."],
+      "alerta": "Economia: o jogo já treme e pisca ao apanhar. Se faltar crédito, este quadro pode ficar de fora (-14)."
+    },
+    {
+      "id": "g_minion_morte", "grupo": "goblin_minion", "prioridade": 1, "rodada": "goblin_minion",
+      "tipo": "preset", "preset": "death", "frames": 12,
+      "titulo": "Goblin Minion: morte (preset)",
+      "prompt": "(preset 'death' do SpriteCook, sem texto próprio)",
+      "negativo": "",
+      "conferir": ["Cai e fica deitado, imóvel, no último quadro."],
+      "alerta": "Economia: dá para trocar por cair e sumir por código (-14)."
+    },
+    {
+      "id": "g_warrior_base", "grupo": "goblin_warrior", "prioridade": 1, "rodada": "goblin_warrior",
+      "tipo": "personagem",
+      "titulo": "Goblin Warrior: personagem base",
+      "prompt": "A goblin warrior, side profile facing right, green skin, large pointy ears, a scarred cheek, studded leather armor, a small round wooden shield on the left arm and a curved scimitar in the right hand, cute chibi proportions, clean dark outline, readable silhouette, full body",
+      "negativo": "",
+      "conferir": ["Escudo redondo no braço esquerdo, cimitarra na direita (ficha: CA 15 com escudo).", "Um pouco maior e mais forte que o Minion, mas ainda Pequeno."],
+      "alerta": "Se quiser economizar: reaproveitar a base do Minion com outra cor (-114) perde o escudo e a cimitarra."
+    },
+    {
+      "id": "g_warrior_parado", "grupo": "goblin_warrior", "prioridade": 1, "rodada": "goblin_warrior",
+      "tipo": "preset", "preset": "idle", "frames": 8,
+      "titulo": "Goblin Warrior: parado (preset)",
+      "prompt": "(preset 'idle' do SpriteCook, sem texto próprio)", "negativo": "",
+      "conferir": ["Respira, escudo e cimitarra acompanham."], "alerta": ""
+    },
+    {
+      "id": "g_warrior_andar", "grupo": "goblin_warrior", "prioridade": 1, "rodada": "goblin_warrior",
+      "tipo": "preset", "preset": "walk", "frames": 8, "prep": true,
+      "titulo": "Goblin Warrior: andar (preset, com pose de andar)",
+      "prompt": "(preset 'walk' do SpriteCook, sem texto próprio)", "negativo": "",
+      "conferir": ["Passos de lado, escudo e cimitarra na mão certa."], "alerta": "Preparo +12."
+    },
+    {
+      "id": "g_warrior_golpe", "grupo": "goblin_warrior", "prioridade": 1, "rodada": "goblin_warrior",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Goblin Warrior: golpe de cimitarra",
+      "prompt": "The goblin warrior in side view facing right, feet planted on the same ground line, same camera angle. Frames 1-2: the scimitar arm rises back over the shoulder while the shield arm stays forward and the body leans back. Frames 3-4: a diagonal slash, the arm swings down across the body with the shoulders and hips driving it, the shield held steady in front. Frames 5-6: short follow-through with the scimitar low and extended. Frames 7-8: return to the guarded stance. The scimitar and shield keep the same size and color. No effects, no text.",
+      "negativo": "turning around, back view, facing the camera, extra weapons, extra limbs, motion lines, text",
+      "conferir": ["Corte na diagonal nos quadros 3-4, escudo parado na frente.", "Armas não mudam de tamanho."], "alerta": ""
+    },
+    {
+      "id": "g_warrior_arco", "grupo": "goblin_warrior", "prioridade": 1, "rodada": "goblin_warrior",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Goblin Warrior: tiro de arco curto",
+      "prompt": "The goblin warrior in side view facing right, feet planted on the same ground line, same camera angle, now holding a short bow instead of the scimitar. Frames 1-2: the bow arm extends forward and the other hand reaches back for the string. Frames 3-4: the string hand pulls back to the cheek, the body leaning into the draw. Frames 5: hold the tense aim. Frames 6-8: release, the string hand snaps back, the bow arm holds steady, then relax toward the guarded stance. No arrow in flight, no effects, no text.",
+      "negativo": "turning around, back view, facing the camera, flying arrow, projectile, motion lines, extra limbs, text",
+      "conferir": ["Arco curto na mão da frente, corda puxada até o rosto (quadros 3-4).", "Nenhuma flecha voando (a flecha é do jogo)."],
+      "alerta": "Pode sair com a cimitarra no lugar do arco: nesse caso, repetir com o arco no primeiro termo do pedido."
+    },
+    {
+      "id": "g_warrior_dano", "grupo": "goblin_warrior", "prioridade": 1, "rodada": "goblin_warrior",
+      "tipo": "preset", "preset": "hurt", "frames": 8,
+      "titulo": "Goblin Warrior: levar dano (preset)",
+      "prompt": "(preset 'hurt' do SpriteCook, sem texto próprio)", "negativo": "",
+      "conferir": ["Recua e volta à pose."], "alerta": "Pode ficar de fora (-14): o jogo treme e pisca."
+    },
+    {
+      "id": "g_warrior_morte", "grupo": "goblin_warrior", "prioridade": 1, "rodada": "goblin_warrior",
+      "tipo": "preset", "preset": "death", "frames": 12,
+      "titulo": "Goblin Warrior: morte (preset)",
+      "prompt": "(preset 'death' do SpriteCook, sem texto próprio)", "negativo": "",
+      "conferir": ["Cai e fica deitado, imóvel."], "alerta": "Pode ser cair e sumir por código (-14)."
+    },
+    {
+      "id": "o_base", "grupo": "gray_ooze", "prioridade": 0, "rodada": "gray_ooze",
+      "tipo": "personagem",
+      "titulo": "Gray Ooze: personagem base (opcional)",
+      "prompt": "A gray ooze, a translucent gray-green slime blob with a glossy surface, dripping edges and two small dark eyes, side profile facing right, cute chibi proportions, clean dark outline, readable silhouette, full body",
+      "negativo": "",
+      "conferir": ["Gosma cinza translúcida com contorno escuro, olhos pequenos."],
+      "alerta": "Opcional: o slime CC0 atual (rvros) já tem parado, andar, golpe, dano e morte. Só vale se o estilo destoar do herói."
+    },
+    {
+      "id": "o_parado", "grupo": "gray_ooze", "prioridade": 0, "rodada": "gray_ooze",
+      "tipo": "preset", "preset": "idle", "frames": 8,
+      "titulo": "Gray Ooze: parado (preset)",
+      "prompt": "(preset 'idle' do SpriteCook, sem texto próprio)", "negativo": "",
+      "conferir": ["Pulsa devagar no lugar."], "alerta": ""
+    },
+    {
+      "id": "o_mover", "grupo": "gray_ooze", "prioridade": 0, "rodada": "gray_ooze",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Gray Ooze: deslizar",
+      "prompt": "The gray ooze in side view facing right, on the same ground line, same camera angle. Frames 1-2: the body stretches forward low along the ground. Frames 3-4: the front pulls ahead while the rear drags and thins. Frames 5-6: the rear catches up and the body bunches and rises. Frames 7-8: settle back into the starting round shape. The glossy surface and two small eyes stay the same. No effects, no puddle trail, no text.",
+      "negativo": "turning around, facing the camera, extra eyes, puddle trail, motion lines, text",
+      "conferir": ["Estica, arrasta e junta, sem deixar rastro."], "alerta": ""
+    },
+    {
+      "id": "o_golpe", "grupo": "gray_ooze", "prioridade": 0, "rodada": "gray_ooze",
+      "tipo": "custom", "frames": 8, "source_view": "front_idle",
+      "titulo": "Gray Ooze: pseudópode",
+      "prompt": "The gray ooze in side view facing right, on the same ground line, same camera angle. Frames 1-2: the body compresses and pulls back, gathering force. Frames 3-4: a thick pseudopod lashes forward to the right from the front of the body and stays extended. Frames 5-6: the pseudopod whips back into the body. Frames 7-8: settle back into the starting round shape. No acid drops, no effects, no text.",
+      "negativo": "turning around, facing the camera, acid drops, splash, extra eyes, motion lines, text",
+      "conferir": ["Pseudópode estica para a direita nos quadros 3-4 (acerto: 0,2 a 0,35 s)."], "alerta": ""
+    },
+    {
+      "id": "o_dano", "grupo": "gray_ooze", "prioridade": 0, "rodada": "gray_ooze",
+      "tipo": "preset", "preset": "hurt", "frames": 8,
+      "titulo": "Gray Ooze: levar dano (preset)",
+      "prompt": "(preset 'hurt' do SpriteCook, sem texto próprio)", "negativo": "",
+      "conferir": ["Amassa e balança com o impacto."], "alerta": ""
+    },
+    {
+      "id": "o_morte", "grupo": "gray_ooze", "prioridade": 0, "rodada": "gray_ooze",
+      "tipo": "preset", "preset": "death", "frames": 12,
+      "titulo": "Gray Ooze: morte (preset)",
+      "prompt": "(preset 'death' do SpriteCook, sem texto próprio)", "negativo": "",
+      "conferir": ["Derrete numa poça e fica parado."], "alerta": ""
+    },
+    {
+      "id": "e_arco_corte", "grupo": "efeito_heroi", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: arco de corte (herói)",
+      "prompt_imagem": "a bright white crescent slash arc, side view, simple clean shape, transparent background, pixel art",
+      "prompt": "The white crescent slash sweeps from the upper left to the lower right, grows quickly to full size, holds for one frame, then fades out. The arc stays in the same place and keeps the same white color.",
+      "negativo": "character, weapon, text, background",
+      "conferir": ["Branco puro (a cor vem da arma por tinta).", "Cresce, segura 1 quadro e some."], "alerta": "Hoje existe por script (4 quadros). Só trocar se ficar melhor."
+    },
+    {
+      "id": "e_rastro", "grupo": "efeito_heroi", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: rastro de estocada (herói)",
+      "prompt_imagem": "a thin white horizontal thrust streak made of a few long speed lines, side view, transparent background, pixel art",
+      "prompt": "The white speed lines shoot forward to the right, stretch out to full length, then fade quickly. The streak stays on the same horizontal line.",
+      "negativo": "character, weapon, text, background",
+      "conferir": ["Linhas brancas horizontais, somem rápido."], "alerta": "Hoje existe por script."
+    },
+    {
+      "id": "e_impacto", "grupo": "efeito_heroi", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: impacto de contundente (herói)",
+      "prompt_imagem": "a white impact burst ring with small sparks, front view, transparent background, pixel art",
+      "prompt": "The white ring bursts outward from the center with small sparks flying out, expands to full size and then fades away. The center stays fixed.",
+      "negativo": "character, weapon, text, background",
+      "conferir": ["Anel branco com faíscas que expande e some."], "alerta": "Hoje existe por script."
+    },
+    {
+      "id": "e_critico", "grupo": "efeito_heroi", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: acerto crítico (herói)",
+      "prompt_imagem": "a golden four-pointed star burst with a bright white center, transparent background, pixel art",
+      "prompt": "The golden star pops in small, flares to full size with a bright white flash at the center, then shrinks and fades. It stays centered the whole time.",
+      "negativo": "character, text, background",
+      "conferir": ["Estrela dourada que abre e some, centrada."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "e_cura", "grupo": "efeito_heroi", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: cura (Fôlego)",
+      "prompt_imagem": "a green healing glow with small rising plus-shaped sparkles, transparent background, pixel art",
+      "prompt": "Small green plus-shaped sparkles float upward from the bottom while a soft green glow pulses around them, then everything fades out softly.",
+      "negativo": "character, text, background",
+      "conferir": ["Brilho verde com cruzes subindo."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "e_surto", "grupo": "efeito_heroi", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: Surto de Ação",
+      "prompt_imagem": "a golden-orange energy aura flame shape, tall, side view, transparent background, pixel art",
+      "prompt": "The golden-orange flames flicker upward in a loop, swaying slightly and pulsing in brightness. The base stays fixed on the ground line and the loop closes smoothly.",
+      "negativo": "character, text, background",
+      "conferir": ["Aura dourada em laço, base fixa."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "e_nivel", "grupo": "efeito_heroi", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: subir de nível",
+      "prompt_imagem": "a column of golden light with rising stars, transparent background, pixel art",
+      "prompt": "The column of golden light shoots up from the ground, small stars rise inside it, and it fades out at the top. The base stays fixed.",
+      "negativo": "character, text, background",
+      "conferir": ["Coluna dourada que sobe e some."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "e_acido", "grupo": "efeito_inimigo", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: respingo de ácido (Gray Ooze)",
+      "prompt_imagem": "a splash of green acid with a few droplets, side view, transparent background, pixel art",
+      "prompt": "The green acid splashes outward from the center with droplets flying and then falling, the splash spreads out and shrinks away. The center stays fixed.",
+      "negativo": "character, text, background",
+      "conferir": ["Respingo verde que abre e some."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "e_fumaca", "grupo": "efeito_inimigo", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: fumaça ao esconder (goblins)",
+      "prompt_imagem": "a puff of gray smoke cloud, front view, transparent background, pixel art",
+      "prompt": "The gray smoke puffs out from a small cloud to a large one, swirling softly, then thins out and fades. The center stays fixed.",
+      "negativo": "character, text, background",
+      "conferir": ["Nuvem cinza que cresce e some."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "e_morte_nuvem", "grupo": "efeito_inimigo", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: nuvem de morte (todos)",
+      "prompt_imagem": "a white poof cloud with small star sparks, front view, transparent background, pixel art",
+      "prompt": "The white poof bursts out in a round cloud with small sparks flying outward, then the cloud shrinks and fades. The center stays fixed.",
+      "negativo": "character, text, background",
+      "conferir": ["Nuvem branca com faíscas que some."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "e_flecha_impacto", "grupo": "efeito_inimigo", "prioridade": 2, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Efeito: impacto de flecha e adaga",
+      "prompt_imagem": "a small white spark hit with a few tiny shards, front view, transparent background, pixel art",
+      "prompt": "The small white sparks burst out with a few tiny shards, expand briefly and fade out fast. The center stays fixed.",
+      "negativo": "character, text, background",
+      "conferir": ["Faísca pequena e rápida."], "alerta": "Pode ser feito por partículas (grátis)."
+    },
+    {
+      "id": "m_tocha", "grupo": "mapa", "prioridade": 3, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Mapa: tocha (Ruína e Fortaleza)",
+      "prompt_imagem": "a wall torch with an orange flame on a dark wooden handle, side view, transparent background, pixel art",
+      "prompt": "The torch flame flickers in a loop, swaying slightly and changing height, with a few small embers rising. The wooden handle does not move and the loop closes smoothly.",
+      "negativo": "character, text, background",
+      "conferir": ["Só a chama se mexe; o cabo fica parado.", "Laço sem salto."], "alerta": "A luz da tocha pode ser feita por código."
+    },
+    {
+      "id": "m_agua", "grupo": "mapa", "prioridade": 3, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Mapa: água com bolhas (Pântano)",
+      "prompt_imagem": "a strip of murky green swamp water with a few bubbles, side view, seamless horizontal, transparent background, pixel art",
+      "prompt": "The swamp water surface ripples gently from side to side while a few bubbles rise and pop. The strip stays seamless horizontally and the loop closes smoothly.",
+      "negativo": "character, text",
+      "conferir": ["Laço contínuo, emenda horizontal sem corte."], "alerta": "Pode ser feito por shader (grátis)."
+    },
+    {
+      "id": "m_porta", "grupo": "mapa", "prioridade": 3, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Mapa: porta (hoje invisível)",
+      "prompt_imagem": "a tall arched wooden door with iron bands set in a stone frame, front view, transparent background, pixel art",
+      "prompt": "The door glows faintly with a soft golden light along its edges in a slow pulsing loop, the wood and stone staying still. The loop closes smoothly.",
+      "negativo": "character, text, background",
+      "conferir": ["Porta de madeira com ferro, brilho suave nas bordas."], "alerta": "Só a imagem custa 6; a animação (+20) é opcional."
+    },
+    {
+      "id": "m_bau", "grupo": "mapa", "prioridade": 3, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Mapa: baú abrindo (Clareira)",
+      "prompt_imagem": "a closed wooden treasure chest with iron corners, side view, transparent background, pixel art",
+      "prompt": "The chest lid swings open, a golden glow bursts out of the opening and settles into a soft shine. The chest base stays fixed.",
+      "negativo": "character, text, background",
+      "conferir": ["Tampa abre, brilho dourado, base parada."], "alerta": ""
+    },
+    {
+      "id": "m_bandeira", "grupo": "mapa", "prioridade": 3, "rodada": "",
+      "tipo": "efeito", "frames": 8,
+      "titulo": "Mapa: bandeira (Fortaleza)",
+      "prompt_imagem": "a red banner flag on a tall wooden pole with a simple emblem, side view, transparent background, pixel art",
+      "prompt": "The red flag waves in the wind in a smooth loop, the cloth rippling toward the right. The pole does not move and the loop closes smoothly.",
+      "negativo": "character, text, background",
+      "conferir": ["Só o pano balança; a haste fica parada."], "alerta": ""
+    }
+  ]
+}

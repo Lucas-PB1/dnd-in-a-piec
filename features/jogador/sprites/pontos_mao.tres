@@ -7,7 +7,7 @@ script = ExtResource("1_ubihd")
 pontos = Dictionary[StringName, PackedVector2Array]({
 &"ataque": PackedVector2Array(18, -24, 16, -23),
 &"aterrissar": PackedVector2Array(18, -24, 18, -24),
-&"correr": PackedVector2Array(12, -18, 11, -19, 11, -20, 11, -21, 15, -20, 11, -20, 11, -22, 10, -23),
+&"correr": PackedVector2Array(20, -31, 19, -27, 14, -25, 12, -28, 10, -31, 8, -28, 11, -27, 13, -26, 19, -31, 18, -31),
 &"idle": PackedVector2Array(12, -18, 13, -19, 13, -20, 15, -21, 15, -20, 13, -19, 12, -17, 12, -18),
 &"mirar": PackedVector2Array(17, -26),
 &"pulo_caindo": PackedVector2Array(21, -28),
@@ -18,7 +18,7 @@ pontos = Dictionary[StringName, PackedVector2Array]({
 pontos_de_tras = Dictionary[StringName, PackedVector2Array]({
 &"ataque": PackedVector2Array(-10, -21, -11, -21),
 &"aterrissar": PackedVector2Array(-10, -21, -16, -21),
-&"correr": PackedVector2Array(-11, -17, -10, -18, -8, -19, -5, -20, -1, -20, -4, -19, -6, -20, -9, -20),
+&"correr": PackedVector2Array(-20, -24, -13, -21, -6, -23, 4, -29, 3, -27, 3, -27, 2, -25, -6, -24, -15, -25, -20, -26),
 &"idle": PackedVector2Array(-11, -17, -12, -18, -13, -19, -15, -20, -15, -19, -13, -17, -11, -16, -11, -17),
 &"mirar": PackedVector2Array(-18, -24),
 &"pulo_caindo": PackedVector2Array(-18, -25),
@@ -40,7 +40,7 @@ angulos = Dictionary[StringName, float]({
 ombros = Dictionary[StringName, PackedVector2Array]({
 &"ataque": PackedVector2Array(14, -28, 14, -29),
 &"aterrissar": PackedVector2Array(14, -28, 10, -31),
-&"correr": PackedVector2Array(6, -33, 7, -31, 6, -35, 7, -33, 7, -30, 6, -34, 6, -35, 6, -36),
+&"correr": PackedVector2Array(14, -30, 6, -31, 6, -35, 6, -38, 5, -37, 6, -33, 6, -33, 6, -37, 6, -38, 14, -33),
 &"idle": PackedVector2Array(6, -33, 6, -34, 6, -34, 10, -31, 12, -29, 6, -32, 6, -32, 6, -33),
 &"mirar": PackedVector2Array(12, -31),
 &"pulo_caindo": PackedVector2Array(13, -33),
@@ -51,7 +51,7 @@ ombros = Dictionary[StringName, PackedVector2Array]({
 cinturas = Dictionary[StringName, PackedVector2Array]({
 &"ataque": PackedVector2Array(0.5, -19, 0, -19),
 &"aterrissar": PackedVector2Array(0.5, -19, -1, -20),
-&"correr": PackedVector2Array(-1, -20, -0.5, -21, -1, -22, 0.5, -22, 2, -19, 0.5, -21, -0.5, -23, -1.5, -23),
+&"correr": PackedVector2Array(-1, -20, -0.5, -19, -1.5, -22, -0.5, -26, -0.5, -24, -0.5, -21, -1.5, -21, -2.5, -24, -2, -26, -1, -23),
 &"idle": PackedVector2Array(-1, -20, -1, -21, -1.5, -21, -1.5, -21, -1.5, -20, -1, -19, -1, -19, -1, -20),
 &"mirar": PackedVector2Array(-1.5, -20),
 &"pulo_caindo": PackedVector2Array(-1.5, -23),
@@ -62,7 +62,7 @@ cinturas = Dictionary[StringName, PackedVector2Array]({
 cabecas = Dictionary[StringName, PackedVector2Array]({
 &"ataque": PackedVector2Array(-0.5, -68, 0, -69),
 &"aterrissar": PackedVector2Array(-0.5, -68, -0.5, -72),
-&"correr": PackedVector2Array(-0.5, -72, -0.5, -74, 0, -74, -0.5, -75, -0.5, -73, -0.5, -74, -0.5, -75, -0.5, -76),
+&"correr": PackedVector2Array(-0.5, -71, -0.5, -70, -0.5, -73, -1, -77, -1, -76, -0.5, -72, -0.5, -71, -0.5, -75, -1, -76, -0.5, -74),
 &"idle": PackedVector2Array(-0.5, -72, -0.5, -73, -0.5, -73, -0.5, -72, 0, -71, -0.5, -70, 0, -71, -0.5, -72),
 &"mirar": PackedVector2Array(-1, -73),
 &"pulo_caindo": PackedVector2Array(-0.5, -74),

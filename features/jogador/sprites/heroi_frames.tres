@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_walk.png" id="2_walk"]
 [ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_jump.png" id="3_jump"]
 [ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_mirar.png" id="4_mirar"]
+[ext_resource type="Texture2D" path="res://features/jogador/sprites/heroi_correr.png" id="5_correr"]
 
 [sub_resource type="AtlasTexture" id="i0"]
 atlas = ExtResource("1_idle")
@@ -36,6 +37,46 @@ region = Rect2(480, 0, 80, 80)
 [sub_resource type="AtlasTexture" id="i7"]
 atlas = ExtResource("1_idle")
 region = Rect2(560, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c0"]
+atlas = ExtResource("5_correr")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c1"]
+atlas = ExtResource("5_correr")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c2"]
+atlas = ExtResource("5_correr")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c3"]
+atlas = ExtResource("5_correr")
+region = Rect2(240, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c4"]
+atlas = ExtResource("5_correr")
+region = Rect2(320, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c5"]
+atlas = ExtResource("5_correr")
+region = Rect2(400, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c6"]
+atlas = ExtResource("5_correr")
+region = Rect2(480, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c7"]
+atlas = ExtResource("5_correr")
+region = Rect2(560, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c8"]
+atlas = ExtResource("5_correr")
+region = Rect2(640, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="c9"]
+atlas = ExtResource("5_correr")
+region = Rect2(720, 0, 80, 80)
 
 [sub_resource type="AtlasTexture" id="w0"]
 atlas = ExtResource("2_walk")
@@ -159,32 +200,38 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("w0")
+"texture": SubResource("c0")
 }, {
 "duration": 1.0,
-"texture": SubResource("w1")
+"texture": SubResource("c1")
 }, {
 "duration": 1.0,
-"texture": SubResource("w2")
+"texture": SubResource("c2")
 }, {
 "duration": 1.0,
-"texture": SubResource("w3")
+"texture": SubResource("c3")
 }, {
 "duration": 1.0,
-"texture": SubResource("w4")
+"texture": SubResource("c4")
 }, {
 "duration": 1.0,
-"texture": SubResource("w5")
+"texture": SubResource("c5")
 }, {
 "duration": 1.0,
-"texture": SubResource("w6")
+"texture": SubResource("c6")
 }, {
 "duration": 1.0,
-"texture": SubResource("w7")
+"texture": SubResource("c7")
+}, {
+"duration": 1.0,
+"texture": SubResource("c8")
+}, {
+"duration": 1.0,
+"texture": SubResource("c9")
 }],
 "loop": true,
 "name": &"correr",
-"speed": 20.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,

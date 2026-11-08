@@ -14,7 +14,9 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 | 2 | **Subclasse do Guerreiro** | M | `core/dados/`, criação, combate | O nível 3 ainda não oferece a escolha de subclasse nem seus recursos. |
 | 3 | **Testes de habilidade nas fases** | M | `levels/`, interações e perícias | A regra e o toggle de Mente Tática estão prontos; falta uma interação que peça um teste de habilidade do herói. |
 | 4 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |
-| 5 | **Sprites novos dos monstros** | M | `features/goblin/`, `tools/gerar_goblin*.gd` | Não há pacote CC0 melhor. Opção paga: [Rpg miniatures: The Goblins](https://ivoryred.itch.io/rpg-miniatures-the-goblins) (US$ 2,99, 4 goblins com dano e morte), só se o usuário comprar. |
+| 5 | ~~Sprites novos dos monstros~~ (feito com o SpriteCook; falta só o refino do golpe do Minion e do arremesso) | M | `features/goblin/`, `tools/gerar_goblin*.gd` | Não há pacote CC0 melhor. Opção paga: [Rpg miniatures: The Goblins](https://ivoryred.itch.io/rpg-miniatures-the-goblins) (US$ 2,99, 4 goblins com dano e morte), só se o usuário comprar. |
+| 8 | **Corte de cima do herói (SpriteCook)** | M | `features/jogador/sprites/`, `docs/spritecook/prompts.json` | Pendente. 2 tentativas (52 créditos) saíram parciais: a IA desenha uma espada e o golpe não desce claro. Ideia: 3ª tentativa só com "balança o braço de cima para baixo", avisando o custo antes. Hoje vale o golpe antigo. |
+| 9 | **Ligar as animações do SpriteCook nos goblins** | M | `features/goblin/sprites/`, `tools/gerar_goblin*.gd` | Minion pronto: parado, andar e dano aprovados. Golpe (quadros 3 e 7) e arremesso (quadros 4-5 e 6) têm a adaga deformada ou solta: usar só os quadros bons e a adaga por código, ou refazer (20 cada, na mesma rodada 14). Warrior aprovado (golpe com cimitarra levemente distorcida nos quadros 5-6; um pixel solto no dano). Ooze: parado e dano ok, deslizar parcial (quadros 6-7), pseudópode refeito e aprovado (v2). |
 | 6 | **Arte própria do Pântano e da Ruína** | M | `levels/fundo_paralaxe.gd`, `assets/fundos/` | Hoje reusam floresta e fortaleza em outro tom. Faltam camadas de pântano e de ruína (não achei CC0). |
 | 7 | **Ataques novos dos monstros** | M | `core/dados/criatura_rpg.gd`, estados | Só com fonte no livro (ex.: criatura nova com ataques próprios). O Ooze, o Minion e o Warrior já usam todos os ataques das fichas. |
 
@@ -38,7 +40,6 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 
 | O quê | Como trocar |
 |---|---|
-| Animação de correr do herói (quadros do andar a 20 fps) | Animação `run` no SpriteCook (~32 créditos; a conta tem 2). Sem mexer no código. |
 | Efeitos de golpe (arco, rastro, impacto) | Desenhados por script em `assets/efeitos/`. Pacote CC0 ou SpriteCook. |
 | Ladrilhos e cenário | `tools/gerar_arte_provisoria.gd`. Pacote de tileset CC0 (`docs/artes_prontas.md`). |
 | Armaduras no herói | O usuário achou "pouco épico"; ficou como pintura da túnica. Revisitar com arte nova. |

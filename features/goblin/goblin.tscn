@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" path="res://features/goblin/goblin.gd" id="1_script"]
 [ext_resource type="Resource" path="res://data/goblin_minion.tres" id="2_criatura"]
-[ext_resource type="SpriteFrames" path="res://features/goblin/sprites/goblin_frames.tres" id="3_frames"]
+[ext_resource type="SpriteFrames" path="res://features/goblin/sprites/minion_sc_frames.tres" id="3_frames"]
 [ext_resource type="Script" path="res://core/componentes/tremor_component.gd" id="22_tremor"]
+[ext_resource type="Script" path="res://core/componentes/dissolver_component.gd" id="99_dissolver"]
 [ext_resource type="Script" path="res://core/componentes/health_component.gd" id="4_vida"]
 [ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="5_hurtbox"]
 [ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="6_defesa"]
@@ -37,6 +38,8 @@ size = Vector2(32, 28)
 collision_layer = 16
 script = ExtResource("1_script")
 criatura = ExtResource("2_criatura")
+escala_arte = 0.55
+animacao_distancia = &"arremessar"
 
 [node name="Colisao" type="CollisionShape2D" parent="."]
 position = Vector2(0, -22)
@@ -47,11 +50,11 @@ color = Color(0, 0, 0, 0.3)
 polygon = PackedVector2Array(13.0, 0.0, 12.0, 1.1, 9.2, 2.1, 5.0, 2.8, 0.0, 3.0, -5.0, 2.8, -9.2, 2.1, -12.0, 1.1, -13.0, 0.0, -12.0, -1.1, -9.2, -2.1, -5.0, -2.8, -0.0, -3.0, 5.0, -2.8, 9.2, -2.1, 12.0, -1.1)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-scale = Vector2(2, 2)
+scale = Vector2(0.55, 0.55)
 sprite_frames = ExtResource("3_frames")
 animation = &"parado"
 autoplay = "parado"
-offset = Vector2(11, -16)
+offset = Vector2(0, -44)
 
 [node name="Vida" type="Node" parent="."]
 script = ExtResource("4_vida")
@@ -127,3 +130,8 @@ script = ExtResource("21_patrulhando")
 [node name="Tremor" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("22_tremor")
 sprite = NodePath("../Sprite")
+
+[node name="Dissolver" type="Node2D" parent="." node_paths=PackedStringArray("sprite", "sombra")]
+script = ExtResource("99_dissolver")
+sprite = NodePath("../Sprite")
+sombra = NodePath("../Sombra")

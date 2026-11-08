@@ -40,6 +40,9 @@ const CHEGOU_PATRULHA := 6.0
 @export var fim_acerto: float = 0.3
 ## Quando a adaga ou a flecha sai da mão (s desde o início da animação).
 @export var momento_soltura: float = 0.15
+## Animação do ataque à distância (a adaga arremessada ou o tiro de arco).
+@export var animacao_distancia: StringName = &"atacar"
+
 ## Dentro desta distância (pés) quem tem arco guarda o tiro e fecha para o corpo a corpo.
 @export var perto_pes: float = 20.0
 ## Empurrar (maestria): velocidade com que o empurrão o desloca (px/s).
@@ -77,6 +80,7 @@ var _camada_hurtbox: int = 0
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _sombra: Polygon2D = $Sombra
 @onready var _tremor: TremorComponent = $Tremor
+@onready var _dissolver: DissolverComponent = $Dissolver
 @onready var _hurtbox: Area2D = $Hurtbox
 @onready var _vida: HealthComponent = $Vida
 @onready var _defesa: DefesaComponent = $Defesa
@@ -95,6 +99,7 @@ func _ready() -> void:
 	_defesa.resistencias = criatura.resistencias
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
+	_dissolver.terminou.connect(terminar_de_morrer)
 	_adagas = criatura.arremessos
 	_flechas = criatura.disparos
 	_preparar_condicoes()
@@ -303,11 +308,11 @@ func animacao_terminou() -> bool:
 	return not _sprite.is_playing()
 
 
-func iniciar_ataque() -> void:
+func iniciar_ataque(animacao: StringName = &"atacar") -> void:
 	_tempo_desde_ataque = 0.0
 	virar_para_alvo()
 	parar()
-	tocar(&"atacar")
+	tocar(animacao)
 
 
 ## Enfraquecido (maestria): este ataque sai com desvantagem e a condição se gasta.
@@ -422,7 +427,12 @@ func deitar(deitado: bool) -> void:
 	_sprite.rotation_degrees = -90.0 * direcao_olhar if deitado else 0.0
 
 
-## Some do jogo depois da animação de morte.
+## Morte por código: pisca, some em fumaça e, ao acabar, sai do jogo.
+func dissolver() -> void:
+	_dissolver.dissolver()
+
+
+## Sai do jogo depois de dissolver.
 func terminar_de_morrer() -> void:
 	morreu.emit()
 	queue_free()

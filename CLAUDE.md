@@ -30,6 +30,8 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | `docs/pendencias.md` | **O que falta**, com tamanho e prioridade. Escolha a próxima fatia daqui. |
 | `docs/historico.md` | O que já foi feito, fatia por fatia. |
 | `docs/artes_prontas.md` | Arte de terceiros: onde buscar, licença, como usar. |
+| `docs/plano_animacoes.md` | Todas as animações e efeitos que o jogo quer, por prioridade, com o custo em créditos do SpriteCook. |
+| `docs/spritecook/prompts.md` | Os 42 pedidos prontos do SpriteCook (gerado de `prompts.json`; conferidor em `tools/conferir_prompts_spritecook.ps1`). |
 | `docs/exportar_android.md` | Requisitos do SDK/JDK e comando para exportar o APK. |
 | `docs/talentos.md` | Talentos do livro anotados. |
 

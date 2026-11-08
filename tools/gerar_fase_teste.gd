@@ -34,6 +34,10 @@ const ALTURA_PORTA := 72.0
 
 enum { GRAMA, TERRA, PLATAFORMA, PEDRA }
 
+## Colunas extras do atlas com variantes de GRAMA e de TERRA, sorteadas por ladrilho (ver gerar_arte_provisoria.gd).
+const VARIANTES_GRAMA: Array[int] = [GRAMA, 4, 5]
+const VARIANTES_TERRA: Array[int] = [TERRA, 6, 7, 8]
+
 const OOZE := &"ooze"
 const MINION := &"minion"
 const WARRIOR := &"warrior"
@@ -288,8 +292,18 @@ func _colocar_ceu(fase: Node2D, mapa: Array[String], cor: Color) -> void:
 	_adicionar(fase, ceu)
 
 
+## Sorteia a variante do ladrilho pela posição (sempre a mesma para a mesma célula, sem depender de semente).
+func _sortear_variante(celula: Vector2i, tipo: int) -> int:
+	var variantes: Array[int] = [tipo]
+	if tipo == GRAMA:
+		variantes = VARIANTES_GRAMA
+	elif tipo == TERRA:
+		variantes = VARIANTES_TERRA
+	return variantes[absi(hash(celula)) % variantes.size()]
+
+
 func _pintar(terreno: TileMapLayer, celula: Vector2i, tipo: int, tema: int) -> void:
-	terreno.set_cell(celula, 0, Vector2i(tipo, tema))
+	terreno.set_cell(celula, 0, Vector2i(_sortear_variante(celula, tipo), tema))
 
 
 func _adicionar(fase: Node2D, no: Node) -> void:
@@ -327,7 +341,7 @@ func _criar_tileset() -> TileSet:
 	fonte.texture_region_size = Vector2i(TAM, TAM)
 	tileset.add_source(fonte, 0)
 	for tema in CEU.size():
-		for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA]:
+		for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA] + VARIANTES_GRAMA.slice(1) + VARIANTES_TERRA.slice(1):
 			var coord := Vector2i(tipo, tema)
 			fonte.create_tile(coord)
 			var dados := fonte.get_tile_data(coord, 0)

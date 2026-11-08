@@ -42,6 +42,7 @@ var _escala_sprite: Vector2
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _tremor: TremorComponent = $Tremor
+@onready var _dissolver: DissolverComponent = $Dissolver
 @onready var _vida: HealthComponent = $Vida
 @onready var _defesa: DefesaComponent = $Defesa
 @onready var _texto: TextoFlutuanteComponent = $Texto
@@ -59,6 +60,7 @@ func _ready() -> void:
 	_defesa.resistencias = criatura.resistencias
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
+	_dissolver.terminou.connect(terminar_de_morrer)
 	_preparar_condicoes()
 	_posicao_sprite = _sprite.position
 	_escala_sprite = _sprite.scale
@@ -73,7 +75,7 @@ func _physics_process(delta: float) -> void:
 	_maquina.processar_fisica(delta)
 	_aplicar_empurrao(delta)
 	move_and_slide()
-	_sprite.flip_h = direcao_olhar > 0  # a arte original olha para a esquerda
+	_sprite.flip_h = direcao_olhar < 0  # a arte do SpriteCook olha para a direita
 	_pseudopode.scale.x = direcao_olhar
 
 
@@ -205,7 +207,12 @@ func deitar(deitado: bool) -> void:
 	_sprite.position = Vector2(_posicao_sprite.x, _posicao_sprite.y * escala_caido.y) if deitado else _posicao_sprite
 
 
-## Some do jogo depois da animação de morte.
+## Morte por código: pisca, some em fumaça e, ao acabar, sai do jogo.
+func dissolver() -> void:
+	_dissolver.dissolver()
+
+
+## Sai do jogo depois de dissolver.
 func terminar_de_morrer() -> void:
 	morreu.emit()
 	queue_free()

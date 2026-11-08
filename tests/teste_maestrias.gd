@@ -183,6 +183,8 @@ func _testar_ooze_caido() -> void:
 	var ooze: GrayOoze = load("res://features/gray_ooze/gray_ooze.tscn").instantiate()
 	root.add_child(ooze)
 	await _esperar(3)
+	var sprite: Node2D = ooze.get_node("Sprite")
+	var escala_normal := sprite.scale  # a da cena
 	var condicoes: CondicoesComponent = ooze.get_node("Condicoes")
 	_checar(condicoes.bonus_salvaguardas.get(Atributos.CONSTITUICAO) == 3, "o Ooze usa a CON da ficha (+3) na salvaguarda")
 	condicoes.bonus_salvaguardas[Atributos.CONSTITUICAO] = -100
@@ -191,8 +193,6 @@ func _testar_ooze_caido() -> void:
 	(ooze.get_node("Defesa") as DefesaComponent).rng.seed = 5
 	(ooze.get_node("Hurtbox") as HurtboxComponent).golpe_recebido.emit(r.golpe, ooze.global_position + Vector2.LEFT * 10)
 	await _esperar(2)
-	var sprite: Node2D = ooze.get_node("Sprite")
-	var escala_normal := Vector2(2, 2)  # a da cena
 	_checar(ooze.esta_caido() and ooze.nome_estado() == &"Caido", "Ooze falhou na salvaguarda: estado Caído")
 	_checar(sprite.scale.x > escala_normal.x and sprite.scale.y < escala_normal.y, "Caído: achatado em relação ao tamanho normal")
 	await _esperar(int(CondicoesComponent.DURACAO_CAIDO * 60) + 5)

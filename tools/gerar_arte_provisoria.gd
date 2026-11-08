@@ -86,7 +86,7 @@ const PALETAS: Array[Dictionary] = [
 
 
 func _gerar_ladrilhos() -> void:
-	var img := Image.create(TAM * 4, TAM * PALETAS.size(), false, Image.FORMAT_RGBA8)
+	var img := Image.create(TAM * COLUNAS_ATLAS, TAM * PALETAS.size(), false, Image.FORMAT_RGBA8)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	for linha in PALETAS.size():
@@ -104,6 +104,16 @@ func _gerar_ladrilhos() -> void:
 ## mesma ordem de FundoParalaxe.AMBIENTES e pintados com o mesmo tom. Os recortes são de 32x32
 ## (a plataforma, de 32x16) e ficam numa lista na ordem do enum: GRAMA, TERRA, PLATAFORMA, PEDRA.
 const ALTURA_PLATAFORMA := 16
+## Chão do SpriteCook (assets/tiles/spritecook): recortes de 32x32 do autotile 4x4, que entram no lugar
+## da GRAMA e da TERRA nos ambientes de floresta (coluna, linha do recorte).
+const ARQ_CHAO_SPRITECOOK := "res://assets/tiles/spritecook/chao_floresta.png"
+## O 1º de cada lista vai na coluna normal (GRAMA, TERRA); os demais, nas colunas extras de sorteio
+## (`COLUNAS_EXTRAS_GRAMA`, `COLUNAS_EXTRAS_TERRA`), que gerar_fase_teste.gd sorteia por ladrilho.
+const CELULAS_GRAMA_SPRITECOOK: Array[Vector2i] = [Vector2i(2, 0), Vector2i(3, 0), Vector2i(1, 0)]
+const CELULAS_TERRA_SPRITECOOK: Array[Vector2i] = [Vector2i(2, 1), Vector2i(2, 2), Vector2i(3, 1), Vector2i(3, 2)]
+const COLUNAS_EXTRAS_GRAMA: Array[int] = [4, 5]
+const COLUNAS_EXTRAS_TERRA: Array[int] = [6, 7, 8]
+const COLUNAS_ATLAS := 9
 const PACOTES_LADRILHO := {
 	&"floresta": {
 		"arquivo": "res://assets/fundos/floresta/tiles.png",
@@ -123,14 +133,44 @@ func _ladrilhos_do_pacote(img: Image) -> void:
 		var pacote: Dictionary = PACOTES_LADRILHO[dados[0]]
 		var fonte := Image.load_from_file(ProjectSettings.globalize_path(pacote["arquivo"]))
 		fonte.convert(Image.FORMAT_RGBA8)
+		var chao: Image = _chao_spritecook() if dados[0] == &"floresta" else null
 		for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA]:
 			var altura := ALTURA_PLATAFORMA if tipo == PLATAFORMA else TAM
 			var origem: Vector2i = pacote["recortes"][tipo]
 			var bloco := fonte.get_region(Rect2i(origem, Vector2i(TAM, altura)))
+			if chao != null and (tipo == GRAMA or tipo == TERRA):
+				var celulas := CELULAS_GRAMA_SPRITECOOK if tipo == GRAMA else CELULAS_TERRA_SPRITECOOK
+				bloco = chao.get_region(Rect2i(celulas[0] * TAM, Vector2i(TAM, TAM)))
 			_pintar(bloco, dados[1])
 			var destino := Vector2i(tipo * TAM, linha * TAM)
 			img.fill_rect(Rect2i(destino, Vector2i(TAM, TAM)), Color(0, 0, 0, 0))
 			img.blit_rect(bloco, Rect2i(Vector2i.ZERO, bloco.get_size()), destino)
+		_variantes_de_sorteio(img, linha, chao, dados[1])
+
+
+## Preenche as colunas extras da linha: com o ladrilho normal (sorteio sem efeito) ou, na floresta,
+## com as outras peças do SpriteCook, pintadas com o tom do ambiente.
+func _variantes_de_sorteio(img: Image, linha: int, chao: Image, tom: Color) -> void:
+	_preencher_extras(img, linha, GRAMA, COLUNAS_EXTRAS_GRAMA, CELULAS_GRAMA_SPRITECOOK, chao, tom)
+	_preencher_extras(img, linha, TERRA, COLUNAS_EXTRAS_TERRA, CELULAS_TERRA_SPRITECOOK, chao, tom)
+
+
+func _preencher_extras(img: Image, linha: int, coluna_base: int, extras: Array[int], celulas: Array[Vector2i], chao: Image, tom: Color) -> void:
+	for i in extras.size():
+		var destino := Vector2i(extras[i] * TAM, linha * TAM)
+		var bloco: Image
+		if chao == null:
+			bloco = img.get_region(Rect2i(coluna_base * TAM, linha * TAM, TAM, TAM))
+		else:
+			bloco = chao.get_region(Rect2i(celulas[i + 1] * TAM, Vector2i(TAM, TAM)))
+			_pintar(bloco, tom)
+		img.blit_rect(bloco, Rect2i(Vector2i.ZERO, bloco.get_size()), destino)
+
+
+func _chao_spritecook() -> Image:
+	var chao := Image.load_from_file(ProjectSettings.globalize_path(ARQ_CHAO_SPRITECOOK))
+	chao.convert(Image.FORMAT_RGBA8)
+	return chao
 
 
 ## Multiplica a cor de cada pixel pelo `tom` (a transparência não muda).
