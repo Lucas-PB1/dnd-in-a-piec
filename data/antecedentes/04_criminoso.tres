@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_fcqx5"]
+
+[resource]
+script = ExtResource("1_fcqx5")
+id = &"criminoso"
+nome = "Criminoso"
+descricao = "Ganhou a vida fora da lei, atento a becos e a quem o segue."
+atributos = Array[StringName]([&"destreza", &"constituicao", &"inteligencia"])
+talento = &"alerta"
+pericias = Array[StringName]([&"prestidigitacao", &"furtividade"])
+ferramenta = "Ferramentas de ladrão"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

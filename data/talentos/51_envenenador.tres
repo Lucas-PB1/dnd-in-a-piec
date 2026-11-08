@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_jn7w4"]
+
+[resource]
+script = ExtResource("1_jn7w4")
+id = &"envenenador"
+nome = "Envenenador"
+resumo = "Aplica veneno na arma."
+motivo = "Espera o tipo de dano veneno em TiposDano."

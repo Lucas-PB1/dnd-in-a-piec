@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_3uql8"]
+
+[resource]
+script = ExtResource("1_3uql8")
+id = &"cortador"
+nome = "Cortador"
+resumo = "Acerto cortante aplica Lentidão; crítico dá desvantagem no próximo ataque do alvo."
+situacao = 0
+motivo = "Regra pequena de combate."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_3wxnt"]
+
+[resource]
+script = ExtResource("1_3wxnt")
+id = &"marinheiro"
+nome = "Marinheiro"
+descricao = "Trabalhou em navios, entre tempestades, cordas e brigas de porto."
+atributos = Array[StringName]([&"forca", &"destreza", &"sabedoria"])
+talento = &"brigao_de_taverna"
+pericias = Array[StringName]([&"acrobacia", &"percepcao"])
+ferramenta = "Ferramentas de navegador"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

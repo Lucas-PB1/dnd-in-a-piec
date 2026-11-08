@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_xjvlm"]
+
+[resource]
+script = ExtResource("1_xjvlm")
+id = &"resiliente"
+nome = "Resiliente"
+resumo = "+1 num atributo e proficiência numa salvaguarda."
+situacao = 0
+motivo = "A ficha já sabe somar o que o talento dá."

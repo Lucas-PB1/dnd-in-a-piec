@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_w54pq"]
+
+[resource]
+script = ExtResource("1_w54pq")
+id = &"sabio"
+nome = "Sábio"
+descricao = "Passou a juventude entre livros, mestres e bibliotecas."
+atributos = Array[StringName]([&"constituicao", &"inteligencia", &"sabedoria"])
+talento = &"iniciado_em_magia"
+pericias = Array[StringName]([&"arcanismo", &"historia"])
+ferramenta = "Suprimentos de caligrafia"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

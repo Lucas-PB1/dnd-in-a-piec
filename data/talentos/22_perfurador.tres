@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_yd8ws"]
+
+[resource]
+script = ExtResource("1_yd8ws")
+id = &"perfurador"
+nome = "Perfurador"
+resumo = "Pode rerrolar um dado de dano perfurante; no crítico rola um dado a mais."
+situacao = 0
+motivo = "Regra pequena de combate."

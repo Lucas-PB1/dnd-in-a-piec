@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_g0txc"]
+
+[resource]
+script = ExtResource("1_g0txc")
+id = &"musico"
+nome = "Músico"
+categoria = 0
+resumo = "Proficiência com instrumento e uma canção que dá inspiração no fim do descanso."
+motivo = "Espera instrumentos, inspiração e descanso."

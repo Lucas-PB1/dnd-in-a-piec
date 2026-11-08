@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_y06ku"]
+
+[resource]
+script = ExtResource("1_y06ku")
+id = &"investida"
+nome = "Investida"
+resumo = "Se está correndo, o próximo golpe soma 1d8 ou empurra 10 pés."
+situacao = 0
+motivo = "Regra pequena de combate."

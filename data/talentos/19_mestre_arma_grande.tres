@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_5nm0m"]
+
+[resource]
+script = ExtResource("1_5nm0m")
+id = &"mestre_arma_grande"
+nome = "Mestre em Arma Grande"
+resumo = "Arma Pesada soma a proficiência no dano; crítico ou abater abre um golpe extra."
+situacao = 0
+motivo = "A ação bônus já existe."

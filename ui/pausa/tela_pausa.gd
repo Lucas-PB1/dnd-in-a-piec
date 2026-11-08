@@ -6,6 +6,7 @@ extends Control
 
 signal mochila_escolhida
 signal bestiario_escolhido
+signal compendio_escolhido
 signal habilidades_escolhidas
 signal opcoes_escolhidas
 signal salvar_escolhido
@@ -18,6 +19,7 @@ signal fechou
 @onready var _botao_continuar: Button = %Continuar
 @onready var _botao_mochila: Button = %Mochila
 @onready var _botao_bestiario: Button = %Bestiario
+@onready var _botao_compendio: Button = %Compendio
 @onready var _botao_habilidades: Button = %Habilidades
 @onready var _botao_opcoes: Button = %Opcoes
 @onready var _botao_salvar: Button = %Salvar
@@ -32,6 +34,7 @@ func _ready() -> void:
 	_botao_mochila.pressed.connect(_escolher.bind(mochila_escolhida))
 	_botao_habilidades.pressed.connect(_escolher.bind(habilidades_escolhidas))
 	_botao_bestiario.pressed.connect(_escolher.bind(bestiario_escolhido))
+	_botao_compendio.pressed.connect(_escolher.bind(compendio_escolhido))
 	_botao_opcoes.pressed.connect(_escolher.bind(opcoes_escolhidas))
 	_botao_salvar.pressed.connect(salvar_escolhido.emit)
 	_botao_titulo.pressed.connect(_confirmacao.popup_centered)

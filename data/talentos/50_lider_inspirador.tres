@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_rcvkj"]
+
+[resource]
+script = ExtResource("1_rcvkj")
+id = &"lider_inspirador"
+nome = "Líder Inspirador"
+resumo = "Um discurso curto dá vida temporária aos aliados."
+motivo = "Espera aliados e vida temporária."

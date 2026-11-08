@@ -71,6 +71,7 @@ var _heroi_na_porta: bool = false
 @onready var _pausa: TelaPausa = $Interface/TelaPausa
 @onready var _tela_bestiario: TelaBestiario = $Interface/TelaBestiario
 @onready var _tela_habilidades: TelaHabilidades = $Interface/TelaHabilidades
+@onready var _tela_compendio: TelaCompendio = $Interface/TelaCompendio
 @onready var _sons: Sons = $Sons
 @onready var _musica: Musica = $Musica
 @onready var _controles_toque: ControlesToque = $ControlesToque
@@ -108,6 +109,8 @@ func _ready() -> void:
 	_pausa.opcoes_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_comandos))
 	_pausa.bestiario_escolhido.connect(_abrir_pela_pausa.bind(_abrir_bestiario))
 	_tela_bestiario.fechou.connect(_ao_fechar_modal)
+	_pausa.compendio_escolhido.connect(_abrir_pela_pausa.bind(_abrir_compendio))
+	_tela_compendio.fechou.connect(_ao_fechar_modal)
 	_pausa.habilidades_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_habilidades))
 	_tela_habilidades.fechou.connect(_ao_fechar_modal)
 	_pausa.salvar_escolhido.connect(_salvar_jogo)
@@ -142,6 +145,7 @@ func _abrir_titulo() -> void:
 	titulo.novo_jogo_escolhido.connect(_ao_escolher_novo_jogo.bind(titulo))
 	titulo.continuar_escolhido.connect(_ao_continuar.bind(titulo))
 	titulo.opcoes_escolhidas.connect(_abrir_opcoes_do_titulo.bind(titulo))
+	titulo.compendio_escolhido.connect(_abrir_compendio_do_titulo.bind(titulo))
 	titulo.sair_escolhido.connect(get_tree().quit)
 	_interface.add_child(titulo)
 	titulo.mostrar_continuar(not Salvamento.ler().is_empty())
@@ -157,6 +161,19 @@ func _abrir_opcoes_do_titulo(titulo: TelaTitulo) -> void:
 	_titulo_escondido = titulo
 	titulo.hide()
 	_comandos.abrir(false)
+
+
+## Abre o mesmo Compêndio da pausa usando a classe disponível na criação.
+func _abrir_compendio_do_titulo(titulo: TelaTitulo) -> void:
+	_titulo_escondido = titulo
+	titulo.hide()
+	_tela_compendio.abrir(Compendio.montar(_classe_padrao_do_compendio()))
+
+
+func _classe_padrao_do_compendio() -> ClasseRPG:
+	if not classes_disponiveis.is_empty():
+		return classes_disponiveis[0]
+	return _jogador.ficha.classe
 
 
 ## Carrega o jogo salvo: a ficha, a mochila e o começo da fase em que salvou.
@@ -459,9 +476,9 @@ func _unhandled_input(evento: InputEvent) -> void:
 		_abrir_pausa()
 
 
-## Pausa (Esc ou o botão Menu): Continuar, Mochila, Opções, Salvar e Menu principal.
+## Pausa (Esc ou o botão Menu): Continuar, Mochila, Habilidades, Bestiário, Compêndio, Opções, Salvar e Menu principal.
 func _abrir_pausa() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _tela_bestiario.visible or _tela_habilidades.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
 		return
 	_pausa.abrir()
 	_controles_toque.atualizar(true)
@@ -487,9 +504,16 @@ func _voltar_ao_titulo() -> void:
 
 
 func _abrir_habilidades() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible:
 		return
 	_tela_habilidades.abrir(_jogador.ficha)
+	_controles_toque.atualizar(true)
+
+
+func _abrir_compendio() -> void:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
+		return
+	_tela_compendio.abrir(Compendio.montar(_jogador.ficha.classe))
 	_controles_toque.atualizar(true)
 
 
@@ -501,7 +525,7 @@ func _abrir_bestiario() -> void:
 
 
 func _abrir_inventario() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
@@ -527,7 +551,7 @@ func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> voi
 
 
 func _abrir_bau(itens: Array[Item]) -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
 		return
 	_sons.tocar(&"bau")
 	_tela_bau.abrir(itens, _jogador.inventario)
@@ -535,7 +559,7 @@ func _abrir_bau(itens: Array[Item]) -> void:
 
 
 func _abrir_comandos() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
 		return
 	_comandos.abrir()
 	_controles_toque.atualizar(true)
@@ -551,7 +575,7 @@ func _reabrir_pausa() -> void:
 func _abrir_pela_pausa(abrir_tela: Callable) -> void:
 	_voltar_para_pausa = true
 	abrir_tela.call()
-	if not (_inventario.visible or _comandos.visible or _tela_bestiario.visible or _tela_habilidades.visible):
+	if not (_inventario.visible or _comandos.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible):
 		_voltar_para_pausa = false
 		_pausa.abrir()
 

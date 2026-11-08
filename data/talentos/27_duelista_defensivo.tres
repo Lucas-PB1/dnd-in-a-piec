@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_dfp4x"]
+
+[resource]
+script = ExtResource("1_dfp4x")
+id = &"duelista_defensivo"
+nome = "Duelista Defensivo"
+resumo = "Soma a proficiência na CA contra um golpe corpo a corpo."
+situacao = 0
+motivo = "Não há reação: viraria um botão."

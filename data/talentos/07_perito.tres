@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_xytie"]
+
+[resource]
+script = ExtResource("1_xytie")
+id = &"perito"
+nome = "Perito"
+categoria = 0
+resumo = "Proficiência em três perícias ou ferramentas à escolha."
+motivo = "Espera as perícias virarem teste."

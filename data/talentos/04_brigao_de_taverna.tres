@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_j4nm8"]
+
+[resource]
+script = ExtResource("1_j4nm8")
+id = &"brigao_de_taverna"
+nome = "Brigão de Taverna"
+categoria = 0
+resumo = "O soco passa de 1d1 para 1d4 e pode empurrar."
+situacao = 0
+motivo = "Conta combinada."

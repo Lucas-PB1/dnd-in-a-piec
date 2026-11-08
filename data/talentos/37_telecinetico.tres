@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_3ekad"]
+
+[resource]
+script = ExtResource("1_3ekad")
+id = &"telecinetico"
+nome = "Telecinético"
+resumo = "+1 num atributo mental, um empurrão à distância e o truque Mão Maga."
+motivo = "Espera a magia."

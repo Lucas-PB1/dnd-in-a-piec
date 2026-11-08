@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_oweop"]
+
+[resource]
+script = ExtResource("1_oweop")
+id = &"mercador"
+nome = "Mercador"
+descricao = "Negociou em feiras e rotas comerciais, de olho no lucro."
+atributos = Array[StringName]([&"constituicao", &"inteligencia", &"carisma"])
+talento = &"sortudo"
+pericias = Array[StringName]([&"lidar_com_animais", &"persuasao"])
+ferramenta = "Ferramentas de navegador"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

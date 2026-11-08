@@ -75,6 +75,13 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Opções"
 
+[node name="Compendio" type="Button" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Compêndio"
+
 [node name="Sair" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 40)

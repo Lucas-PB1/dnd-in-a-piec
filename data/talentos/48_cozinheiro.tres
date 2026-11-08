@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_wbrwo"]
+
+[resource]
+script = ExtResource("1_wbrwo")
+id = &"cozinheiro"
+nome = "Cozinheiro"
+resumo = "+1 de Constituição ou Sabedoria, comida que cura um pouco e petisco que dá vida temporária."
+motivo = "Espera descanso e vida temporária."

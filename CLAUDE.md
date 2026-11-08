@@ -93,7 +93,8 @@ features/bau/            baú do arsenal (E)
 features/arremesso/      arma arremessada / projétil do herói
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
 ui/                      titulo, criacao_personagem, hud, inventario, bau, comandos, derrota,
-                         controles_toque; tema_menu.tres; resumo_item.gd
+                         controles_toque, bestiario, habilidades, pausa, compendio;
+                         tema_menu.tres; resumo_item.gd
 data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze, goblin_minion, goblin_warrior,
                          armas/, armaduras/, municoes/, pacotes/
 assets/                  tiles/, armas/, armaduras/, efeitos/, shaders/; CREDITOS.md

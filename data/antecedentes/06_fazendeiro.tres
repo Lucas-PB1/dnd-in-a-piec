@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_fiywo"]
+
+[resource]
+script = ExtResource("1_fiywo")
+id = &"fazendeiro"
+nome = "Fazendeiro"
+descricao = "Cresceu entre plantações e rebanhos, com o corpo forte de quem trabalha a terra."
+atributos = Array[StringName]([&"forca", &"constituicao", &"sabedoria"])
+talento = &"resistente"
+pericias = Array[StringName]([&"lidar_com_animais", &"natureza"])
+ferramenta = "Ferramentas de carpinteiro"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

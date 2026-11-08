@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_xupi4"]
+
+[resource]
+script = ExtResource("1_xupi4")
+id = &"mestre_armadura_media"
+nome = "Mestre em Armadura Média"
+resumo = "O teto de Destreza da armadura média sobe para +3 e a Furtividade deixa de sofrer desvantagem."
+situacao = 0
+motivo = "A desvantagem de Furtividade espera o teste."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_fer5k"]
+
+[resource]
+script = ExtResource("1_fer5k")
+id = &"soldado"
+nome = "Soldado"
+descricao = "Serviu num exército ou numa milícia, treinado para a batalha."
+atributos = Array[StringName]([&"forca", &"destreza", &"constituicao"])
+talento = &"atacante_selvagem"
+pericias = Array[StringName]([&"atletismo", &"intimidacao"])
+ferramenta = "Jogo (à escolha)"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

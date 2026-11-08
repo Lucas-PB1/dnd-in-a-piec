@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_0510s"]
+
+[resource]
+script = ExtResource("1_0510s")
+id = &"charlatao"
+nome = "Charlatão"
+descricao = "Vive de lábia: golpes, disfarces e histórias bem contadas."
+atributos = Array[StringName]([&"destreza", &"constituicao", &"carisma"])
+talento = &"perito"
+pericias = Array[StringName]([&"enganacao", &"prestidigitacao"])
+ferramenta = "Kit de falsificação"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

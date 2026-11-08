@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_p0w7r"]
+
+[resource]
+script = ExtResource("1_p0w7r")
+id = &"conjurador_de_guerra"
+nome = "Conjurador de Guerra"
+resumo = "Conjurar no lugar de um ataque de oportunidade e segurar o foco com as mãos ocupadas."
+motivo = "Espera a magia."

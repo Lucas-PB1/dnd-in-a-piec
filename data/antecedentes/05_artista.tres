@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_vft31"]
+
+[resource]
+script = ExtResource("1_vft31")
+id = &"artista"
+nome = "Artista"
+descricao = "Viveu de palco e estrada, atraindo plateias com música, dança ou contos."
+atributos = Array[StringName]([&"forca", &"destreza", &"carisma"])
+talento = &"musico"
+pericias = Array[StringName]([&"acrobacia", &"atuacao"])
+ferramenta = "Instrumento musical (à escolha)"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

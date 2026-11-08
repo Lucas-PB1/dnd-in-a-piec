@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_xytai"]
+
+[resource]
+script = ExtResource("1_xytai")
+id = &"agarrador"
+nome = "Agarrador"
+resumo = "Vantagem em ataques contra quem você agarra e agarrar sem soltar a arma."
+motivo = "Espera a condição Agarrado."

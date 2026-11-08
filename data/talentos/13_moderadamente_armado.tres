@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_5f5wq"]
+
+[resource]
+script = ExtResource("1_5f5wq")
+id = &"moderadamente_armado"
+nome = "Moderadamente Armado"
+resumo = "+1 num atributo e treinamento com armadura média e escudo."
+situacao = 0
+motivo = "A ficha já sabe somar treinamentos."

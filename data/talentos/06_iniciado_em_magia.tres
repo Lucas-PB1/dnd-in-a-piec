@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_kd636"]
+
+[resource]
+script = ExtResource("1_kd636")
+id = &"iniciado_em_magia"
+nome = "Iniciado em Magia"
+categoria = 0
+resumo = "Dois truques e uma magia de 1º círculo de uma lista, usados um pouco por descanso."
+motivo = "Espera a magia entrar no jogo."

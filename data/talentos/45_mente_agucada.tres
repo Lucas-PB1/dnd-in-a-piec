@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_hblew"]
+
+[resource]
+script = ExtResource("1_hblew")
+id = &"mente_agucada"
+nome = "Mente Aguçada"
+resumo = "+1 de Inteligência e um estudo que revela detalhes do lugar."
+motivo = "Espera as perícias virarem teste."

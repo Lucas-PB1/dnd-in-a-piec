@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_3ojgy"]
+
+[resource]
+script = ExtResource("1_3ojgy")
+id = &"atacante_selvagem"
+nome = "Atacante Selvagem"
+categoria = 0
+resumo = "Uma vez por rodada, rola o dano da arma duas vezes e fica o maior."
+situacao = 0
+motivo = "Conta combinada."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_jwsu6"]
+
+[resource]
+script = ExtResource("1_jwsu6")
+id = &"escriba"
+nome = "Escriba"
+descricao = "Copiou e organizou documentos, com letra firme e olho para detalhes."
+atributos = Array[StringName]([&"destreza", &"inteligencia", &"sabedoria"])
+talento = &"perito"
+pericias = Array[StringName]([&"investigacao", &"percepcao"])
+ferramenta = "Suprimentos de caligrafia"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

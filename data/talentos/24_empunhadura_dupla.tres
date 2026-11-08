@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_lki1a"]
+
+[resource]
+script = ExtResource("1_lki1a")
+id = &"empunhadura_dupla"
+nome = "Empunhadura Dupla"
+resumo = "A segunda arma não precisa ser Leve."
+situacao = 0
+motivo = "Regra pequena de combate."

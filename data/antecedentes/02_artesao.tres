@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_f7ffo"]
+
+[resource]
+script = ExtResource("1_f7ffo")
+id = &"artesao"
+nome = "Artesão"
+descricao = "Aprendeu um ofício numa oficina e cresceu entre ferramentas e clientes."
+atributos = Array[StringName]([&"forca", &"destreza", &"inteligencia"])
+talento = &"artesao"
+pericias = Array[StringName]([&"investigacao", &"persuasao"])
+ferramenta = "Ferramentas de artesão (à escolha)"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

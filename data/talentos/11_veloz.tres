@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_hvlfj"]
+
+[resource]
+script = ExtResource("1_hvlfj")
+id = &"veloz"
+nome = "Veloz"
+resumo = "Deslocamento +10 pés."
+situacao = 0
+motivo = "Conta combinada; é de nível 4 e a escolha de talento ainda não existe."

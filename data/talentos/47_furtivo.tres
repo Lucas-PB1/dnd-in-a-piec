@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_tlueh"]
+
+[resource]
+script = ExtResource("1_tlueh")
+id = &"furtivo"
+nome = "Furtivo"
+resumo = "Vantagem em Furtividade com pouca luz; um tiro de cobertura não revela tanto."
+motivo = "Furtividade ainda não é teste do herói."

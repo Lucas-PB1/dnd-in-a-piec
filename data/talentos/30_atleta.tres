@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_f1wp7"]
+
+[resource]
+script = ExtResource("1_f1wp7")
+id = &"atleta"
+nome = "Atleta"
+resumo = "Levantar de Caído gasta menos deslocamento."
+situacao = 0
+motivo = "Escalar espera o cenário."

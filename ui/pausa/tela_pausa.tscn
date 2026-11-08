@@ -73,6 +73,12 @@ custom_minimum_size = Vector2(150, 36)
 layout_mode = 2
 text = "Bestiário"
 
+[node name="Compendio" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Compêndio"
+
 [node name="Opcoes" type="Button" parent="Centro/Painel/Coluna/Grade"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 36)

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_agd0k"]
+
+[resource]
+script = ExtResource("1_agd0k")
+id = &"guia"
+nome = "Guia"
+descricao = "Levou viajantes por ermos e trilhas, lendo o terreno e o tempo."
+atributos = Array[StringName]([&"destreza", &"constituicao", &"sabedoria"])
+talento = &"iniciado_em_magia"
+pericias = Array[StringName]([&"furtividade", &"sobrevivencia"])
+ferramenta = "Ferramentas de cartógrafo"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AntecedenteRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/antecedente_rpg.gd" id="1_iw4nd"]
+
+[resource]
+script = ExtResource("1_iw4nd")
+id = &"guarda"
+nome = "Guarda"
+descricao = "Vigiou muralhas, portões e caravanas, sempre de olho em problemas."
+atributos = Array[StringName]([&"forca", &"inteligencia", &"sabedoria"])
+talento = &"alerta"
+pericias = Array[StringName]([&"atletismo", &"percepcao"])
+ferramenta = "Jogo (à escolha)"
+equipamento = "Ferramenta e pacote de equipamento do livro. O jogo só entregará o que já existe nele (por enquanto, nada)."

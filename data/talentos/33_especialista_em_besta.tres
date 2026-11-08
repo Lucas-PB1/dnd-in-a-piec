@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_0sjll"]
+
+[resource]
+script = ExtResource("1_0sjll")
+id = &"especialista_em_besta"
+nome = "Especialista em Besta"
+resumo = "Inimigo a 5 pés não dá desvantagem no tiro de besta; a ação bônus dispara a Besta de Mão."
+situacao = 0
+motivo = "A arma à distância já dispara."

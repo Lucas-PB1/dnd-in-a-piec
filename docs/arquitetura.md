@@ -20,8 +20,9 @@ core/estados/        Estado, MaquinaEstados (genéricos)
 core/utilitarios/    ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
    ▲ usados por
 features/<nome>/     entidades: jogador, gray_ooze, goblin, boneco_treino, bau, arremesso
-ui/<tela>/           telas: titulo, criacao_personagem, hud, inventario, bau, comandos,
-                     derrota, vitoria, controles_toque
+ui/<tela>/           telas e apresentação: titulo, criacao_personagem, hud, inventario, bau,
+                     comandos, derrota, vitoria, controles_toque, bestiario, habilidades,
+                     pausa, compendio (páginas e montagem do conteúdo)
    ▲ montados por
 levels/main.gd       a ÚNICA peça que conhece todas as outras: liga sinais e chama APIs públicas
 ```
@@ -46,6 +47,10 @@ Main (main.gd)
     ├── TelaInventario (I)
     ├── TelaBau
     ├── TelaComandos   (C: teclas, trazer criatura, opções e ajuste do toque)
+    ├── TelaPausa      (Esc / Menu no celular)
+    ├── TelaBestiario
+    ├── TelaHabilidades
+    ├── TelaCompendio   (abre pela pausa ou pelo título)
     └── Telas de título, derrota e vitória (abertas conforme o fluxo)
 ```
 

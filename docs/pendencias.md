@@ -61,3 +61,8 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 - Controle (gamepad).
 - iOS (precisa de Mac com Xcode).
 - Trocar o nome do jogo antes de publicar ("D&D" é marca da Wizards of the Coast).
+
+## Antecedentes e talentos (só documentados)
+- Os dados existem, mas nenhum antecedente ou talento está acessível ainda. O Compêndio (menu inicial e pausa) só cria essas abas quando houver conteúdo disponível; para liberar um talento funcional, marque o id em `TALENTOS_FUNCIONANDO` de `tools/gerar_compendio.gd` e rode o gerador.
+- Passo de criação com o antecedente (+2/+1 ou +1/+1/+1 depois da compra de pontos, teto 20, perícias, talento de origem). Itens só os que o jogo já tem. Antes disso, decidir com o usuário: Iniciado em Magia, Músico, Artesão e Curandeiro.
+- Efeitos dos talentos de origem: Alerta, Resistente, Atacante Selvagem, Perito, Sortudo, Brigão de Taverna (contas em `docs/talentos.md`).

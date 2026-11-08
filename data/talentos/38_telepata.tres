@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_wok12"]
+
+[resource]
+script = ExtResource("1_wok12")
+id = &"telepata"
+nome = "Telepata"
+resumo = "+1 num atributo mental, fala na mente de uma criatura e a magia Detectar Pensamentos."
+motivo = "Espera a magia."

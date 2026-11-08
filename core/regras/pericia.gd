@@ -17,6 +17,15 @@ const PERCEPCAO := &"percepcao"
 const SOBREVIVENCIA := &"sobrevivencia"
 ## Não entra na lista do Guerreiro. Os goblins rolam esta.
 const FURTIVIDADE := &"furtividade"
+## Perícias que os antecedentes do livro usam (ainda sem teste no jogo, só na ficha).
+const ARCANISMO := &"arcanismo"
+const ATUACAO := &"atuacao"
+const ENGANACAO := &"enganacao"
+const INVESTIGACAO := &"investigacao"
+const MEDICINA := &"medicina"
+const NATUREZA := &"natureza"
+const PRESTIDIGITACAO := &"prestidigitacao"
+const RELIGIAO := &"religiao"
 
 const ATRIBUTO := {
 	ACROBACIA: Atributos.DESTREZA,
@@ -29,6 +38,14 @@ const ATRIBUTO := {
 	PERCEPCAO: Atributos.SABEDORIA,
 	SOBREVIVENCIA: Atributos.SABEDORIA,
 	FURTIVIDADE: Atributos.DESTREZA,
+	ARCANISMO: Atributos.INTELIGENCIA,
+	ATUACAO: Atributos.CARISMA,
+	ENGANACAO: Atributos.CARISMA,
+	INVESTIGACAO: Atributos.INTELIGENCIA,
+	MEDICINA: Atributos.SABEDORIA,
+	NATUREZA: Atributos.INTELIGENCIA,
+	PRESTIDIGITACAO: Atributos.DESTREZA,
+	RELIGIAO: Atributos.INTELIGENCIA,
 }
 
 const NOMES := {
@@ -42,6 +59,14 @@ const NOMES := {
 	PERCEPCAO: "Percepção",
 	SOBREVIVENCIA: "Sobrevivência",
 	FURTIVIDADE: "Furtividade",
+	ARCANISMO: "Arcanismo",
+	ATUACAO: "Atuação",
+	ENGANACAO: "Enganação",
+	INVESTIGACAO: "Investigação",
+	MEDICINA: "Medicina",
+	NATUREZA: "Natureza",
+	PRESTIDIGITACAO: "Prestidigitação",
+	RELIGIAO: "Religião",
 }
 
 const DESCRICOES := {
@@ -55,6 +80,14 @@ const DESCRICOES := {
 	PERCEPCAO: "Notar o que está escondido. Sobe a Percepção passiva (Sabedoria).",
 	SOBREVIVENCIA: "Seguir trilha e achar abrigo (Sabedoria).",
 	FURTIVIDADE: "Passar sem ser notado (Destreza).",
+	ARCANISMO: "Saber sobre magia e criaturas mágicas (Inteligência).",
+	ATUACAO: "Cantar, dançar e entreter (Carisma).",
+	ENGANACAO: "Mentir de forma convincente (Carisma).",
+	INVESTIGACAO: "Procurar pistas e deduzir (Inteligência).",
+	MEDICINA: "Estabilizar e tratar feridas (Sabedoria).",
+	NATUREZA: "Conhecer plantas, bichos e o clima (Inteligência).",
+	PRESTIDIGITACAO: "Truques de mão e bolsos leves (Destreza).",
+	RELIGIAO: "Conhecer deuses e ritos (Inteligência).",
 }
 
 

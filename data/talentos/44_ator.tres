@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_vbldx"]
+
+[resource]
+script = ExtResource("1_vbldx")
+id = &"ator"
+nome = "Ator"
+resumo = "+1 de Carisma, vantagem para fingir ser outra pessoa e imitar voz."
+motivo = "Espera as perícias virarem teste."

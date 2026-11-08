@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_dx0wv"]
+
+[resource]
+script = ExtResource("1_dx0wv")
+id = &"sortudo"
+nome = "Sortudo"
+categoria = 0
+resumo = "Pontos de sorte para rerrolar um d20 (ou forçar o rerrolar de um ataque contra você)."
+situacao = 0
+motivo = "O próximo efeito fácil: o Combate já rola o dado."

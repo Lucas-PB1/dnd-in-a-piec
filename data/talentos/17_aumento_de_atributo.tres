@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_r3rt2"]
+
+[resource]
+script = ExtResource("1_r3rt2")
+id = &"aumento_de_atributo"
+nome = "Aumento de Valor de Habilidade"
+resumo = "+2 num atributo, ou +1 em dois. Pode repetir."
+situacao = 0
+motivo = "A ficha já sabe somar o que o talento dá."

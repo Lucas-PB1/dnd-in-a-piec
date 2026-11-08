@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TalentoRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/talento_rpg.gd" id="1_jxma2"]
+
+[resource]
+script = ExtResource("1_jxma2")
+id = &"especialista_em_pericia"
+nome = "Especialista em Perícia"
+resumo = "+1 num atributo, uma proficiência e uma perícia com perícia especializada."
+motivo = "Espera as perícias virarem teste."
