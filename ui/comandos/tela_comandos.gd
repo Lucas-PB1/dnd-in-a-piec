@@ -1,7 +1,7 @@
 class_name TelaComandos
 extends Control
-## Tela de comandos (tecla C): mostra o que cada botão faz e deixa trocar a tecla.
-## Na mesma tela, traz ou tira uma criatura da arena. Pausa o jogo. Não conhece o herói:
+## Tela de opções (tecla C ou Opções no menu de pausa), em abas: Controles (trocar a tecla de cada ação),
+## Toque (analógico ou setas, ajustar botões) e Combate (trazer ou tirar uma criatura, para testes). Pausa o jogo. Não conhece o herói:
 ## quem monta o jogo responde a `abrir_pedido` e a `trazer_pedido`.
 
 ## Emitido quando o jogador aperta C com a tela fechada.
@@ -18,6 +18,8 @@ signal editar_toque_pedido
 signal fechou
 
 const TAMANHO_FONTE_LINHA := 12
+## Altura dos botões da aba Toque (px da tela do jogo): grandes para o dedo.
+const ALTURA_BOTAO_TOQUE := 36.0
 
 var _acao_escolhida: StringName = &""
 var _cenas: Array[PackedScene] = []
@@ -25,12 +27,17 @@ var _botoes: Dictionary[StringName, Button] = {}
 var _lista_modo: OptionButton
 var _lista_mostrar: OptionButton
 
-@onready var _lista_acoes: VBoxContainer = %ListaAcoes
+@onready var _lista_acoes: GridContainer = %ListaAcoes
 @onready var _lista_criaturas: ItemList = %ListaCriaturas
 @onready var _trazer: Button = %Trazer
 @onready var _tirar: Button = %Tirar
 @onready var _fechar: Button = %Fechar
-@onready var _coluna_combate: VBoxContainer = $Centro/Painel/Coluna/Miolo/Combate
+@onready var _pagina_controles: Control = %PaginaControles
+@onready var _pagina_toque: Control = %PaginaToque
+@onready var _pagina_combate: Control = %PaginaCombate
+@onready var _aba_controles: Button = %AbaControles
+@onready var _aba_toque: Button = %AbaToque
+@onready var _aba_combate: Button = %AbaCombate
 
 
 func _ready() -> void:
@@ -39,10 +46,17 @@ func _ready() -> void:
 	for acao in Comandos.ACOES:
 		var botao := Button.new()
 		botao.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		botao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		botao.add_theme_font_size_override(&"font_size", TAMANHO_FONTE_LINHA)
 		botao.pressed.connect(_escolher_acao.bind(acao))
 		_botoes[acao] = botao
 		_lista_acoes.add_child(botao)
+	var grupo := ButtonGroup.new()  # uma aba de cada vez
+	for aba in [_aba_controles, _aba_toque, _aba_combate]:
+		aba.button_group = grupo
+	_aba_controles.pressed.connect(_mostrar_pagina.bind(_pagina_controles))
+	_aba_toque.pressed.connect(_mostrar_pagina.bind(_pagina_toque))
+	_aba_combate.pressed.connect(_mostrar_pagina.bind(_pagina_combate))
 	_trazer.pressed.connect(_pedir_trazer)
 	_tirar.pressed.connect(tirar_pedido.emit)
 	_fechar.pressed.connect(fechar)
@@ -85,6 +99,8 @@ func abrir() -> void:
 	_atualizar_rotulos()
 	_lista_modo.select(OpcoesToque.modo)  # as opções são carregadas depois do _ready
 	_lista_mostrar.select(OpcoesToque.mostrar)
+	_aba_controles.button_pressed = true
+	_mostrar_pagina(_pagina_controles)
 	show()
 	get_tree().paused = true
 
@@ -95,6 +111,12 @@ func fechar() -> void:
 	hide()
 	get_tree().paused = false
 	fechou.emit()
+
+
+## Mostra só a página da aba escolhida.
+func _mostrar_pagina(pagina: Control) -> void:
+	for candidata in [_pagina_controles, _pagina_toque, _pagina_combate]:
+		candidata.visible = candidata == pagina
 
 
 func _escolher_acao(acao: StringName) -> void:
@@ -120,23 +142,22 @@ func _capturar_tecla(evento: InputEvent) -> bool:
 
 ## Celular: analógico ou setas, e quando os controles aparecem (OpcoesToque).
 func _criar_opcoes_toque() -> void:
-	var titulo := Label.new()
-	titulo.text = "Toque (celular)"
-	_coluna_combate.add_child(titulo)
 	_lista_modo = _lista_de_opcoes(OpcoesToque.NOMES_MODO, _escolher_modo)
 	_lista_mostrar = _lista_de_opcoes(OpcoesToque.NOMES_MOSTRAR, _escolher_mostrar)
-	_coluna_combate.add_child(_lista_modo)
-	_coluna_combate.add_child(_lista_mostrar)
+	_pagina_toque.add_child(_lista_modo)
+	_pagina_toque.add_child(_lista_mostrar)
 	var ajustar := Button.new()
 	ajustar.name = "AjustarToque"
+	ajustar.custom_minimum_size = Vector2(0, ALTURA_BOTAO_TOQUE)
 	ajustar.text = "Ajustar botões"
 	ajustar.add_theme_font_size_override(&"font_size", TAMANHO_FONTE_LINHA)
 	ajustar.pressed.connect(_pedir_edicao_toque)
-	_coluna_combate.add_child(ajustar)
+	_pagina_toque.add_child(ajustar)
 
 
 func _lista_de_opcoes(nomes: PackedStringArray, ao_escolher: Callable) -> OptionButton:
 	var lista := OptionButton.new()
+	lista.custom_minimum_size = Vector2(0, ALTURA_BOTAO_TOQUE)
 	lista.add_theme_font_size_override(&"font_size", TAMANHO_FONTE_LINHA)
 	for nome in nomes:
 		lista.add_item(nome)

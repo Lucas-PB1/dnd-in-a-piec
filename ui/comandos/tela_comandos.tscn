@@ -40,51 +40,103 @@ theme_override_constants/separation = 6
 [node name="Titulo" type="Label" parent="Centro/Painel/Coluna"]
 layout_mode = 2
 theme_type_variation = &"Titulo"
-text = "Comandos"
+text = "Opções"
 horizontal_alignment = 1
 
-[node name="Dica" type="Label" parent="Centro/Painel/Coluna"]
+[node name="Abas" type="HBoxContainer" parent="Centro/Painel/Coluna"]
 layout_mode = 2
-theme_type_variation = &"Dica"
-text = "Clique numa ação e aperte a tecla nova. Esc cancela. No celular, escolha analógico ou setas."
-horizontal_alignment = 1
+theme_override_constants/separation = 4
+alignment = 1
 
-[node name="Miolo" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+[node name="AbaControles" type="Button" parent="Centro/Painel/Coluna/Abas"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-theme_override_constants/separation = 16
+toggle_mode = true
+button_pressed = true
+text = "Controles"
 
-[node name="ListaAcoes" type="VBoxContainer" parent="Centro/Painel/Coluna/Miolo"]
+[node name="AbaToque" type="Button" parent="Centro/Painel/Coluna/Abas"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+toggle_mode = true
+text = "Toque"
+
+[node name="AbaCombate" type="Button" parent="Centro/Painel/Coluna/Abas"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+toggle_mode = true
+text = "Combate"
+
+[node name="Paginas" type="MarginContainer" parent="Centro/Painel/Coluna"]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+
+[node name="PaginaControles" type="VBoxContainer" parent="Centro/Painel/Coluna/Paginas"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 4
 
-[node name="Combate" type="VBoxContainer" parent="Centro/Painel/Coluna/Miolo"]
+[node name="Dica" type="Label" parent="Centro/Painel/Coluna/Paginas/PaginaControles"]
+layout_mode = 2
+theme_type_variation = &"Dica"
+text = "Clique numa ação e aperte a tecla nova. Esc cancela."
+horizontal_alignment = 1
+
+[node name="Rolagem" type="ScrollContainer" parent="Centro/Painel/Coluna/Paginas/PaginaControles"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ListaAcoes" type="GridContainer" parent="Centro/Painel/Coluna/Paginas/PaginaControles/Rolagem"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 2
+columns = 2
+
+[node name="PaginaToque" type="VBoxContainer" parent="Centro/Painel/Coluna/Paginas"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PaginaCombate" type="VBoxContainer" parent="Centro/Painel/Coluna/Paginas"]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="TituloCombate" type="Label" parent="Centro/Painel/Coluna/Miolo/Combate"]
+[node name="DicaCombate" type="Label" parent="Centro/Painel/Coluna/Paginas/PaginaCombate"]
 layout_mode = 2
-theme_type_variation = &"Titulo"
-text = "Combate"
+theme_type_variation = &"Dica"
+text = "Para testar: traga uma criatura para perto do herói ou limpe a arena."
 horizontal_alignment = 1
 
-[node name="ListaCriaturas" type="ItemList" parent="Centro/Painel/Coluna/Miolo/Combate"]
+[node name="ListaCriaturas" type="ItemList" parent="Centro/Painel/Coluna/Paginas/PaginaCombate"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(150, 96)
+custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Trazer" type="Button" parent="Centro/Painel/Coluna/Miolo/Combate"]
+[node name="Trazer" type="Button" parent="Centro/Painel/Coluna/Paginas/PaginaCombate"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 text = "Trazer"
 
-[node name="Tirar" type="Button" parent="Centro/Painel/Coluna/Miolo/Combate"]
+[node name="Tirar" type="Button" parent="Centro/Painel/Coluna/Paginas/PaginaCombate"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 text = "Tirar da arena"
 
 [node name="Fechar" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 36)
 layout_mode = 2
+size_flags_horizontal = 4
 text = "Fechar"

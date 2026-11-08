@@ -70,6 +70,7 @@ func _testar_compra_de_pontos() -> void:
 	_checar(sugestao.aplicar(guerreiro.atributos_sugeridos) and sugestao.pontos_restantes() == 0,
 		"sugestão do Guerreiro gasta exatamente 27")
 	_checar(not sugestao.aplicar({Atributos.FORCA: 16}), "recusa valor acima de 15")
+	_testar_builds_do_guerreiro(guerreiro)
 
 
 func _testar_ficha() -> void:
@@ -157,6 +158,23 @@ func _testar_fases() -> void:
 		_checar(pode_warrior == (i >= 3), "Warrior só entra no sorteio a partir da ruína")
 		_checar(fase.indice == i + 1 and fase.ultima == (i == 4), "a última fase é a fortaleza")
 		fase.free()
+
+
+## As três distribuições prontas do Guerreiro: armadura média, pesada e leve.
+func _testar_builds_do_guerreiro(guerreiro: ClasseRPG) -> void:
+	_checar(guerreiro.builds_sugeridos.size() == 3, "o Guerreiro tem 3 distribuições prontas")
+	var esperados := {
+		"Armadura média": [15, 14, 14, 10, 10, 8],
+		"Armadura pesada": [15, 10, 14, 10, 14, 8],
+		"Armadura leve": [10, 15, 14, 10, 14, 8],
+	}
+	for build in guerreiro.builds_sugeridos:
+		var compra := CompraDePontos.new()
+		_checar(compra.aplicar(build.atributos) and compra.pontos_restantes() >= 0, "%s cabe nos 27 pontos (sobram %d)" % [build.nome, compra.pontos_restantes()])
+		var valores: Array = []
+		for atributo in Atributos.TODOS:
+			valores.append(build.atributos[atributo])
+		_checar(valores == esperados.get(build.nome), "%s: FOR, DES, CON, INT, SAB, CAR como combinado" % build.nome)
 
 
 func _checar(condicao: bool, descricao: String) -> void:

@@ -54,16 +54,23 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
+[node name="Continuar" type="Button" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Continuar"
+
 [node name="NovoJogo" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Novo Jogo"
 
 [node name="Sair" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Sair"

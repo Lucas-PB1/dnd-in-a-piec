@@ -28,7 +28,7 @@ const BOTOES := [
 	[&"interagir", "E", Vector2(1, 1), Vector2(-164, -82), 20.0],
 	[&"surto_acao", "Surto", Vector2(1, 1), Vector2(-174, -140), 20.0],
 	[&"inventario", "Bolsa", Vector2(1, 0), Vector2(-26, 24), 21.0],
-	[&"comandos", "Menu", Vector2(1, 0), Vector2(-68, 24), 21.0],
+	[&"pausa", "Menu", Vector2(1, 0), Vector2(-68, 24), 21.0],
 ]
 ## Camada: acima do jogo e do HUD, abaixo dos menus (Interface = 10).
 const CAMADA := 5

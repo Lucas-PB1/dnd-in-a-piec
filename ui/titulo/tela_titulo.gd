@@ -1,14 +1,17 @@
 class_name TelaTitulo
 extends Control
-## Tela de título: nome do jogo (vem do project.godot), Novo Jogo e Sair.
+## Tela de título: nome do jogo (vem do project.godot), Continuar, Novo Jogo e Sair.
 ## Não decide nada: só avisa quem montou o jogo pelos sinais.
 
+## Emitido ao escolher "Continuar" (só fica ativo se há jogo salvo).
+signal continuar_escolhido
 ## Emitido ao escolher "Novo Jogo".
 signal novo_jogo_escolhido
 ## Emitido ao escolher "Sair".
 signal sair_escolhido
 
 @onready var _titulo: Label = %Titulo
+@onready var _botao_continuar: Button = %Continuar
 @onready var _botao_novo: Button = %NovoJogo
 @onready var _botao_sair: Button = %Sair
 
@@ -16,6 +19,16 @@ signal sair_escolhido
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS  # funciona com o jogo pausado
 	_titulo.text = ProjectSettings.get_setting("application/config/name")
+	_botao_continuar.pressed.connect(continuar_escolhido.emit)
 	_botao_novo.pressed.connect(novo_jogo_escolhido.emit)
 	_botao_sair.pressed.connect(sair_escolhido.emit)
-	_botao_novo.grab_focus()
+	mostrar_continuar(false)
+
+
+## Liga o botão Continuar se há jogo salvo; sem save ele fica apagado e o foco vai para Novo Jogo.
+func mostrar_continuar(ha_jogo_salvo: bool) -> void:
+	_botao_continuar.disabled = not ha_jogo_salvo
+	if ha_jogo_salvo:
+		_botao_continuar.grab_focus()
+	else:
+		_botao_novo.grab_focus()

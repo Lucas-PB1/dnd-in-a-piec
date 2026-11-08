@@ -7,8 +7,14 @@ extends Control
 ## Emitido ao clicar em "Começar", com a ficha montada e o pacote inicial escolhido
 ## (null se a classe não tiver pacotes).
 signal confirmada(ficha: Ficha, pacote: PacoteInicial)
+## Esc no primeiro passo: quem montou o jogo volta ao título.
+signal voltar_ao_titulo_pedido
 
 const LARGURA_AJUSTE := 28
+## Largura dos botões de distribuição pronta (px).
+const LARGURA_BUILD := 150
+## Espaço entre as partes de um atributo na grade (px).
+const SEPARACAO_CELULA := 6
 
 ## Classes que o jogador pode escolher (por enquanto só o Guerreiro).
 @export var classes: Array[ClasseRPG] = []
@@ -18,6 +24,8 @@ const LARGURA_AJUSTE := 28
 @export var pasta_armas: String = "res://data/armas/"
 
 enum Passo { QUEM, ATRIBUTOS, PERICIAS, MAESTRIAS }
+
+var _passo_atual: Passo = Passo.QUEM
 const TITULOS := {
 	Passo.QUEM: "Quem é você",
 	Passo.ATRIBUTOS: "Atributos",
@@ -57,7 +65,7 @@ var _armas: Array[Arma] = []
 @onready var _lista_maestrias: ItemList = %ListaMaestrias
 @onready var _contagem_maestrias: Label = %ContagemMaestrias
 @onready var _detalhe_maestria: Label = %DetalheMaestria
-@onready var _botao_sugestao: Button = %Sugestao
+@onready var _caixa_builds: HBoxContainer = %Builds
 @onready var _botao_comecar: Button = %Comecar
 
 
@@ -99,6 +107,12 @@ func escolher_pacote(indice: int) -> void:
 	_pacote = _classe.pacotes_iniciais[indice] if indice < _classe.pacotes_iniciais.size() else null
 	_escolha_pacote.select(indice)
 	_marcar_armas_do_pacote()
+	_atualizar()
+
+
+## Aplica uma distribuição pronta da classe (ex.: Guerreiro de armadura pesada).
+func aplicar_build(build: BuildSugerido) -> void:
+	_compra.aplicar(build.atributos)
 	_atualizar()
 
 
@@ -167,7 +181,6 @@ func _preparar_campos() -> void:
 	_escolha_nivel.item_selected.connect(escolher_nivel)
 	_escolha_pacote.item_selected.connect(escolher_pacote)
 	_escolha_classe.disabled = classes.size() == 1  # só uma classe por enquanto
-	_botao_sugestao.pressed.connect(aplicar_sugestao)
 	_botao_comecar.pressed.connect(confirmar)
 	(%Atributos as Button).pressed.connect(_mostrar_passo.bind(Passo.ATRIBUTOS))
 	(%Voltar as Button).pressed.connect(_mostrar_passo.bind(Passo.QUEM))
@@ -179,7 +192,24 @@ func _preparar_campos() -> void:
 	_lista_maestrias.multi_selected.connect(_ao_marcar)
 
 
+## Esc volta um passo; no primeiro, pede para voltar ao título.
+func _unhandled_input(evento: InputEvent) -> void:
+	if not evento.is_action_pressed(&"ui_cancel"):
+		return
+	get_viewport().set_input_as_handled()
+	match _passo_atual:
+		Passo.QUEM:
+			voltar_ao_titulo_pedido.emit()
+		Passo.ATRIBUTOS:
+			_mostrar_passo(Passo.QUEM)
+		Passo.PERICIAS:
+			_mostrar_passo(Passo.ATRIBUTOS)
+		Passo.MAESTRIAS:
+			_mostrar_passo(Passo.PERICIAS)
+
+
 func _mostrar_passo(passo: Passo) -> void:
+	_passo_atual = passo
 	_passo_quem.visible = passo == Passo.QUEM
 	_passo_atributos.visible = passo == Passo.ATRIBUTOS
 	_passo_pericias.visible = passo == Passo.PERICIAS
@@ -265,8 +295,6 @@ func _ficha_atual() -> Ficha:
 func _falta_algo() -> String:
 	if not Ficha.nome_valido(_campo_nome.text):
 		return "Escreva um nome"
-	if _compra.pontos_restantes() != 0:
-		return "Gaste todos os pontos"
 	if _classe.quantidade_pericias > 0 and pericias_marcadas().size() != _classe.quantidade_pericias:
 		return "Escolha %d perícias" % _classe.quantidade_pericias
 	if armas_marcadas().size() != _classe.quantidade_maestrias:
@@ -275,13 +303,29 @@ func _falta_algo() -> String:
 
 
 func _criar_linha(atributo: StringName) -> void:
-	_grade.add_child(_rotulo(Atributos.SIGLAS[atributo]))
+	var celula := HBoxContainer.new()  # sigla, valor, modificador, - e +: um atributo por célula da grade
+	celula.add_theme_constant_override(&"separation", SEPARACAO_CELULA)
+	celula.add_child(_rotulo(Atributos.SIGLAS[atributo]))
 	_rotulos_valor[atributo] = _rotulo("")
 	_rotulos_mod[atributo] = _rotulo("")
 	_botoes_menos[atributo] = _botao("-", mudar_atributo.bind(atributo, -1))
 	_botoes_mais[atributo] = _botao("+", mudar_atributo.bind(atributo, 1))
 	for no in [_rotulos_valor[atributo], _rotulos_mod[atributo], _botoes_menos[atributo], _botoes_mais[atributo]]:
-		_grade.add_child(no)
+		celula.add_child(no)
+	_grade.add_child(celula)
+
+
+## Um botão por distribuição pronta da classe. Só refaz se a classe mudou.
+func _montar_builds() -> void:
+	var builds := _classe.builds_sugeridos
+	if _caixa_builds.get_child_count() == builds.size():
+		return
+	for botao in _caixa_builds.get_children():
+		botao.queue_free()
+	for build in builds:
+		var botao := _botao(build.nome, aplicar_build.bind(build))
+		botao.custom_minimum_size = Vector2(LARGURA_BUILD, 0)
+		_caixa_builds.add_child(botao)
 
 
 func _atualizar() -> void:
@@ -304,7 +348,7 @@ func _atualizar() -> void:
 	_leva.text = "Leva: %s" % _pacote.texto_itens() if _pacote else ""
 	_proficiencias.text = "Proficiência: %s · %s" % [Proficiencias.texto_armas(_classe.proficiencias_armas),
 		Proficiencias.texto_armaduras(_classe.treinamento_armaduras)]
-	_botao_sugestao.text = "Sugestão do %s" % _classe.nome
+	_montar_builds()
 	_contagem_maestrias.text = "Domine %d tipos de arma (%d/%d marcadas). Só com elas a maestria vale." % [
 		_classe.quantidade_maestrias, armas_marcadas().size(), _classe.quantidade_maestrias]
 	var falta := _falta_algo()

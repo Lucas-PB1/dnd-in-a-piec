@@ -11,6 +11,9 @@
 [ext_resource type="PackedScene" path="res://features/bau/bau.tscn" id="10_bau"]
 [ext_resource type="PackedScene" path="res://ui/bau/tela_bau.tscn" id="11_tela_bau"]
 [ext_resource type="PackedScene" path="res://ui/comandos/tela_comandos.tscn" id="12_comandos"]
+[ext_resource type="PackedScene" path="res://ui/pausa/tela_pausa.tscn" id="15_pausa"]
+[ext_resource type="PackedScene" path="res://ui/bestiario/tela_bestiario.tscn" id="16_bestiario"]
+[ext_resource type="PackedScene" path="res://ui/habilidades/tela_habilidades.tscn" id="17_habilidades"]
 [ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
 [ext_resource type="Script" path="res://levels/impacto.gd" id="14_impacto"]
 
@@ -40,6 +43,12 @@ layer = 10
 [node name="TelaBau" parent="Interface" instance=ExtResource("11_tela_bau")]
 
 [node name="TelaComandos" parent="Interface" instance=ExtResource("12_comandos")]
+
+[node name="TelaPausa" parent="Interface" instance=ExtResource("15_pausa")]
+
+[node name="TelaBestiario" parent="Interface" instance=ExtResource("16_bestiario")]
+
+[node name="TelaHabilidades" parent="Interface" instance=ExtResource("17_habilidades")]
 
 [node name="Impacto" type="Node2D" parent="."]
 script = ExtResource("14_impacto")

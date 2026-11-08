@@ -19,6 +19,12 @@ const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_4.tscn"),
 	preload("res://levels/fase_5.tscn"),
 ]
+## Páginas do bestiário, na ordem da lista.
+const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
+	preload("res://data/bestiario/gray_ooze.tres"),
+	preload("res://data/bestiario/goblin_minion.tres"),
+	preload("res://data/bestiario/goblin_warrior.tres"),
+]
 const GRUPO_MONSTROS := &"monstros"
 const TIPO_MINION := &"minion"
 const TIPO_WARRIOR := &"warrior"
@@ -40,6 +46,10 @@ var _em_tela_de_pausa: bool = false
 ## Instâncias da cota desta entrada. O que foi trazido por Comandos não entra aqui.
 var _ids_da_cota: Array[int] = []
 var _surto_usado: bool = false
+## A tela aberta agora veio do menu de pausa: ao fechar, a pausa volta.
+var _voltar_para_pausa: bool = false
+## Quantas vezes o herói derrotou cada criatura (o bestiário mostra e o save guarda).
+var _bestiario := Bestiario.new()
 ## O herói está em cima da porta agora.
 var _heroi_na_porta: bool = false
 
@@ -52,6 +62,9 @@ var _heroi_na_porta: bool = false
 @onready var _boneco: Node2D = $BonecoTreino
 @onready var _tela_bau: TelaBau = $Interface/TelaBau
 @onready var _comandos: TelaComandos = $Interface/TelaComandos
+@onready var _pausa: TelaPausa = $Interface/TelaPausa
+@onready var _tela_bestiario: TelaBestiario = $Interface/TelaBestiario
+@onready var _tela_habilidades: TelaHabilidades = $Interface/TelaHabilidades
 @onready var _controles_toque: ControlesToque = $ControlesToque
 
 
@@ -72,6 +85,15 @@ func _ready() -> void:
 	_inventario.fechou.connect(_ao_fechar_modal)
 	_bau.abrir_pedido.connect(_abrir_bau)
 	_tela_bau.fechou.connect(_ao_fechar_modal)
+	_pausa.fechou.connect(_ao_fechar_modal)
+	_pausa.mochila_escolhida.connect(_abrir_pela_pausa.bind(_abrir_inventario))
+	_pausa.opcoes_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_comandos))
+	_pausa.bestiario_escolhido.connect(_abrir_pela_pausa.bind(_abrir_bestiario))
+	_tela_bestiario.fechou.connect(_ao_fechar_modal)
+	_pausa.habilidades_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_habilidades))
+	_tela_habilidades.fechou.connect(_ao_fechar_modal)
+	_pausa.salvar_escolhido.connect(_salvar_jogo)
+	_pausa.titulo_escolhido.connect(_voltar_ao_titulo)
 	_comandos.abrir_pedido.connect(_abrir_comandos)
 	_comandos.fechou.connect(_ao_fechar_modal)
 	_comandos.trazer_pedido.connect(trazer_criatura)
@@ -94,13 +116,33 @@ func _abrir_titulo() -> void:
 	_pausar(true)
 	var titulo: TelaTitulo = CENA_TITULO.instantiate()
 	titulo.novo_jogo_escolhido.connect(_ao_escolher_novo_jogo.bind(titulo))
+	titulo.continuar_escolhido.connect(_ao_continuar.bind(titulo))
 	titulo.sair_escolhido.connect(get_tree().quit)
 	_interface.add_child(titulo)
+	titulo.mostrar_continuar(not Salvamento.ler().is_empty())
 
 
 func _ao_escolher_novo_jogo(titulo: TelaTitulo) -> void:
 	titulo.queue_free()
 	_abrir_criacao()
+
+
+## Carrega o jogo salvo: a ficha, a mochila e o começo da fase em que salvou.
+func _ao_continuar(titulo: TelaTitulo) -> void:
+	var dados := Salvamento.ler()
+	var ficha := Salvamento.montar_ficha(dados)
+	if ficha == null:
+		return
+	titulo.queue_free()
+	_jogador.configurar_ficha(ficha)
+	_jogador.definir_mente_tatica(false)
+	Salvamento.restaurar_inventario(dados, _jogador.inventario)
+	Salvamento.restaurar_bestiario(dados, _bestiario)
+	var indice := clampi(Salvamento.fase_de(dados) - 1, 0, CENAS_FASE.size() - 1)
+	_entrar_fase(CENAS_FASE[indice])
+	_mostrar_personagem_no_hud()
+	_apontar_monstros_para(_jogador)
+	_pausar(false)
 
 
 func _abrir_criacao() -> void:
@@ -109,7 +151,14 @@ func _abrir_criacao() -> void:
 		tela.classes = classes_disponiveis
 	tela.arma_previa = _jogador.ataque_desarmado
 	tela.confirmada.connect(_ao_criar_personagem.bind(tela))
+	tela.voltar_ao_titulo_pedido.connect(_ao_voltar_da_criacao.bind(tela))
 	_interface.add_child(tela)
+
+
+## Esc no primeiro passo da criação: fecha a tela e mostra o título de novo.
+func _ao_voltar_da_criacao(tela: TelaCriacao) -> void:
+	tela.queue_free()
+	_abrir_titulo()
 
 
 func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao) -> void:
@@ -187,6 +236,7 @@ func _tentar_atravessar() -> void:
 	var seguinte := _fase.indice
 	if seguinte < CENAS_FASE.size():
 		_entrar_fase(CENAS_FASE[seguinte])
+		_salvar_ao_entrar_na_fase()
 
 
 func _entrar_fase(cena: PackedScene) -> void:
@@ -243,12 +293,20 @@ func _nascer_armadilhas() -> void:
 		_passar_percepcao(monstro)
 
 
+## Quando a criatura morre, o bestiário anota a derrota dela.
+func _registrar_no_bestiario(monstro: Node2D) -> void:
+	var criatura := monstro.get("criatura") as CriaturaRPG
+	if criatura and monstro.has_signal(&"morreu"):
+		monstro.connect(&"morreu", _bestiario.registrar_derrota.bind(criatura.nome))
+
+
 func quantidade_inimigos_da_fase(nivel: int) -> int:
 	var pontos := _fase.pontos_armadilha()
 	return mini(_fase.quantidade + (nivel - 1) * INIMIGOS_EXTRA_POR_NIVEL, pontos.size())
 
 
 func _ligar_morte_da_cota(monstro: Node2D, tipo: StringName, id: int, experiencia: int) -> void:
+	_registrar_no_bestiario(monstro)
 	if tipo == TIPO_MINION or tipo == TIPO_WARRIOR:
 		(monstro as Goblin).morreu.connect(_ao_morreu_da_cota.bind(id, experiencia))
 	else:
@@ -360,8 +418,53 @@ func _cenas_criaturas() -> Array[PackedScene]:
 
 # --- Interface --------------------------------------------------------------------
 
+## Esc (ou o botão Menu) abre a pausa se nenhuma tela por cima já usou a tecla para voltar.
+func _unhandled_input(evento: InputEvent) -> void:
+	if evento.is_action_pressed(&"pausa"):
+		_abrir_pausa()
+
+
+## Pausa (Esc ou o botão Menu): Continuar, Mochila, Opções, Salvar e Menu principal.
+func _abrir_pausa() -> void:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _tela_bestiario.visible or _tela_habilidades.visible:
+		return
+	_pausa.abrir()
+	_controles_toque.atualizar(true)
+
+
+## Salva a ficha, a mochila e a fase atual. Ao continuar, o herói volta ao começo da fase.
+func _salvar_jogo() -> void:
+	var gravou := Salvamento.gravar(_jogador.ficha, _jogador.inventario, _fase.indice, _bestiario)
+	_pausa.mostrar_aviso("Jogo salvo" if gravou else "Não foi possível salvar")
+
+
+## Entrou numa fase nova: guarda o progresso sozinho. Só no jogo de verdade (os testes pulam o início).
+func _salvar_ao_entrar_na_fase() -> void:
+	if mostrar_inicio and Salvamento.gravar(_jogador.ficha, _jogador.inventario, _fase.indice, _bestiario):
+		_jogador.avisar("Jogo salvo")
+
+
+func _voltar_ao_titulo() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+
+func _abrir_habilidades() -> void:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible:
+		return
+	_tela_habilidades.abrir(_jogador.ficha)
+	_controles_toque.atualizar(true)
+
+
+func _abrir_bestiario() -> void:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible:
+		return
+	_tela_bestiario.abrir(_bestiario, ENTRADAS_BESTIARIO)
+	_controles_toque.atualizar(true)
+
+
 func _abrir_inventario() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _tela_bau.visible or _comandos.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
@@ -386,20 +489,38 @@ func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> voi
 
 
 func _abrir_bau(itens: Array[Item]) -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
 		return
 	_tela_bau.abrir(itens, _jogador.inventario)
 	_controles_toque.atualizar(true)
 
 
 func _abrir_comandos() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible:
+	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
 		return
 	_comandos.abrir()
 	_controles_toque.atualizar(true)
 
 
+func _reabrir_pausa() -> void:
+	if _voltar_para_pausa:
+		_voltar_para_pausa = false
+		_pausa.abrir()
+
+
+## Mochila ou Opções abertas pela pausa: ao fechar (Esc ou Fechar), a pausa volta.
+func _abrir_pela_pausa(abrir_tela: Callable) -> void:
+	_voltar_para_pausa = true
+	abrir_tela.call()
+	if not (_inventario.visible or _comandos.visible or _tela_bestiario.visible or _tela_habilidades.visible):
+		_voltar_para_pausa = false
+		_pausa.abrir()
+
+
 func _ao_fechar_modal() -> void:
+	if _voltar_para_pausa:
+		_reabrir_pausa.call_deferred()  # adia: Ajustar botões cancela o retorno logo depois de fechar
+		return
 	_atualizar_controles_toque()
 
 
@@ -409,6 +530,7 @@ func _atualizar_controles_toque() -> void:
 
 ## Ajustar os controles de toque: o jogo fica pausado até o Pronto.
 func _editar_toque() -> void:
+	_voltar_para_pausa = false
 	get_tree().paused = true
 	_controles_toque.editar()
 
@@ -422,6 +544,7 @@ func trazer_criatura(cena: PackedScene) -> void:
 	add_child(monstro)
 	var frente := Vector2(EscalaDnd.pes_para_pixels(DISTANCIA_CRIATURA_PES) * _jogador.direcao_olhar, 0.0)
 	monstro.global_position = _jogador.global_position + frente
+	_registrar_no_bestiario(monstro)
 	if monstro.has_method(&"definir_alvo"):
 		monstro.call(&"definir_alvo", _jogador)
 	_passar_percepcao(monstro)

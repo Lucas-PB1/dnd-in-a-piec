@@ -1,0 +1,132 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/bestiario/tela_bestiario.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/tema_menu.tres" id="2_tema"]
+
+[node name="TelaBestiario" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+script = ExtResource("1_script")
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.05, 0.72)
+
+[node name="Centro" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Painel" type="PanelContainer" parent="Centro"]
+layout_mode = 2
+
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Cabecalho" type="Label" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_type_variation = &"Titulo"
+text = "Bestiário"
+horizontal_alignment = 1
+
+[node name="Miolo" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="EsquerdaCol" type="VBoxContainer" parent="Centro/Painel/Coluna/Miolo"]
+layout_mode = 2
+
+[node name="Lista" type="ItemList" parent="Centro/Painel/Coluna/Miolo/EsquerdaCol"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 190)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Contagem" type="Label" parent="Centro/Painel/Coluna/Miolo/EsquerdaCol"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Dica"
+horizontal_alignment = 1
+
+[node name="Pagina" type="VBoxContainer" parent="Centro/Painel/Coluna/Miolo"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Topo" type="HBoxContainer" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Retrato" type="TextureRect" parent="Centro/Painel/Coluna/Miolo/Pagina/Topo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Identidade" type="VBoxContainer" parent="Centro/Painel/Coluna/Miolo/Pagina/Topo"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Nome" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/Topo/Identidade"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Titulo"
+
+[node name="Tipo" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/Topo/Identidade"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Dica"
+autowrap_mode = 3
+
+[node name="Rolagem" type="ScrollContainer" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Textos" type="VBoxContainer" parent="Centro/Painel/Coluna/Miolo/Pagina/Rolagem"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Ficha" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/Rolagem/Textos"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="Descricao" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/Rolagem/Textos"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+
+[node name="Dica" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/Rolagem/Textos"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.45, 1)
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+
+[node name="Fechar" type="Button" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Fechar"

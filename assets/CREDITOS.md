@@ -11,5 +11,6 @@
 | Goblin Warrior (soldado de lado: parado, andar, golpe com espada, morte). A flecha que ele atira é a do Aerial Arsenal | **MoikMellah** | https://opengameart.org/content/goblin-corps-mv-platformer-set (Goblin Corps) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/goblin/sprites/fonte_goblin_corps/` |
 | Herói | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/jogador/sprites/` |
 | Chão da floresta | Gerado no SpriteCook (tileset) | https://spritecook.ai | Conta do usuário | `assets/tiles/spritecook/` |
+| Menus (molduras, botões, painéis) | Pixel UI pack, de Kenney Vleugels (CC0) | https://www.kenney.nl/assets/pixel-ui-pack | CC0 (crédito não é obrigatório) | `assets/ui/kenney_pixel_ui/` |
 
 Estatísticas do Gray Ooze: ficha de criatura do D&D 5e (Wizards of the Coast), usada como referência de regras.

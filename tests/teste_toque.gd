@@ -218,16 +218,21 @@ func _testar_telas_no_toque() -> void:
 	await _tocar_interface(inventario.get_node("%Fechar"))
 	_checar(not inventario.visible and not paused and _controles.esta_visivel(), "Fechar do inventário responde ao toque e restaura os controles")
 
+	var pausa: TelaPausa = _main.get_node("Interface/TelaPausa")
 	var comandos: TelaComandos = _main.get_node("Interface/TelaComandos")
-	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"comandos")), true)
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"pausa")), true)
 	await process_frame
-	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"comandos")), false)
+	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"pausa")), false)
 	await process_frame
-	_checar(comandos.visible and paused and not _controles.esta_visivel(), "Menu abre pelo toque e esconde os controles pausados")
+	_checar(pausa.visible and paused and not _controles.esta_visivel(), "Menu abre a pausa pelo toque e esconde os controles pausados")
+	await _tocar_interface(pausa.get_node("%Opcoes"))
+	_checar(comandos.visible and not pausa.visible, "Opções da pausa respondem ao toque")
 	comandos.opcoes_toque_mudaram.emit()
 	_checar(not _controles.esta_visivel(), "atualizar opções não mostra controles sobre o menu pausado")
 	await _tocar_interface(comandos.get_node("%Fechar"))
-	_checar(not comandos.visible and not paused and _controles.esta_visivel(), "Fechar dos comandos responde ao toque e restaura os controles")
+	_checar(not comandos.visible and pausa.visible and not _controles.esta_visivel(), "Fechar das opções volta para a pausa")
+	await _tocar_interface(pausa.get_node("%Continuar"))
+	_checar(not pausa.visible and not paused and _controles.esta_visivel(), "Continuar da pausa responde ao toque e restaura os controles")
 
 	var bau: Node2D = _main.get_node("Bau")
 	_jogador.posicionar_no_inicio(bau.global_position + Vector2(-35.0, 0.0))

@@ -7,6 +7,8 @@ extends Resource
 @export var dado_vida: int = 10
 ## Distribuição sugerida na compra de pontos (atributo -> valor, total 27 pontos).
 @export var atributos_sugeridos: Dictionary[StringName, int] = {}
+## Distribuições prontas à escolha na criação (Guerreiro: armadura média, pesada e leve).
+@export var builds_sugeridos: Array[BuildSugerido] = []
 ## Salvaguardas em que a classe é proficiente (Guerreiro: Força e Constituição).
 @export var salvaguardas_proficientes: Array[StringName] = []
 ## Categorias de arma em que é proficiente (Proficiencias: simples, marcial).
@@ -25,6 +27,8 @@ extends Resource
 @export var pericias_sugeridas: Array[StringName] = []
 ## Second Wind: usos por luta. 0 = a classe não tem o poder. Guerreiro nível 1 = 2.
 @export var usos_segundo_folego: int = 0
+## Habilidades mostradas na árvore de habilidades (só descrição; as regras estão no código).
+@export var habilidades: Array[HabilidadeClasse] = []
 
 ## Cura do Second Wind: 1d10 + nível. Quem chama confere se ainda há usos.
 const DADO_SEGUNDO_FOLEGO := "1d10+1"  # rolagem de referência no nível 1.

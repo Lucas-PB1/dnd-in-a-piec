@@ -150,6 +150,15 @@ func desgastar(item: Item, quanto: int, limite: int) -> bool:
 	return false
 
 
+## Itens equipados na ordem em que foram equipados (sem repetir o que ocupa dois espaços).
+func equipados_em_ordem() -> Array[Item]:
+	var lista: Array[Item] = []
+	for item in _equipados.values():
+		if item not in lista:
+			lista.append(item)
+	return lista
+
+
 ## Item equipado no `espaco`, ou null.
 func equipado(espaco: StringName) -> Item:
 	return _equipados.get(espaco)

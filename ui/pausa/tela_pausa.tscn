@@ -1,0 +1,106 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/pausa/tela_pausa.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/tema_menu.tres" id="2_tema"]
+
+[node name="TelaPausa" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+script = ExtResource("1_script")
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.05, 0.1, 0.7)
+
+[node name="Centro" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Painel" type="PanelContainer" parent="Centro"]
+layout_mode = 2
+
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Cabecalho" type="Label" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_type_variation = &"Titulo"
+text = "Pausa"
+horizontal_alignment = 1
+
+[node name="Continuar" type="Button" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "Continuar"
+
+[node name="Grade" type="GridContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="Mochila" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Mochila"
+
+[node name="Habilidades" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Habilidades"
+
+[node name="Bestiario" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Bestiário"
+
+[node name="Opcoes" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Opções"
+
+[node name="Salvar" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Salvar"
+
+[node name="Titulo" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Menu principal"
+
+[node name="Aviso" type="Label" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+theme_type_variation = &"Dica"
+horizontal_alignment = 1
+
+[node name="Confirmacao" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Voltar ao título?"
+dialog_text = "O que não foi salvo se perde."
+ok_button_text = "Voltar"
+cancel_button_text = "Ficar"

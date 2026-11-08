@@ -1,27 +1,128 @@
-[gd_resource type="Theme" load_steps=2 format=3]
+[gd_resource type="Theme" load_steps=13 format=3]
 
-[sub_resource type="StyleBoxFlat" id="Painel"]
+[ext_resource type="Texture2D" path="res://assets/ui/kenney_pixel_ui/9-Slice/Ancient/brown.png" id="1_painel"]
+[ext_resource type="Texture2D" path="res://assets/ui/kenney_pixel_ui/9-Slice/Ancient/brown_inlay.png" id="2_lista"]
+[ext_resource type="Texture2D" path="res://assets/ui/kenney_pixel_ui/9-Slice/Ancient/tan.png" id="3_botao"]
+[ext_resource type="Texture2D" path="res://assets/ui/kenney_pixel_ui/9-Slice/Ancient/tan_pressed.png" id="4_botao_apertado"]
+
+[sub_resource type="StyleBoxTexture" id="Painel"]
 content_margin_left = 12.0
 content_margin_top = 10.0
 content_margin_right = 12.0
-content_margin_bottom = 10.0
-bg_color = Color(0.1, 0.08, 0.14, 0.98)
+content_margin_bottom = 12.0
+texture = ExtResource("1_painel")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxTexture" id="Lista"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+texture = ExtResource("2_lista")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+modulate_color = Color(0.62, 0.55, 0.5, 1)
+
+[sub_resource type="StyleBoxTexture" id="Botao"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+texture = ExtResource("3_botao")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxTexture" id="BotaoSobre"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+texture = ExtResource("3_botao")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 12.0
+modulate_color = Color(1.12, 1.1, 1.0, 1)
+
+[sub_resource type="StyleBoxTexture" id="BotaoApertado"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 5.0
+texture = ExtResource("4_botao_apertado")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+modulate_color = Color(0.8, 0.7, 0.55, 1)
+
+[sub_resource type="StyleBoxTexture" id="BotaoDesligado"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+texture = ExtResource("3_botao")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 12.0
+modulate_color = Color(0.7, 0.62, 0.52, 1)
+
+[sub_resource type="StyleBoxFlat" id="Foco"]
+draw_center = false
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.55, 0.4, 0.18, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+border_color = Color(1, 0.84, 0.3, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="Selecao"]
+bg_color = Color(0.95, 0.78, 0.35, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [resource]
 default_font_size = 14
-Label/colors/font_color = Color(0.93, 0.9, 0.84, 1)
+Button/colors/font_color = Color(0.2, 0.11, 0.05, 1)
+Button/colors/font_disabled_color = Color(0.36, 0.27, 0.18, 1)
+Button/colors/font_focus_color = Color(0.2, 0.11, 0.05, 1)
+Button/colors/font_hover_color = Color(0.12, 0.06, 0.02, 1)
+Button/colors/font_hover_pressed_color = Color(0.2, 0.11, 0.05, 1)
+Button/colors/font_pressed_color = Color(0.2, 0.11, 0.05, 1)
+Button/constants/h_separation = 6
+Button/styles/disabled = SubResource("BotaoDesligado")
+Button/styles/focus = SubResource("Foco")
+Button/styles/hover = SubResource("BotaoSobre")
+Button/styles/hover_pressed = SubResource("BotaoApertado")
+Button/styles/normal = SubResource("Botao")
+Button/styles/pressed = SubResource("BotaoApertado")
+ItemList/colors/font_color = Color(0.93, 0.9, 0.84, 1)
+ItemList/colors/font_selected_color = Color(0.2, 0.11, 0.05, 1)
+ItemList/styles/focus = SubResource("Foco")
+ItemList/styles/panel = SubResource("Lista")
+ItemList/styles/selected = SubResource("Selecao")
+ItemList/styles/selected_focus = SubResource("Selecao")
+Label/colors/font_color = Color(0.96, 0.92, 0.82, 1)
 PanelContainer/styles/panel = SubResource("Painel")
 Titulo/base_type = &"Label"
-Titulo/colors/font_color = Color(1, 0.84, 0.4, 1)
+Titulo/colors/font_color = Color(1, 0.86, 0.45, 1)
 Titulo/colors/font_outline_color = Color(0.22, 0.1, 0.04, 1)
 Titulo/constants/outline_size = 6
 Titulo/font_sizes/font_size = 18
@@ -32,5 +133,5 @@ TituloPerigo/colors/font_color = Color(0.95, 0.35, 0.28, 1)
 TituloPerigo/colors/font_outline_color = Color(0.18, 0.03, 0.03, 1)
 TituloPerigo/font_sizes/font_size = 32
 Dica/base_type = &"Label"
-Dica/colors/font_color = Color(0.7, 0.68, 0.62, 1)
+Dica/colors/font_color = Color(0.82, 0.74, 0.6, 1)
 Dica/font_sizes/font_size = 12

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EntradaBestiario" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/dados/entrada_bestiario.gd" id="1_entrada"]
+[ext_resource type="Resource" path="res://data/goblin_warrior.tres" id="2_criatura"]
+[ext_resource type="Texture2D" path="res://features/goblin/sprites/warrior_parado_sc.png" id="3_folha"]
+
+[sub_resource type="AtlasTexture" id="Retrato"]
+atlas = ExtResource("3_folha")
+region = Rect2(0, 0, 76, 76)
+
+[resource]
+script = ExtResource("1_entrada")
+criatura = ExtResource("2_criatura")
+retrato = SubResource("Retrato")
+tipo_texto = "Fada pequena (goblinoide), neutro e caótico"
+descricao = "Mais forte e teimoso que o Minion, leva escudo, cimitarra e arco curto. Atira de longe e fecha para a cimitarra quando você chega perto."
+dica = "Quem o surpreende leva o primeiro golpe com vantagem e dano extra. De perto ele guarda o arco: feche a distância e bata antes do aviso."
