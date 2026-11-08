@@ -34,7 +34,18 @@ const PIXELS_MINIMOS := 3
 ## A mão fica ~18 px acima dos pés e a lâmina tem ~30 px: acima de ~35° a ponta entra no chão.
 const ANGULOS := {
 	&"idle": 35.0, &"walk": 35.0, &"correr": 25.0, &"pulo_subindo": 20.0,
-	&"pulo_topo": 30.0, &"pulo_caindo": 40.0, &"aterrissar": 35.0, &"ataque": 35.0,
+	&"pulo_topo": 30.0, &"pulo_caindo": 40.0, &"aterrissar": 35.0, &"ataque": 35.0, &"corte": 35.0,
+}
+## Pontos marcados à mão (relativos aos pés) para animações em que a mão sobe acima da cabeça e a busca
+## por pele não a acha. "corte": golpe de cima do SpriteCook (tools/montar_golpe_heroi.gd); medidos na
+## folha: a mão da frente sobe até acima da cabeça e desce à frente; a de trás sobe e vem junto.
+const PONTOS_FIXOS := {
+	&"corte": {
+		"frente": [Vector2(12, -18), Vector2(17, -30), Vector2(15, -46), Vector2(14, -53),
+			Vector2(8, -58), Vector2(27, -40), Vector2(23, -26), Vector2(15, -22)],
+		"tras": [Vector2(-11, -17), Vector2(-3, -29), Vector2(-18, -45), Vector2(-27, -51),
+			Vector2(-19, -55), Vector2(19, -38), Vector2(16, -25), Vector2(-6, -19)],
+	},
 }
 const ESCALA_REVISAO := 4
 ## Túnica = azul maior que vermelho e verde por esta margem (igual ao shader da roupa).
@@ -50,8 +61,8 @@ func _initialize() -> void:
 	var frames: SpriteFrames = load(FRAMES)
 	var resultado := PontosMao.new()
 	for animacao in frames.get_animation_names():
-		resultado.pontos[animacao] = _pontos_da_animacao(frames, animacao, true)
-		resultado.pontos_de_tras[animacao] = _pontos_da_animacao(frames, animacao, false)
+		resultado.pontos[animacao] = _pontos_fixos_ou_achados(frames, animacao, "frente", true)
+		resultado.pontos_de_tras[animacao] = _pontos_fixos_ou_achados(frames, animacao, "tras", false)
 		resultado.angulos[animacao] = ANGULOS.get(animacao, PontosMao.ANGULO_PADRAO)
 		resultado.ombros[animacao] = _pontos_com(frames, animacao, _achar_ombro)
 		resultado.cinturas[animacao] = _pontos_com(frames, animacao, _achar_cintura)
@@ -63,6 +74,12 @@ func _initialize() -> void:
 	if not args.is_empty():
 		_salvar_revisao(frames, resultado, args[0])
 	quit()
+
+
+func _pontos_fixos_ou_achados(frames: SpriteFrames, animacao: StringName, lado: String, da_frente: bool) -> PackedVector2Array:
+	if PONTOS_FIXOS.has(animacao):
+		return PackedVector2Array(PONTOS_FIXOS[animacao][lado])
+	return _pontos_da_animacao(frames, animacao, da_frente)
 
 
 ## Um ponto por quadro da animação, achado por `achar` (imagem do quadro -> Vector2 relativo

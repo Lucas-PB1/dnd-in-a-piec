@@ -50,7 +50,7 @@ alignment = 1
 
 [node name="AbaControles" type="Button" parent="Centro/Painel/Coluna/Abas"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 32)
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
@@ -58,14 +58,28 @@ text = "Controles"
 
 [node name="AbaToque" type="Button" parent="Centro/Painel/Coluna/Abas"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 32)
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 toggle_mode = true
 text = "Toque"
 
+[node name="AbaAtalhos" type="Button" parent="Centro/Painel/Coluna/Abas"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 32)
+layout_mode = 2
+toggle_mode = true
+text = "Atalhos"
+
+[node name="AbaSom" type="Button" parent="Centro/Painel/Coluna/Abas"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 32)
+layout_mode = 2
+toggle_mode = true
+text = "Som"
+
 [node name="AbaCombate" type="Button" parent="Centro/Painel/Coluna/Abas"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 32)
+custom_minimum_size = Vector2(96, 32)
 layout_mode = 2
 toggle_mode = true
 text = "Combate"
@@ -103,6 +117,44 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 8
+
+[node name="PaginaAtalhos" type="VBoxContainer" parent="Centro/Painel/Coluna/Paginas"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DicaAtalhos" type="Label" parent="Centro/Painel/Coluna/Paginas/PaginaAtalhos"]
+layout_mode = 2
+theme_type_variation = &"Dica"
+text = "Barra de habilidades do celular: escolha o que vai em cada botão."
+horizontal_alignment = 1
+
+[node name="GradeAtalhos" type="GridContainer" parent="Centro/Painel/Coluna/Paginas/PaginaAtalhos"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 6
+columns = 4
+
+[node name="PaginaSom" type="VBoxContainer" parent="Centro/Painel/Coluna/Paginas"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DicaSom" type="Label" parent="Centro/Painel/Coluna/Paginas/PaginaSom"]
+layout_mode = 2
+theme_type_variation = &"Dica"
+text = "Volume da música, dos efeitos do jogo e dos sons dos menus."
+horizontal_alignment = 1
+
+[node name="GradeSom" type="GridContainer" parent="Centro/Painel/Coluna/Paginas/PaginaSom"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 10
+columns = 3
 
 [node name="PaginaCombate" type="VBoxContainer" parent="Centro/Painel/Coluna/Paginas"]
 unique_name_in_owner = true

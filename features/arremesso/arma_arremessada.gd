@@ -12,6 +12,8 @@ extends CharacterBody2D
 signal recolhida(arma: Arma, penalidade: int)
 ## A arma não mágica chegou no limite de corrosão no voo e se desfez.
 signal derreteu(texto: String)
+## O herói chegou perto da arma caída (true) ou se afastou (false): o botão E do toque só aparece perto.
+signal perto_mudou(perto: bool)
 
 ## Gravidade do arco (px/s²). A munição multiplica pelo peso dela.
 const GRAVIDADE := 980.0
@@ -62,9 +64,21 @@ const MIRA_MAXIMA := 85.0
 
 func _ready() -> void:
 	_aviso.hide()
-	_perto_area.body_entered.connect(func(_corpo: Node2D) -> void: _perto = true)
-	_perto_area.body_exited.connect(func(_corpo: Node2D) -> void: _perto = false)
+	_perto_area.body_entered.connect(func(_corpo: Node2D) -> void: _definir_perto(true))
+	_perto_area.body_exited.connect(func(_corpo: Node2D) -> void: _definir_perto(false))
 	_hitbox.alvo_atingido.connect(func(_alvo: HurtboxComponent) -> void: _ao_acertar())
+
+
+func _exit_tree() -> void:
+	if _perto:
+		_definir_perto(false)  # a arma some (recolhida ou derretida): o botão E apaga
+
+
+func _definir_perto(perto: bool) -> void:
+	if _perto == perto:
+		return
+	_perto = perto
+	perto_mudou.emit(perto)
 
 
 ## Começa o voo. Chamar depois de entrar na árvore (a posição já é a da mão). `forca` de 0

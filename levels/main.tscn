@@ -16,6 +16,8 @@
 [ext_resource type="PackedScene" path="res://ui/habilidades/tela_habilidades.tscn" id="17_habilidades"]
 [ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
 [ext_resource type="Script" path="res://levels/impacto.gd" id="14_impacto"]
+[ext_resource type="Script" path="res://levels/sons.gd" id="18_sons"]
+[ext_resource type="Script" path="res://levels/musica.gd" id="19_musica"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -52,3 +54,9 @@ layer = 10
 
 [node name="Impacto" type="Node2D" parent="."]
 script = ExtResource("14_impacto")
+
+[node name="Sons" type="Node" parent="."]
+script = ExtResource("18_sons")
+
+[node name="Musica" type="Node" parent="."]
+script = ExtResource("19_musica")

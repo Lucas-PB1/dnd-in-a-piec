@@ -25,6 +25,7 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 | `docs/decisoes/armas_e_itens.md` | Itens, inventário, pacotes, baú, corrosão, armaduras, armas, golpes, arremesso, disparo. |
 | `docs/decisoes/criaturas.md` | Ficha de criatura, Gray Ooze, Goblin Minion, Goblin Warrior, monstros no jogo, arena. |
 | `docs/decisoes/interface.md` | Título, criação, HUD, inventário, comandos, ações de input, celular e controles de toque. |
+| `docs/decisoes/audio.md` | Música, efeitos sonoros, barramentos de volume e créditos do áudio. |
 | `docs/arquitetura.md` | Como as peças se ligam (camadas, cena principal, caminho de um golpe, entrada). |
 | `docs/receitas.md` | Passo a passo: criatura, arma, regra, estado, ação, tela, teste, print; armadilhas conhecidas. |
 | `docs/pendencias.md` | **O que falta**, com tamanho e prioridade. Escolha a próxima fatia daqui. |

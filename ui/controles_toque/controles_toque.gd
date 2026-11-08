@@ -11,24 +11,32 @@ extends CanvasLayer
 signal edicao_terminada
 
 ## Analógico: [id, canto (âncora 0..1), centro a partir do canto (px), raio].
-const ANALOGICO := ["analogico", Vector2(0, 1), Vector2(76, -76), 46.0]
+const ANALOGICO := ["analogico", Vector2(0, 1), Vector2(84, -84), 52.0]
 ## Setas: [ação, seta, canto, centro, raio]. ↑ mira para cima (não pula; o pulo tem botão).
 const SETAS := [
-	[&"mover_esquerda", Vector2.LEFT, Vector2(0, 1), Vector2(36, -62), 22.0],
-	[&"mover_direita", Vector2.RIGHT, Vector2(0, 1), Vector2(110, -62), 22.0],
-	[&"mirar_cima", Vector2.UP, Vector2(0, 1), Vector2(73, -104), 18.0],
-	[&"mover_baixo", Vector2.DOWN, Vector2(0, 1), Vector2(73, -22), 18.0],
+	[&"mover_esquerda", Vector2.LEFT, Vector2(0, 1), Vector2(34, -66), 26.0],
+	[&"mover_direita", Vector2.RIGHT, Vector2(0, 1), Vector2(128, -66), 26.0],
+	[&"mirar_cima", Vector2.UP, Vector2(0, 1), Vector2(81, -114), 22.0],
+	[&"mover_baixo", Vector2.DOWN, Vector2(0, 1), Vector2(81, -22), 20.0],
 ]
 ## Botões: [ação, texto, canto, centro, raio].
 const BOTOES := [
-	[&"atacar", "Atacar", Vector2(1, 1), Vector2(-50, -54), 28.0],
-	[&"pular", "Pular", Vector2(1, 1), Vector2(-120, -36), 26.0],
-	[&"arremessar", "Lançar", Vector2(1, 1), Vector2(-42, -126), 22.0],
-	[&"folego", "Fôlego", Vector2(1, 1), Vector2(-108, -102), 19.0],
-	[&"interagir", "E", Vector2(1, 1), Vector2(-164, -82), 20.0],
-	[&"surto_acao", "Surto", Vector2(1, 1), Vector2(-174, -140), 20.0],
-	[&"inventario", "Bolsa", Vector2(1, 0), Vector2(-26, 24), 21.0],
-	[&"pausa", "Menu", Vector2(1, 0), Vector2(-68, 24), 21.0],
+	[&"atacar", "Atacar", Vector2(1, 1), Vector2(-52, -56), 34.0],
+	[&"pular", "Pular", Vector2(1, 1), Vector2(-128, -42), 30.0],
+	[&"arremessar", "Lançar", Vector2(1, 1), Vector2(-44, -128), 26.0],
+	[&"interagir", "Abrir", Vector2(1, 1), Vector2(-120, -100), 26.0],
+	[&"pausa", "Menu", Vector2(1, 0), Vector2(-34, 34), 28.0],
+]
+## Slots das habilidades especiais (barra de atalhos em arco, à esquerda e acima do Atacar, do Pular e do Lançar,
+## que são ações básicas e ficam fixas): [id, canto, centro, raio]. Só aparece o slot que tem habilidade e que
+## serve agora; o que vai em cada um é de OpcoesToque.slots.
+const SLOTS := [
+	["slot1", Vector2(1, 1), Vector2(-196, -40), 26.0],
+	["slot2", Vector2(1, 1), Vector2(-190, -100), 26.0],
+	["slot3", Vector2(1, 1), Vector2(-160, -152), 26.0],
+	["slot4", Vector2(1, 1), Vector2(-110, -190), 26.0],
+	["slot5", Vector2(1, 1), Vector2(-52, -200), 26.0],
+	["slot6", Vector2(1, 1), Vector2(-250, -110), 26.0],
 ]
 ## Camada: acima do jogo e do HUD, abaixo dos menus (Interface = 10).
 const CAMADA := 5
@@ -37,6 +45,8 @@ const RAIO_MINIMO := 12.0
 const RAIO_MAXIMO := 64.0
 const PASSO_RAIO := 3.0
 const SEM_DEDO := -1
+## Texto do botão de interação quando a edição do layout o mostra sem nada perto.
+const ROTULO_INTERACAO_PADRAO := "Abrir"
 const TEMA := preload("res://ui/tema_menu.tres")
 const TAMANHO_FONTE_EDICAO := 10
 ## Tamanho mínimo dos botões do painel de edição (px): dá para acertar com o dedo.
@@ -47,6 +57,7 @@ var _raiz: Control
 var _analogico: AnalogicoToque
 var _setas: Array[BotaoToque] = []
 var _botoes: Array[BotaoToque] = []
+var _slots: Array[BotaoToque] = []
 ## id -> controle e id -> [canto, centro, raio] padrão.
 var _controles: Dictionary[String, Control] = {}
 var _padroes: Dictionary[String, Array] = {}
@@ -54,6 +65,12 @@ var _padroes: Dictionary[String, Array] = {}
 var _editando: bool = false
 var _painel: PanelContainer
 var _barra_opacidade: HSlider
+## Ações cujo botão está escondido porque não servem agora (Surto antes do nível 2, E longe de tudo).
+var _escondidos: Dictionary[StringName, bool] = {}
+## Estado de cada habilidade (BotaoToque.EstadoBotao), guardado para valer também quando ela troca de slot.
+var _estados: Dictionary[StringName, BotaoToque.EstadoBotao] = {}
+## "Abrir" ou "Pegar" quando há algo perto (o botão de interação aparece só então); vazio = escondido.
+var _rotulo_interacao: String = ""
 var _selecionado: Control
 var _dedo_edicao: int = SEM_DEDO
 ## Do centro do controle até o dedo, para ele não pular quando começa a arrastar.
@@ -72,9 +89,11 @@ func _ready() -> void:
 	_analogico.name = "Analogico"
 	_registrar(ANALOGICO[0], _analogico, ANALOGICO[1], ANALOGICO[2], ANALOGICO[3])
 	for d in SETAS:
-		_setas.append(_criar_botao(d[0], "", d[1], d[2], d[3], d[4]))
+		_setas.append(_criar_botao(String(d[0]), d[0], "", d[1], d[2], d[3], d[4]))
 	for d in BOTOES:
-		_botoes.append(_criar_botao(d[0], d[1], Vector2.ZERO, d[2], d[3], d[4]))
+		_botoes.append(_criar_botao(String(d[0]), d[0], d[1], Vector2.ZERO, d[2], d[3], d[4]))
+	for d in SLOTS:
+		_slots.append(_criar_botao(d[0], &"", "", Vector2.ZERO, d[1], d[2], d[3]))
 	_criar_painel()
 	aplicar_layout()
 	atualizar()
@@ -87,6 +106,32 @@ func atualizar(escondido: bool = false) -> void:
 	for seta in _setas:
 		seta.visible = OpcoesToque.modo == OpcoesToque.Modo.SETAS
 	_raiz.modulate.a = OpcoesToque.opacidade
+	_aplicar_slots()
+	_aplicar_interacao()
+	_aplicar_escondidos()
+
+
+## O botão de interação (Abrir, Pegar) aparece só enquanto houver algo perto; sem rótulo, some.
+func definir_interacao(rotulo: String) -> void:
+	_rotulo_interacao = rotulo
+	_aplicar_interacao()
+
+
+## Acende, deixa normal ou marca como desligado o botão de uma habilidade (BotaoToque.EstadoBotao).
+func definir_estado(acao: StringName, estado: BotaoToque.EstadoBotao) -> void:
+	_estados[acao] = estado
+	var b := botao(acao)
+	if b != null:
+		b.estado = estado
+
+
+## Mostra ou esconde o botão de uma ação conforme ela serve agora. Na edição do layout todos aparecem.
+func mostrar_acao(acao: StringName, serve: bool) -> void:
+	if serve:
+		_escondidos.erase(acao)
+	else:
+		_escondidos[acao] = true
+	_aplicar_escondidos()
 
 
 ## Põe cada controle no lugar e tamanho salvos (ou no padrão).
@@ -100,6 +145,27 @@ func aplicar_layout() -> void:
 			_posicionar(_controles[id], padrao[0], padrao[1], padrao[2])
 
 
+func _aplicar_interacao() -> void:
+	var interagir := botao(&"interagir")
+	if interagir == null:
+		return
+	interagir.trocar_funcao(&"interagir", _rotulo_interacao if not _rotulo_interacao.is_empty() else ROTULO_INTERACAO_PADRAO)
+	mostrar_acao(&"interagir", not _rotulo_interacao.is_empty())
+
+
+## Põe em cada slot a habilidade que o jogador escolheu (OpcoesToque.slots). Slot vazio só aparece na edição.
+func _aplicar_slots() -> void:
+	for i in _slots.size():
+		var acao: StringName = OpcoesToque.slots[i] if i < OpcoesToque.slots.size() else &""
+		_slots[i].trocar_funcao(acao, OpcoesToque.nome_da_habilidade(acao))
+		_slots[i].estado = _estados.get(acao, BotaoToque.EstadoBotao.NORMAL)
+
+
+func _aplicar_escondidos() -> void:
+	for b in _botoes + _slots:
+		b.visible = _editando or (b.acao != &"" and not _escondidos.has(b.acao))
+
+
 func esta_visivel() -> bool:
 	return _raiz.visible
 
@@ -110,8 +176,8 @@ func esta_editando() -> bool:
 
 ## O botão da `acao` (para testes); null se não houver.
 func botao(acao: StringName) -> BotaoToque:
-	for b in _setas + _botoes:
-		if b.acao == acao:
+	for b in _setas + _botoes + _slots:
+		if b.acao == acao and acao != &"":
 			return b
 	return null
 
@@ -285,13 +351,13 @@ func _botao_painel(texto: String, ao_apertar: Callable) -> Button:
 	return botao_novo
 
 
-func _criar_botao(acao: StringName, texto: String, seta: Vector2, canto: Vector2, centro: Vector2, raio: float) -> BotaoToque:
+func _criar_botao(id: String, acao: StringName, texto: String, seta: Vector2, canto: Vector2, centro: Vector2, raio: float) -> BotaoToque:
 	var novo := BotaoToque.new()
-	novo.name = "Botao_" + String(acao)
+	novo.name = "Botao_" + id
 	novo.acao = acao
 	novo.texto = texto
 	novo.seta = seta
-	_registrar(String(acao), novo, canto, centro, raio)
+	_registrar(id, novo, canto, centro, raio)
 	return novo
 
 

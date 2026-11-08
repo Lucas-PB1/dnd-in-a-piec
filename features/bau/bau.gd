@@ -6,6 +6,8 @@ extends Area2D
 
 ## Emitido quando o herói aperta E perto do baú.
 signal abrir_pedido(itens: Array[Item])
+## O herói chegou perto do baú (true) ou se afastou (false): o botão E do toque só aparece perto.
+signal perto_mudou(perto: bool)
 
 ## Pastas cujos .tres de Item formam o conteúdo (o baú nunca esvazia: dá cópias).
 @export var pastas: PackedStringArray = ["res://data/armas/", "res://data/armaduras/", "res://data/municoes/"]
@@ -44,5 +46,8 @@ static func carregar_itens(lista_pastas: PackedStringArray) -> Array[Item]:
 
 
 func _mudar_perto(quanto: int) -> void:
+	var estava_perto := _corpos_perto > 0
 	_corpos_perto += quanto
 	_aviso.visible = _corpos_perto > 0
+	if (_corpos_perto > 0) != estava_perto:
+		perto_mudou.emit(_corpos_perto > 0)

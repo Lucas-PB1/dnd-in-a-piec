@@ -71,8 +71,10 @@ func _testar_mente_tatica() -> void:
 	_checar(_jogador.vida_maxima() == maximo_antes + ganho_por_nivel
 		and _jogador.vida_atual() == pv_antes + ganho_por_nivel,
 		"ao subir de nível, os PV máximos e atuais sobem juntos")
-	_checar(not (_main.get_node("Hud/Coluna/MenteTatica") as CheckButton).disabled,
-		"o toggle de Mente Tática fica disponível no nível 2")
+	_main._alternar_mente_tatica()
+	_checar(_jogador.mente_tatica_ligada(), "no nível 2 a Mente Tática liga pela ação (tecla T ou botão)")
+	_main._alternar_mente_tatica()
+	_checar(not _jogador.mente_tatica_ligada(), "e desliga pela mesma ação")
 	_jogador.definir_mente_tatica(true)
 	var bonus := _jogador.ficha.bonus_pericia(Pericia.ATLETISMO)
 	var semente_sucesso := _semente_para_teste(bonus, 20, true)
@@ -101,27 +103,18 @@ func _testar_mente_tatica() -> void:
 
 
 func _testar_surto_e_descanso() -> void:
-	var inimigos := _main.get_tree().get_nodes_in_group(&"monstros")
-	_checar(not inimigos.is_empty(), "a fase tem inimigos para o Surto")
-	if inimigos.is_empty():
-		return
-	var inimigo := inimigos[0] as Node
+	_main.tirar_criaturas()  # o novo Surto não depende de inimigo: funciona com a arena vazia
 	_jogador.get_node("Vida").receber_dano(1)
 	Input.action_press(&"surto_acao")
 	await _esperar(2)
 	Input.action_release(&"surto_acao")
 	_checar(_main._surto_usado, "a ação de input ativa o Surto")
-	_checar(inimigo.process_mode == Node.PROCESS_MODE_DISABLED,
-		"Surto de Ação paralisa inimigos")
+	_checar(_jogador.surto_ativo(), "o Surto acende a aura do herói mesmo sem inimigo")
 	_main._usar_surto_acao()
-	_checar(inimigo.process_mode == Node.PROCESS_MODE_DISABLED,
-		"o Surto não pode ser usado de novo na mesma fase")
-	await create_timer(ESPERA_SURTO_SEGUNDOS).timeout
-	_checar(is_instance_valid(inimigo) and inimigo.process_mode == Node.PROCESS_MODE_INHERIT,
-		"inimigos voltam a agir após 1 segundo")
+	_checar(not _jogador.armar_surto(), "o Surto não pode ser usado de novo enquanto está ativo")
 	_main._entrar_fase(load("res://levels/fase_2.tscn"))
 	await physics_frame
-	_checar(not _main._surto_usado and _jogador.usos_folego() == _jogador.usos_folego_total(),
+	_checar(not _main._surto_usado and not _jogador.surto_ativo() and _jogador.usos_folego() == _jogador.usos_folego_total(),
 		"a fase seguinte funciona como descanso longo e recupera recursos")
 	_checar(_jogador.vida_atual() == _jogador.vida_maxima(), "o descanso longo recupera PV")
 	_checar(_main._tipos_da_fase(3).has(Main.TIPO_WARRIOR),

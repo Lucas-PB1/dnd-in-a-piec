@@ -15,6 +15,7 @@ func _rodar() -> void:
 	await _testar_pausa_e_salvar()
 	await _testar_continuar()
 	await _testar_esc_volta()
+	await _testar_opcoes_no_titulo()
 	Salvamento.apagar()
 	print("PASSOU: todos os testes da pausa" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
 	quit(_falhas)
@@ -93,6 +94,22 @@ func _testar_esc_volta() -> void:
 	main.free()
 	await _esperar(2)
 	await _testar_esc_na_criacao()
+
+
+func _testar_opcoes_no_titulo() -> void:
+	var main := await _criar_main(true)
+	var interface := main.get_node("Interface")
+	var titulo: TelaTitulo = interface.get_child(-1)
+	var opcoes: TelaComandos = interface.get_node("TelaComandos")
+	titulo.get_node("%Opcoes").pressed.emit()
+	await _esperar(2)
+	_checar(opcoes.visible and not titulo.visible and paused, "Opções no título abrem por cima e o título se esconde")
+	_checar(not opcoes.find_child("AjustarToque", true, false).visible, "no título, Ajustar botões não aparece")
+	_apertar(&"ui_cancel")
+	await _esperar(4)
+	_checar(not opcoes.visible and titulo.visible and paused, "Esc nas Opções volta ao título, com o jogo ainda parado")
+	main.free()
+	await _esperar(2)
 
 
 func _testar_esc_na_criacao() -> void:

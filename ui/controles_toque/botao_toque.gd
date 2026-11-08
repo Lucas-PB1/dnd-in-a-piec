@@ -11,10 +11,22 @@ const SEM_DEDO := -1
 const CONTORNO := 1.5
 ## Contorno do selecionado na edição.
 const CONTORNO_DESTAQUE := 2.5
+## Grossura do brilho em volta do botão aceso.
+const CONTORNO_BRILHO := 4.0
 const COR_DESTAQUE := Color(1.0, 0.85, 0.3, 0.95)
-const TAMANHO_TEXTO := 9
+const TAMANHO_TEXTO_MINIMO := 11
+const TAMANHO_TEXTO_MAXIMO := 18
+## O texto cresce com o botão: fração do raio.
+const TEXTO_POR_RAIO := 0.42
+## Contorno escuro da letra, para ler sobre qualquer fundo.
+const CONTORNO_TEXTO := 3
+const COR_CONTORNO_TEXTO := Color(0.1, 0.06, 0.04, 0.85)
 ## Tamanho da seta desenhada, em fração do raio.
 const TAMANHO_SETA := 0.45
+
+## Estado da habilidade no botão: NORMAL (pronta), ACESO (ativa agora: Surto armado, Mente Tática ligada)
+## e DESLIGADO (não dá para usar agora: Mente Tática desligada, Surto já usado, sem Fôlego).
+enum EstadoBotao { NORMAL, ACESO, DESLIGADO }
 
 ## Ação apertada (ex.: &"pular").
 @export var acao: StringName
@@ -22,12 +34,22 @@ const TAMANHO_SETA := 0.45
 @export var texto: String = ""
 ## Seta desenhada no meio (Vector2.ZERO = nenhuma), ex.: Vector2.LEFT.
 @export var seta: Vector2 = Vector2.ZERO
-@export var cor: Color = Color(1.0, 1.0, 1.0, 0.22)
+@export var cor: Color = Color(1.0, 1.0, 1.0, 0.28)
 @export var cor_apertado: Color = Color(1.0, 0.92, 0.6, 0.5)
 @export var cor_contorno: Color = Color(1.0, 1.0, 1.0, 0.55)
 @export var cor_texto: Color = Color(1.0, 1.0, 1.0, 0.9)
+@export var cor_aceso: Color = Color(1.0, 0.82, 0.3, 0.62)
+@export var cor_contorno_aceso: Color = Color(1.0, 0.9, 0.5, 1.0)
+@export var cor_desligado: Color = Color(0.85, 0.28, 0.28, 0.3)
+@export var cor_contorno_desligado: Color = Color(0.9, 0.4, 0.4, 0.55)
 
 var _dedo: int = SEM_DEDO
+## Ver EstadoBotao. A interface muda quando a habilidade liga, desliga ou fica indisponível.
+var estado: EstadoBotao = EstadoBotao.NORMAL:
+	set(valor):
+		if estado != valor:
+			estado = valor
+			queue_redraw()
 ## Modo de edição do layout: não aperta nada (quem arrasta é o ControlesToque).
 var editando: bool = false:
 	set(valor):
@@ -49,7 +71,7 @@ func _input(evento: InputEvent) -> void:
 	var toque := evento as InputEventScreenTouch
 	if toque == null:
 		return
-	if toque.pressed and _dedo == SEM_DEDO and not editando and is_visible_in_tree() and not get_tree().paused and _contem(toque.position):
+	if toque.pressed and _dedo == SEM_DEDO and acao != &"" and not editando and is_visible_in_tree() and not get_tree().paused and _contem(toque.position):
 		_dedo = toque.index
 		_enviar_acao(true)
 		queue_redraw()
@@ -60,6 +82,16 @@ func _input(evento: InputEvent) -> void:
 
 func esta_apertado() -> bool:
 	return _dedo != SEM_DEDO
+
+
+## Troca o que o botão faz (ex.: o de ataque vira "Abrir" perto de um baú). Solta a ação antes.
+func trocar_funcao(nova_acao: StringName, novo_texto: String) -> void:
+	if nova_acao == acao and novo_texto == texto:
+		return
+	soltar()
+	acao = nova_acao
+	texto = novo_texto
+	queue_redraw()
 
 
 ## Solta a ação (o dedo saiu, ou o botão sumiu).
@@ -102,17 +134,43 @@ func _contem(ponto: Vector2) -> bool:
 
 func _draw() -> void:
 	var centro := size / 2.0
-	draw_circle(centro, _raio(), cor_apertado if esta_apertado() else cor)
-	draw_arc(centro, _raio() - CONTORNO / 2.0, 0.0, TAU, 32, cor_contorno, CONTORNO, true)
+	draw_circle(centro, _raio(), cor_apertado if esta_apertado() else _cor_do_estado())
+	if estado == EstadoBotao.ACESO:
+		draw_arc(centro, _raio() + CONTORNO_BRILHO / 2.0, 0.0, TAU, 32, Color(cor_contorno_aceso, 0.45), CONTORNO_BRILHO, true)
+	draw_arc(centro, _raio() - CONTORNO / 2.0, 0.0, TAU, 32, _cor_do_contorno(), CONTORNO, true)
 	if seta != Vector2.ZERO:
 		_desenhar_seta(centro)
 	if destacado:
 		draw_arc(centro, _raio() + CONTORNO_DESTAQUE, 0.0, TAU, 32, COR_DESTAQUE, CONTORNO_DESTAQUE, true)
 	if texto != "":
 		var fonte := get_theme_default_font()
-		var largura := fonte.get_string_size(texto, HORIZONTAL_ALIGNMENT_CENTER, -1, TAMANHO_TEXTO).x
-		var base := centro + Vector2(-largura / 2.0, TAMANHO_TEXTO / 3.0)
-		draw_string(fonte, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, TAMANHO_TEXTO, cor_texto)
+		var tamanho := _tamanho_texto()
+		var largura := fonte.get_string_size(texto, HORIZONTAL_ALIGNMENT_CENTER, -1, tamanho).x
+		var base := centro + Vector2(-largura / 2.0, tamanho / 3.0)
+		draw_string_outline(fonte, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tamanho, CONTORNO_TEXTO, COR_CONTORNO_TEXTO)
+		draw_string(fonte, base, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tamanho, cor_texto)
+
+
+func _tamanho_texto() -> int:
+	return clampi(int(_raio() * TEXTO_POR_RAIO), TAMANHO_TEXTO_MINIMO, TAMANHO_TEXTO_MAXIMO)
+
+
+func _cor_do_estado() -> Color:
+	match estado:
+		EstadoBotao.ACESO:
+			return cor_aceso
+		EstadoBotao.DESLIGADO:
+			return cor_desligado
+	return cor
+
+
+func _cor_do_contorno() -> Color:
+	match estado:
+		EstadoBotao.ACESO:
+			return cor_contorno_aceso
+		EstadoBotao.DESLIGADO:
+			return cor_contorno_desligado
+	return cor_contorno
 
 
 func _desenhar_seta(centro: Vector2) -> void:

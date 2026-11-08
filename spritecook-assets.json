@@ -55,6 +55,30 @@
       "file": "features/jogador/sprites/heroi_corte_cima_v2.png"
     },
     {
+      "asset_id": "3109c6cc-72eb-46d7-b330-86ae60cd1bfd",
+      "sha12": "31ecadb943d4",
+      "label": "heroi_ataque_preset (8 quadros 80x80, preset attack, 20 créditos; sem espada desenhada, mas é um soco e nos quadros 4-5 o corpo vira de frente com os braços abertos; ainda não ligado)",
+      "file": "features/jogador/sprites/heroi_ataque_preset.png"
+    },
+    {
+      "asset_id": "ce52af4a-ceed-4e7e-9535-a42f9769c579",
+      "sha12": "b9897ace5f03",
+      "label": "heroi_corte_v4 (8 quadros 84x84, animate_game_art com proibições, 20 créditos; sem arma, punhos sobem acima da cabeça e descem à frente; joelho levantado nos quadros 3-5; o melhor até agora, ainda não ligado)",
+      "file": "features/jogador/sprites/heroi_corte_v4.png"
+    },
+    {
+      "asset_id": "cfa912f2-2123-46c8-b7f3-09d82a8b1c3b",
+      "sha12": "7f17eaf6bdfe",
+      "label": "heroi_dano (8 quadros 80x80, preset hurt; aprovado)",
+      "file": "features/jogador/sprites/heroi_dano_sc.png"
+    },
+    {
+      "asset_id": "d45d22f2-587e-44ed-9b12-137405bafdfa",
+      "sha12": "c090b8d03e16",
+      "label": "heroi_morte (12 quadros 80x80, preset death; aprovado, termina deitado e parado)",
+      "file": "features/jogador/sprites/heroi_morte_sc.png"
+    },
+    {
       "asset_id": "153d2592-aa9f-4fe4-bb8a-96d0acf0cffd",
       "sha12": "ee170bb28ed2",
       "label": "minion_base (personagem base do Goblin Minion, 82x82, 12 créditos; aprovada; base para animar)",

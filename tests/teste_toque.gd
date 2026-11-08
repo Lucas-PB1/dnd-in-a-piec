@@ -39,6 +39,9 @@ func _rodar() -> void:
 	_controles = _main.get_node("ControlesToque")
 	_main.tirar_criaturas()
 	OpcoesToque.mostrar = OpcoesToque.Mostrar.SEMPRE
+	OpcoesToque.caminho = "user://toque_teste.cfg"  # nunca a configuração de verdade
+	DirAccess.remove_absolute(OpcoesToque.caminho)  # começa sem opções salvas
+	OpcoesToque.slots = OpcoesToque.padrao_slots()
 	OpcoesToque.modo = OpcoesToque.Modo.ANALOGICO
 	_controles.atualizar()
 	await _esperar(30)
@@ -174,6 +177,7 @@ func _testar_botoes_de_acao() -> void:
 	_checar(_jogador.usos_folego() == usos_antes - 1, "toque em Fôlego ativa a habilidade do Guerreiro")
 
 	for acao in [&"arremessar", &"surto_acao"]:
+		_controles.mostrar_acao(acao, true)  # esconde quando não serve; aqui só testa o envio da ação
 		var botao := _controles.botao(acao)
 		_tocar(DEDO_BOTAO, _centro(botao), true)
 		await process_frame
@@ -185,12 +189,19 @@ func _testar_botoes_de_acao() -> void:
 
 func _testar_mente_tatica_no_toque() -> void:
 	_jogador.ganhar_experiencia(Ficha.XP_POR_NIVEL[2])
-	var toggle: CheckButton = _main.get_node("Hud/Coluna/MenteTatica")
-	_checar(not toggle.disabled, "Mente Tática fica habilitada no nível 2")
-	await _tocar_interface(toggle)
-	_checar(_jogador.mente_tatica_ligada(), "toque liga Mente Tática")
-	await _tocar_interface(toggle)
-	_checar(not _jogador.mente_tatica_ligada(), "toque desliga Mente Tática")
+	var mente := _controles.botao(&"mente_tatica")
+	_checar(mente != null and mente.visible, "a Mente Tática aparece na barra de habilidades no nível 2")
+	_checar(mente.estado == BotaoToque.EstadoBotao.DESLIGADO, "desligada, o botão fica avermelhado")
+	_tocar(DEDO_BOTAO, _centro(mente), true)
+	await _esperar(2)
+	_tocar(DEDO_BOTAO, _centro(mente), false)
+	await _esperar(2)
+	_checar(_jogador.mente_tatica_ligada() and mente.estado == BotaoToque.EstadoBotao.ACESO, "toque liga a Mente Tática e acende o botão")
+	_tocar(DEDO_BOTAO, _centro(mente), true)
+	await _esperar(2)
+	_tocar(DEDO_BOTAO, _centro(mente), false)
+	await _esperar(2)
+	_checar(not _jogador.mente_tatica_ligada() and mente.estado == BotaoToque.EstadoBotao.DESLIGADO, "toque desliga e o botão volta a avermelhado")
 
 	_main.trazer_criatura(load("res://features/gray_ooze/gray_ooze.tscn"))
 	await _esperar(2)
@@ -200,24 +211,12 @@ func _testar_mente_tatica_no_toque() -> void:
 	await _esperar(2)
 	_tocar(DEDO_BOTAO, _centro(surto), false)
 	await process_frame
-	_checar(_main._surto_usado and not inimigos.is_empty()
-		and inimigos[0].process_mode == Node.PROCESS_MODE_DISABLED,
-		"Surto pelo toque paralisa o inimigo e consome o uso da fase")
-	await create_timer(ESPERA_SURTO_SEGUNDOS).timeout
-	_checar(inimigos[0].process_mode == Node.PROCESS_MODE_INHERIT, "inimigo volta a agir depois do Surto")
+	_checar(_main._surto_usado and _jogador.surto_ativo() and surto.estado == BotaoToque.EstadoBotao.ACESO,
+		"Surto pelo toque liga a aura, acende o botão e consome o uso da fase")
 	_main.tirar_criaturas()
 
 
 func _testar_telas_no_toque() -> void:
-	var inventario: TelaInventario = _main.get_node("Interface/TelaInventario")
-	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"inventario")), true)
-	await process_frame
-	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"inventario")), false)
-	await process_frame
-	_checar(inventario.visible and paused and not _controles.esta_visivel(), "Bolsa abre pelo toque e esconde os controles pausados")
-	await _tocar_interface(inventario.get_node("%Fechar"))
-	_checar(not inventario.visible and not paused and _controles.esta_visivel(), "Fechar do inventário responde ao toque e restaura os controles")
-
 	var pausa: TelaPausa = _main.get_node("Interface/TelaPausa")
 	var comandos: TelaComandos = _main.get_node("Interface/TelaComandos")
 	_tocar(DEDO_BOTAO, _centro(_controles.botao(&"pausa")), true)
@@ -305,18 +304,18 @@ func _testar_edicao() -> void:
 
 ## Guarda o user://toque.cfg do jogador: o teste salva um layout de mentira.
 func _guardar_config() -> void:
-	_tinha_config = FileAccess.file_exists(OpcoesToque.ARQUIVO)
+	_tinha_config = FileAccess.file_exists(OpcoesToque.caminho)
 	if _tinha_config:
-		_config_original = FileAccess.get_file_as_bytes(OpcoesToque.ARQUIVO)
+		_config_original = FileAccess.get_file_as_bytes(OpcoesToque.caminho)
 
 
 func _devolver_config() -> void:
 	if _tinha_config:
-		var arquivo := FileAccess.open(OpcoesToque.ARQUIVO, FileAccess.WRITE)
+		var arquivo := FileAccess.open(OpcoesToque.caminho, FileAccess.WRITE)
 		arquivo.store_buffer(_config_original)
 		arquivo.close()
 	else:
-		DirAccess.remove_absolute(OpcoesToque.ARQUIVO)
+		DirAccess.remove_absolute(OpcoesToque.caminho)
 
 
 func _centro(controle: Control) -> Vector2:

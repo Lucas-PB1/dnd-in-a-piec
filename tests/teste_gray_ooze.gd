@@ -158,8 +158,7 @@ func _testar_voce_caiu(cena: Node) -> void:
 			break
 		(_jogador.get_node("Defesa") as DefesaComponent).invulneravel = false
 		hurtbox.receber_golpe(golpe_fatal, _jogador.global_position + Vector2.RIGHT)
-	await process_frame
-	await process_frame
+	await create_timer(Jogador.DURACAO_MORTE + 0.3).timeout  # a animação de morte toca antes da tela
 	var tela: TelaDerrota = null
 	for filho in cena.get_node("Interface").get_children():
 		if filho is TelaDerrota:

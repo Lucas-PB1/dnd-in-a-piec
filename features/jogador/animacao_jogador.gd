@@ -21,13 +21,22 @@ var piscando: bool = false
 var mao_por_cima: bool = true
 ## Atirando com arma de disparo: usa a pose de mira (braço esticado na altura do peito).
 var mirando: bool = false
+## O herói está morrendo: toca a animação de morte e fica deitado (a arma e o escudo somem).
+var morrendo: bool = false
+## Golpe com corpo próprio (ex.: &"corte"): o quadro vem de fora (o tempo do golpe da arma), não do relógio.
+## Vazio = o golpe usa a animação "ataque" de sempre.
+var animacao_do_golpe: StringName = &""
+var quadro_do_golpe: int = 0
 
 @onready var _mao_frente: AnimatedSprite2D = get_node_or_null("MaoFrente")
 
 var _pulso: Tween
+var _ultimo_estado: StringName = &""
 ## Verde claro do Second Wind, antes de voltar ao branco.
 const COR_FOLEGO := Color(0.55, 1.0, 0.7)
 const TEMPO_FOLEGO := 0.55
+const ANIMACAO_DANO := &"dano"
+const ANIMACAO_MORTE := &"morte"
 
 
 func _ready() -> void:
@@ -41,9 +50,15 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 	flip_h = direcao_olhar < 0
 	speed_scale = 1.0
 	_atualizar_piscar()
+	if morrendo:
+		if animation != ANIMACAO_MORTE:
+			play(ANIMACAO_MORTE)
+		_sincronizar_mao()
+		return
 	match estado:
 		&"LevandoDano":
-			play(&"pulo_caindo")
+			if _ultimo_estado != estado:
+				play(ANIMACAO_DANO)  # só no começo do recuo: não reinicia a cada quadro
 		&"NoAr":
 			_animar_no_ar(velocidade.y)
 		&"Andando":
@@ -51,10 +66,22 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 		&"Correndo":
 			_animar_passos(&"correr", absf(velocidade.x) / vel_corrida)
 		&"Atacando", &"Arremessando":
-			play(&"mirar" if mirando else &"ataque")
+			if animacao_do_golpe != &"" and not mirando:
+				_mostrar_quadro_do_golpe()
+			else:
+				play(&"mirar" if mirando else &"ataque")
 		_:
 			_animar_parado()
+	_ultimo_estado = estado
 	_sincronizar_mao()
+
+
+## Quadro escolhido pelo tempo do golpe: o corpo sobe e desce junto com a arma, em qualquer arma de corte.
+func _mostrar_quadro_do_golpe() -> void:
+	if animation != animacao_do_golpe:
+		animation = animacao_do_golpe
+	pause()
+	frame = clampi(quadro_do_golpe, 0, sprite_frames.get_frame_count(animacao_do_golpe) - 1)
 
 
 ## A camada da mão acompanha o quadro e o lado do herói.
@@ -83,11 +110,16 @@ func ponto_da_mao_de_tras() -> Vector2:
 
 ## Second Wind: o corpo fica verde e volta ao normal.
 func pulso_cura() -> void:
+	brilhar(COR_FOLEGO, TEMPO_FOLEGO)
+
+
+## O corpo pega a `cor` de uma vez e volta ao normal em `tempo` (Surto de Ação, Fôlego).
+func brilhar(cor: Color, tempo: float) -> void:
 	if _pulso:
 		_pulso.kill()
-	modulate = COR_FOLEGO
+	modulate = cor
 	_pulso = create_tween()
-	_pulso.tween_property(self, "modulate", Color.WHITE, TEMPO_FOLEGO)
+	_pulso.tween_property(self, "modulate", Color.WHITE, tempo)
 
 
 ## Pinta a roupa com a `armadura` (shader roupa_armadura). null = túnica normal.

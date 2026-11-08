@@ -26,9 +26,11 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 	preload("res://data/bestiario/goblin_warrior.tres"),
 ]
 const GRUPO_MONSTROS := &"monstros"
+## O que o botão de ataque do celular passa a dizer perto de um baú ou de uma arma caída.
+const ROTULO_ABRIR := "Abrir"
+const ROTULO_PEGAR := "Pegar"
 const TIPO_MINION := &"minion"
 const TIPO_WARRIOR := &"warrior"
-const DURACAO_SURTO_SEGUNDOS := 1.0
 const INIMIGOS_EXTRA_POR_NIVEL := 1
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
 const DISTANCIA_CRIATURA_PES := 15.0
@@ -48,6 +50,10 @@ var _ids_da_cota: Array[int] = []
 var _surto_usado: bool = false
 ## A tela aberta agora veio do menu de pausa: ao fechar, a pausa volta.
 var _voltar_para_pausa: bool = false
+## Quantas coisas com que dá para interagir (o baú, uma arma caída) estão perto do herói, por rótulo do botão.
+var _interagiveis_perto: Dictionary[String, int] = {}
+## O título está escondido porque as Opções abriram por cima dele; ao fechar, ele volta.
+var _titulo_escondido: TelaTitulo
 ## Quantas vezes o herói derrotou cada criatura (o bestiário mostra e o save guarda).
 var _bestiario := Bestiario.new()
 ## O herói está em cima da porta agora.
@@ -65,7 +71,15 @@ var _heroi_na_porta: bool = false
 @onready var _pausa: TelaPausa = $Interface/TelaPausa
 @onready var _tela_bestiario: TelaBestiario = $Interface/TelaBestiario
 @onready var _tela_habilidades: TelaHabilidades = $Interface/TelaHabilidades
+@onready var _sons: Sons = $Sons
+@onready var _musica: Musica = $Musica
 @onready var _controles_toque: ControlesToque = $ControlesToque
+
+
+## Os barramentos de áudio precisam existir antes de qualquer som nascer (os filhos ficam prontos antes da main).
+func _enter_tree() -> void:
+	OpcoesSom.carregar()
+	OpcoesSom.preparar_barramentos()
 
 
 func _ready() -> void:
@@ -78,12 +92,16 @@ func _ready() -> void:
 	_jogador.folego_mudou.connect(_hud.mostrar_folego)
 	_jogador.progressao_mudou.connect(_ao_mudar_progressao)
 	_jogador.surto_acao_pedido.connect(_usar_surto_acao)
-	_hud.mente_tatica_mudou.connect(_jogador.definir_mente_tatica)
+	_jogador.mente_tatica_pedido.connect(_alternar_mente_tatica)
+	_jogador.surto_ativo_mudou.connect(_ao_surto_ativo_mudou)
+	_jogador.folego_mudou.connect(func(_restantes: int, _total: int) -> void: _atualizar_botoes_toque())
 	_jogador.caiu.connect(_ao_cair)
 	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
 	_inventario.fechou.connect(_ao_fechar_modal)
 	_bau.abrir_pedido.connect(_abrir_bau)
+	_bau.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_ABRIR))
+	_jogador.inventario.mudou.connect(_atualizar_botoes_toque)
 	_tela_bau.fechou.connect(_ao_fechar_modal)
 	_pausa.fechou.connect(_ao_fechar_modal)
 	_pausa.mochila_escolhida.connect(_abrir_pela_pausa.bind(_abrir_inventario))
@@ -103,20 +121,27 @@ func _ready() -> void:
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
 	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
+	_atualizar_botoes_toque()
 	_ligar_porta()
 	_atualizar_pecas_da_fase()
 	_nascer_armadilhas()
+	_sons.ligar_jogador(_jogador)
+	_sons.ligar_telas(_interface)
 	if mostrar_inicio:
 		_abrir_titulo()
+	else:
+		_musica.tocar_da_fase(_fase.indice)
 
 
 # --- Início -----------------------------------------------------------------------
 
 func _abrir_titulo() -> void:
 	_pausar(true)
+	_musica.tocar(Musica.TITULO)
 	var titulo: TelaTitulo = CENA_TITULO.instantiate()
 	titulo.novo_jogo_escolhido.connect(_ao_escolher_novo_jogo.bind(titulo))
 	titulo.continuar_escolhido.connect(_ao_continuar.bind(titulo))
+	titulo.opcoes_escolhidas.connect(_abrir_opcoes_do_titulo.bind(titulo))
 	titulo.sair_escolhido.connect(get_tree().quit)
 	_interface.add_child(titulo)
 	titulo.mostrar_continuar(not Salvamento.ler().is_empty())
@@ -125,6 +150,13 @@ func _abrir_titulo() -> void:
 func _ao_escolher_novo_jogo(titulo: TelaTitulo) -> void:
 	titulo.queue_free()
 	_abrir_criacao()
+
+
+## Opções a partir do título: ele se esconde e volta quando as Opções fecham (Esc ou Fechar).
+func _abrir_opcoes_do_titulo(titulo: TelaTitulo) -> void:
+	_titulo_escondido = titulo
+	titulo.hide()
+	_comandos.abrir(false)
 
 
 ## Carrega o jogo salvo: a ficha, a mochila e o começo da fase em que salvou.
@@ -143,6 +175,7 @@ func _ao_continuar(titulo: TelaTitulo) -> void:
 	_mostrar_personagem_no_hud()
 	_apontar_monstros_para(_jogador)
 	_pausar(false)
+	_musica.tocar_da_fase(_fase.indice)
 
 
 func _abrir_criacao() -> void:
@@ -169,6 +202,7 @@ func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao
 	_apontar_monstros_para(_jogador)
 	tela.queue_free()
 	_pausar(false)
+	_musica.tocar_da_fase(_fase.indice)
 
 
 # --- Derrota ----------------------------------------------------------------------
@@ -191,6 +225,7 @@ func _tentar_de_novo(tela: TelaDerrota) -> void:
 
 func _abrir_vitoria() -> void:
 	_pausar(true)
+	_musica.tocar(Musica.TAVERNA)
 	var tela: TelaVitoria = CENA_VITORIA.instantiate()
 	tela.jogar_de_novo_escolhido.connect(_ao_jogar_de_novo.bind(tela))
 	_interface.add_child(tela)
@@ -257,6 +292,8 @@ func _entrar_fase(cena: PackedScene) -> void:
 	_atualizar_pecas_da_fase()
 	_nascer_armadilhas()
 	_hud.mostrar_surto(_jogador.ficha.nivel, true)
+	_atualizar_botoes_toque()
+	_musica.tocar_da_fase(_fase.indice)
 
 
 ## Baú e boneco ficam na clareira (e na fase reta de teste, índice 0). Nas outras fases não ocupam o caminho.
@@ -330,18 +367,16 @@ func _tipos_da_fase(nivel: int) -> Array[StringName]:
 	return tipos
 
 
-## Surto de Ação paralisa todos os inimigos ativos por 1 segundo uma vez nesta fase.
+## Surto de Ação: acende a aura do herói e o próximo ataque sai em dobro (dois golpes seguidos).
+## Funciona sem inimigo por perto, uma vez por fase.
 func _usar_surto_acao() -> void:
 	if not _surto_disponivel():
 		return
-	var modos_originais := _paralisar_inimigos()
-	if modos_originais.is_empty():
-		_jogador.avisar("Não há inimigos para paralisar")
+	if not _jogador.armar_surto():
 		return
 	_surto_usado = true
-	_hud.mostrar_surto(_jogador.ficha.nivel, false)
-	await get_tree().create_timer(DURACAO_SURTO_SEGUNDOS, false).timeout
-	_restaurar_inimigos(modos_originais)
+	_hud.mostrar_surto(_jogador.ficha.nivel, false, true)
+	_atualizar_botoes_toque()
 
 
 func _surto_disponivel() -> bool:
@@ -356,22 +391,22 @@ func _surto_disponivel() -> bool:
 	return true
 
 
-func _paralisar_inimigos() -> Dictionary[int, int]:
-	var modos_originais: Dictionary[int, int] = {}
-	for monstro in get_tree().get_nodes_in_group(GRUPO_MONSTROS):
-		if not is_instance_valid(monstro) or monstro.is_queued_for_deletion():
-			continue
-		modos_originais[monstro.get_instance_id()] = monstro.process_mode
-		monstro.process_mode = Node.PROCESS_MODE_DISABLED
-	return modos_originais
+## O Surto acendeu ou apagou (o segundo golpe saiu): atualiza o HUD e o botão da barra.
+func _ao_surto_ativo_mudou(ativo: bool) -> void:
+	_hud.mostrar_surto(_jogador.ficha.nivel, not _surto_usado, ativo)
+	_atualizar_botoes_toque()
 
 
-func _restaurar_inimigos(modos_originais: Dictionary[int, int]) -> void:
-	for id in modos_originais:
-		var monstro := instance_from_id(id) as Node
-		if is_instance_valid(monstro) and not monstro.is_queued_for_deletion():
-			var modo_original := int(modos_originais[id]) as Node.ProcessMode
-			monstro.process_mode = modo_original
+## Mente Tática liga e desliga como as outras habilidades (tecla T, ou o botão na barra do celular).
+func _alternar_mente_tatica() -> void:
+	if _em_tela_de_pausa:
+		return
+	if _jogador.ficha.nivel < Ficha.NIVEL_HABILIDADES_GUERREIRO:
+		_jogador.avisar("Mente Tática: nível 2")
+		return
+	_jogador.definir_mente_tatica(not _jogador.mente_tatica_ligada())
+	_jogador.avisar("Mente Tática %s" % ("ligada" if _jogador.mente_tatica_ligada() else "desligada"))
+	_atualizar_botoes_toque()
 
 
 func _rng_da_fase() -> RandomNumberGenerator:
@@ -435,6 +470,8 @@ func _abrir_pausa() -> void:
 ## Salva a ficha, a mochila e a fase atual. Ao continuar, o herói volta ao começo da fase.
 func _salvar_jogo() -> void:
 	var gravou := Salvamento.gravar(_jogador.ficha, _jogador.inventario, _fase.indice, _bestiario)
+	if gravou:
+		_sons.tocar(&"confirmar")
 	_pausa.mostrar_aviso("Jogo salvo" if gravou else "Não foi possível salvar")
 
 
@@ -473,6 +510,7 @@ func _abrir_inventario() -> void:
 
 func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool, destreza: int) -> void:
 	var voo: ArmaArremessada = CENA_ARREMESSO.instantiate()
+	voo.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_PEGAR))
 	if municao == null:
 		voo.recolhida.connect(_ao_recolher_arma.bind(voo))
 		voo.derreteu.connect(_jogador.avisar)
@@ -491,6 +529,7 @@ func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> voi
 func _abrir_bau(itens: Array[Item]) -> void:
 	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
 		return
+	_sons.tocar(&"bau")
 	_tela_bau.abrir(itens, _jogador.inventario)
 	_controles_toque.atualizar(true)
 
@@ -518,10 +557,53 @@ func _abrir_pela_pausa(abrir_tela: Callable) -> void:
 
 
 func _ao_fechar_modal() -> void:
+	if _titulo_escondido != null:
+		_titulo_escondido.show()
+		_titulo_escondido.mostrar_continuar(not Salvamento.ler().is_empty())
+		_titulo_escondido = null
+		_pausar(true)  # as Opções despausaram o jogo; o título continua pausando
+		return
 	if _voltar_para_pausa:
 		_reabrir_pausa.call_deferred()  # adia: Ajustar botões cancela o retorno logo depois de fechar
 		return
 	_atualizar_controles_toque()
+
+
+## Esconde os botões de toque que não servem agora (Surto antes do nível 2, Fôlego sem a habilidade, Lançar
+## sem arma na mão) e faz o botão de ataque dizer Abrir ou Pegar perto de um baú ou de uma arma caída.
+func _atualizar_botoes_toque() -> void:
+	var tem_nivel_2 := _jogador.ficha.nivel >= Ficha.NIVEL_HABILIDADES_GUERREIRO
+	_controles_toque.mostrar_acao(&"surto_acao", tem_nivel_2)
+	_controles_toque.mostrar_acao(&"mente_tatica", tem_nivel_2)
+	_controles_toque.mostrar_acao(&"folego", _jogador.usos_folego_total() > 0)
+	_controles_toque.mostrar_acao(&"arremessar", _jogador.inventario.equipado(Item.ESPACO_MAO) != null)
+	_controles_toque.definir_interacao(_rotulo_de_interacao())
+	_acender_habilidades()
+
+
+## Habilidade ativa = botão aceso; desligada ou sem uso = botão avermelhado; pronta = botão normal.
+func _acender_habilidades() -> void:
+	var estado_do_surto := BotaoToque.EstadoBotao.NORMAL
+	if _jogador.surto_ativo():
+		estado_do_surto = BotaoToque.EstadoBotao.ACESO
+	elif _surto_usado:
+		estado_do_surto = BotaoToque.EstadoBotao.DESLIGADO
+	_controles_toque.definir_estado(&"surto_acao", estado_do_surto)
+	_controles_toque.definir_estado(&"mente_tatica", BotaoToque.EstadoBotao.ACESO if _jogador.mente_tatica_ligada() else BotaoToque.EstadoBotao.DESLIGADO)
+	_controles_toque.definir_estado(&"folego", BotaoToque.EstadoBotao.NORMAL if _jogador.usos_folego() > 0 else BotaoToque.EstadoBotao.DESLIGADO)
+
+
+func _ao_mudar_interagivel(perto: bool, rotulo: String) -> void:
+	_interagiveis_perto[rotulo] = maxi(_interagiveis_perto.get(rotulo, 0) + (1 if perto else -1), 0)
+	_atualizar_botoes_toque()
+
+
+## "Abrir" ou "Pegar" se há algo perto (o baú vem primeiro); vazio se não há nada.
+func _rotulo_de_interacao() -> String:
+	for rotulo in [ROTULO_ABRIR, ROTULO_PEGAR]:
+		if _interagiveis_perto.get(rotulo, 0) > 0:
+			return rotulo
+	return ""
 
 
 func _atualizar_controles_toque() -> void:
@@ -567,16 +649,16 @@ func _pausar(pausar: bool) -> void:
 
 
 func _mostrar_personagem_no_hud() -> void:
+	_atualizar_botoes_toque()
 	_hud.mostrar_personagem(_jogador.ficha.nome, _jogador.ficha.classe.nome)
 	_hud.mostrar_vida(_jogador.vida_atual(), _jogador.vida_maxima())
 	_hud.mostrar_folego(_jogador.usos_folego(), _jogador.usos_folego_total())
 	_hud.mostrar_progressao(_jogador.ficha.nivel, _jogador.ficha.experiencia, _jogador.ficha.xp_proximo_nivel())
 	_hud.mostrar_surto(_jogador.ficha.nivel, not _surto_usado)
-	_hud.marcar_mente_tatica(_jogador.mente_tatica_ligada(), _jogador.ficha.nivel >= 2)
 
 
 func _ao_mudar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> void:
+	_atualizar_botoes_toque()
 	_hud.mostrar_progressao(nivel, experiencia, proximo_nivel)
 	_hud.mostrar_surto(nivel, not _surto_usado)
-	_hud.marcar_mente_tatica(_jogador.mente_tatica_ligada(), nivel >= 2)
 

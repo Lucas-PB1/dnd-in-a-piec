@@ -8,14 +8,22 @@ extends CharacterBody2D
 signal pulou
 ## Emitido no quadro em que toca o chão depois de estar no ar.
 signal aterrissou
+## O herói começou um golpe (`extra` = o da outra mão): o som do golpe no ar vem daqui.
+signal golpe_iniciado(arma: Arma, extra: bool)
+## O herói começou a morrer (antes da animação de morte e da tela "Você caiu!").
+signal comecou_a_morrer
 ## Emitido quando volta para o início (ex.: caiu num buraco).
 signal reapareceu
 ## Emitido quando a vida muda (ex.: ao criar o personagem).
 signal vida_mudou(atual: int, maxima: int)
 ## Emitido quando os usos do Second Wind mudam (restantes e o total da classe).
 signal folego_mudou(restantes: int, total: int)
-## A main decide o alcance do Surto de Ação na fase atual.
+## Apertou o Surto de Ação: a main vê se ele está liberado nesta fase e chama armar_surto().
 signal surto_acao_pedido
+## Apertou a Mente Tática: a main liga ou desliga.
+signal mente_tatica_pedido
+## O Surto ficou ativo (aura ligada, o próximo ataque sai em dobro) ou acabou: a interface acende o botão.
+signal surto_ativo_mudou(ativo: bool)
 ## Atualização de nível e XP para o HUD.
 signal progressao_mudou(nivel: int, experiencia: int, proximo_nivel: int)
 ## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
@@ -25,6 +33,26 @@ signal caiu
 ## `municao` preenchida = disparo: a arma fica na mão e essa munição é o que voa.
 ## Sem ninguém escutando (cena aberta sozinha), nada é gasto.
 signal arma_arremessada(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool, destreza: int)
+
+## Cores e tamanhos dos efeitos do Surto de Ação (dourado) e do Fôlego (verde).
+const COR_SURTO := Color(1.0, 0.82, 0.3)
+const COR_FOLEGO_AURA := Color(0.45, 1.0, 0.6)
+const FAISCAS_ATIVAR_SURTO := 18
+const FAISCAS_SEGUNDO_GOLPE := 22
+const FAISCAS_FOLEGO := 14
+const TEMPO_ANEL_FOLEGO := 0.7
+## Golpe de corte com o corpo animado (features/jogador/sprites/heroi_corte.png): 8 quadros; os 5 primeiros
+## preparam (os punhos sobem acima da cabeça) e o 6º (índice 5) é quando os punhos descem à frente.
+## Tempo (s) da animação de morte antes da tela "Você caiu!" (12 quadros a 10 por segundo, e um respiro deitado).
+const DURACAO_MORTE := 1.4
+## Quanto o herói desliza para o lado ao cair (px/s por segundo): ele freia e fica deitado onde caiu.
+const FREIO_DA_MORTE := 900.0
+const ANIMACAO_CORTE := &"corte"
+const QUADROS_CORTE := 8
+const QUADRO_DO_ACERTO_CORTE := 5
+## O anel da ativação do Surto de Ação dura meio segundo.
+const DURACAO_ANEL_SURTO := 0.5
+const TEMPO_BRILHO_SURTO := 0.5
 
 ## Números de balanceamento (velocidades, pulo). Padrão: data/jogador_padrao.tres.
 @export var stats: StatsJogador
@@ -63,6 +91,12 @@ var _usos_folego: int = 0
 var _rng_folego := RandomNumberGenerator.new()
 var _rng_habilidades := RandomNumberGenerator.new()
 var _mente_tatica_ligada: bool = false
+## Surto de Ação armado: o próximo ataque ganha um segundo golpe logo atrás do primeiro.
+var _surto_armado: bool = false
+## O primeiro golpe do Surto já saiu e o segundo ainda vai sair.
+var _golpe_do_surto_pendente: bool = false
+## O herói está morrendo (animação de morte): não responde a nada até reviver().
+var _morrendo: bool = false
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -78,6 +112,7 @@ var _toque_duplo: ToqueDuplo
 @onready var _texto: TextoFlutuanteComponent = $Texto
 @onready var _escudo: EscudoJogador = $Escudo
 @onready var _arma_tras: ArmaTras = $ArmaTras
+@onready var _aura: AuraComponent = $Aura
 
 
 func _ready() -> void:
@@ -102,6 +137,9 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _morrendo:
+		_processar_morte(delta)
+		return
 	_atualizar_contadores(delta)
 	_atualizar_invencibilidade(delta)
 	_maquina.processar_fisica(delta)
@@ -109,6 +147,9 @@ func _physics_process(delta: float) -> void:
 	_checar_aterrissagem()
 	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
 	_animacao.mirando = nome_estado() == &"Arremessando" and disparo_na_mao()
+	_animacao.animacao_do_golpe = ANIMACAO_CORTE if _ataque.corpo_acompanha() else &""
+	if _ataque.corpo_acompanha():
+		_animacao.quadro_do_golpe = _ataque.quadro_do_corpo(QUADROS_CORTE, QUADRO_DO_ACERTO_CORTE)
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
 	var na_tras: Arma = null if _ataque.golpe_da_secundaria() else arma_secundaria()
@@ -336,6 +377,59 @@ func mente_tatica_ligada() -> bool:
 	return _mente_tatica_ligada
 
 
+## Surto de Ação: arma a aura. O próximo ataque sai em dobro (dois golpes seguidos, cada um com a
+## sua rolagem). Devolve false se já estava ativo ou se o herói caiu.
+func armar_surto() -> bool:
+	if surto_ativo() or ficha == null or _vida.esta_morto():
+		return false
+	_surto_armado = true
+	_aura.ligar(COR_SURTO)
+	_aura.pulso(COR_SURTO, FAISCAS_ATIVAR_SURTO, DURACAO_ANEL_SURTO)
+	_animacao.brilhar(COR_SURTO, TEMPO_BRILHO_SURTO)
+	_texto.mostrar("Surto de Ação!", COR_SURTO)
+	surto_ativo_mudou.emit(true)
+	return true
+
+
+## A aura do Surto está ligada (armado, ou o segundo golpe ainda vai sair).
+func surto_ativo() -> bool:
+	return _surto_armado or _golpe_do_surto_pendente
+
+
+## O primeiro golpe do Surto acabou e o segundo ainda não saiu: o estado Atacando chama já.
+func quer_golpe_do_surto() -> bool:
+	return _golpe_do_surto_pendente and not esta_golpeando()
+
+
+## O segundo golpe do Surto: a mesma arma, na hora, com rolagem nova. Gasta o Surto e apaga a aura.
+func iniciar_golpe_do_surto() -> void:
+	_golpe_do_surto_pendente = false
+	_aura.pulso(COR_SURTO, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
+	_aura.desligar()
+	_animacao.brilhar(COR_SURTO, TEMPO_BRILHO_SURTO)
+	_comecar_golpe(false, true)
+	surto_ativo_mudou.emit(false)
+
+
+## O ataque foi interrompido (levou dano, por exemplo): o segundo golpe se perde e a aura apaga.
+func cancelar_golpe_do_surto() -> void:
+	if not _golpe_do_surto_pendente:
+		return
+	_golpe_do_surto_pendente = false
+	_aura.desligar()
+	surto_ativo_mudou.emit(false)
+
+
+## Apaga o Surto sem usar (nova fase, o herói caiu).
+func _apagar_surto() -> void:
+	var estava_ativo := surto_ativo()
+	_surto_armado = false
+	_golpe_do_surto_pendente = false
+	_aura.desligar()
+	if estava_ativo:
+		surto_ativo_mudou.emit(false)
+
+
 ## Rola um teste de perícia e aplica Mente Tática automaticamente se estiver ligada.
 func rolar_teste_pericia(pericia: StringName, cd: int,
 		rng: RandomNumberGenerator = null) -> Dictionary:
@@ -354,6 +448,7 @@ func rolar_teste_pericia(pericia: StringName, cd: int,
 
 ## Descanso longo ao entrar numa fase nova: vida, Fôlego e ação bônus recuperados.
 func descansar_longo() -> void:
+	_apagar_surto()
 	_tempo_desde_acao_bonus = INF
 	_vida.curar_tudo()
 	_repor_folego()
@@ -368,6 +463,7 @@ func usar_folego() -> bool:
 	_tempo_desde_acao_bonus = 0.0
 	var ganho := _vida.curar(classe.cura_do_folego(_rng_folego, ficha.nivel))
 	_animacao.pulso_cura()
+	_aura.pulso(COR_FOLEGO_AURA, FAISCAS_FOLEGO, TEMPO_ANEL_FOLEGO, true)
 	_texto.mostrar_cura("Fôlego +%d" % ganho)
 	_avisar_folego()
 	return true
@@ -476,6 +572,10 @@ func criar_golpe() -> Golpe:
 
 ## Volta para o início com a vida cheia (ex.: "Tentar de novo" depois de cair).
 func reviver() -> void:
+	_apagar_surto()
+	_morrendo = false
+	_animacao.morrendo = false
+	_mostrar_equipamento(true)
 	_contador_invencivel = 0.0
 	_defesa.invulneravel = false
 	_animacao.piscando = false
@@ -547,6 +647,8 @@ func _atualizar_contadores(delta: float) -> void:
 		usar_folego()
 	if Input.is_action_just_pressed("surto_acao"):
 		surto_acao_pedido.emit()
+	if Input.is_action_just_pressed("mente_tatica"):
+		mente_tatica_pedido.emit()
 	# Toque duplo para correr, ou segurar "correr" (Shift; o analógico na borda).
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()
@@ -602,10 +704,35 @@ func _atualizar_invencibilidade(delta: float) -> void:
 ## Vida zerou: avisa quem monta o jogo. Sem ninguém escutando, revive sozinho.
 func _morrer() -> void:
 	_defesa.invulneravel = true
+	comecou_a_morrer.emit()
+	_apagar_surto()
+	_ataque.cancelar()
+	_morrendo = true
+	_animacao.morrendo = true
+	_mostrar_equipamento(false)
+	await get_tree().create_timer(DURACAO_MORTE, false).timeout
+	if not _morrendo:
+		return  # reviveu antes do fim da animação
 	if caiu.get_connections().is_empty():
 		reviver()
 	else:
 		caiu.emit()
+
+
+## Cai e fica deitado: só a gravidade age; a animação de morte toca até o fim.
+func _processar_morte(delta: float) -> void:
+	velocity.x = move_toward(velocity.x, 0.0, FREIO_DA_MORTE * delta)
+	aplicar_gravidade(delta)
+	move_and_slide()
+	_animacao.atualizar(&"Morrendo", velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
+
+
+## Arma, escudo e a mão por cima do corpo: somem enquanto o herói morre e voltam ao reviver.
+func _mostrar_equipamento(mostrar: bool) -> void:
+	_ataque.visible = mostrar
+	_escudo.visible = mostrar
+	_arma_tras.visible = mostrar
+	_animacao.mao_por_cima = mostrar
 
 
 ## Equipamento mudou (vestiu, tirou, quebrou): recalcula a CA e troca o visual.
@@ -632,7 +759,10 @@ func _corroer_armadura() -> void:
 
 ## Começa o golpe da arma da mão (ou o extra, da outra mão). O extra sem Corte Duplo gasta
 ## a ação bônus: o próximo só depois de 1 rodada.
-func _comecar_golpe(extra: bool) -> void:
+func _comecar_golpe(extra: bool, do_surto: bool = false) -> void:
+	if not extra and not do_surto and _surto_armado:
+		_surto_armado = false  # este golpe abre o Surto; o segundo vem logo atrás
+		_golpe_do_surto_pendente = true
 	if not extra:
 		_tempo_desde_golpe = 0.0
 	elif not _tem_corte_duplo():
@@ -642,6 +772,7 @@ func _comecar_golpe(extra: bool) -> void:
 	_golpe_extra = extra
 	var arma := arma_secundaria() if extra else arma_atual()
 	_ataque.golpear(arma, _criar_golpe_de(arma, extra), extra, arma_atual() if extra else null)
+	golpe_iniciado.emit(arma, extra)
 
 
 func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:

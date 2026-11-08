@@ -136,6 +136,29 @@ func mao_fora_do_lugar() -> bool:
 	return _golpeando or (_carga >= 0.0 and not _disparando)
 
 
+## No golpe de corte da arma da mão (não no extra, nem nas armas desenhadas quadro a quadro), o corpo do
+## herói faz o movimento: a mão sobe e desce no desenho, e a arma vai presa a ela.
+func corpo_acompanha() -> bool:
+	return _golpeando and not _golpe_secundario and _arma != null and _arma.efeito == Arma.EFEITO_CORTE and _arma.quadros.is_empty()
+
+
+## Quadro do corpo no instante do golpe: os quadros antes de `quadro_do_acerto` (a preparação) cobrem o tempo
+## até a arma começar a acertar; dali em diante, o resto cobre o golpe e a volta.
+func quadro_do_corpo(quadros: int, quadro_do_acerto: int) -> int:
+	var inicio := _inicio_do_acerto()
+	if _tempo < inicio:
+		return int(_tempo / maxf(inicio, 0.001) * quadro_do_acerto)
+	var resto := (_tempo - inicio) / maxf(_arma.duracao() - inicio, 0.001)
+	return mini(quadro_do_acerto + int(resto * (quadros - quadro_do_acerto)), quadros - 1)
+
+
+func _inicio_do_acerto() -> float:
+	for pose in _arma.poses:
+		if pose.acerta:
+			return pose.tempo
+	return _arma.duracao() * 0.5
+
+
 func esta_golpeando() -> bool:
 	return _golpeando
 
@@ -187,7 +210,7 @@ func _virar(direcao: int) -> void:
 ## Põe a arma e a área de acerto na pose do instante atual.
 func _aplicar_pose() -> void:
 	var pose := _arma.pose_em(_tempo)
-	position = _mao + pose.mao
+	position = _mao if corpo_acompanha() else _mao + pose.mao  # com o corpo animado, a mão do desenho já se move
 	if _arma.quadros.is_empty():
 		_espada.rotation_degrees = DesenhoArma.rotacao(_arma, pose.angulo)
 	else:

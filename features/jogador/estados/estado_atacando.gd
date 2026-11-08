@@ -8,6 +8,10 @@ func entrar() -> void:
 	jogador.iniciar_golpe()
 
 
+func sair() -> void:
+	jogador.cancelar_golpe_do_surto()  # se o ataque foi interrompido, o segundo golpe se perde
+
+
 func processar_fisica(delta: float) -> void:
 	if jogador.is_on_floor():
 		jogador.tentar_pular()
@@ -17,6 +21,9 @@ func processar_fisica(delta: float) -> void:
 		jogador.cortar_pulo_se_soltou()
 		jogador.mover_horizontal(jogador.direcao(), jogador.velocidade_andar(), delta, false)
 	if not jogador.esta_golpeando():
+		if jogador.quer_golpe_do_surto():
+			jogador.iniciar_golpe_do_surto()  # Surto de Ação: o segundo golpe, logo atrás do primeiro
+			return
 		if jogador.quer_golpe_extra():
 			jogador.iniciar_golpe_extra()
 			return

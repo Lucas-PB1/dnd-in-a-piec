@@ -29,6 +29,7 @@
 [ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="23_texto"]
 [ext_resource type="Script" path="res://features/jogador/estados/estado_levando_dano.gd" id="24_levando_dano"]
 [ext_resource type="SpriteFrames" path="res://features/jogador/sprites/maos_frente_frames.tres" id="40_maos"]
+[ext_resource type="Script" path="res://core/componentes/aura_component.gd" id="41_aura"]
 
 [sub_resource type="ShaderMaterial" id="MaterialRoupa"]
 resource_local_to_scene = true
@@ -78,6 +79,10 @@ script = ExtResource("17_vida")
 [node name="Colisao" type="CollisionShape2D" parent="."]
 position = Vector2(0, -28)
 shape = SubResource("Forma")
+
+[node name="Aura" type="Node2D" parent="."]
+position = Vector2(0, -36)
+script = ExtResource("41_aura")
 
 [node name="ArmaTras" type="Sprite2D" parent="."]
 centered = false

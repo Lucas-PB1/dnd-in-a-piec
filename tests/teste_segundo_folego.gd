@@ -152,8 +152,7 @@ func _testar_criatura() -> void:
 	_principal.trazer_criatura(load("res://features/gray_ooze/gray_ooze.tscn"))
 	var vida: HealthComponent = _jogador.get_node("Vida")
 	vida.receber_dano(vida.vida_atual)
-	await process_frame
-	await process_frame
+	await create_timer(Jogador.DURACAO_MORTE + 0.3).timeout  # a animação de morte toca antes da tela
 	var derrota := _principal.get_node("Interface").find_child("TelaDerrota", true, false) as TelaDerrota
 	_checar(derrota != null, "cair abre a tela Você caiu")
 	if derrota == null:
