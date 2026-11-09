@@ -93,3 +93,19 @@ O que já foi feito, em ordem. **Acrescente uma linha ao fechar cada fatia.** O 
 - Pose de guarda com duas armas (`heroi_guarda_dupla_v1.png`, 20 créditos, saldo 368): quase igual ao idle; não ligada ao jogo. A guarda atual é feita por código (lâminas erguidas).
 
 - Épico 10 fases, fatia 1: ouro e saque. `Saque` (regra pura), `Ficha.ouro` (salvo), `CriaturaRPG.ouro`, HUD "Ouro", chip "po" na ficha, arma de saque na mochila; Carisma melhora ouro e chance de arma. Também: cada atributo explica o que faz (`Atributos.DESCRICOES`; dica na criação e na ficha, por toque ou mouse).
+- Épico 10 fases, fatia 2: armas mágicas +1/+2/+3 (`Arma.bonus_magico`, brilho de cor, sem Corrosão, save e saque).
+- Épico 10 fases, fatia 3: loja no início da fase (`Loja`, `Lojista`, `TelaLoja`; comprar, vender, estoque por fase, desconto do Artesão). Arte do lojista pelo SpriteCook: personagem (12) e animação parado (20); saldo 336.
+- Épico 10 fases, fatia 4: missão por fase (`Missao`, título em `Fase.missao`, linha na HUD, aviso ao cumprir).
+- Épico 10 fases, fatia 5: minions novos (Hobgoblin, Bugbear e Kobold Warrior) com as fichas do livro conferidas no Códice. Cenas herdadas do Goblin (`hobgoblin_guerreiro`, `bugbear_guerreiro`, `kobold_guerreiro`) com outra cor (`Goblin.cor_corpo`) e escala; `CriaturaRPG` ganhou dano adicional (veneno do Hobgoblin), agarrar (Bugbear, CD 12), arremesso com dano próprio (Martelo Leve) e os traços Táticas de Matilha (`TaticasDeMatilha`) e Sensibilidade à Luz Solar (`Fase.luz_do_sol`). A main escolhe a cena pelo mapa `CENAS_DOS_TIPOS`. Entram na campanha (Kobold nas fases 2–3, Hobgoblin na 4–5, Bugbear na 5), no bestiário e na tela de comandos. Arte grátis (recolor), sem créditos.
+
+## Fatia: Hobgoblin com arte própria (Gemini) e IA que salta
+- Hobgoblin Warrior com arte gerada no Gemini, limpa por `tools/montar_tiras_gemini.gd` e montada por
+  `tools/montar_frames_gemini.gd` (animações parado, correr, atacar, disparar; dano por código).
+- Monstros (Goblin e variantes) saltam degraus, atravessam vãos e descem quedas atrás do alvo (`SaltoDnd`,
+  `SensorDeTerreno`, estado `Pulando`); teste `tests/teste_salto_monstros.gd`.
+- IA dos monstros: cobertura contra tiros do herói (`Abrigo`, `BuscaDeAbrigo`, estado `Cobrindo`) e estratégia
+  (`EstrategiaDeMonstro`, estado `Afastando`: manter distância e recuar ferido). Testes `teste_cobertura.gd` e `teste_estrategia.gd`.
+- `tests/rodar_testes.ps1` ganhou limite de tempo por teste (mata o travado e reprova).
+- IA dos monstros: flanqueio em grupo (estado `Flanqueando`, só manobra, sem vantagem). Teste `teste_flanqueio.gd`.
+- Bugbear Warrior com arte própria (Gemini): correr, agarrar, parado e arremessar; limpeza de franja nas tiras.
+- Kobold Warrior com arte própria (Gemini): correr, estocada, parado e arremessar. Os três minions novos têm arte própria.

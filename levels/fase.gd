@@ -24,10 +24,17 @@ const CAMADA_MUNDO := 1
 @export var ultima: bool = false
 ## Nome do ambiente, só para leitura (a cor já está nos ladrilhos).
 @export var nome_ambiente: String = ""
+## Título da missão da fase (ex.: "Limpe a clareira"); o resto do texto vem da Missao.
+@export var missao: String = ""
 ## Quantos pontos de armadilha ocupar ao entrar. Há mais pontos do que este número.
 @export var quantidade: int = 0
-## Tipos que o sorteio pode colocar: "ooze", "minion", "warrior".
+## Tipos que o sorteio pode colocar: "ooze", "minion", "warrior", "hobgoblin", "bugbear", "kobold".
 @export var tipos_permitidos: Array[StringName] = []
+## A fase é ao ar livre de dia: quem tem Sensibilidade à Luz Solar (Kobold) ataca com desvantagem.
+@export var luz_do_sol: bool = false
+## Onde fica a banca do lojista em relação ao ponto de partida (px): à vista, em chão firme e longe do baú (a 70 px do
+## começo; as áreas de interação não podem se sobrepor, senão o E abriria a loja em vez do arsenal).
+@export var deslocamento_loja: Vector2 = Vector2(250, 0)
 
 @onready var _terreno: TileMapLayer = $Terreno
 @onready var _inicio: Marker2D = $InicioJogador

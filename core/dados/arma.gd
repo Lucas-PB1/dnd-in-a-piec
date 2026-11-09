@@ -15,6 +15,8 @@ extends Item
 @export var acuidade: bool = false
 ## Arma não mágica: sofre Corrosão (ex.: tocar o Gray Ooze). Falso para soco e armas mágicas.
 @export var corroivel: bool = true
+## Arma mágica +1, +2 ou +3 (DMG): soma o número ao ataque e ao dano, brilha com a cor do nível e não sofre Corrosão.
+@export var bonus_magico: int = 0
 ## Imagem da arma (pode estar na diagonal: veja angulo_arte e pegada).
 @export var textura: Texture2D
 ## Para onde a lâmina aponta NA IMAGEM (graus; 0 = direita, -45 = para cima e à direita).
@@ -196,3 +198,40 @@ func alcance_da_ponta() -> float:
 			var pose := pose_em(lerpf(poses[i].tempo, poses[i + 1].tempo, float(s) / AMOSTRAS_ALCANCE))
 			mais_longe = maxf(mais_longe, pose.mao.x + comprimento * pose.escala * cos(deg_to_rad(pose.angulo)))
 	return mais_longe
+
+
+## Maior bônus de uma arma mágica comum.
+const BONUS_MAGICO_MAXIMO := 3
+## Cor do brilho (a arte e o golpe) por bônus mágico: +1 azul, +2 roxo, +3 dourado.
+const CORES_MAGICAS := {
+	1: Color(0.6, 0.85, 1.0),
+	2: Color(0.85, 0.65, 1.0),
+	3: Color(1.0, 0.78, 0.35),
+}
+
+
+## Cor que tinge a arte da arma: branca (sem tinta) se não for mágica.
+func cor_do_brilho() -> Color:
+	return CORES_MAGICAS.get(bonus_magico, Color.WHITE)
+
+
+## Uma cópia desta arma com o bônus mágico (nome "Adaga +1", sem Corrosão, golpe com a cor do bônus).
+## Bônus 0 devolve só a cópia. Munição e armas empilháveis não ganham bônus.
+func com_bonus_magico(bonus: int) -> Arma:
+	var copia := duplicate() as Arma
+	if bonus < 1 or empilhavel:
+		return copia
+	copia.bonus_magico = clampi(bonus, 1, BONUS_MAGICO_MAXIMO)
+	copia.nome = "%s +%d" % [nome, copia.bonus_magico]
+	copia.corroivel = false
+	copia.cor_corte = copia.cor_do_brilho()
+	return copia
+
+
+## O nome sem o " +N" ("Adaga +1" -> "Adaga") e o bônus dele (0 se não tem). Serve ao salvamento.
+static func separar_nome_magico(nome_completo: String) -> Array:
+	for bonus in range(1, BONUS_MAGICO_MAXIMO + 1):
+		var sufixo := " +%d" % bonus
+		if nome_completo.ends_with(sufixo):
+			return [nome_completo.trim_suffix(sufixo), bonus]
+	return [nome_completo, 0]

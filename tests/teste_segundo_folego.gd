@@ -123,7 +123,7 @@ func _testar_teclas() -> void:
 	var tela: TelaComandos = _principal.get_node("Interface/TelaComandos")
 	var lista := tela.find_child("ListaCriaturas", true, false) as ItemList
 	_checar(not tela.visible, "comandos começa fechado")
-	_checar(lista.item_count == 3 and lista.get_item_text(0) == "Gray Ooze"
+	_checar(lista.item_count >= 3 and lista.get_item_text(0) == "Gray Ooze"
 		and lista.get_item_text(1) == "Goblin Minion" and lista.get_item_text(2) == "Goblin Warrior",
 		"a lista de combate tem o Gray Ooze, o Goblin Minion e o Goblin Warrior")
 	tela.abrir()

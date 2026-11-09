@@ -59,9 +59,10 @@ static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: i
 	var itens: Array[Dictionary] = []
 	for item in inventario.itens:
 		itens.append({
-			"nome": item.nome,
+			"nome": item.nome if not (item is Arma and (item as Arma).bonus_magico > 0) else Arma.separar_nome_magico(item.nome)[0],
 			"quantidade": inventario.quantidade_de(item),
 			"desgaste": inventario.penalidade(item),
+			"bonus_magico": (item as Arma).bonus_magico if item is Arma else 0,
 		})
 	return {
 		"versao": VERSAO,
@@ -128,7 +129,7 @@ static func restaurar_inventario(dados: Dictionary, inventario: Inventario) -> v
 		if modelo == null:
 			guardados.append(null)  # item que não existe mais: segura o número da posição
 			continue
-		var copia := modelo.duplicate() as Item
+		var copia := _copia_do_modelo(modelo, int(linha.get("bonus_magico", 0)))
 		inventario.adicionar_com_desgaste(copia, int(linha.get("desgaste", 0)), int(linha.get("quantidade", 1)))
 		guardados.append(copia)
 	for indice in mochila.get("equipados", []):
@@ -136,6 +137,12 @@ static func restaurar_inventario(dados: Dictionary, inventario: Inventario) -> v
 		if item != null:
 			inventario.equipar(item)
 
+
+## Cópia nova do item do jogo; arma mágica salva volta com o mesmo bônus.
+static func _copia_do_modelo(modelo: Item, bonus_magico: int) -> Item:
+	if modelo is Arma and bonus_magico > 0:
+		return (modelo as Arma).com_bonus_magico(bonus_magico)
+	return modelo.duplicate() as Item
 
 ## Põe de volta as criaturas já derrotadas.
 static func restaurar_bestiario(dados: Dictionary, bestiario: Bestiario) -> void:

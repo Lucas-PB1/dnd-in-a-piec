@@ -12,6 +12,7 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 |---|---|---|---|---|
 | 1 | **Validar o APK num celular Android** | P | `builds/android/dnd_in_a_piece.apk`, controles de toque | APK exportável; falta conferir no aparelho o tamanho dos alvos, movimento durante o ataque e resposta do pulo. |
 | 2 | **Subclasse do Guerreiro** | M | `core/dados/`, criação, combate | O nível 3 ainda não oferece a escolha de subclasse nem seus recursos. |
+| 3a | **IA dos monstros: cobertura e estratégia** | M | `features/goblin/`, `core/regras/` | Saltar, cobertura, manter distância e recuar ferido (feitos). Flanqueio (só manobra) também feito. Faltam: esperar em vantagem de terreno e levar o salto ao Gray Ooze, à patrulha e à Fuga Ágil. |
 | 3 | **Testes de habilidade nas fases** | M | `levels/`, interações e perícias | A regra e o toggle de Mente Tática estão prontos; falta uma interação que peça um teste de habilidade do herói. |
 | 4 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |
 | 5 | ~~Sprites novos dos monstros~~ (feito com o SpriteCook; falta só o refino do golpe do Minion e do arremesso) | M | `features/goblin/`, `tools/gerar_goblin*.gd` | Não há pacote CC0 melhor. Opção paga: [Rpg miniatures: The Goblins](https://ivoryred.itch.io/rpg-miniatures-the-goblins) (US$ 2,99, 4 goblins com dano e morte), só se o usuário comprar. |
@@ -91,3 +92,9 @@ history-lilac.vercel.app): Kobold Warrior, Skeleton, Zombie, Hobgoblin Warrior, 
 Animated Armor; chefes Ankheg (ND 2) e outros até ND 3. Ainda por decidir: plano de criaturas e ordem das fatias.
 Fatias sugeridas: (1) ouro e drops + regra do Carisma; (2) armas mágicas +1/+2/+3; (3) loja no início da fase
 (desconto 20% do Artesão); (4) missões por fase; (5) criaturas novas por ambiente; (6) chefes das fases 3, 6, 9; (7) fases 6 a 10 e super chefe.
+
+### Estratégia de criaturas e chefes (decidida com o usuário em 2026-11-09)
+- **Chefes pagos (SpriteCook)**, um por 3 fases; antes de animar, gerar só a base (12 créditos) para aprovação. Escolhidos: **Fase 3 Ankheg** (ND 2: cava e sai debaixo do herói, morde e agarra, cospe ácido em linha), **Fase 6 Minotaur of Baphomet** (ND 3: investida em linha, empurra e derruba, fica atordoado se bater na parede), **Fase 9 Wight** (ND 3: drena vida e invoca Skeletons e Zombies). **Fase 10 (super chefe): Ettin (ND 4, duas cabeças; a 2ª acorda com metade da vida e ataca dos dois lados).** Arte enxuta ~74 créditos por chefe (base 12, parado 20, andar 14, golpe 14, ataque especial 14); saldo em 2026-11-09: 336.
+- **(Feito: Kobold, Hobgoblin e Bugbear.)** **Minions grátis e familiares, sem limite de quantidade:** recolor e escala das artes que já temos. Do Goblin: Kobold Warrior (1/8), Hobgoblin Warrior (1/2), Bugbear Warrior (1, golpe com alcance), Bullywug Warrior (1/4), Gnoll Warrior (1/2). Do herói (humanos): Bandit (1/8), Guard (1/8), Cultist (1/8), Tough (1/2), Scout (1/2, arco), Priest Acolyte (1/4), Bandit Captain (2). Mortos-vivos com sombreado em cima do herói: Skeleton (1/4), Zombie (1/4). Variar por ambiente.
+- Fases 6 a 10: ambientes novos (sugestão: Caverna, Mina, Cripta, Montanha, Covil); a fase 5 deixa de ser a última.
+- A contagem de inimigos não aparece na missão (as emboscadas são secretas).

@@ -1,0 +1,57 @@
+extends TesteBase
+## A loja: preços do livro, desconto do Artesão, compra, venda e estoque por fase.
+
+
+func _initialize() -> void:
+	var adaga := load("res://data/armas/adaga.tres") as Arma
+	var espada_curta := load("res://data/armas/espada_curta.tres") as Arma
+	var ficha := _ficha()
+	var inventario := Inventario.new(3)
+	_checar(Loja.preco(adaga) == 2, "a Adaga custa os 2 GP do livro")
+	_checar(Loja.preco(espada_curta) == 10, "a Espada Curta custa 10 po")
+	_checar(Loja.preco_de_venda(adaga) == 1, "a loja paga metade (mínimo 1)")
+	_checar(Loja.preco(adaga.com_bonus_magico(2)) == 2 + Loja.EXTRA_POR_BONUS_MAGICO[2], "a arma mágica custa mais")
+	_checar(Loja.comprar(espada_curta, ficha, inventario) == Loja.Resultado.SEM_OURO and inventario.itens.is_empty(), "sem ouro não compra")
+	ficha.ouro = 25
+	_checar(Loja.comprar(espada_curta, ficha, inventario) == Loja.Resultado.OK and ficha.ouro == 15, "comprar tira o ouro")
+	_checar(inventario.itens.size() == 1 and inventario.itens[0] != espada_curta and inventario.itens[0].nome == "Espada Curta", "e põe uma cópia na mochila")
+	ficha.talentos.append(Ficha.TALENTO_ARTESAO)
+	_checar(Loja.preco_de_compra(espada_curta, ficha) == 8, "o Artesão tem 20% de desconto")
+	ficha.talentos.clear()
+	inventario.equipar(inventario.itens[0])
+	_checar(Loja.vender(inventario.itens[0], ficha, inventario) == Loja.Resultado.OK and ficha.ouro == 20 and inventario.itens.is_empty(), "vender paga metade e tira da mochila")
+	_checar(inventario.equipado(Item.ESPACO_MAO) == null, "vender o equipado esvazia a mão")
+	_checar(Loja.vender(espada_curta, ficha, inventario) == Loja.Resultado.ITEM_INVALIDO, "não vende o que não está na mochila")
+	var cheia := Inventario.new(1)
+	cheia.adicionar(adaga.duplicate() as Item)
+	ficha.ouro = 100
+	_checar(Loja.comprar(espada_curta, ficha, cheia) == Loja.Resultado.MOCHILA_CHEIA and ficha.ouro == 100, "mochila cheia não gasta ouro")
+	_checar(not Loja.fica_no_estoque(espada_curta), "arma comprada sai do estoque")
+	_testar_estoque()
+	quit(_falhas)
+
+
+func _testar_estoque() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 21
+	var fase_1 := Loja.sortear_estoque(1, rng)
+	var barato := true
+	for item in fase_1:
+		barato = barato and Loja.preco(item) <= Loja.TETO_DE_PRECO_NA_FASE_1 + Arma.BONUS_MAGICO_MAXIMO * 1000
+		if item is Arma and (item as Arma).bonus_magico > 1:
+			barato = false  # na fase 1 só +1
+	_checar(fase_1.size() == Loja.TAMANHO_DO_ESTOQUE, "o estoque tem o tamanho certo")
+	_checar(barato, "na fase 1 só aparece coisa barata e no máximo +1")
+	var caro := false
+	for i in 40:
+		for item in Loja.sortear_estoque(8, rng):
+			caro = caro or Loja.preco(item) > 100
+	_checar(caro, "nas fases altas aparecem itens caros")
+	var diferentes := {}
+	for item in Loja.sortear_estoque(5, rng):
+		diferentes[item.nome] = true
+	_checar(diferentes.size() > 1, "o estoque tem variedade")
+
+
+func _ficha() -> Ficha:
+	return Ficha.new(load("res://data/classe_guerreiro.tres") as ClasseRPG, {&"forca": 15, &"destreza": 14, &"constituicao": 14, &"inteligencia": 10, &"sabedoria": 10, &"carisma": 10}, "Teste")

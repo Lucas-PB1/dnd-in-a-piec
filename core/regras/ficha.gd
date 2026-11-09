@@ -312,7 +312,7 @@ func proficiente_com(arma: Arma) -> bool:
 ## a arma (sem proficiência a arma ainda funciona, só não soma o +2).
 func bonus_ataque(arma: Arma) -> int:
 	var proficiencia := BONUS_PROFICIENCIA if proficiente_com(arma) else 0
-	return proficiencia + bonus_dano(arma)
+	return proficiencia + bonus_dano(arma) + arma.bonus_magico
 
 
 ## O ataque com a arma, pronto para ser resolvido contra a CA do alvo.
@@ -470,7 +470,7 @@ func _bonus_no_dano(arma: Arma, ataque_extra: bool) -> int:
 	var bonus := bonus_dano(arma)
 	if arma.pesada and tem_talento(TALENTO_MESTRE_ARMA_GRANDE):
 		bonus += BONUS_PROFICIENCIA  # Mestre em Arma Grande: a proficiência soma ao dano
-	return mini(bonus, 0) if ataque_extra else bonus
+	return (mini(bonus, 0) if ataque_extra else bonus) + arma.bonus_magico  # o bônus mágico soma até no ataque extra
 
 
 func _destreza_na_armadura(armadura: Armadura) -> int:

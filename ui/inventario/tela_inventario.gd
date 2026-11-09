@@ -153,6 +153,8 @@ func _adicionar_na_lista(item: Item) -> void:
 	var espaco := _inventario.espaco_de(item)
 	var marca := "[%s] " % EstiloCartao.selo_do_espaco(espaco) if espaco != &"" else ""
 	var indice := _lista.add_item(marca + _nome_com_quantidade(item), item.icone)
+	if item is Arma:
+		_lista.set_item_icon_modulate(indice, (item as Arma).cor_do_brilho())  # arma mágica brilha na cor do bônus
 	if espaco != &"":  # faixa na cor do slot (o texto continua legível, inclusive selecionado)
 		_lista.set_item_custom_bg_color(indice, Color(EstiloCartao.cor_do_espaco(espaco), FAIXA_DO_EQUIPADO))
 

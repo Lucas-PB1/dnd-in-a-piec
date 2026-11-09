@@ -6,12 +6,15 @@ extends CanvasLayer
 const LADO_PONTO := 9.0
 const COR_PONTO_CHEIO := Color(0.45, 0.95, 0.55, 1.0)
 const COR_PONTO_VAZIO := Color(0.15, 0.2, 0.17, 0.9)
+const COR_MISSAO := Color(0.95, 0.9, 0.7, 1.0)
+const COR_MISSAO_CUMPRIDA := Color(0.55, 0.95, 0.62, 1.0)
 
 @onready var _personagem: Label = %Personagem
 @onready var _vida: Label = %Vida
 @onready var _folego: Label = %Folego
 @onready var _progressao: Label = %Progressao
 @onready var _ouro: Label = %Ouro
+@onready var _missao: Label = %Missao
 @onready var _surto: Label = %Surto
 @onready var _sorte: Label = %Sorte
 @onready var _investida: Label = %Investida
@@ -53,6 +56,13 @@ func mostrar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> voi
 	_progressao.text = "Nível %d · XP %d/%d" % [nivel, experiencia, proximo_nivel]
 	_barra_xp.max_value = maxi(proximo_nivel, 1)
 	_barra_xp.value = experiencia
+
+
+## A linha da missão da fase. Texto vazio some; cumprida ela fica verde.
+func mostrar_missao(texto: String, cumprida: bool) -> void:
+	_missao.visible = texto != ""
+	_missao.text = texto
+	_missao.add_theme_color_override(&"font_color", COR_MISSAO_CUMPRIDA if cumprida else COR_MISSAO)
 
 
 ## Mostra o ouro em peças ("Ouro 12").

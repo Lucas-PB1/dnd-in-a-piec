@@ -16,6 +16,8 @@
 [ext_resource type="PackedScene" path="res://ui/habilidades/tela_habilidades.tscn" id="17_habilidades"]
 [ext_resource type="PackedScene" path="res://ui/compendio/tela_compendio.tscn" id="20_compendio"]
 [ext_resource type="PackedScene" path="res://ui/talento/tela_talento.tscn" id="21_talento"]
+[ext_resource type="PackedScene" path="res://features/loja/lojista.tscn" id="22_lojista"]
+[ext_resource type="PackedScene" path="res://ui/loja/tela_loja.tscn" id="23_tela_loja"]
 [ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
 [ext_resource type="Script" path="res://levels/impacto.gd" id="14_impacto"]
 [ext_resource type="Script" path="res://levels/sons.gd" id="18_sons"]
@@ -29,6 +31,8 @@ classes_disponiveis = Array[ExtResource("8_classe_rpg")]([ExtResource("7_guerrei
 
 [node name="Bau" parent="." instance=ExtResource("10_bau")]
 position = Vector2(150, 288)
+
+[node name="Lojista" parent="." instance=ExtResource("22_lojista")]
 
 [node name="BonecoTreino" parent="." instance=ExtResource("4_boneco")]
 position = Vector2(240, 288)
@@ -45,6 +49,8 @@ layer = 10
 [node name="TelaInventario" parent="Interface" instance=ExtResource("6_inventario")]
 
 [node name="TelaBau" parent="Interface" instance=ExtResource("11_tela_bau")]
+
+[node name="TelaLoja" parent="Interface" instance=ExtResource("23_tela_loja")]
 
 [node name="TelaComandos" parent="Interface" instance=ExtResource("12_comandos")]
 

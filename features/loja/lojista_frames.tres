@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://features/loja/lojista_idle.png" id="1_mg8o8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1afa7"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(0, 0, 75, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gsupw"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(75, 0, 75, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4rd3l"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(150, 0, 75, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k6jku"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(225, 0, 75, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lrrmy"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(300, 0, 75, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_btfuk"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(375, 0, 75, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pj42y"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(450, 0, 75, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bcpt4"]
+atlas = ExtResource("1_mg8o8")
+region = Rect2(525, 0, 75, 75)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1afa7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gsupw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4rd3l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k6jku")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lrrmy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_btfuk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pj42y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bcpt4")
+}],
+"loop": 1,
+"name": &"parado",
+"speed": 8.0
+}]

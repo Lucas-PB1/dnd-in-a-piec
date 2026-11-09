@@ -12,6 +12,9 @@ const CENA_ARREMESSO := preload("res://features/arremesso/arma_arremessada.tscn"
 const CENA_OOZE := preload("res://features/gray_ooze/gray_ooze.tscn")
 const CENA_GOBLIN := preload("res://features/goblin/goblin.tscn")
 const CENA_GOBLIN_GUERREIRO := preload("res://features/goblin/goblin_guerreiro.tscn")
+const CENA_HOBGOBLIN := preload("res://features/goblin/hobgoblin_guerreiro.tscn")
+const CENA_BUGBEAR := preload("res://features/goblin/bugbear_guerreiro.tscn")
+const CENA_KOBOLD := preload("res://features/goblin/kobold_guerreiro.tscn")
 const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_1.tscn"),
 	preload("res://levels/fase_2.tscn"),
@@ -24,6 +27,9 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 	preload("res://data/bestiario/gray_ooze.tres"),
 	preload("res://data/bestiario/goblin_minion.tres"),
 	preload("res://data/bestiario/goblin_warrior.tres"),
+	preload("res://data/bestiario/hobgoblin_warrior.tres"),
+	preload("res://data/bestiario/bugbear_warrior.tres"),
+	preload("res://data/bestiario/kobold_warrior.tres"),
 ]
 ## Talentos do livro (a tela de escolha do nível 4 lê daqui).
 const PASTA_TALENTOS := "res://data/talentos"
@@ -31,12 +37,26 @@ const GRUPO_MONSTROS := &"monstros"
 ## O que o botão de ataque do celular passa a dizer perto de um baú ou de uma arma caída.
 const ROTULO_ABRIR := "Abrir"
 const ROTULO_PEGAR := "Pegar"
+const TIPO_OOZE := &"ooze"
 const TIPO_MINION := &"minion"
 const TIPO_WARRIOR := &"warrior"
+const TIPO_HOBGOBLIN := &"hobgoblin"
+const TIPO_BUGBEAR := &"bugbear"
+const TIPO_KOBOLD := &"kobold"
+## Cena de cada tipo que a fase pode sortear. Tipo novo = uma linha aqui (e o nome em `Fase.tipos_permitidos`).
+const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
+	TIPO_OOZE: CENA_OOZE,
+	TIPO_MINION: CENA_GOBLIN,
+	TIPO_WARRIOR: CENA_GOBLIN_GUERREIRO,
+	TIPO_HOBGOBLIN: CENA_HOBGOBLIN,
+	TIPO_BUGBEAR: CENA_BUGBEAR,
+	TIPO_KOBOLD: CENA_KOBOLD,
+}
 const INIMIGOS_EXTRA_POR_NIVEL := 1
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
 const DISTANCIA_CRIATURA_PES := 15.0
 const AVISO_PORTA := "A porta não abre"
+const AVISO_MISSAO_CUMPRIDA := "Missão cumprida!"
 
 ## Começa pelo título e pela criação. Os testes desligam para jogar direto com a sugestão.
 @export var mostrar_inicio: bool = true
@@ -49,6 +69,8 @@ const AVISO_PORTA := "A porta não abre"
 var _em_tela_de_pausa: bool = false
 ## Instâncias da cota desta entrada. O que foi trazido por Comandos não entra aqui.
 var _ids_da_cota: Array[int] = []
+## A missão da fase atual (os inimigos da cota são o objetivo).
+var _missao := Missao.new()
 var _surto_usado: bool = false
 ## A tela aberta agora veio do menu de pausa: ao fechar, a pausa volta.
 var _voltar_para_pausa: bool = false
@@ -58,6 +80,8 @@ var _interagiveis_perto: Dictionary[String, int] = {}
 var _titulo_escondido: TelaTitulo
 ## Quantas vezes o herói derrotou cada criatura (o bestiário mostra e o save guarda).
 var _bestiario := Bestiario.new()
+## O que a loja da fase tem à venda (sorteado ao entrar na fase; o comprado sai daqui).
+var _estoque_da_loja: Array[Item] = []
 ## O herói está em cima da porta agora.
 var _heroi_na_porta: bool = false
 
@@ -69,6 +93,8 @@ var _heroi_na_porta: bool = false
 @onready var _bau: Bau = $Bau
 @onready var _boneco: Node2D = $BonecoTreino
 @onready var _tela_bau: TelaBau = $Interface/TelaBau
+@onready var _lojista: Lojista = $Lojista
+@onready var _tela_loja: TelaLoja = $Interface/TelaLoja
 @onready var _comandos: TelaComandos = $Interface/TelaComandos
 @onready var _pausa: TelaPausa = $Interface/TelaPausa
 @onready var _tela_bestiario: TelaBestiario = $Interface/TelaBestiario
@@ -113,6 +139,10 @@ func _ready() -> void:
 	_bau.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_ABRIR))
 	_jogador.inventario.mudou.connect(_atualizar_botoes_toque)
 	_tela_bau.fechou.connect(_ao_fechar_modal)
+	_lojista.abrir_pedido.connect(_abrir_loja)
+	_lojista.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_ABRIR))
+	_tela_loja.fechou.connect(_ao_fechar_modal)
+	_tela_loja.ouro_mudou.connect(_hud.mostrar_ouro)
 	_pausa.fechou.connect(_ao_fechar_modal)
 	_pausa.mochila_escolhida.connect(_abrir_pela_pausa.bind(_abrir_inventario))
 	_pausa.opcoes_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_comandos))
@@ -134,7 +164,7 @@ func _ready() -> void:
 	_comandos.opcoes_toque_mudaram.connect(_atualizar_controles_toque)
 	_comandos.editar_toque_pedido.connect(_editar_toque)
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
-	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior"]), _cenas_criaturas())
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_atualizar_botoes_toque()
 	_ligar_porta()
@@ -334,6 +364,7 @@ func _atualizar_pecas_da_fase() -> void:
 	var modo := Node.PROCESS_MODE_INHERIT if na_primeira else Node.PROCESS_MODE_DISABLED
 	_bau.process_mode = modo
 	_boneco.process_mode = modo
+	_posicionar_a_loja()
 
 
 func _nascer_armadilhas() -> void:
@@ -355,10 +386,18 @@ func _nascer_armadilhas() -> void:
 		var criatura := monstro.get("criatura") as CriaturaRPG
 		var experiencia := criatura.experiencia if criatura else 0
 		var ouro := criatura.ouro if criatura else 0
-		_ligar_morte_da_cota(monstro, tipo, id, experiencia, ouro)
+		_ligar_morte_da_cota(monstro, id, experiencia, ouro)
 		if monstro.has_method(&"definir_alvo"):
 			monstro.call(&"definir_alvo", _jogador)
 		_passar_percepcao(monstro)
+		_passar_luz_do_sol(monstro)
+	_missao = Missao.new(_fase.missao, _ids_da_cota.size())
+	_mostrar_missao()
+
+
+## A linha da missão na HUD (some se a fase não tem inimigos).
+func _mostrar_missao() -> void:
+	_hud.mostrar_missao(_missao.texto() if _missao.existe() else "", _missao.cumprida())
 
 
 ## Quando a criatura morre, o bestiário anota a derrota dela.
@@ -373,18 +412,20 @@ func quantidade_inimigos_da_fase(nivel: int) -> int:
 	return mini(_fase.quantidade + (nivel - 1) * INIMIGOS_EXTRA_POR_NIVEL, pontos.size())
 
 
-func _ligar_morte_da_cota(monstro: Node2D, tipo: StringName, id: int, experiencia: int, ouro: int) -> void:
+## Todo monstro da cota tem o sinal `morreu`.
+func _ligar_morte_da_cota(monstro: Node2D, id: int, experiencia: int, ouro: int) -> void:
 	_registrar_no_bestiario(monstro)
-	if tipo == TIPO_MINION or tipo == TIPO_WARRIOR:
-		(monstro as Goblin).morreu.connect(_ao_morreu_da_cota.bind(id, experiencia, ouro))
-	else:
-		(monstro as GrayOoze).morreu.connect(_ao_morreu_da_cota.bind(id, experiencia, ouro))
+	monstro.connect(&"morreu", _ao_morreu_da_cota.bind(id, experiencia, ouro))
 
 
 func _ao_morreu_da_cota(id: int, experiencia: int, ouro: int) -> void:
 	_ids_da_cota.erase(id)
 	_jogador.ganhar_experiencia(experiencia)
 	_soltar_saque(ouro)
+	_missao.registrar_morte()
+	_mostrar_missao()
+	if _missao.cumprida():
+		_jogador.avisar(AVISO_MISSAO_CUMPRIDA)
 	# Adia: quem morreu ainda está emitindo o sinal e não pode ser apagado agora.
 	if _heroi_na_porta:
 		_tentar_atravessar.call_deferred()
@@ -499,11 +540,7 @@ func _rng_da_fase() -> RandomNumberGenerator:
 
 
 func _cena_do_tipo(tipo: StringName) -> PackedScene:
-	if tipo == TIPO_MINION:
-		return CENA_GOBLIN
-	if tipo == TIPO_WARRIOR:
-		return CENA_GOBLIN_GUERREIRO
-	return CENA_OOZE
+	return CENAS_DOS_TIPOS.get(tipo, CENA_OOZE)
 
 
 func _apagar_monstros() -> void:
@@ -518,6 +555,7 @@ func _apontar_monstros_para(alvo: Node2D) -> void:
 	for monstro in get_tree().get_nodes_in_group(GRUPO_MONSTROS):
 		monstro.definir_alvo(alvo)
 		_passar_percepcao(monstro)
+		_passar_luz_do_sol(monstro)
 
 
 func _passar_percepcao(monstro: Node) -> void:
@@ -525,9 +563,15 @@ func _passar_percepcao(monstro: Node) -> void:
 		monstro.call(&"definir_percepcao_passiva", _jogador.ficha.percepcao_passiva())
 
 
+## Quem é sensível ao sol (Kobold) precisa saber se a fase é de dia.
+func _passar_luz_do_sol(monstro: Node) -> void:
+	if monstro.has_method(&"definir_luz_do_sol"):
+		monstro.call(&"definir_luz_do_sol", _fase != null and _fase.luz_do_sol)
+
+
 ## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
 func _cenas_criaturas() -> Array[PackedScene]:
-	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO]
+	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD]
 	return cenas
 
 
@@ -547,7 +591,7 @@ func _ha_tela_aberta(exceto: Control = null) -> bool:
 
 
 func _telas_modais() -> Array[Control]:
-	return [_inventario, _tela_bau, _comandos, _pausa, _tela_bestiario, _tela_compendio, _tela_habilidades, _tela_talento]
+	return [_inventario, _tela_bau, _tela_loja, _comandos, _pausa, _tela_bestiario, _tela_compendio, _tela_habilidades, _tela_talento]
 
 
 ## Esc (ou o botão Menu) abre a pausa se nenhuma tela por cima já usou a tecla para voltar.
@@ -631,6 +675,7 @@ func _abrir_inventario() -> void:
 
 
 func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool, destreza: int) -> void:
+	_avisar_monstros_do_disparo(origem)
 	var voo: ArmaArremessada = CENA_ARREMESSO.instantiate()
 	voo.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_PEGAR))
 	if municao == null:
@@ -639,6 +684,13 @@ func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, 
 	add_child(voo)
 	voo.global_position = origem
 	voo.lancar(arma, golpe, penalidade, direcao, forca, mira, municao, ignora_alcance_longo, destreza)
+
+
+## Quem vê o herói atirar ou arremessar procura abrigo (a decisão é de cada monstro).
+func _avisar_monstros_do_disparo(origem: Vector2) -> void:
+	for monstro in get_tree().get_nodes_in_group(GRUPO_MONSTROS):
+		if monstro.has_method(&"perceber_disparo"):
+			monstro.call(&"perceber_disparo", origem)
 
 
 func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> void:
@@ -653,6 +705,20 @@ func _abrir_bau(itens: Array[Item]) -> void:
 		return
 	_sons.tocar(&"bau")
 	_tela_bau.abrir(itens, _jogador.inventario)
+	_controles_toque.atualizar(true)
+
+
+## A banca do lojista fica ao lado do começo da fase, com o estoque novo dela.
+func _posicionar_a_loja() -> void:
+	_lojista.global_position = _fase.posicao_inicio() + _fase.deslocamento_loja
+	_estoque_da_loja = Loja.sortear_estoque(_fase.indice, _rng_da_fase())
+
+
+func _abrir_loja() -> void:
+	if _ha_menu_aberto(_tela_loja):
+		return
+	_sons.tocar(&"bau")
+	_tela_loja.abrir(_estoque_da_loja, _jogador.ficha, _jogador.inventario)
 	_controles_toque.atualizar(true)
 
 
@@ -762,11 +828,14 @@ func trazer_criatura(cena: PackedScene) -> void:
 	if monstro.has_method(&"definir_alvo"):
 		monstro.call(&"definir_alvo", _jogador)
 	_passar_percepcao(monstro)
+	_passar_luz_do_sol(monstro)
 
 
 ## Apaga os monstros que estão na fase (a cota e os trazidos). A porta fica livre.
 func tirar_criaturas() -> void:
 	_ids_da_cota.clear()
+	_missao = Missao.new()
+	_mostrar_missao()
 	_apagar_monstros()
 	if _heroi_na_porta:
 		_tentar_atravessar.call_deferred()

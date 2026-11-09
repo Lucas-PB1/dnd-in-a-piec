@@ -15,6 +15,7 @@ static func preparar(sprite: Sprite2D, arma: Arma) -> void:
 	sprite.centered = false
 	sprite.texture = textura
 	sprite.offset = -arma.pegada
+	sprite.modulate = arma.cor_do_brilho()
 
 
 ## Giro do sprite (graus) para a lâmina apontar em `angulo` (0 = para a frente).
