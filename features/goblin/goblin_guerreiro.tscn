@@ -22,6 +22,10 @@
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_arremessando.gd" id="18_arremessando"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_desengajando.gd" id="19_desengajando"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_patrulhando.gd" id="21_patrulhando"]
+[ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_pulando.gd" id="22_pulando"]
+[ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_cobrindo.gd" id="23_cobrindo"]
+[ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_afastando.gd" id="24_afastando"]
+[ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_flanqueando.gd" id="25_flanqueando"]
 [ext_resource type="Script" path="res://features/goblin/estados/estado_goblin_escondido.gd" id="20_escondido"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
@@ -128,6 +132,18 @@ script = ExtResource("17_caido")
 
 [node name="Patrulhando" type="Node" parent="MaquinaEstados"]
 script = ExtResource("21_patrulhando")
+
+[node name="Pulando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("22_pulando")
+
+[node name="Cobrindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("23_cobrindo")
+
+[node name="Afastando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("24_afastando")
+
+[node name="Flanqueando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("25_flanqueando")
 
 [node name="Tremor" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("22_tremor")

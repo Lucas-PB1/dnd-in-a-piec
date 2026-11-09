@@ -89,8 +89,8 @@ func _testar_tiro() -> void:
 	var viu_flecha := false
 	_colocar_heroi_a(100.0)
 	await _esperar(20)
-	_checar(_flechas_voando().is_empty() and _goblin.nome_estado() == &"Perseguindo",
-		"a menos de 20 pés ele fecha para a cimitarra, sem metralhar flechas")
+	_checar(_flechas_voando().is_empty() and _goblin.nome_estado() in [&"Perseguindo", &"Afastando"],
+		"a menos de 20 pés ele recua ou fecha para a cimitarra, sem metralhar flechas")
 	_colocar_heroi_a(LONGE)
 	await _esperar(5)
 	_checar(not _goblin.esta_escondido() and _goblin.nome_estado() != &"Escondido",

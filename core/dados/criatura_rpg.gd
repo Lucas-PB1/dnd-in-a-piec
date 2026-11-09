@@ -47,6 +47,10 @@ extends Resource
 @export var ataque_alcance_pes: float = 5.0
 ## O acerto corrói a armadura não mágica do alvo (-1 na CA dela; Pseudópode do Gray Ooze).
 @export var ataque_corroi_armadura: bool = false
+## Dano a mais do acerto, de outro tipo (ex.: "3d4"). Vazio = não tem.
+@export var ataque_dano_adicional: String = ""
+## O acerto agarra o alvo; CD do escape. 0 = não agarra (Bugbear: 12).
+@export var ataque_agarra_cd: int = 0
 
 @export_group("Arremesso")
 ## Quantas armas de arremesso carrega (Goblin Minion: 3 adagas). 0 = não arremessa.
@@ -56,6 +60,10 @@ extends Resource
 @export var arremesso_longo_pes: float = 0.0
 ## Arma que voa (só a arte; o golpe é o do ataque da ficha). Ex.: data/armas/adaga.tres.
 @export var arma_arremesso: Arma
+## Nome e dano do arremesso quando diferem do ataque corpo a corpo (Bugbear: Martelo Leve 3d4+2). Vazio = usa o ataque.
+@export var arremesso_nome: String = ""
+@export var arremesso_dano: String = ""
+@export var arremesso_tipo_dano: StringName = TiposDano.CONTUNDENTE
 
 @export_group("Disparo")
 ## Quantas flechas carrega. 0 = não dispara. Menor que 0 = não acaba (Goblin Warrior).
@@ -69,6 +77,8 @@ extends Resource
 @export var disparo_dano: String = ""
 ## Tipo de dano do tiro (TiposDano).
 @export var disparo_tipo_dano: StringName = TiposDano.PERFURANTE
+## Dano a mais do tiro, de outro tipo (Hobgoblin: "3d4" de veneno). Vazio = não tem.
+@export var disparo_dano_adicional: String = ""
 
 @export_group("Furtividade")
 ## Tem a perícia e começa escondido (rola contra a Percepção passiva do herói).
@@ -90,6 +100,12 @@ extends Resource
 @export var fuga_agil: bool = false
 ## Depois do recuo, esconde de novo e rola Furtividade outra vez (Goblin Warrior).
 @export var esconde_de_novo: bool = false
+
+@export_group("Traços")
+## Táticas de Matilha: vantagem no ataque se um aliado em pé está a 5 pés do alvo (Hobgoblin, Kobold).
+@export var taticas_de_matilha: bool = false
+## Sensibilidade à Luz Solar: ao sol, desvantagem nos ataques (Kobold). Só vale em fase de dia.
+@export var sensivel_ao_sol: bool = false
 
 
 func dado_vida() -> Dado:
@@ -115,6 +131,9 @@ func golpe() -> Golpe:
 	var ataque := Golpe.new(ataque_nome, ataque_bonus, _dado_ou_padrao(ataque_dano), ataque_tipo_dano)
 	ataque.corroi_armadura = ataque_corroi_armadura
 	_anexar_dano_extra(ataque)
+	_anexar_dano_adicional(ataque, ataque_dano_adicional)
+	if ataque_agarra_cd > 0:
+		ataque.efeitos.append(EfeitosDeTalento.Agarrar.new(ataque_agarra_cd))
 	return ataque
 
 
@@ -124,7 +143,28 @@ func golpe_disparo() -> Golpe:
 	var notacao := disparo_dano if not disparo_dano.is_empty() else ataque_dano
 	var tiro := Golpe.new(nome_tiro, ataque_bonus, _dado_ou_padrao(notacao), disparo_tipo_dano)
 	_anexar_dano_extra(tiro)
+	_anexar_dano_adicional(tiro, disparo_dano_adicional)
 	return tiro
+
+
+## A arma arremessada. Sem dano próprio na ficha, vale o ataque corpo a corpo (a adaga do Minion e do Kobold).
+func golpe_arremesso() -> Golpe:
+	if arremesso_dano.is_empty():
+		return golpe()
+	var nome_arremesso := arremesso_nome if not arremesso_nome.is_empty() else ataque_nome
+	var arremesso := Golpe.new(nome_arremesso, ataque_bonus, _dado_ou_padrao(arremesso_dano), arremesso_tipo_dano)
+	_anexar_dano_extra(arremesso)
+	return arremesso
+
+
+func _anexar_dano_adicional(ataque: Golpe, notacao: String) -> void:
+	if notacao.is_empty():
+		return
+	var dado := Dado.de_texto(notacao)
+	if dado == null:
+		push_warning("Criatura '%s': dano adicional '%s' inválido." % [nome, notacao])
+		return
+	ataque.efeitos.append(EfeitoDanoAdicional.new(dado))
 
 
 func _anexar_dano_extra(ataque: Golpe) -> void:
@@ -143,3 +183,22 @@ func _dado_ou_padrao(notacao: String) -> Dado:
 		push_warning("Criatura '%s': dado '%s' inválido, usando 1d4." % [nome, notacao])
 		return Dado.new(1, 4)
 	return dado
+
+
+## Dano médio de um golpe da ficha, somando o dano adicional (ex.: os 3d4 de veneno do arco do Hobgoblin).
+func dano_medio(ataque: Golpe) -> float:
+	var total := float(ataque.dano.media())
+	var adicional := ataque.efeito(&"dano_adicional") as EfeitoDanoAdicional
+	if adicional != null:
+		total += adicional.dado.media()
+	return total
+
+
+## Dano médio do melhor ataque à distância (arco ou arremesso), 0 se a ficha não tem nenhum.
+func dano_medio_a_distancia() -> float:
+	var melhor := 0.0
+	if disparos != 0:
+		melhor = maxf(melhor, dano_medio(golpe_disparo()))
+	if arremessos > 0:
+		melhor = maxf(melhor, dano_medio(golpe_arremesso()))
+	return melhor

@@ -21,6 +21,35 @@ const MASCARA_MUNDO := 1
 ## Patrulha: anda nesta fração do deslocamento e considera que chegou a esta distância (px).
 const FRACAO_PATRULHA := 0.5
 const CHEGOU_PATRULHA := 6.0
+## Grupo onde a main põe todos os monstros: de lá saem os aliados das Táticas de Matilha.
+const GRUPO_ALIADOS := &"monstros"
+## Salto: passo e começo da sondagem do chão (px), folga acima do degrau (px), espera entre saltos (s) e quanto o
+## alvo precisa estar abaixo dos pés (px) para valer descer.
+const PASSO_SONDA := 8.0
+const FOLGA_TOPO_SALTO := 10.0
+const INTERVALO_SALTO := 0.4
+const DESNIVEL_ALVO_PX := 24.0
+## Cobertura: quanto tempo um tiro do herói ainda conta (s), de onde a busca começa e até onde vai (px), espera entre
+## buscas (s) e a distância mínima do herói para valer se esconder (px).
+const JANELA_DISPARO := 3.0
+const PASSO_ABRIGO := 16.0
+const ALCANCE_ABRIGO_PX := 192.0
+const INTERVALO_ABRIGO := 2.0
+const DISTANCIA_MINIMA_ABRIGO := 96.0
+## Estratégia: espera entre afastamentos (s, uma rodada), folga além do "perto" para considerar a distância recuperada (px), espaço
+## livre atrás para recuar (px), segurança de quem recua ferido (px) e até onde um aliado conta como "por perto" (px).
+const INTERVALO_AFASTAR := 1.5
+const FOLGA_DISTANCIA_PX := 64.0
+const ESPACO_ATRAS_PX := 24.0
+const DISTANCIA_SEGURA_FERIDO_PX := 256.0
+const ALCANCE_ALIADO_PX := 256.0
+const MOTIVO_DISTANCIA := &"distancia"
+const MOTIVO_FERIDO := &"ferido"
+## Flanqueio: espera entre manobras (s), até onde um aliado engajado puxa este monstro (px) e quanto antes do alvo ele
+## para do lado oposto (fração do alcance).
+const INTERVALO_FLANCO := 6.0
+const ALCANCE_FLANCO_PX := 256.0
+const FRACAO_ALCANCE_FLANCO := 0.6
 
 ## Bloco de estatísticas. Padrão: data/goblin_minion.tres.
 @export var criatura: CriaturaRPG
@@ -51,6 +80,8 @@ const CHEGOU_PATRULHA := 6.0
 @export var cor_dano: Color = Color(1.0, 0.45, 0.45)
 ## Cor do brilho do aviso antes do golpe.
 @export var cor_aviso: Color = Color(1.0, 0.9, 0.35)
+## Tinta do corpo (branco = a arte como é). As variantes (Hobgoblin, Bugbear, Kobold) reusam a arte do Goblin com outra cor.
+@export var cor_corpo: Color = Color.WHITE
 
 ## Alvo perseguido (ex.: o herói). Sem alvo, fica parado.
 var alvo: Node2D
@@ -59,6 +90,18 @@ var direcao_olhar: int = -1
 
 var _rng := RandomNumberGenerator.new()
 var _tempo_desde_ataque: float = INF
+var _tempo_desde_salto: float = INF
+var _velocidade_no_ar: float = 0.0
+var _origem_disparo: Vector2 = Vector2.ZERO
+var _tempo_desde_disparo: float = INF
+var _tempo_desde_abrigo: float = INF
+var _x_abrigo: float = 0.0
+var _tempo_desde_afastar: float = INF
+var _motivo_afastar: StringName = MOTIVO_DISTANCIA
+var _ja_recuou_ferido: bool = false
+var _prefere_distancia: bool = false
+var _tempo_desde_flanco: float = INF
+var _x_flanco: float = 0.0
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _empurrao_restante: float = 0.0
 ## Patrulha: onde começou (X, sorteado ao 1º passo) e o lado do próximo extremo.
@@ -69,6 +112,8 @@ var _adagas: int = 0
 var _flechas: int = 0
 ## Percepção passiva de quem olha. 0 (ninguém passou) = o goblin sempre se esconde.
 var _percepcao_passiva: int = 0
+## A fase é de dia: a Sensibilidade à Luz Solar vale (a main avisa).
+var _luz_do_sol: bool = false
 var _rolou_furtividade: bool = false
 var _foi_percebido: bool = false
 ## O próximo golpe sai com vantagem (a emboscada de quem não foi percebido).
@@ -102,6 +147,8 @@ func _ready() -> void:
 	_dissolver.terminou.connect(terminar_de_morrer)
 	_adagas = criatura.arremessos
 	_flechas = criatura.disparos
+	_prefere_distancia = EstrategiaDeMonstro.prefere_distancia(criatura.dano_medio(criatura.golpe()), criatura.dano_medio_a_distancia())
+	_sprite.modulate = cor_corpo
 	_preparar_condicoes()
 	_preparar_golpe()
 	_maquina.iniciar(self)
@@ -109,6 +156,11 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
+	_tempo_desde_salto += delta
+	_tempo_desde_disparo += delta
+	_tempo_desde_abrigo += delta
+	_tempo_desde_afastar += delta
+	_tempo_desde_flanco += delta
 	if not is_on_floor():
 		velocity.y += _gravidade * delta
 	_maquina.processar_fisica(delta)
@@ -127,6 +179,11 @@ func definir_alvo(novo_alvo: Node2D) -> void:
 ## A main passa a Percepção passiva do herói. O goblin não lê a ficha dele.
 func definir_percepcao_passiva(valor: int) -> void:
 	_percepcao_passiva = valor
+
+
+## A main diz se a fase é de dia (o Kobold ataca com desvantagem ao sol).
+func definir_luz_do_sol(ao_sol: bool) -> void:
+	_luz_do_sol = ao_sol
 
 
 func vida_atual() -> int:
@@ -213,14 +270,57 @@ func alvo_ao_alcance() -> bool:
 
 ## Ainda tem adaga, o alvo está fora do corpo a corpo e dentro do alcance longo.
 func pode_arremessar() -> bool:
-	return _adagas > 0 and alvo != null and not alvo_ao_alcance() \
+	return _adagas > 0 and alvo != null and not alvo_ao_alcance() and _linha_de_tiro_livre() \
 		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.arremesso_longo_pes)
 
 
 ## Tem flecha, o alvo está longe o bastante para valer o arco e dentro do alcance longo.
 func pode_atirar() -> bool:
-	return _tem_flecha() and alvo != null and not _perto_para_oarco() \
+	return _tem_flecha() and alvo != null and not _perto_para_oarco() and _linha_de_tiro_livre() \
 		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes)
+
+
+## Nada do mundo entre o peito de quem atira e o do alvo: senão o tiro bateria na parede.
+func _linha_de_tiro_livre() -> bool:
+	return alvo == null or SensorDeTerreno.linha_livre(get_world_2d().direct_space_state,
+		global_position + Vector2(0.0, -altura_mao), alvo.global_position + Vector2(0.0, -altura_alvo), MASCARA_MUNDO)
+
+
+## O herói atirou ou arremessou de `origem`: quem percebe passa a procurar abrigo.
+func perceber_disparo(origem: Vector2) -> void:
+	_origem_disparo = origem
+	_tempo_desde_disparo = 0.0
+
+
+## Segundos desde o último disparo do herói que este monstro percebeu.
+func tempo_sem_disparo() -> float:
+	return _tempo_desde_disparo
+
+
+## Há abrigo perto contra o tiro recente do herói? Guarda o X dele (`x_do_abrigo`). Quem já está protegido fica; quem está
+## no corpo a corpo ou perto demais do herói não se esconde.
+func quer_cobertura() -> bool:
+	if alvo == null or _tempo_desde_disparo > JANELA_DISPARO or _tempo_desde_abrigo < INTERVALO_ABRIGO:
+		return false
+	if alvo_ao_alcance() or not alvo_percebido() or _distancia_horizontal() < DISTANCIA_MINIMA_ABRIGO:
+		return false
+	_tempo_desde_abrigo = 0.0
+	if protegido_do_disparo():
+		_x_abrigo = global_position.x  # já está atrás da parede: só fica
+		return true
+	_x_abrigo = BuscaDeAbrigo.procurar(get_world_2d().direct_space_state, global_position, altura_mao, _origem_disparo,
+		PASSO_ABRIGO, ceili(ALCANCE_ABRIGO_PX / PASSO_ABRIGO), MASCARA_MUNDO)
+	return not is_nan(_x_abrigo)
+
+
+## Há parede entre o último disparo do herói e o peito deste monstro.
+func protegido_do_disparo() -> bool:
+	return not SensorDeTerreno.linha_livre(get_world_2d().direct_space_state, _origem_disparo,
+		global_position + Vector2(0.0, -altura_mao), MASCARA_MUNDO)
+
+
+func x_do_abrigo() -> float:
+	return _x_abrigo
 
 
 ## Ritmo pela iniciativa da ficha (Goblin: +2 -> um ataque a cada 0,8 s).
@@ -283,6 +383,41 @@ func tempo_de_fuga() -> float:
 
 func parar() -> void:
 	velocity.x = 0.0
+
+
+## Diante de uma parede, degrau, vão ou queda, decide se vale saltar (regra em `SaltoDnd`). Sem alvo, no ar ou
+## sem obstáculo à frente, devolve um plano vazio.
+func planejar_salto() -> SaltoDnd.Plano:
+	virar_para_alvo()
+	var direcao := float(direcao_olhar)
+	var bloqueado := is_on_wall() or not _tem_chao_na(direcao)
+	if alvo == null or not is_on_floor() or not bloqueado or _tempo_desde_salto < INTERVALO_SALTO:
+		return SaltoDnd.Plano.new()
+	var forca := criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int
+	var altura_max := SaltoDnd.altura_px(forca)
+	var distancia_max := SaltoDnd.distancia_px(forca)
+	var quantidade := ceili(distancia_max / PASSO_SONDA) + 1
+	var perfil := SensorDeTerreno.perfil(get_world_2d().direct_space_state, global_position, direcao, DISTANCIA_BEIRA,
+		PASSO_SONDA, quantidade, altura_max, SaltoDnd.queda_segura_px(), MASCARA_MUNDO)
+	var alvo_embaixo := alvo.global_position.y - global_position.y >= DESNIVEL_ALVO_PX
+	return SaltoDnd.planejar(perfil, PASSO_SONDA, DISTANCIA_BEIRA, altura_max, distancia_max, alvo_embaixo)
+
+
+## Dá o impulso do plano: corre na velocidade da ficha e sobe o bastante para o degrau ou para cobrir o vão.
+func iniciar_salto(plano: SaltoDnd.Plano) -> void:
+	_tempo_desde_salto = 0.0
+	var velocidade := EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes())
+	var subida := sqrt(2.0 * _gravidade * (maxf(plano.desnivel_px, 0.0) + FOLGA_TOPO_SALTO)) if plano.tipo != SaltoDnd.Tipo.DESCER else 0.0
+	if plano.tipo == SaltoDnd.Tipo.VAO and velocidade > 0.0:
+		var tempo_no_ar := (plano.distancia_px + meia_largura_corpo) / velocidade
+		subida = maxf(subida, _gravidade * tempo_no_ar / 2.0)
+	_velocidade_no_ar = velocidade
+	velocity = Vector2(direcao_olhar * velocidade, -subida)
+
+
+## No ar do salto: mantém a corrida (uma batida na parede zera o x).
+func correr_no_ar() -> void:
+	velocity.x = direcao_olhar * _velocidade_no_ar
 
 
 ## False na beira: o próximo passo não tem chão. Empurrão ainda pode derrubar.
@@ -384,7 +519,7 @@ func preparar_aviso() -> void:
 
 
 func encerrar_aviso() -> void:
-	_sprite.modulate = Color.WHITE
+	_sprite.modulate = cor_corpo
 
 
 func quer_patrulhar() -> bool:
@@ -399,8 +534,8 @@ func proximo_extremo_patrulha() -> float:
 	return _base_x + _lado_patrulha * EscalaDnd.pes_para_pixels(criatura.patrulha_pes)
 
 
-## Anda até `x` devagar, vigiando. True quando chegou, bateu numa parede ou acabou o chão.
-func andar_ate(x: float) -> bool:
+## Anda até `x` devagar, vigiando (ou correndo, em Disparada). True quando chegou, bateu numa parede ou acabou o chão.
+func andar_ate(x: float, correndo: bool = false) -> bool:
 	var falta := x - global_position.x
 	if absf(falta) <= CHEGOU_PATRULHA:
 		parar()
@@ -409,13 +544,14 @@ func andar_ate(x: float) -> bool:
 	if is_on_wall() or not _tem_chao_na(float(direcao_olhar)):
 		parar()
 		return true
-	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes() * FRACAO_PATRULHA)
+	var fracao := EscalaDnd.MULTIPLICADOR_DISPARADA if correndo else FRACAO_PATRULHA
+	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes() * fracao)
 	return false
 
 
 ## Levou dano: pisca na cor do dano.
 func piscar(ligado: bool) -> void:
-	_sprite.modulate = cor_dano if ligado else Color.WHITE
+	_sprite.modulate = cor_dano if ligado else cor_corpo
 
 
 func esta_caido() -> bool:
@@ -452,18 +588,120 @@ func _golpe_do_disparo() -> Golpe:
 
 ## A adaga arremessada vem de longe: o parry do Duelista Defensivo não vale.
 func _golpe_do_arremesso() -> Golpe:
-	var golpe := _golpe_da_ficha()
+	var golpe := _com_autor(criatura.golpe_arremesso())
 	golpe.corpo_a_corpo = false
 	return golpe
 
 
 func _com_autor(golpe: Golpe) -> Golpe:
 	golpe.autor_id = get_instance_id()
-	golpe.desvantagem = _condicoes.consumir_desvantagem()
-	if _emboscada:
+	golpe.desvantagem = _condicoes.consumir_desvantagem() or (criatura.sensivel_ao_sol and _luz_do_sol)
+	if _emboscada or _tem_matilha_com_o_alvo():
 		golpe.vantagem = true
 		_emboscada = false
 	return golpe
+
+
+## Táticas de Matilha: um aliado em pé (nem Caído nem morto) a 5 pés do alvo.
+func _tem_matilha_com_o_alvo() -> bool:
+	if not criatura.taticas_de_matilha or alvo == null:
+		return false
+	return TaticasDeMatilha.vale(alvo.global_position, _posicoes_dos_aliados())
+
+
+## Onde estão os aliados em pé (nem Caídos nem mortos) do grupo de monstros.
+func _posicoes_dos_aliados() -> Array[Vector2]:
+	var posicoes: Array[Vector2] = []
+	for aliado in _aliados_em_pe():
+		posicoes.append(aliado.global_position)
+	return posicoes
+
+
+func _aliados_em_pe() -> Array[Goblin]:
+	var aliados: Array[Goblin] = []
+	for no in get_tree().get_nodes_in_group(GRUPO_ALIADOS):
+		var aliado := no as Goblin
+		if aliado != null and aliado != self and not aliado.is_queued_for_deletion() \
+				and not aliado.esta_caido() and aliado.vida_atual() > 0:
+			aliados.append(aliado)
+	return aliados
+
+
+## Um aliado já segura o herói de perto do MEU lado e eu ainda não o alcancei: vale dar a volta para o lado oposto
+## (flanqueio). Guarda o X do outro lado (`x_do_flanco`). Uma vez a cada 6 s.
+func quer_flanquear() -> bool:
+	if alvo == null or not alvo_percebido() or alvo_ao_alcance() or _tempo_desde_flanco < INTERVALO_FLANCO:
+		return false
+	if _vida.vida_atual * 3 <= _vida.vida_maxima:
+		return false  # ferido não se arrisca: recua
+	if _distancia_horizontal() > ALCANCE_FLANCO_PX:
+		return false
+	var meu_lado := Flanqueio.lado(alvo.global_position.x, global_position.x)
+	for aliado in _aliados_em_pe():
+		if aliado.alvo_ao_alcance() and Flanqueio.lado(alvo.global_position.x, aliado.global_position.x) == meu_lado:
+			_tempo_desde_flanco = 0.0
+			_x_flanco = alvo.global_position.x - meu_lado * (_alcance_px() * FRACAO_ALCANCE_FLANCO + meia_largura_corpo)
+			return true
+	return false
+
+
+func x_do_flanco() -> float:
+	return _x_flanco
+
+
+## Estratégia: recua para manter distância (quem atira de longe tão bem quanto bate de perto) enquanto há espaço e o
+## herói ainda não está no corpo a corpo (aí vale a espada) ou, ferido, para junto
+## dos aliados. Guarda o motivo (`motivo_afastar`). Uma vez por vida no caso do ferido.
+func quer_afastar() -> bool:
+	if alvo == null or not alvo_percebido():
+		return false
+	virar_para_alvo()
+	if _quer_recuar_ferido():
+		return _comecar_a_afastar(MOTIVO_FERIDO)
+	if _quer_manter_distancia():
+		return _comecar_a_afastar(MOTIVO_DISTANCIA)
+	return false
+
+
+func motivo_afastar() -> StringName:
+	return _motivo_afastar
+
+
+## Já se afastou o bastante para o motivo atual?
+func afastado_o_bastante() -> bool:
+	if _motivo_afastar == MOTIVO_FERIDO:
+		return _distancia_horizontal() >= DISTANCIA_SEGURA_FERIDO_PX
+	return _distancia_horizontal() > EscalaDnd.pes_para_pixels(perto_pes) + FOLGA_DISTANCIA_PX
+
+
+func _comecar_a_afastar(motivo: StringName) -> bool:
+	_motivo_afastar = motivo
+	_tempo_desde_afastar = 0.0
+	_ja_recuou_ferido = _ja_recuou_ferido or motivo == MOTIVO_FERIDO
+	return true
+
+
+func _quer_recuar_ferido() -> bool:
+	if _ja_recuou_ferido or _tempo_desde_afastar < INTERVALO_AFASTAR:
+		return false
+	var aliados_perto := 0
+	for posicao in _posicoes_dos_aliados():
+		if absf(posicao.x - global_position.x) <= ALCANCE_ALIADO_PX:
+			aliados_perto += 1
+	return EstrategiaDeMonstro.deve_recuar_ferido(_vida.vida_atual, _vida.vida_maxima, aliados_perto) and _tem_espaco_atras()
+
+
+func _quer_manter_distancia() -> bool:
+	return _prefere_distancia and (_tem_flecha() or _adagas > 0) and _tempo_desde_afastar >= INTERVALO_AFASTAR \
+		and _perto_para_oarco() and not alvo_ao_alcance() and _tem_espaco_atras()
+
+
+## Chão firme e sem parede para recuar de costas.
+func _tem_espaco_atras() -> bool:
+	var costas := -float(direcao_olhar)
+	var peito := global_position + Vector2(0.0, -altura_mao)
+	return _tem_chao_na(costas) and SensorDeTerreno.linha_livre(get_world_2d().direct_space_state, peito,
+		peito + Vector2(costas * ESPACO_ATRAS_PX, 0.0), MASCARA_MUNDO)
 
 
 func _tem_flecha() -> bool:
