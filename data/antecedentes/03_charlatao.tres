@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_0510s")
+no_jogo = true
 id = &"charlatao"
 nome = "Charlatão"
 descricao = "Vive de lábia: golpes, disfarces e histórias bem contadas."

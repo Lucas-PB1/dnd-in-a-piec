@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_om1k1")
+no_jogo = true
 id = &"atirador_de_elite"
 nome = "Atirador de Elite"
-resumo = "O alcance longo do tiro deixa de dar desvantagem."
+resumo = "+1 em Destreza. O alcance longo e o inimigo a 5 pés deixam de dar desvantagem no tiro, e a flecha atravessa paredes, degraus e criaturas do cenário (cada criatura uma vez), parando só no chão."
 situacao = 0
 motivo = "A arma à distância já dispara; cobertura fica de fora."
+atributos = Array[StringName]([&"destreza"])
+pontos_de_atributo = 1

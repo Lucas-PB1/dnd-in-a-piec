@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Surto de Ação: acende a aura e o próximo ataque vira dois golpes seguidos, cada um com a sua
 ## rolagem. Também confere o Fôlego (pulso verde), a Mente Tática (liga e desliga) e o botão aceso.
 ## godot --headless --debug --path . --script res://tests/teste_surto.gd
@@ -6,7 +6,6 @@ extends SceneTree
 ## Tempo (s) que o ataque leva para terminar com folga, golpe duplo incluído.
 const ESPERA_ATAQUE := 1.6
 
-var _falhas: int = 0
 var _main: Main
 var _jogador: Jogador
 var _boneco_defesa: DefesaComponent
@@ -109,11 +108,3 @@ func _testar_folego() -> void:
 func _esperar_quadros(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

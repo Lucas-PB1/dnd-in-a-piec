@@ -22,10 +22,15 @@ const HABILIDADES: Dictionary[StringName, String] = {
 	&"folego": "Fôlego",
 	&"surto_acao": "Surto",
 	&"mente_tatica": "Mente",
+	&"sorte": "Sorte",
+	&"defesa": "Defesa",
+	&"investida": "Investida",
+	&"dado_de_vida": "Dado",
+	&"veneno": "Veneno",
 }
 const NOME_SLOT_VAZIO := "Vazio"
-## Quantos slots a barra tem. Os três primeiros vêm com Fôlego, Surto e Mente Tática; os outros esperam habilidades novas (Subclasse, magias).
-const QUANTIDADE_SLOTS := 6
+## Quantos slots a barra tem. Os oito vêm com Fôlego, Surto, Mente Tática, Sorte, Defesa, Investida, Dado de vida e Veneno; os outros esperam habilidades novas (Subclasse, magias).
+const QUANTIDADE_SLOTS := 8
 
 static var modo: Modo = Modo.ANALOGICO
 static var mostrar: Mostrar = Mostrar.AUTOMATICO
@@ -59,7 +64,7 @@ static func salvar() -> void:
 	arquivo.save(caminho)
 
 
-## Slots de fábrica: Fôlego, Surto e Mente Tática nos três primeiros; o resto vazio.
+## Slots de fábrica: Fôlego, Surto, Mente Tática, Sorte, Defesa, Investida, Dado de vida e Veneno; o resto vazio.
 static func padrao_slots() -> Array[StringName]:
 	var padrao: Array[StringName] = []
 	for i in QUANTIDADE_SLOTS:

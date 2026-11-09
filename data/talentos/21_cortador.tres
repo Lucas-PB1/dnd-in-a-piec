@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_3uql8")
+no_jogo = true
 id = &"cortador"
-nome = "Cortador"
-resumo = "Acerto cortante aplica Lentidão; crítico dá desvantagem no próximo ataque do alvo."
+nome = "Retalhador"
+resumo = "+1 em Força ou Destreza. O acerto cortante deixa o alvo Lento (uma vez por rodada); o crítico dá desvantagem ao próximo ataque dele."
 situacao = 0
 motivo = "Regra pequena de combate."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

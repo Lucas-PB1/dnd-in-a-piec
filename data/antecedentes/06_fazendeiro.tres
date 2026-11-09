@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_fiywo")
+no_jogo = true
 id = &"fazendeiro"
 nome = "Fazendeiro"
 descricao = "Cresceu entre plantações e rebanhos, com o corpo forte de quem trabalha a terra."

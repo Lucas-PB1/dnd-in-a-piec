@@ -4,8 +4,10 @@
 
 [resource]
 script = ExtResource("1_xytie")
+no_jogo = true
 id = &"perito"
-nome = "Perito"
+nome = "Habilidoso"
 categoria = 0
-resumo = "Proficiência em três perícias ou ferramentas à escolha."
-motivo = "Espera as perícias virarem teste."
+resumo = "Proficiência em 3 perícias à escolha, entre todas as do jogo (na criação)."
+situacao = 0
+motivo = "Escolhido para entrar cedo; as perícias novas já existem na ficha, falta o teste delas."

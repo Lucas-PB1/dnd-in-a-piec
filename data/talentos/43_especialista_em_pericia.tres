@@ -4,7 +4,11 @@
 
 [resource]
 script = ExtResource("1_jxma2")
+no_jogo = true
 id = &"especialista_em_pericia"
 nome = "Especialista em Perícia"
-resumo = "+1 num atributo, uma proficiência e uma perícia com perícia especializada."
-motivo = "Espera as perícias virarem teste."
+resumo = "+1 num atributo, proficiência numa perícia nova e Especialização numa perícia treinada (a proficiência conta em dobro)."
+situacao = 0
+motivo = "Decidido com o usuário (ver docs/talentos.md)."
+atributos = Array[StringName]([&"forca", &"destreza", &"constituicao", &"inteligencia", &"sabedoria", &"carisma"])
+pontos_de_atributo = 1

@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_y06ku")
+no_jogo = true
 id = &"investida"
 nome = "Investida"
-resumo = "Se está correndo, o próximo golpe soma 1d8 ou empurra 10 pés."
+resumo = "+1 em Força ou Destreza. Depois de correr 10 pés em linha reta, o ataque soma 1d8 ou empurra 10 pés (um botão alterna o modo, uma vez por rodada). A corrida também fica 10 pés mais rápida."
 situacao = 0
 motivo = "Regra pequena de combate."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_xupi4")
+no_jogo = true
 id = &"mestre_armadura_media"
 nome = "Mestre em Armadura Média"
-resumo = "O teto de Destreza da armadura média sobe para +3 e a Furtividade deixa de sofrer desvantagem."
+resumo = "+1 em Força ou Destreza. O teto de Destreza da armadura média sobe de +2 para +3 na CA."
 situacao = 0
 motivo = "A desvantagem de Furtividade espera o teste."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

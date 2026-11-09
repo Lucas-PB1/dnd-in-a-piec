@@ -333,7 +333,7 @@ func arremessar_adaga() -> void:
 	add_child(adaga)
 	var mao := global_position + Vector2(direcao_olhar * meia_largura_corpo, -altura_mao)
 	var destino := alvo.global_position + Vector2(0.0, -altura_alvo)
-	adaga.lancar(_golpe_da_ficha(), criatura.arma_arremesso, mao, destino,
+	adaga.lancar(_golpe_do_arremesso(), criatura.arma_arremesso, mao, destino,
 		EscalaDnd.pes_para_pixels(criatura.arremesso_normal_pes),
 		EscalaDnd.pes_para_pixels(criatura.arremesso_longo_pes), _gravidade)
 
@@ -445,7 +445,16 @@ func _golpe_da_ficha() -> Golpe:
 
 
 func _golpe_do_disparo() -> Golpe:
-	return _com_autor(criatura.golpe_disparo())
+	var golpe := _com_autor(criatura.golpe_disparo())
+	golpe.corpo_a_corpo = false
+	return golpe
+
+
+## A adaga arremessada vem de longe: o parry do Duelista Defensivo não vale.
+func _golpe_do_arremesso() -> Golpe:
+	var golpe := _golpe_da_ficha()
+	golpe.corpo_a_corpo = false
+	return golpe
 
 
 func _com_autor(golpe: Golpe) -> Golpe:

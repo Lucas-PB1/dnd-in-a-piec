@@ -1,8 +1,6 @@
-extends SceneTree
+extends TesteBase
 ## Teste da tela de inventário dentro do jogo (abrir com I, equipar, desequipar, jogar fora).
 ## godot --headless --debug --path . --script res://tests/teste_tela_inventario.gd
-
-var _falhas := 0
 
 
 func _initialize() -> void:
@@ -66,11 +64,3 @@ func _apertar_inventario() -> void:
 	Input.parse_input_event(evento)
 	await process_frame
 	await process_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

@@ -65,6 +65,8 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 			_animar_passos(&"walk", absf(velocidade.x) / vel_andar)
 		&"Correndo":
 			_animar_passos(&"correr", absf(velocidade.x) / vel_corrida)
+		&"Escalando":
+			_animar_passos(&"walk", absf(velocidade.y) / vel_andar)  # as pernas andam na parede
 		&"Atacando", &"Arremessando":
 			if animacao_do_golpe != &"" and not mirando:
 				_mostrar_quadro_do_golpe()

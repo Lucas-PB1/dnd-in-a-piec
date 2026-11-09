@@ -1,11 +1,10 @@
-extends SceneTree
+extends TesteBase
 ## Progressão, Mente Tática, descanso longo e Surto de Ação.
 ## godot --headless --debug --path . --script res://tests/teste_progressao.gd
 
 const QUADROS_INICIAIS := 3
 const ESPERA_SURTO_SEGUNDOS := 1.2
 
-var _falhas := 0
 var _main: Main
 var _jogador: Jogador
 
@@ -44,8 +43,12 @@ func _testar_ficha() -> void:
 	_checar(ficha.xp_proximo_nivel() == 900, "nível 2 mostra o marco de 900 XP")
 	_checar(ficha.adicionar_experiencia(600) == 1 and ficha.nivel == 3 and ficha.vida_maxima() == 28,
 		"900 XP sobe ao nível 3 e acrescenta PV")
-	_checar(ficha.adicionar_experiencia(1000) == 0 and ficha.nivel == Ficha.NIVEL_MAXIMO,
-		"nível não passa do limite 3")
+	_checar(ficha.adicionar_experiencia(1000) == 0 and ficha.nivel == 3,
+		"1900 XP ainda é nível 3")
+	_checar(ficha.adicionar_experiencia(800) == 1 and ficha.nivel == Ficha.NIVEL_MAXIMO and ficha.vida_maxima() == 36,
+		"2700 XP sobe ao nível 4 e acrescenta PV")
+	_checar(ficha.adicionar_experiencia(100000) == 0 and ficha.nivel == Ficha.NIVEL_MAXIMO,
+		"nível não passa do limite 4")
 	var ficha_inicial := Ficha.new(classe, {})
 	ficha_inicial.definir_nivel_inicial(3)
 	_checar(ficha_inicial.nivel == 3 and ficha_inicial.experiencia == 900,
@@ -139,11 +142,3 @@ func _semente_para_teste(bonus: int, cd: int, sucesso_com_d10: bool) -> int:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

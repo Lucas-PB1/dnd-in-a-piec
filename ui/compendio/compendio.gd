@@ -14,6 +14,7 @@ const ABA_TALENTOS := "Talentos"
 const PASTA_ARMAS := "res://data/armas"
 const PASTA_ARMADURAS := "res://data/armaduras"
 const PASTA_MUNICOES := "res://data/municoes"
+const PASTA_ITENS := "res://data/itens"
 const PASTA_ANTECEDENTES := "res://data/antecedentes"
 const PASTA_TALENTOS := "res://data/talentos"
 
@@ -27,7 +28,7 @@ static func montar(classe: ClasseRPG) -> Dictionary[String, Array]:
 	_adicionar_secao(secoes, ABA_MAESTRIAS, maestrias(armas))
 	_adicionar_secao(secoes, ABA_ARMAS, itens(armas))
 	_adicionar_secao(secoes, ABA_ARMADURAS, itens(_itens(PASTA_ARMADURAS)))
-	_adicionar_secao(secoes, ABA_ITENS, itens(_itens(PASTA_MUNICOES)))
+	_adicionar_secao(secoes, ABA_ITENS, itens(_itens(PASTA_MUNICOES) + _itens(PASTA_ITENS)))
 	_adicionar_secao(secoes, ABA_ANTECEDENTES, antecedentes(Recursos.da_pasta(PASTA_ANTECEDENTES)))
 	_adicionar_secao(secoes, ABA_TALENTOS, talentos(Recursos.da_pasta(PASTA_TALENTOS)))
 	return secoes

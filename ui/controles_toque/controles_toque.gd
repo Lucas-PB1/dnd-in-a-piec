@@ -11,38 +11,42 @@ extends CanvasLayer
 signal edicao_terminada
 
 ## Analógico: [id, canto (âncora 0..1), centro a partir do canto (px), raio].
-const ANALOGICO := ["analogico", Vector2(0, 1), Vector2(84, -84), 52.0]
+const ANALOGICO := ["analogico", Vector2(0, 1), Vector2(104, -104), 58.0]
 ## Setas: [ação, seta, canto, centro, raio]. ↑ mira para cima (não pula; o pulo tem botão).
 const SETAS := [
-	[&"mover_esquerda", Vector2.LEFT, Vector2(0, 1), Vector2(34, -66), 26.0],
-	[&"mover_direita", Vector2.RIGHT, Vector2(0, 1), Vector2(128, -66), 26.0],
-	[&"mirar_cima", Vector2.UP, Vector2(0, 1), Vector2(81, -114), 22.0],
-	[&"mover_baixo", Vector2.DOWN, Vector2(0, 1), Vector2(81, -22), 20.0],
+	[&"mover_esquerda", Vector2.LEFT, Vector2(0, 1), Vector2(58, -94), 30.0],
+	[&"mover_direita", Vector2.RIGHT, Vector2(0, 1), Vector2(152, -94), 30.0],
+	[&"mirar_cima", Vector2.UP, Vector2(0, 1), Vector2(105, -154), 26.0],
+	[&"mover_baixo", Vector2.DOWN, Vector2(0, 1), Vector2(105, -46), 24.0],
 ]
 ## Botões: [ação, texto, canto, centro, raio].
 const BOTOES := [
-	[&"atacar", "Atacar", Vector2(1, 1), Vector2(-52, -56), 34.0],
-	[&"pular", "Pular", Vector2(1, 1), Vector2(-128, -42), 30.0],
-	[&"arremessar", "Lançar", Vector2(1, 1), Vector2(-44, -128), 26.0],
-	[&"interagir", "Abrir", Vector2(1, 1), Vector2(-120, -100), 26.0],
-	[&"pausa", "Menu", Vector2(1, 0), Vector2(-34, 34), 28.0],
+	[&"atacar", "Atacar", Vector2(1, 1), Vector2(-64, -72), 40.0],
+	[&"pular", "Pular", Vector2(1, 1), Vector2(-150, -58), 34.0],
+	[&"arremessar", "Lançar", Vector2(1, 1), Vector2(-56, -158), 30.0],
+	[&"interagir", "Abrir", Vector2(1, 1), Vector2(-136, -130), 30.0],
+	[&"pausa", "Menu", Vector2(1, 0), Vector2(-54, 54), 30.0],
 ]
 ## Slots das habilidades especiais (barra de atalhos em arco, à esquerda e acima do Atacar, do Pular e do Lançar,
 ## que são ações básicas e ficam fixas): [id, canto, centro, raio]. Só aparece o slot que tem habilidade e que
 ## serve agora; o que vai em cada um é de OpcoesToque.slots.
 const SLOTS := [
-	["slot1", Vector2(1, 1), Vector2(-196, -40), 26.0],
-	["slot2", Vector2(1, 1), Vector2(-190, -100), 26.0],
-	["slot3", Vector2(1, 1), Vector2(-160, -152), 26.0],
-	["slot4", Vector2(1, 1), Vector2(-110, -190), 26.0],
-	["slot5", Vector2(1, 1), Vector2(-52, -200), 26.0],
-	["slot6", Vector2(1, 1), Vector2(-250, -110), 26.0],
+	["slot1", Vector2(1, 1), Vector2(-228, -52), 30.0],
+	["slot2", Vector2(1, 1), Vector2(-216, -122), 30.0],
+	["slot3", Vector2(1, 1), Vector2(-186, -190), 30.0],
+	["slot4", Vector2(1, 1), Vector2(-120, -226), 30.0],
+	["slot5", Vector2(1, 1), Vector2(-56, -236), 30.0],
+	["slot6", Vector2(1, 1), Vector2(-290, -122), 30.0],
+	["slot7", Vector2(1, 1), Vector2(-310, -190), 30.0],
+	["slot8", Vector2(1, 1), Vector2(-250, -262), 30.0],
 ]
 ## Camada: acima do jogo e do HUD, abaixo dos menus (Interface = 10).
 const CAMADA := 5
 ## Limites e passo do tamanho na edição (raio, px).
+## Folga mínima entre qualquer botão e a borda da tela (px do jogo), para o dedo e a mão não esbarrarem na borda.
+const MARGEM_BORDA := 20.0
 const RAIO_MINIMO := 12.0
-const RAIO_MAXIMO := 64.0
+const RAIO_MAXIMO := 72.0
 const PASSO_RAIO := 3.0
 const SEM_DEDO := -1
 ## Texto do botão de interação quando a edição do layout o mostra sem nada perto.
@@ -139,10 +143,11 @@ func aplicar_layout() -> void:
 	for id in _controles:
 		var padrao: Array = _padroes[id]
 		var salvo: Array = OpcoesToque.posicoes.get(id, [])
-		if salvo.size() == 5:
-			_posicionar(_controles[id], Vector2(salvo[0], salvo[1]), Vector2(salvo[2], salvo[3]), salvo[4])
+		if salvo.size() == 5:  # o que o jogador pôs também respeita a folga da borda
+			var canto := Vector2(salvo[0], salvo[1])
+			_posicionar(_controles[id], canto, _com_folga_da_borda(canto, Vector2(salvo[2], salvo[3]), salvo[4]), salvo[4])
 		else:
-			_posicionar(_controles[id], padrao[0], padrao[1], padrao[2])
+			_posicionar(_controles[id], padrao[0], _com_folga_da_borda(padrao[0], _empurrar_para_dentro(padrao[0], padrao[1]), padrao[2]), padrao[2])
 
 
 func _aplicar_interacao() -> void:
@@ -286,7 +291,8 @@ func _selecionar(controle: Control) -> void:
 ## Leva o controle para `centro` (px da tela), preso ao canto mais perto, e guarda.
 func _mover_para(controle: Control, centro: Vector2, raio: float) -> void:
 	var tela := _raiz.size
-	centro = centro.clamp(Vector2(raio, raio), tela - Vector2(raio, raio))
+	var folga := Vector2.ONE * (raio + MARGEM_BORDA)
+	centro = centro.clamp(folga, tela - folga)
 	var canto := Vector2(0.0 if centro.x < tela.x / 2.0 else 1.0, 0.0 if centro.y < tela.y / 2.0 else 1.0)
 	var a_partir_do_canto := centro - canto * tela
 	_posicionar(controle, canto, a_partir_do_canto, raio)
@@ -366,6 +372,35 @@ func _registrar(id: String, controle: Control, canto: Vector2, centro: Vector2, 
 	_controles[id] = controle
 	_padroes[id] = [canto, centro, raio]
 
+
+## Leva o centro (relativo ao canto) para dentro da folga mínima da borda. Sem tamanho de tela ainda, não mexe.
+func _com_folga_da_borda(canto: Vector2, centro: Vector2, raio: float) -> Vector2:
+	var tela := _raiz.size
+	if tela.x <= 0.0 or tela.y <= 0.0:
+		return centro
+	var folga := Vector2.ONE * (raio + MARGEM_BORDA)
+	var absoluto := (canto * tela + centro).clamp(folga, tela - folga)
+	return absoluto - canto * tela
+
+
+## Celulares com recorte ou barras do sistema: afasta os controles padrão da área que o sistema ocupa.
+func _empurrar_para_dentro(canto: Vector2, centro: Vector2) -> Vector2:
+	var folga := _folga_do_sistema()
+	var x := centro.x + (folga.x if canto.x == 0.0 else -folga.z)
+	var y := centro.y + (folga.y if canto.y == 0.0 else -folga.w)
+	return Vector2(x, y)
+
+
+## Esquerda, cima, direita e baixo ocupados pelo sistema (recorte da câmera, barras), em px do jogo. Zero no PC.
+func _folga_do_sistema() -> Vector4:
+	var janela := Vector2(DisplayServer.window_get_size())
+	if not OS.has_feature("mobile") or janela.x <= 0.0 or _raiz.size.x <= 0.0:
+		return Vector4.ZERO
+	var segura := Rect2(DisplayServer.get_display_safe_area())
+	var tela := Vector2(DisplayServer.screen_get_size())
+	var escala := _raiz.size.x / janela.x
+	return Vector4(maxf(segura.position.x, 0.0), maxf(segura.position.y, 0.0),
+		maxf(tela.x - segura.end.x, 0.0), maxf(tela.y - segura.end.y, 0.0)) * escala
 
 ## Prende o controle ao `canto` da tela (âncoras), com o centro a `centro` px dele.
 func _posicionar(controle: Control, canto: Vector2, centro: Vector2, raio: float) -> void:

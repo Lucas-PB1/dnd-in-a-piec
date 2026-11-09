@@ -120,6 +120,61 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+text = "Antecedente"
+
+[node name="PassoAntecedente" type="VBoxContainer" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Miolo" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoAntecedente"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ListaAntecedentes" type="ItemList" parent="Centro/Painel/Coluna/PassoAntecedente/Miolo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="DetalheAntecedente" type="Label" parent="Centro/Painel/Coluna/PassoAntecedente/Miolo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(330, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="Aumento" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoAntecedente"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="RotuloAumento" type="Label" parent="Centro/Painel/Coluna/PassoAntecedente/Aumento"]
+layout_mode = 2
+text = "Aumento de atributo"
+
+[node name="EscolhaAumento" type="OptionButton" parent="Centro/Painel/Coluna/PassoAntecedente/Aumento"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="BotoesAntecedente" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoAntecedente"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="VoltarDoAntecedente" type="Button" parent="Centro/Painel/Coluna/PassoAntecedente/BotoesAntecedente"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Voltar"
+
+[node name="IrAtributos" type="Button" parent="Centro/Painel/Coluna/PassoAntecedente/BotoesAntecedente"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
 text = "Atributos"
 
 [node name="PassoAtributos" type="VBoxContainer" parent="Centro/Painel/Coluna"]

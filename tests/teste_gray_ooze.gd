@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Teste do Gray Ooze no jogo: percebe, persegue, ataca uma vez por rodada, machuca o herói,
 ## leva dano e morre. godot --headless --debug --path . --script res://tests/teste_gray_ooze.gd
 
@@ -10,7 +10,6 @@ const VIDA_DE_TESTE := 999
 ## Acertos com dano na espada para conferir a Corrosão.
 const ACERTOS_CORROSAO := 2
 
-var _falhas := 0
 var _jogador: Jogador
 var _ooze: GrayOoze
 
@@ -206,11 +205,3 @@ func _colocar_heroi_a(distancia: float) -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_xjvlm")
+no_jogo = true
 id = &"resiliente"
 nome = "Resiliente"
-resumo = "+1 num atributo e proficiência numa salvaguarda."
+resumo = "+1 num atributo em que o herói ainda não tem proficiência na salvaguarda, e proficiência nela."
 situacao = 0
 motivo = "A ficha já sabe somar o que o talento dá."
+atributos = Array[StringName]([&"forca", &"destreza", &"constituicao", &"inteligencia", &"sabedoria", &"carisma"])
+pontos_de_atributo = 1

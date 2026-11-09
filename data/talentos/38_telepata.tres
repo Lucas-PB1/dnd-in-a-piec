@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_wok12")
 id = &"telepata"
-nome = "Telepata"
+nome = "TelepÃ¡tico"
 resumo = "+1 num atributo mental, fala na mente de uma criatura e a magia Detectar Pensamentos."
 motivo = "Espera a magia."

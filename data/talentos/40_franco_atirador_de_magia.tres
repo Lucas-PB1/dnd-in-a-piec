@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_vc563")
 id = &"franco_atirador_de_magia"
-nome = "Franco-atirador de Magia"
+nome = "Atirador Arcano"
 resumo = "Ataque mágico à distância ignora meia cobertura e soma o alcance."
 motivo = "Espera a magia."

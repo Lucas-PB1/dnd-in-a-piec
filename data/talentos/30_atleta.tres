@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_f1wp7")
+no_jogo = true
 id = &"atleta"
 nome = "Atleta"
-resumo = "Levantar de Caído gasta menos deslocamento."
+resumo = "+1 em Força ou Destreza. Deslocamento +5 pés, o herói não perde o controle ao levar um golpe e escala paredes: empurrando contra uma, sobe na velocidade de andar até o topo."
 situacao = 0
 motivo = "Escalar espera o cenário."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

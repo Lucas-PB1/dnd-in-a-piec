@@ -7,5 +7,4 @@ script = ExtResource("1_v5dxa")
 id = &"combatente_montado"
 nome = "Combatente Montado"
 resumo = "Protege a montaria e ganha vantagem contra quem é menor."
-situacao = 2
-motivo = "Não há montaria."
+motivo = "Decidido: em espera até existirem montarias."

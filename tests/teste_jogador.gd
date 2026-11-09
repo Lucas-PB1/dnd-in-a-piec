@@ -1,8 +1,7 @@
-extends SceneTree
+extends TesteBase
 ## Teste automático do herói 2D (roda sem janela).
 ## godot --headless --path . --script res://tests/teste_jogador.gd
 
-var _falhas := 0
 var _jogador: Jogador
 var _sprite: AnimatedSprite2D
 
@@ -152,11 +151,3 @@ func _esperar_chao() -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

@@ -17,7 +17,7 @@ func processar_fisica(delta: float) -> void:
 	_tempo += delta
 	jogador.aplicar_gravidade(delta)
 	jogador.mover_horizontal(0.0, jogador.velocidade_andar(), delta, false)
-	if _tempo < jogador.stats.tempo_recuo:
+	if _tempo < jogador.tempo_de_recuo():
 		return
 	if not jogador.is_on_floor():
 		trocar_para.emit(&"NoAr")

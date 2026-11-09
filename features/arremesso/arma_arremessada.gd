@@ -35,6 +35,11 @@ const FINCADA := 4.0
 const RAIO_ACERTO_MINIMO := 8.0
 const AVISO_PEGAR := "E: pegar"
 const AVISO_CHEIA := "Mochila cheia"
+## O tiro que atravessa some depois deste tempo (s) se não pousar em nenhum chão.
+const TEMPO_MAXIMO_ATRAVESSANDO := 5.0
+## Um chão é a superfície que aponta para cima (normal.y abaixo disto); paredes e quinas são ignoradas.
+const NORMAL_MINIMA_DO_CHAO := -0.5
+const CAMADA_MUNDO := 1
 
 var _arma: Arma
 var _golpe: Golpe
@@ -51,6 +56,9 @@ var _destreza: int = Ficha.DESTREZA_REFERENCIA
 ## Multiplica a gravidade (o peso da munição; arremesso = 1).
 var _peso: float = 1.0
 var _ignora_longo: bool = false
+## Atirador de Elite: a flecha ignora as laterais do cenário e atravessa as criaturas (cada uma é atingida uma vez).
+var _ignora_cobertura: bool = false
+var _tempo_atravessando: float = 0.0
 ## Ângulo absoluto do voo (graus a partir da horizontal; positivo = para cima).
 const MIRA_MINIMA := -50.0
 const MIRA_MAXIMA := 85.0
@@ -91,6 +99,7 @@ func lancar(arma: Arma, golpe: Golpe, penalidade: int, direcao: int, forca: floa
 	_municao = municao
 	_destreza = maxi(destreza, 1)
 	_ignora_longo = ignora_alcance_longo
+	_ignora_cobertura = ignora_alcance_longo and municao != null
 	_origem_x = global_position.x
 	var normal_pes := arma.disparo_normal_pes if municao else arma.arremesso_normal_pes
 	var longo_pes := arma.disparo_longo_pes if municao else arma.arremesso_longo_pes
@@ -130,6 +139,9 @@ func _physics_process(delta: float) -> void:
 		_apontar(velocity)
 	else:
 		_sprite.rotation += GIRO * delta * _direcao
+	if _ignora_cobertura:
+		_mover_atravessando(delta)
+		return
 	move_and_slide()
 	if is_on_floor():
 		if _municao:
@@ -230,12 +242,26 @@ func _velocidade_para(distancia: float, tempo: float) -> Vector2:
 
 ## Acertou: o arremesso cai ali; a munição some.
 func _ao_acertar() -> void:
+	if _municao and _ignora_cobertura:
+		return  # o tiro do Atirador de Elite segue e pode acertar quem está atrás
 	_hitbox.desligar()
 	if _municao:
 		queue_free()
 		return
 	velocity.x = 0.0
 
+
+## Atirador de Elite: voa sem parar nas paredes e degraus do cenário nem nas criaturas; só o chão (superfície
+## que aponta para cima) o faz sumir. Some também depois de um tempo, para não voar para sempre.
+func _mover_atravessando(delta: float) -> void:
+	_tempo_atravessando += delta
+	var destino := global_position + velocity * delta
+	var consulta := PhysicsRayQueryParameters2D.create(global_position, destino, CAMADA_MUNDO)
+	var achado := get_world_2d().direct_space_state.intersect_ray(consulta)
+	if _tempo_atravessando >= TEMPO_MAXIMO_ATRAVESSANDO or (not achado.is_empty() and (achado["normal"] as Vector2).y < NORMAL_MINIMA_DO_CHAO):
+		queue_free()
+		return
+	global_position = destino
 
 ## Passou do alcance longo: perde o acerto e cai, sem atravessar.
 func _cair_sem_acertar() -> void:

@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_fer5k")
+no_jogo = true
 id = &"soldado"
 nome = "Soldado"
 descricao = "Serviu num exército ou numa milícia, treinado para a batalha."

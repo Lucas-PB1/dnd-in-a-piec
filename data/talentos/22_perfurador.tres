@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_yd8ws")
+no_jogo = true
 id = &"perfurador"
 nome = "Perfurador"
-resumo = "Pode rerrolar um dado de dano perfurante; no crítico rola um dado a mais."
+resumo = "+1 em Força ou Destreza. O acerto perfurante rerrola o menor dado de dano (uma vez por rodada); o crítico rola um dado a mais."
 situacao = 0
 motivo = "Regra pequena de combate."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

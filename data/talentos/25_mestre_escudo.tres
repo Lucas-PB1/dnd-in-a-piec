@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_hfhru")
+no_jogo = true
 id = &"mestre_escudo"
-nome = "Mestre em Escudo"
-resumo = "A ação bônus empurra com o escudo; a salvaguarda de Destreza soma o bônus do escudo."
+nome = "Mestre em Escudos"
+resumo = "+1 em Força. Com escudo, depois de acertar uma arma corpo a corpo o alvo faz salvaguarda de Força (CD 8 + Força + proficiência); se falhar, é empurrado 5 pés ou derrubado (alterna a cada uso), uma vez por rodada."
 situacao = 0
 motivo = "Regra pequena de combate."
+atributos = Array[StringName]([&"forca"])
+pontos_de_atributo = 1

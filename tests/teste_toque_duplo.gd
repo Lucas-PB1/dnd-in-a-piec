@@ -1,10 +1,8 @@
-extends SceneTree
+extends TesteBase
 ## Teste unitário do ToqueDuplo (não precisa de cena).
 ## godot --headless --path . --script res://tests/teste_toque_duplo.gd
 
 const QUADRO := 1.0 / 60.0
-
-var _falhas := 0
 
 
 func _initialize() -> void:
@@ -36,11 +34,3 @@ func _avancar(t: ToqueDuplo, quadros: int) -> bool:
 	for i in quadros:
 		disparou = t.registrar(0, QUADRO) or disparou
 	return disparou
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

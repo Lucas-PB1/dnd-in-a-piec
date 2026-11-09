@@ -4,9 +4,10 @@
 
 [resource]
 script = ExtResource("1_xk17c")
+no_jogo = true
 id = &"resistente"
-nome = "Resistente"
+nome = "Robusto"
 categoria = 0
-resumo = "Vida máxima +2 por nível (no nível 1, +2)."
+resumo = "Vida máxima +2 por nível."
 situacao = 0
 motivo = "Conta combinada; entra quando o antecedente escolher o talento."

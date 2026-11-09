@@ -4,9 +4,10 @@
 
 [resource]
 script = ExtResource("1_dx0wv")
+no_jogo = true
 id = &"sortudo"
 nome = "Sortudo"
 categoria = 0
-resumo = "Pontos de sorte para rerrolar um d20 (ou forçar o rerrolar de um ataque contra você)."
+resumo = "2 pontos de sorte por fase. Um botão (tecla G) arma a sorte: a próxima rolagem do herói, de ataque ou de teste, usa o melhor de dois d20."
 situacao = 0
 motivo = "O próximo efeito fácil: o Combate já rola o dado."

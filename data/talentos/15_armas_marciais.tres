@@ -7,5 +7,4 @@ script = ExtResource("1_ygsm4")
 id = &"armas_marciais"
 nome = "Treinamento com Armas Marciais"
 resumo = "Proficiência com armas marciais."
-situacao = 0
-motivo = "A ficha já sabe somar treinamentos."
+motivo = "Decidido: em espera, porque o Guerreiro já tem esse treinamento e só sobraria o +1 de atributo."

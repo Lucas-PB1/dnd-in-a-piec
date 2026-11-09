@@ -1,10 +1,8 @@
-extends SceneTree
+extends TesteBase
 ## Teste do início do jogo: tela de título, criação (nome, classe, atributos) e entrada no jogo.
 ## godot --headless --debug --path . --script res://tests/teste_criacao.gd
 
 const NOME_TESTE := "Aldric"
-
-var _falhas := 0
 
 
 func _initialize() -> void:
@@ -40,7 +38,7 @@ func _testar_tela_sozinha() -> void:
 	var escolha: OptionButton = tela.get_node("%Classe")
 	_checar(escolha.item_count == 1 and escolha.get_item_text(0) == "Guerreiro", "classe: só Guerreiro por enquanto")
 	var escolha_nivel: OptionButton = tela.get_node("%Nivel")
-	_checar(escolha_nivel.item_count == 3, "criação permite escolher do nível 1 ao 3")
+	_checar(escolha_nivel.item_count == 4, "criação permite escolher do nível 1 ao 4")
 	tela.escolher_nivel(2)
 	var lista: ItemList = tela.get_node("%ListaMaestrias")
 	_checar(lista.select_mode == ItemList.SELECT_TOGGLE, "clique marca e desmarca a maestria")
@@ -69,12 +67,17 @@ func _testar_tela_sozinha() -> void:
 	_checar(recebida.is_empty(), "não deixa começar com uma perícia só")
 	tela.marcar_pericia(Pericia.PERCEPCAO, true)
 	tela.confirmar()
-	_checar(recebida.size() == 1 and recebida[0].nome == NOME_TESTE and recebida[0].atributos[Atributos.FORCA] == 15,
-		"confirma com nome e sugestão e devolve a ficha")
+	_checar(recebida.size() == 1 and recebida[0].nome == NOME_TESTE and recebida[0].atributos[Atributos.FORCA] == 17,
+		"confirma com nome, sugestão e antecedente e devolve a ficha (FOR 15 + 2 do Artesão)")
+	_checar(recebida[0].antecedente == &"artesao" and recebida[0].tem_talento(&"artesao")
+		and recebida[0].pericias.has(Pericia.INVESTIGACAO) and recebida[0].pericias.has(Pericia.PERSUASAO),
+		"a ficha guarda o antecedente, o talento de origem e as perícias dele")
 	_checar(recebida[0].pericias.has(Pericia.PERCEPCAO) and recebida[0].pericias.has(Pericia.ATLETISMO)
 		and recebida[0].percepcao_passiva() == 13, "a ficha guarda as perícias; SAB 12 treinada: passiva 13")
 	_checar(recebida[0].nivel == 3 and recebida[0].experiencia == 900,
 		"o nível inicial escolhido e o XP correspondente vão para a ficha")
+	await _testar_antecedente_e_passos()
+	await _testar_perito()
 	tela.queue_free()
 
 
@@ -131,9 +134,108 @@ func _achar(cena: Node, tipo: Variant) -> Node:
 	return null
 
 
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)
+## O passo do antecedente: perícias travadas, aumento de atributo e passos que não se pulam.
+func _testar_antecedente_e_passos() -> void:
+	var tela: TelaCriacao = load("res://ui/criacao_personagem/tela_criacao.tscn").instantiate()
+	root.add_child(tela)
+	await process_frame
+	var lista: ItemList = tela.get_node("%ListaAntecedentes")
+	_checar(lista.item_count == 11, "a lista oferece os 11 antecedentes liberados")
+	var passo_antecedente: Control = tela.get_node("%PassoAntecedente")
+	var botao_ir: Button = tela.get_node("%Atributos")
+	_checar(botao_ir.disabled and botao_ir.text == "Escreva um nome", "sem nome, o botão de avançar fica apagado e diz o que falta")
+	tela.get_node("%IrAtributos").pressed.emit()
+	_checar(not passo_antecedente.visible, "não dá para pular de passo sem completar o atual")
+	tela.definir_nome(NOME_TESTE)
+	botao_ir.pressed.emit()
+	_checar(passo_antecedente.visible and not tela.get_node("%PassoQuem").visible, "com nome, avança para o antecedente")
+	var botao_atributos: Button = tela.get_node("%IrAtributos")
+	_checar(not botao_atributos.disabled, "o antecedente já vem escolhido, então dá para seguir")
+	botao_atributos.pressed.emit()
+	var botao_pericias: Button = tela.get_node("%IrPericias")
+	_checar(botao_pericias.disabled and botao_pericias.text == "Gaste todos os pontos", "sem gastar os pontos, não vai para as perícias")
+	tela.get_node("%IrPericias").pressed.emit()
+	_checar(not tela.get_node("%PassoPericias").visible, "e o passo das perícias não abre")
+	tela.aplicar_sugestao()
+	_checar(not botao_pericias.disabled, "gastos os pontos, as perícias liberam")
+	# Guarda: Atletismo e Percepção vêm do antecedente, travadas.
+	tela.escolher_antecedente(_indice_do_antecedente(lista, "Guarda"))
+	_checar(tela.pericias_marcadas().is_empty(), "com o Guarda, as duas perícias sugeridas já vêm do antecedente")
+	tela.marcar_pericia(Pericia.ATLETISMO, false)
+	var lista_pericias: ItemList = tela.get_node("%ListaPericias")
+	_checar(lista_pericias.is_selected(_indice_da_pericia(Pericia.ATLETISMO)), "a perícia do antecedente não se desmarca")
+	tela.marcar_pericia(Pericia.ACROBACIA, true)
+	tela.marcar_pericia(Pericia.HISTORIA, true)
+	_checar(tela.pericias_marcadas().size() == 2, "o Guerreiro escolhe as 2 dele entre as que sobram")
+	# Aumento de atributo: +2 e +1 entre os 3 do antecedente.
+	tela.escolher_aumento(0)
+	var recebida: Array[Ficha] = []
+	tela.confirmada.connect(func(f: Ficha, _p: PacoteInicial) -> void: recebida.append(f))
+	tela.confirmar()
+	var ficha := recebida[0] if recebida.size() == 1 else null
+	_checar(ficha != null and ficha.antecedente == &"guarda" and ficha.tem_talento(&"alerta"), "o Guarda leva o talento Alerta")
+	_checar(ficha != null and ficha.pericias.size() == 4, "a ficha tem 2 do antecedente e 2 escolhidas")
+	_checar(ficha != null and ficha.atributos[Atributos.FORCA] == 17
+		and ficha.atributos[Atributos.INTELIGENCIA] == _sugerido(Atributos.INTELIGENCIA) + 1,
+		"+2 em Força e +1 em Inteligência somam à compra (FOR 15→17)")
+	tela.queue_free()
+	await process_frame
+
+
+func _indice_do_antecedente(lista: ItemList, nome: String) -> int:
+	for i in lista.item_count:
+		if lista.get_item_text(i) == nome:
+			return i
+	return 0
+
+
+func _indice_da_pericia(id: StringName) -> int:
+	var classe: ClasseRPG = load("res://data/classe_guerreiro.tres")
+	return classe.pericias_escolhiveis.find(id)
+
+
+func _sugerido(atributo: StringName) -> int:
+	var classe: ClasseRPG = load("res://data/classe_guerreiro.tres")
+	return classe.atributos_sugeridos[atributo]
+
+
+## Perito (Charlatão, Nobre, Escriba): mais 3 perícias à escolha entre todas as do jogo.
+func _testar_perito() -> void:
+	var tela: TelaCriacao = load("res://ui/criacao_personagem/tela_criacao.tscn").instantiate()
+	root.add_child(tela)
+	await process_frame
+	var lista: ItemList = tela.get_node("%ListaAntecedentes")
+	var lista_pericias: ItemList = tela.get_node("%ListaPericias")
+	_checar(lista_pericias.item_count == 9, "sem o Perito a lista tem as 9 perícias do Guerreiro")
+	tela.escolher_antecedente(_indice_do_antecedente(lista, "Charlatão"))
+	_checar(lista_pericias.item_count == Pericia.ATRIBUTO.size(), "com o Perito a lista tem todas as %d perícias do jogo" % Pericia.ATRIBUTO.size())
+	_checar(lista_pericias.is_selected(_indice_na_lista(lista_pericias, "Enganação")), "a perícia do antecedente fora da lista do Guerreiro vem marcada")
+	tela.definir_nome(NOME_TESTE)
+	tela.aplicar_sugestao()
+	_checar(tela.pericias_marcadas().size() == 2, "abre com as 2 sugeridas; faltam 3 do Perito")
+	var botao: Button = tela.get_node("%IrMaestrias")
+	tela.get_node("%Atributos").pressed.emit()
+	tela.get_node("%IrAtributos").pressed.emit()
+	tela.get_node("%IrPericias").pressed.emit()
+	_checar(botao.disabled and botao.text == "Escolha 5 perícias", "com 2 de 5 marcadas, as maestrias não abrem")
+	tela.marcar_pericia(Pericia.ARCANISMO, true)
+	tela.marcar_pericia(Pericia.MEDICINA, true)
+	tela.marcar_pericia(Pericia.NATUREZA, true)
+	tela.marcar_pericia(Pericia.RELIGIAO, true)
+	_checar(tela.pericias_marcadas().size() == 5, "o sexto não entra: são 5 no total")
+	_checar(not botao.disabled, "completas as 5, as maestrias abrem")
+	var recebida: Array[Ficha] = []
+	tela.confirmada.connect(func(f: Ficha, _p: PacoteInicial) -> void: recebida.append(f))
+	tela.confirmar()
+	_checar(recebida.size() == 1 and recebida[0].pericias.size() == 7 and recebida[0].tem_talento(&"perito"),
+		"a ficha tem 2 do antecedente, 5 escolhidas e o talento Perito")
+	_checar(not recebida.is_empty() and recebida[0].pericias.has(Pericia.ARCANISMO), "e uma perícia fora da lista do Guerreiro")
+	tela.queue_free()
+	await process_frame
+
+
+func _indice_na_lista(lista: ItemList, nome: String) -> int:
+	for i in lista.item_count:
+		if lista.get_item_text(i).begins_with(nome):
+			return i
+	return 0

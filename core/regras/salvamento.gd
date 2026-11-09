@@ -9,9 +9,19 @@ static var caminho: String = "user://save.json"
 ## Sobe quando o formato muda, para não ler um arquivo antigo errado.
 const VERSAO := 1
 ## Onde ficam os itens do jogo; o save guarda só o nome e busca o item aqui ao carregar.
-const PASTAS_ITENS: Array[String] = ["res://data/armas", "res://data/armaduras", "res://data/municoes"]
+const PASTA_TALENTOS := "res://data/talentos"
+const PASTAS_ITENS: Array[String] = ["res://data/armas", "res://data/armaduras", "res://data/municoes", "res://data/itens"]
 
 static var _catalogo: Dictionary[String, String] = {}
+## Nomes de talento de saves antigos -> nome do livro em português. O save agora guarda o id; estes e os nomes do livro
+## ainda são aceitos ao carregar (o id sai do `TalentoRPG` de mesmo nome).
+const NOMES_ANTIGOS_DE_TALENTOS := {
+	"Resistente": "Robusto", "Perito": "Habilidoso", "Cortador": "Retalhador",
+	"Empunhadura Dupla": "Combatente com Duas Armas", "Mestre em Arma Grande": "Mestre em Armas Grandes",
+	"Mestre em Armadura Média": "Mestre em Armaduras Médias", "Mestre em Armadura Pesada": "Mestre em Armaduras Pesadas",
+	"Mestre em Escudo": "Mestre em Escudos", "Mestre em Arma de Haste": "Mestre em Armas de Haste",
+	"Especialista em Besta": "Especialista em Bestas", "Aumento de Valor de Habilidade": "Aumento no Valor de Atributo",
+}
 
 
 static func existe() -> bool:
@@ -64,7 +74,11 @@ static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: i
 			"atributos": ficha.atributos,
 			"armas_dominadas": ficha.armas_dominadas,
 			"talentos": ficha.talentos,
+			"escolhas_de_talento": ficha.escolhas_de_talento_feitas,
+			"antecedente": ficha.antecedente,
+			"salvaguardas_extras": ficha.salvaguardas_extras,
 			"pericias": ficha.pericias,
+			"pericias_especializadas": ficha.pericias_especializadas,
 		},
 		"mochila": {"itens": itens, "equipados": _posicoes_dos_equipados(inventario)},
 		"bestiario": bestiario.para_dicionario() if bestiario else {},
@@ -89,9 +103,16 @@ static func montar_ficha(dados: Dictionary) -> Ficha:
 	ficha.nivel = clampi(int(f.get("nivel", 1)), 1, Ficha.NIVEL_MAXIMO)
 	ficha.experiencia = int(f.get("experiencia", 0))
 	ficha.armas_dominadas.assign(f.get("armas_dominadas", []))
-	ficha.talentos.assign(f.get("talentos", []))
+	for nome in f.get("talentos", []):
+		ficha.talentos.append(id_do_talento(str(nome)))
+	ficha.escolhas_de_talento_feitas = int(f.get("escolhas_de_talento", 0))
+	ficha.antecedente = StringName(str(f.get("antecedente", "")))
+	for atributo in f.get("salvaguardas_extras", []):
+		ficha.salvaguardas_extras.append(StringName(atributo))
 	for pericia in f.get("pericias", []):
 		ficha.pericias.append(StringName(pericia))
+	for pericia in f.get("pericias_especializadas", []):
+		ficha.pericias_especializadas.append(StringName(pericia))
 	return ficha
 
 
@@ -118,6 +139,15 @@ static func restaurar_inventario(dados: Dictionary, inventario: Inventario) -> v
 static func restaurar_bestiario(dados: Dictionary, bestiario: Bestiario) -> void:
 	bestiario.carregar(dados.get("bestiario", {}))
 
+
+## O id do talento de um save: já é um id, ou é um nome (do livro ou antigo) de talento em `data/talentos`.
+static func id_do_talento(valor: String) -> StringName:
+	var nome := NOMES_ANTIGOS_DE_TALENTOS.get(valor, valor) as String
+	for recurso in Recursos.da_pasta(PASTA_TALENTOS):
+		var talento := recurso as TalentoRPG
+		if String(talento.id) == valor or talento.nome == nome:
+			return talento.id
+	return StringName(valor)
 
 ## O item do jogo com esse nome (a base, não uma cópia), ou null.
 static func item_chamado(nome: String) -> Item:

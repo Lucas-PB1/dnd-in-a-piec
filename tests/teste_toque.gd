@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Controles de toque (celular): botões apertam as ações, o analógico anda e corre, as
 ## setas fazem o toque duplo, "correr" segurado corre, nada aperta com o jogo pausado.
 ## Edição do layout: arrastar, tamanho, transparência, salvar, carregar e Padrão. O
@@ -17,7 +17,6 @@ const DESTINO_ARRASTO := Vector2(200, 150)
 const PASSOS_TAMANHO := 2
 const OPACIDADE_TESTE := 0.5
 
-var _falhas := 0
 var _main: Main
 var _jogador: Jogador
 var _controles: ControlesToque
@@ -205,7 +204,6 @@ func _testar_mente_tatica_no_toque() -> void:
 
 	_main.trazer_criatura(load("res://features/gray_ooze/gray_ooze.tscn"))
 	await _esperar(2)
-	var inimigos := get_nodes_in_group(&"monstros")
 	var surto := _controles.botao(&"surto_acao")
 	_tocar(DEDO_BOTAO, _centro(surto), true)
 	await _esperar(2)
@@ -347,11 +345,3 @@ func _no_chao() -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

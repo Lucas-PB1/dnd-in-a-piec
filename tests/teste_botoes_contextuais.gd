@@ -1,9 +1,7 @@
-extends SceneTree
+extends TesteBase
 ## Garante que a tela só mostra o que o herói tem: os botões de toque e as linhas do HUD
 ## aparecem quando servem (Surto e Mente Tática no nível 2, Lançar com arma na mão, E perto de algo).
 ## godot --headless --debug --path . --script res://tests/teste_botoes_contextuais.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -57,7 +55,7 @@ func _rodar() -> void:
 	toque.terminar_edicao()
 	_checar(not toque.botao(&"interagir").visible and toque.botao(&"surto_acao").visible, "depois da edição, esconde só o que não serve (o Surto serve no nível 2)")
 	_checar(_vazio_escondido(toque), "os slots sem habilidade ficam escondidos no jogo")
-	await _testar_escolha_de_atalhos(main)
+	_testar_escolha_de_atalhos(main)
 	DirAccess.remove_absolute(OpcoesToque.caminho)
 	main.free()
 	await process_frame
@@ -89,11 +87,3 @@ func _vazio_escondido(toque: ControlesToque) -> bool:
 		if (toque.get_node("Raiz/Botao_%s" % id) as Control).visible:
 			return false
 	return true
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

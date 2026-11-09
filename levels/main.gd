@@ -25,6 +25,8 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 	preload("res://data/bestiario/goblin_minion.tres"),
 	preload("res://data/bestiario/goblin_warrior.tres"),
 ]
+## Talentos do livro (a tela de escolha do nível 4 lê daqui).
+const PASTA_TALENTOS := "res://data/talentos"
 const GRUPO_MONSTROS := &"monstros"
 ## O que o botão de ataque do celular passa a dizer perto de um baú ou de uma arma caída.
 const ROTULO_ABRIR := "Abrir"
@@ -72,6 +74,7 @@ var _heroi_na_porta: bool = false
 @onready var _tela_bestiario: TelaBestiario = $Interface/TelaBestiario
 @onready var _tela_habilidades: TelaHabilidades = $Interface/TelaHabilidades
 @onready var _tela_compendio: TelaCompendio = $Interface/TelaCompendio
+@onready var _tela_talento: TelaTalento = $Interface/TelaTalento
 @onready var _sons: Sons = $Sons
 @onready var _musica: Musica = $Musica
 @onready var _controles_toque: ControlesToque = $ControlesToque
@@ -95,6 +98,11 @@ func _ready() -> void:
 	_jogador.surto_acao_pedido.connect(_usar_surto_acao)
 	_jogador.mente_tatica_pedido.connect(_alternar_mente_tatica)
 	_jogador.surto_ativo_mudou.connect(_ao_surto_ativo_mudou)
+	_jogador.sorte_mudou.connect(_ao_mudar_sorte)
+	_jogador.dados_de_vida_mudou.connect(_ao_mudar_dados_de_vida)
+	_jogador.veneno_mudou.connect(_ao_mudar_veneno)
+	_jogador.defesa_mudou.connect(func(_ativa: bool, _pronta: bool) -> void: _atualizar_botoes_toque())
+	_jogador.investida_mudou.connect(_ao_mudar_investida)
 	_jogador.folego_mudou.connect(func(_restantes: int, _total: int) -> void: _atualizar_botoes_toque())
 	_jogador.caiu.connect(_ao_cair)
 	_mostrar_personagem_no_hud()
@@ -111,6 +119,9 @@ func _ready() -> void:
 	_tela_bestiario.fechou.connect(_ao_fechar_modal)
 	_pausa.compendio_escolhido.connect(_abrir_pela_pausa.bind(_abrir_compendio))
 	_tela_compendio.fechou.connect(_ao_fechar_modal)
+	_pausa.talento_pedido.connect(_abrir_pela_pausa.bind(_abrir_talento))
+	_tela_talento.fechou.connect(_ao_fechar_modal)
+	_tela_talento.talento_escolhido.connect(_ao_escolher_talento)
 	_pausa.habilidades_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_habilidades))
 	_tela_habilidades.fechou.connect(_ao_fechar_modal)
 	_pausa.salvar_escolhido.connect(_salvar_jogo)
@@ -295,6 +306,7 @@ func _entrar_fase(cena: PackedScene) -> void:
 	_heroi_na_porta = false
 	_jogador.descansar_longo()
 	_surto_usado = false
+	_jogador.ganhar_item_do_artesao()
 	var antiga := _fase
 	antiga.name = "FaseAntiga"
 	_fase = cena.instantiate()
@@ -414,6 +426,46 @@ func _ao_surto_ativo_mudou(ativo: bool) -> void:
 	_atualizar_botoes_toque()
 
 
+## A sorte do Sortudo mudou (ponto gasto, armada, descanso): atualiza o HUD e o botão da barra.
+func _ao_mudar_sorte(pontos: int, total: int, armada: bool) -> void:
+	_hud.mostrar_sorte(pontos, total, armada)
+	_atualizar_botoes_toque()
+
+
+## O modo da Investida mudou: a linha do HUD diz qual está valendo e o botão acende no empurrão.
+func _ao_mudar_investida(empurra: bool) -> void:
+	_hud.mostrar_investida(true, empurra)
+	_atualizar_botoes_toque()
+
+
+## Os dados de vida do Durável mudaram: o HUD mostra quantos restam.
+func _ao_mudar_dados_de_vida(restantes: int, total: int) -> void:
+	_hud.mostrar_dados_de_vida(restantes, total)
+	_atualizar_botoes_toque()
+
+
+## O veneno mudou (dose usada, arma envenenada, fase nova): o HUD diz o estado.
+func _ao_mudar_veneno(doses: int, total: int, aplicado: bool) -> void:
+	_hud.mostrar_veneno(doses, total, aplicado)
+	_atualizar_botoes_toque()
+
+## Defesa aberta = botão aceso; esperando a recarga = avermelhado; pronta = normal.
+func _estado_da_defesa() -> BotaoToque.EstadoBotao:
+	if _jogador.defesa_ativa():
+		return BotaoToque.EstadoBotao.ACESO
+	if not _jogador.defesa_pronta():
+		return BotaoToque.EstadoBotao.DESLIGADO
+	return BotaoToque.EstadoBotao.NORMAL
+
+## Sorte armada = botão aceso; sem pontos = avermelhado; pronta = normal.
+func _estado_da_sorte() -> BotaoToque.EstadoBotao:
+	if _jogador.sorte_armada():
+		return BotaoToque.EstadoBotao.ACESO
+	if _jogador.pontos_sorte() <= 0:
+		return BotaoToque.EstadoBotao.DESLIGADO
+	return BotaoToque.EstadoBotao.NORMAL
+
+
 ## Mente Tática liga e desliga como as outras habilidades (tecla T, ou o botão na barra do celular).
 func _alternar_mente_tatica() -> void:
 	if _em_tela_de_pausa:
@@ -470,6 +522,23 @@ func _cenas_criaturas() -> Array[PackedScene]:
 
 # --- Interface --------------------------------------------------------------------
 
+## Alguma tela ou o modo de edição dos botões ocupa o jogo? `exceto` é a própria tela que está tentando abrir
+## (ela não conta contra si mesma). Um lugar só: tela nova entra em `_telas_modais()` e vale em toda parte.
+func _ha_menu_aberto(exceto: Control = null) -> bool:
+	return _em_tela_de_pausa or _controles_toque.esta_editando() or _ha_tela_aberta(exceto)
+
+
+func _ha_tela_aberta(exceto: Control = null) -> bool:
+	for tela in _telas_modais():
+		if tela != exceto and tela.visible:
+			return true
+	return false
+
+
+func _telas_modais() -> Array[Control]:
+	return [_inventario, _tela_bau, _comandos, _pausa, _tela_bestiario, _tela_compendio, _tela_habilidades, _tela_talento]
+
+
 ## Esc (ou o botão Menu) abre a pausa se nenhuma tela por cima já usou a tecla para voltar.
 func _unhandled_input(evento: InputEvent) -> void:
 	if evento.is_action_pressed(&"pausa"):
@@ -478,7 +547,7 @@ func _unhandled_input(evento: InputEvent) -> void:
 
 ## Pausa (Esc ou o botão Menu): Continuar, Mochila, Habilidades, Bestiário, Compêndio, Opções, Salvar e Menu principal.
 func _abrir_pausa() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
+	if _ha_menu_aberto(_pausa):
 		return
 	_pausa.abrir()
 	_controles_toque.atualizar(true)
@@ -504,28 +573,46 @@ func _voltar_ao_titulo() -> void:
 
 
 func _abrir_habilidades() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible:
+	if _ha_menu_aberto(_tela_habilidades):
 		return
 	_tela_habilidades.abrir(_jogador.ficha)
 	_controles_toque.atualizar(true)
 
 
+## Abre a escolha do talento do nível 4 (sozinha ao subir de nível; depois, pelo botão da pausa).
+func _abrir_talento() -> void:
+	if _jogador.ficha.escolhas_de_talento_pendentes() <= 0:
+		return
+	if _ha_menu_aberto(_tela_talento):
+		return
+	var talentos: Array[TalentoRPG] = []
+	talentos.assign(Recursos.da_pasta(PASTA_TALENTOS))
+	_tela_talento.abrir(_jogador.ficha, talentos)
+	_controles_toque.atualizar(true)
+
+
+## O talento já está na ficha: o herói recalcula vida e CA.
+func _ao_escolher_talento(talento: TalentoRPG) -> void:
+	_jogador.ao_mudar_ficha()
+	_jogador.avisar(talento.nome)
+
+
 func _abrir_compendio() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_habilidades.visible:
+	if _ha_menu_aberto(_tela_compendio):
 		return
 	_tela_compendio.abrir(Compendio.montar(_jogador.ficha.classe))
 	_controles_toque.atualizar(true)
 
 
 func _abrir_bestiario() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _comandos.visible or _pausa.visible:
+	if _ha_menu_aberto(_tela_bestiario):
 		return
 	_tela_bestiario.abrir(_bestiario, ENTRADAS_BESTIARIO)
 	_controles_toque.atualizar(true)
 
 
 func _abrir_inventario() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _tela_bau.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
+	if _ha_menu_aberto(_inventario):
 		return
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
@@ -551,7 +638,7 @@ func _ao_recolher_arma(arma: Arma, penalidade: int, voo: ArmaArremessada) -> voi
 
 
 func _abrir_bau(itens: Array[Item]) -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _comandos.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
+	if _ha_menu_aberto(_tela_bau):
 		return
 	_sons.tocar(&"bau")
 	_tela_bau.abrir(itens, _jogador.inventario)
@@ -559,7 +646,7 @@ func _abrir_bau(itens: Array[Item]) -> void:
 
 
 func _abrir_comandos() -> void:
-	if _em_tela_de_pausa or _controles_toque.esta_editando() or _inventario.visible or _tela_bau.visible or _pausa.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible:
+	if _ha_menu_aberto(_comandos):
 		return
 	_comandos.abrir()
 	_controles_toque.atualizar(true)
@@ -575,7 +662,7 @@ func _reabrir_pausa() -> void:
 func _abrir_pela_pausa(abrir_tela: Callable) -> void:
 	_voltar_para_pausa = true
 	abrir_tela.call()
-	if not (_inventario.visible or _comandos.visible or _tela_bestiario.visible or _tela_compendio.visible or _tela_habilidades.visible):
+	if not _ha_tela_aberta():
 		_voltar_para_pausa = false
 		_pausa.abrir()
 
@@ -599,6 +686,11 @@ func _atualizar_botoes_toque() -> void:
 	var tem_nivel_2 := _jogador.ficha.nivel >= Ficha.NIVEL_HABILIDADES_GUERREIRO
 	_controles_toque.mostrar_acao(&"surto_acao", tem_nivel_2)
 	_controles_toque.mostrar_acao(&"mente_tatica", tem_nivel_2)
+	_controles_toque.mostrar_acao(&"sorte", _jogador.pontos_sorte_total() > 0)
+	_controles_toque.mostrar_acao(&"defesa", _jogador.ficha.tem_talento(Ficha.TALENTO_DUELISTA_DEFENSIVO))
+	_controles_toque.mostrar_acao(&"investida", _jogador.ficha.tem_talento(Ficha.TALENTO_INVESTIDA))
+	_controles_toque.mostrar_acao(&"dado_de_vida", _jogador.ficha.dados_de_vida() > 0)
+	_controles_toque.mostrar_acao(&"veneno", _jogador.doses_de_veneno() > 0 or _jogador.veneno_na_arma() != &"" or _jogador.tem_item_veneno())
 	_controles_toque.mostrar_acao(&"folego", _jogador.usos_folego_total() > 0)
 	_controles_toque.mostrar_acao(&"arremessar", _jogador.inventario.equipado(Item.ESPACO_MAO) != null)
 	_controles_toque.definir_interacao(_rotulo_de_interacao())
@@ -614,6 +706,11 @@ func _acender_habilidades() -> void:
 		estado_do_surto = BotaoToque.EstadoBotao.DESLIGADO
 	_controles_toque.definir_estado(&"surto_acao", estado_do_surto)
 	_controles_toque.definir_estado(&"mente_tatica", BotaoToque.EstadoBotao.ACESO if _jogador.mente_tatica_ligada() else BotaoToque.EstadoBotao.DESLIGADO)
+	_controles_toque.definir_estado(&"sorte", _estado_da_sorte())
+	_controles_toque.definir_estado(&"defesa", _estado_da_defesa())
+	_controles_toque.definir_estado(&"dado_de_vida", BotaoToque.EstadoBotao.NORMAL if _jogador.dados_de_vida_restantes() > 0 else BotaoToque.EstadoBotao.DESLIGADO)
+	_controles_toque.definir_estado(&"veneno", BotaoToque.EstadoBotao.ACESO if _jogador.veneno_na_arma() != &"" else BotaoToque.EstadoBotao.NORMAL)
+	_controles_toque.definir_estado(&"investida", BotaoToque.EstadoBotao.ACESO if _jogador.investida_empurra() else BotaoToque.EstadoBotao.NORMAL)
 	_controles_toque.definir_estado(&"folego", BotaoToque.EstadoBotao.NORMAL if _jogador.usos_folego() > 0 else BotaoToque.EstadoBotao.DESLIGADO)
 
 
@@ -682,6 +779,10 @@ func _mostrar_personagem_no_hud() -> void:
 
 
 func _ao_mudar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> void:
+	_hud.mostrar_investida(_jogador.ficha != null and _jogador.ficha.tem_talento(Ficha.TALENTO_INVESTIDA), _jogador.investida_empurra())
+	_pausa.mostrar_talento(_jogador.ficha != null and _jogador.ficha.escolhas_de_talento_pendentes() > 0)
+	if _jogador.ficha != null and _jogador.ficha.escolhas_de_talento_pendentes() > 0 and not _em_tela_de_pausa:
+		_abrir_talento.call_deferred()
 	_atualizar_botoes_toque()
 	_hud.mostrar_progressao(nivel, experiencia, proximo_nivel)
 	_hud.mostrar_surto(nivel, not _surto_usado)

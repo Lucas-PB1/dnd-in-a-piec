@@ -16,7 +16,7 @@ func entrar() -> void:
 func processar_fisica(delta: float) -> void:
 	var dir := jogador.direcao()
 	jogador.mover_horizontal(dir, jogador.velocidade_corrida(), delta)
-	if _foi_atacar() or _foi_arremessar() or _foi_para_o_ar():
+	if _foi_escalar() or _foi_atacar() or _foi_arremessar() or _foi_para_o_ar():
 		return
 	if dir == 0.0 or signf(dir) != _direcao_corrida or (_pelo_botao and not jogador.correr_segurado()):
 		trocar_para.emit(&"Andando")

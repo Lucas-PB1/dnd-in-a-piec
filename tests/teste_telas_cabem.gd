@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Garante que as telas de menu cabem na tela do jogo (640x360), cada passo da criação inclusive.
 ## O tema novo deixou a criação maior que a tela uma vez; este teste evita que volte a acontecer.
 ## godot --headless --debug --path . --script res://tests/teste_telas_cabem.gd
@@ -10,6 +10,7 @@ const TELAS: Dictionary[String, String] = {
 	"pausa": "res://ui/pausa/tela_pausa.tscn",
 	"bestiário": "res://ui/bestiario/tela_bestiario.tscn",
 	"compêndio": "res://ui/compendio/tela_compendio.tscn",
+	"talento": "res://ui/talento/tela_talento.tscn",
 	"habilidades": "res://ui/habilidades/tela_habilidades.tscn",
 	"inventário": "res://ui/inventario/tela_inventario.tscn",
 	"baú": "res://ui/bau/tela_bau.tscn",
@@ -17,8 +18,6 @@ const TELAS: Dictionary[String, String] = {
 	"derrota": "res://ui/derrota/tela_derrota.tscn",
 	"vitória": "res://ui/vitoria/tela_vitoria.tscn",
 }
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -68,11 +67,3 @@ func _medir(nome: String, paineis: Array[Node]) -> void:
 	var painel := paineis[0] as Control
 	var tamanho := painel.get_combined_minimum_size()
 	_checar(tamanho.x <= LARGURA and tamanho.y <= ALTURA, "%s cabe (%dx%d)" % [nome, tamanho.x, tamanho.y])
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

@@ -1,8 +1,6 @@
-extends SceneTree
+extends TesteBase
 ## Teste da regra pura do Inventario.
 ## godot --headless --debug --path . --script res://tests/teste_inventario.gd
-
-var _falhas := 0
 
 
 func _initialize() -> void:
@@ -52,11 +50,3 @@ func _initialize() -> void:
 	else:
 		print("FALHOU: %d teste(s)" % _falhas)
 	quit(1 if _falhas > 0 else 0)
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

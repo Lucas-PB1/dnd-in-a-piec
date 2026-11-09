@@ -12,6 +12,11 @@ signal porta_liberada(corpo: Node2D)
 const MARGEM_QUEDA := 64.0
 ## Ladrilhos de parede em cada ponta, que a câmera não deve mostrar.
 const PAREDES_POR_LADO := 1
+## Porta da saída (arte CC0 do rubberduck, ver assets/CREDITOS.md): com os pés no chão do ponto da porta.
+const TEXTURA_PORTA := preload("res://assets/tiles/castelo/porta.png")
+## O teto invisível fica isto acima do topo da fase (px): o Atleta que escala não sai do mapa.
+const ALTURA_DO_TETO_ACIMA_PX := 96.0
+const CAMADA_MUNDO := 1
 
 ## Número da fase na campanha (1 a 5). A fase reta de teste fica em 0.
 @export var indice: int = 0
@@ -30,12 +35,46 @@ const PAREDES_POR_LADO := 1
 
 func _ready() -> void:
 	_criar_fundo()
+	_criar_limites()
 	var porta := get_node_or_null("Porta") as Area2D
 	if porta == null:
 		return
+	_desenhar_porta(porta)
 	porta.body_entered.connect(_ao_tocar_porta)
 	porta.body_exited.connect(_ao_sair_da_porta)
 
+
+## Fecha o mapa: parede de cada lado e um teto, invisíveis e sem fim, no mesmo mundo do chão. Quem escala
+## (Atleta) não passa por cima das paredes das pontas nem sobe para fora da fase.
+func _criar_limites() -> void:
+	var area := area_jogavel()
+	var corpo := StaticBody2D.new()
+	corpo.name = "Limites"
+	corpo.collision_layer = 1 << (CAMADA_MUNDO - 1)
+	corpo.collision_mask = 0
+	add_child(corpo)
+	_adicionar_plano(corpo, Vector2.RIGHT, area.position.x)  # parede da esquerda: sólido onde x < inicio
+	_adicionar_plano(corpo, Vector2.LEFT, -area.end.x)  # parede da direita: sólido onde x > fim
+	_adicionar_plano(corpo, Vector2.DOWN, area.position.y - ALTURA_DO_TETO_ACIMA_PX)  # teto: sólido onde y < topo
+
+
+func _adicionar_plano(corpo: StaticBody2D, normal: Vector2, distancia: float) -> void:
+	var forma := CollisionShape2D.new()
+	var plano := WorldBoundaryShape2D.new()
+	plano.normal = normal
+	plano.distance = distancia
+	forma.shape = plano
+	corpo.add_child(forma)
+
+
+## A porta de verdade: um sprite de arco de madeira com moldura de pedra, atrás do herói.
+func _desenhar_porta(porta: Area2D) -> void:
+	var desenho := Sprite2D.new()
+	desenho.name = "Desenho"
+	desenho.texture = TEXTURA_PORTA
+	desenho.position = Vector2(0.0, -TEXTURA_PORTA.get_height() / 2.0)
+	desenho.z_index = -1
+	porta.add_child(desenho)
 
 ## Põe o fundo em camadas do ambiente (se tiver) e esconde o céu liso que ficava no lugar.
 func _criar_fundo() -> void:

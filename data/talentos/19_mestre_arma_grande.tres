@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_5nm0m")
+no_jogo = true
 id = &"mestre_arma_grande"
-nome = "Mestre em Arma Grande"
-resumo = "Arma Pesada soma a proficiência no dano; crítico ou abater abre um golpe extra."
+nome = "Mestre em Armas Grandes"
+resumo = "+1 em Força. A arma Pesada soma a proficiência no dano. Crítico ou abate com uma arma corpo a corpo faz um golpe extra logo em seguida, como o Surto de Ação (uma vez por rodada)."
 situacao = 0
-motivo = "A ação bônus já existe."
+motivo = "Decidido: o golpe extra reaproveita o ataque duplo do Surto de Ação."
+atributos = Array[StringName]([&"forca"])
+pontos_de_atributo = 1

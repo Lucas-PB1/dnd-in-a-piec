@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Sensação dos golpes: acerto dá pausa curta, tremor de câmera e faíscas; erro não faz nada;
 ## crítico é mais forte; golpe sofrido pelo herói também; pouso e corrida soltam poeira; e o tempo
 ## do jogo sempre volta ao normal. godot --headless --debug --path . --script res://tests/teste_impacto.gd
@@ -8,7 +8,6 @@ const ESPERA_CURTA := 0.05
 ## Faíscas vivem 0,3 s e somem 0,2 s depois.
 const ESPERA_FAISCAS := 0.7
 
-var _falhas := 0
 var _cena: Main
 var _jogador: Jogador
 var _impacto: Impacto
@@ -109,11 +108,3 @@ func _resultado(acertou: bool, critico: bool) -> Combate.Resultado:
 ## Espera tempo REAL (o teste não pode depender do tempo do jogo, que a pausa desacelera).
 func _esperar(segundos: float) -> void:
 	await create_timer(segundos, true, false, true).timeout
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

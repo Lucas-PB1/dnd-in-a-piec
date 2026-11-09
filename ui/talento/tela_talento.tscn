@@ -1,0 +1,149 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/talento/tela_talento.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/tema_menu.tres" id="2_tema"]
+
+[node name="TelaTalento" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+script = ExtResource("1_script")
+
+[node name="Fundo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.05, 0.72)
+
+[node name="Centro" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Painel" type="PanelContainer" parent="Centro"]
+layout_mode = 2
+
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Cabecalho" type="Label" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_type_variation = &"Titulo"
+text = "Escolha um talento"
+horizontal_alignment = 1
+
+[node name="Miolo" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Lista" type="ItemList" parent="Centro/Painel/Coluna/Miolo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 170)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Pagina" type="VBoxContainer" parent="Centro/Painel/Coluna/Miolo"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Nome" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Titulo"
+
+[node name="Tipo" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Dica"
+
+[node name="Rolagem" type="ScrollContainer" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Texto" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/Rolagem"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+
+[node name="Atributos" type="HFlowContainer" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LinhaPericia1" type="HBoxContainer" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RotuloPericia1" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/LinhaPericia1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Perícia"
+
+[node name="Pericia1" type="OptionButton" parent="Centro/Painel/Coluna/Miolo/Pagina/LinhaPericia1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+
+[node name="LinhaPericia2" type="HBoxContainer" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RotuloPericia2" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina/LinhaPericia2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Especialização"
+
+[node name="Pericia2" type="OptionButton" parent="Centro/Painel/Coluna/Miolo/Pagina/LinhaPericia2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+
+[node name="AvisoAtributos" type="Label" parent="Centro/Painel/Coluna/Miolo/Pagina"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Dica"
+autowrap_mode = 3
+
+[node name="Rodape" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Escolher" type="Button" parent="Centro/Painel/Coluna/Rodape"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+text = "Escolher"
+
+[node name="Limpar" type="Button" parent="Centro/Painel/Coluna/Rodape"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+text = "Limpar"
+
+[node name="Fechar" type="Button" parent="Centro/Painel/Coluna/Rodape"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+text = "Depois"

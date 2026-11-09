@@ -18,6 +18,17 @@ enum Situacao { PLANEJADO, EM_ESPERA, FORA }
 @export var situacao: Situacao = Situacao.EM_ESPERA
 ## Por que está em espera (ou o que falta), em uma frase.
 @export var motivo: String
+## Atributos em que o talento deixa pôr o aumento (vazio = o talento não aumenta atributo).
+@export var atributos: Array[StringName] = []
+## Quantos pontos de atributo ele dá (1 na maioria; o Aumento de Valor de Habilidade dá 2).
+@export var pontos_de_atributo: int = 0
+## Pode ser escolhido mais de uma vez (só o Aumento de Valor de Habilidade).
+@export var repetivel: bool = false
+
+
+## O jogador pode escolher este talento no nível 4? Só os gerais já decididos como planejados.
+func escolhivel() -> bool:
+	return categoria == Categoria.GERAL and situacao == Situacao.PLANEJADO
 
 
 static func nome_da_categoria(valor: Categoria) -> String:

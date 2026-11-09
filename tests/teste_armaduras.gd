@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Teste das armaduras: as 21 do Empório, CA por categoria, limite de DES, Força mínima,
 ## treinamento (desvantagem / escudo sem CA), escudo, desvantagem no d20 e no herói.
 ## godot --headless --debug --path . --script res://tests/teste_armaduras.gd
@@ -6,7 +6,6 @@ extends SceneTree
 const PASTA := "res://data/armaduras/"
 const ROLAGENS := 400
 
-var _falhas := 0
 var _rng := RandomNumberGenerator.new()
 
 
@@ -144,11 +143,3 @@ func _testar_heroi_vestido() -> void:
 	await physics_frame
 	_checar(not material.get_shader_parameter(&"vestida"), "desvestiu: túnica volta ao normal")
 	cena.queue_free()
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

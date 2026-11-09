@@ -10,7 +10,7 @@ signal abrir_pedido(itens: Array[Item])
 signal perto_mudou(perto: bool)
 
 ## Pastas cujos .tres de Item formam o conteúdo (o baú nunca esvazia: dá cópias).
-@export var pastas: PackedStringArray = ["res://data/armas/", "res://data/armaduras/", "res://data/municoes/"]
+@export var pastas: PackedStringArray = ["res://data/armas/", "res://data/armaduras/", "res://data/municoes/", "res://data/itens/"]
 
 var _itens: Array[Item] = []
 var _corpos_perto: int = 0

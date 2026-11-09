@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Fatia 11c: maestrias de arma. Vantagem/desvantagem, Raspão, CD, condições (Derrubar com
 ## salvaguarda, Empurrar, Enfraquecer, Lentidão, Atormentar), um alvo por golpe + Trespassar,
 ## Gray Ooze Caído e Corte Duplo no golpe extra.
@@ -6,7 +6,6 @@ extends SceneTree
 
 const ROLAGENS := 2000
 
-var _falhas := 0
 var _rng := RandomNumberGenerator.new()
 var _guerreiro: ClasseRPG = load("res://data/classe_guerreiro.tres")
 
@@ -231,11 +230,3 @@ func _testar_corte_duplo() -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

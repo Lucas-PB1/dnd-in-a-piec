@@ -49,10 +49,27 @@ static func resolver_ataque(golpe: Golpe, ca: int, rng: RandomNumberGenerator,
 ## Dano de um acerto. Com vantagem (e sem desvantagem anulando), soma o dado extra.
 ## No crítico os dois dados dobram; o bônus de cada um não.
 static func dano_do_acerto(golpe: Golpe, rng: RandomNumberGenerator, critico: bool) -> int:
-	var dano := golpe.dano.rolar(rng, critico)
-	if teve_vantagem(golpe) and golpe.dano_extra != null:
-		dano += golpe.dano_extra.rolar(rng, critico)
+	var dano := _rolar_dano(golpe, rng, critico)
+	if golpe.selvagem:  # Atacante Selvagem: rola de novo e fica o maior
+		dano = maxi(dano, _rolar_dano(golpe, rng, critico))
+		golpe.efeito_usado.emit(Proficiencias.EFEITO_SELVAGEM)
+	if golpe.perfurador:
+		golpe.efeito_usado.emit(Proficiencias.EFEITO_PERFURADOR)
+	if golpe.investida_dano != null:  # Investida: +1d8 no ataque feito correndo
+		dano += golpe.investida_dano.rolar(rng, critico)
+		golpe.efeito_usado.emit(Proficiencias.EFEITO_INVESTIDA)
+	if golpe.veneno_extra != null:  # Veneno Básico: +1d4 de veneno
+		dano += golpe.veneno_extra.rolar(rng, critico)
+	if golpe.veneno_extra != null or golpe.veneno_potente != null:
+		golpe.efeito_usado.emit(Proficiencias.EFEITO_VENENO)  # o acerto gasta o veneno da arma
 	return maxi(dano, DANO_MINIMO)
+
+
+static func _rolar_dano(golpe: Golpe, rng: RandomNumberGenerator, critico: bool) -> int:
+	var dano := golpe.dano.rolar_perfurador(rng, critico) if golpe.perfurador else golpe.dano.rolar(rng, critico, golpe.rerrolar_um)
+	if teve_vantagem(golpe) and golpe.dano_extra != null:
+		dano += golpe.dano_extra.rolar(rng, critico, golpe.rerrolar_um)
+	return dano
 
 
 ## O ataque saiu com vantagem de verdade (as duas juntas se anulam, como no d20).

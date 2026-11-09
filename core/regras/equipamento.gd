@@ -43,8 +43,12 @@ static func bonus_ataque(ficha: Ficha, inventario: Inventario, com_arma: Arma) -
 ## O golpe da arma: desgaste da arma, desvantagem (armadura sem treinamento, arma Pesada
 ## sem Força) e o dado Versátil se a mão secundária estiver livre.
 static func golpe(ficha: Ficha, inventario: Inventario, com_arma: Arma, ataque_extra: bool = false) -> Golpe:
-	return ficha.golpe_com(com_arma, inventario.penalidade(com_arma), armadura(inventario),
+	var montado := ficha.golpe_com(com_arma, inventario.penalidade(com_arma), armadura(inventario),
 		duas_maos(inventario, com_arma), ataque_extra)
+	# Mestre em Escudos: com escudo na outra mão, o acerto corpo a corpo também golpeia com ele.
+	if ficha.tem_talento(Ficha.TALENTO_MESTRE_ESCUDOS) and escudo(inventario) != null and not com_arma.disparavel() and not ataque_extra:
+		montado.escudo_cd = ficha.cd_golpe_de_escudo()
+	return montado
 
 
 ## Texto do dano como no golpe (ex.: Espada Longa sem escudo = "1d10+3").

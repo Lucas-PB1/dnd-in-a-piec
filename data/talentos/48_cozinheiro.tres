@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_wbrwo")
 id = &"cozinheiro"
-nome = "Cozinheiro"
+nome = "Chef"
 resumo = "+1 de Constituição ou Sabedoria, comida que cura um pouco e petisco que dá vida temporária."
-motivo = "Espera descanso e vida temporária."
+motivo = "Decidido com o usuário: em espera (ver docs/talentos.md)."

@@ -4,7 +4,11 @@
 
 [resource]
 script = ExtResource("1_ta6wx")
+no_jogo = true
 id = &"observador"
 nome = "Observador"
-resumo = "+1 de Inteligência ou Sabedoria e bônus para perceber esconderijo e ler lábios."
-motivo = "Espera as perícias virarem teste."
+resumo = "+1 em Inteligência ou Sabedoria e uma perícia entre Intuição, Investigação e Percepção: proficiência ou, se já treina, Especialização."
+situacao = 0
+motivo = "Decidido com o usuário (ver docs/talentos.md)."
+atributos = Array[StringName]([&"inteligencia", &"sabedoria"])
+pontos_de_atributo = 1

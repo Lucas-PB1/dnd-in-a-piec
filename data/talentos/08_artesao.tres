@@ -4,8 +4,10 @@
 
 [resource]
 script = ExtResource("1_xg0bx")
+no_jogo = true
 id = &"artesao"
 nome = "Artesão"
 categoria = 0
-resumo = "Proficiência com ferramentas, desconto ao comprar e um item rápido por descanso."
-motivo = "Espera ferramentas, comércio e descanso."
+resumo = "A cada fase nova, um item aleatório do arsenal (arma ou armadura) cai na mochila, se houver lugar."
+situacao = 0
+motivo = "Decidido com o usuário. O desconto espera a loja existir; o item aleatório usa só itens que o jogo já tem."

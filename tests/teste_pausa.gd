@@ -1,8 +1,6 @@
-extends SceneTree
+extends TesteBase
 ## Testa o menu de pausa (Esc), o Salvar e o Continuar do título.
 ## godot --headless --debug --path . --script res://tests/teste_pausa.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -136,7 +134,11 @@ func _testar_esc_na_criacao() -> void:
 	_checar(criacao is TelaCriacao and criacao.visible, "Novo Jogo abre a criação")
 	criacao.get_node("%Atributos").pressed.emit()
 	await _esperar(2)
-	_checar(criacao.get_node("%PassoAtributos").visible, "o botão Atributos vai ao passo 2")
+	_checar(criacao.get_node("%PassoQuem").visible, "sem nome não passa do primeiro passo")
+	criacao.definir_nome("Aldric")
+	criacao.get_node("%Atributos").pressed.emit()
+	await _esperar(2)
+	_checar(criacao.get_node("%PassoAntecedente").visible, "com nome, o botão leva ao passo do antecedente")
 	_apertar(&"ui_cancel")
 	await _esperar(3)
 	_checar(criacao.get_node("%PassoQuem").visible, "Esc no passo 2 volta ao passo 1")
@@ -166,11 +168,3 @@ func _apertar(acao: StringName) -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await process_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

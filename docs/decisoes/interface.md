@@ -26,3 +26,14 @@ decisão deste tema mudar.** Telas em `ui/`; regra geral: a tela não conhece o 
 
 ## Compêndio
 - Abre pela tela de título e pela pausa. Lista à esquerda, página à direita; as abas são montadas a partir do que o jogador consegue acessar: Guerreiro e habilidades implementadas, pacotes iniciais selecionáveis, maestrias, armas, armaduras, escudos e munições. Antecedentes e talentos só ganham aba quando estiverem disponíveis no jogo (`no_jogo`); dados ainda documentais ficam ocultos.
+
+## Escolha de talento (nível 4)
+- `TelaTalento` (`ui/talento/`): lista dos talentos escolhíveis à esquerda; à direita o texto, botões dos atributos que o talento aumenta (cada clique soma um ponto), Escolher, Limpar e "Depois". Abre sozinha ao chegar no nível 4; se o jogador fechar, o menu de pausa mostra "Escolher talento" até ele escolher.
+
+## Criação com antecedente
+- Passos: Quem é você → Antecedente → Atributos → Perícias → Maestrias. O botão de avançar fica apagado e diz o que falta (nome, "Gaste todos os pontos", "Escolha 2 perícias", "Escolha 3 armas"); voltar é sempre livre e `_mostrar_passo` recusa pular.
+- Antecedente: lista à esquerda e texto à direita (perícias, ferramenta, talento de origem); um seletor com os 7 aumentos possíveis. As perícias do antecedente que estão na lista do Guerreiro vêm marcadas "(antecedente)" e não se desmarcam. Os cinco antecedentes cujo talento está em espera ficam fora.
+- Celular: o teclado só sobe quando o jogador toca no nome. O botão voltar com o campo em edição só fecha o teclado (`TelaCriacao._fechar_teclado`); Enter também fecha. No PC nada muda.
+
+## Controles de toque: tamanho e folga
+- Botões de ação com raio 30 a 40 e slots 30, analógico 58: dá para acertar com o polegar. `ControlesToque.MARGEM_BORDA` (20 px do jogo) é a folga mínima até a borda, também para posições salvas; no celular, `_folga_do_sistema()` soma a área ocupada pelo recorte e pelas barras. Atalhos novos: Sorte (G), Defesa (B), Investida (V), nos slots 4 a 6.

@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_lki1a")
+no_jogo = true
 id = &"empunhadura_dupla"
-nome = "Empunhadura Dupla"
-resumo = "A segunda arma não precisa ser Leve."
+nome = "Combatente com Duas Armas"
+resumo = "+1 em Força ou Destreza. Atacando com uma arma Leve, a segunda arma da outra mão pode ser qualquer arma corpo a corpo de uma mão."
 situacao = 0
 motivo = "Regra pequena de combate."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

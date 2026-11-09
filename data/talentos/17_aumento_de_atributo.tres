@@ -4,8 +4,12 @@
 
 [resource]
 script = ExtResource("1_r3rt2")
+no_jogo = true
 id = &"aumento_de_atributo"
-nome = "Aumento de Valor de Habilidade"
-resumo = "+2 num atributo, ou +1 em dois. Pode repetir."
+nome = "Aumento no Valor de Atributo"
+resumo = "+2 num atributo, ou +1 em dois (teto 20). Pode repetir."
 situacao = 0
 motivo = "A ficha já sabe somar o que o talento dá."
+atributos = Array[StringName]([&"forca", &"destreza", &"constituicao", &"inteligencia", &"sabedoria", &"carisma"])
+pontos_de_atributo = 2
+repetivel = true

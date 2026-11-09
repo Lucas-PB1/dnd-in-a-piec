@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_p3wm5")
+no_jogo = true
 id = &"sentinela"
 nome = "Sentinela"
-resumo = "Acerto zera o deslocamento do alvo por uma rodada."
+resumo = "+1 em Força ou Destreza. Acertar um alvo que está se movendo o deixa preso por 1 s."
 situacao = 0
 motivo = "O ataque ao sair do alcance espera essa regra."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

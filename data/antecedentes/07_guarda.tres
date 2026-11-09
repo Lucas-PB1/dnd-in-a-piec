@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_iw4nd")
+no_jogo = true
 id = &"guarda"
 nome = "Guarda"
 descricao = "Vigiou muralhas, portões e caravanas, sempre de olho em problemas."

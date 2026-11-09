@@ -12,6 +12,10 @@ const COR_PONTO_VAZIO := Color(0.15, 0.2, 0.17, 0.9)
 @onready var _folego: Label = %Folego
 @onready var _progressao: Label = %Progressao
 @onready var _surto: Label = %Surto
+@onready var _sorte: Label = %Sorte
+@onready var _investida: Label = %Investida
+@onready var _dados_de_vida: Label = %DadosDeVida
+@onready var _veneno: Label = %Veneno
 @onready var _barra_vida: ProgressBar = %BarraVida
 @onready var _barra_xp: ProgressBar = %BarraXp
 @onready var _pontos_folego: HBoxContainer = %Pontos
@@ -59,6 +63,28 @@ func _atualizar_pontos(restantes: int, total: int) -> void:
 		ponto.custom_minimum_size = Vector2(LADO_PONTO, LADO_PONTO)
 		ponto.color = COR_PONTO_CHEIO if i < restantes else COR_PONTO_VAZIO
 		_pontos_folego.add_child(ponto)
+
+
+## A linha dos dados de vida (Durável). Sem dados some.
+func mostrar_dados_de_vida(restantes: int, total: int) -> void:
+	_dados_de_vida.visible = total > 0
+	_dados_de_vida.text = "Dados de vida %d/%d" % [restantes, total]
+
+
+## A linha do veneno: doses potentes que restam e se a arma está envenenada. Sem nada some.
+func mostrar_veneno(doses: int, total: int, aplicado: bool) -> void:
+	_veneno.visible = total > 0 or aplicado
+	_veneno.text = "Veneno %d/%d%s" % [doses, total, " · na arma" if aplicado else ""]
+
+## A linha da Investida (talento): qual modo vale agora, empurrão ou dano. Sem o talento some.
+func mostrar_investida(tem: bool, empurra: bool) -> void:
+	_investida.visible = tem
+	_investida.text = "Investida: %s" % ("empurrão" if empurra else "dano")
+
+## A linha da Sorte (Sortudo): pontos que restam e se a próxima rolagem está com a sorte armada. Total 0 some.
+func mostrar_sorte(pontos: int, total: int, armada: bool) -> void:
+	_sorte.visible = total > 0
+	_sorte.text = "Sorte %d/%d%s" % [pontos, total, " · armada" if armada else ""]
 
 
 func mostrar_surto(nivel: int, disponivel: bool, ativo: bool = false) -> void:

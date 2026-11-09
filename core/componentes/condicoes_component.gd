@@ -15,9 +15,14 @@ const CAIDO := &"caido"
 const LENTO := &"lento"
 const ENFRAQUECIDO := &"enfraquecido"
 const ATORMENTADO := &"atormentado"
+## Sentinela: não tem ícone na arte (fica fora de ORDEM); o aviso na tela basta.
+const IMOBILIZADO := &"imobilizado"
+## Envenenador e Agarrador: também sem ícone na arte.
+const ENVENENADO := &"envenenado"
+const AGARRADO := &"agarrado"
 ## Ordem dos ícones na arte (assets/efeitos/condicoes.png) e na tela.
 const ORDEM: Array[StringName] = [CAIDO, LENTO, ENFRAQUECIDO, ATORMENTADO]
-const NOMES := {CAIDO: "Caído", LENTO: "Lento", ENFRAQUECIDO: "Enfraquecido", ATORMENTADO: "Atormentado"}
+const NOMES := {CAIDO: "Caído", LENTO: "Lento", ENFRAQUECIDO: "Enfraquecido", ATORMENTADO: "Atormentado", IMOBILIZADO: "Preso", ENVENENADO: "Envenenado", AGARRADO: "Agarrado"}
 
 ## Caído: fica deitado meia rodada (levantar gasta metade do deslocamento).
 const DURACAO_CAIDO := EscalaDnd.RODADA_SEGUNDOS / 2.0
@@ -25,8 +30,24 @@ const DURACAO_CAIDO := EscalaDnd.RODADA_SEGUNDOS / 2.0
 const DURACAO_RODADA := EscalaDnd.RODADA_SEGUNDOS
 ## Lentidão: -10 pés de deslocamento (não acumula).
 const REDUCAO_LENTIDAO_PES := 10.0
+## Imobilizado: o deslocamento zera (a redução é maior que qualquer deslocamento).
+const REDUCAO_IMOBILIZADO_PES := 1000.0
+## Sentinela: quanto tempo o alvo acertado em movimento fica preso (s).
+const DURACAO_IMOBILIZADO := 1.0
+## Envenenado: dura até o fim do próximo turno de quem envenenou (1 rodada).
+const DURACAO_ENVENENADO := EscalaDnd.RODADA_SEGUNDOS
+## Agarrado: dura até escapar (ou o herói se afastar); o limite evita ficar preso para sempre.
+const DURACAO_AGARRADO := 30.0
+## O agarrado tenta escapar a cada rodada.
+const INTERVALO_ESCAPE := EscalaDnd.RODADA_SEGUNDOS
+## Quem agarra solta o alvo se ficar mais longe que isto (pés): o dobro do alcance do soco, de folga para o recuo.
+const ALCANCE_DO_AGARRAO_PES := 10.0
+## Quanto o corpo precisa andar por quadro (px) para contar como "se movendo".
+const MOVIMENTO_MINIMO_PX := 0.2
 ## Empurrar: até 10 pés para longe de quem bateu.
 const EMPURRAO_PES := 10.0
+## Mestre em Escudos: o golpe de escudo empurra isto (pés).
+const EMPURRAO_ESCUDO_PES := 5.0
 ## Tamanho de cada ícone na arte e espaço entre eles (px).
 const TAMANHO_ICONE := 8
 const ESPACO_ICONE := 1
@@ -42,9 +63,19 @@ var rng := RandomNumberGenerator.new()
 var _restante: Dictionary[StringName, float] = {}
 ## Quem atormentou (instance_id): só ele tem vantagem no próximo ataque.
 var _atormentado_por: int = 0
+## Onde o dono estava no quadro anterior e se ele andou: o Sentinela só prende quem está se movendo.
+## Agarrado: quem agarrou (instance_id), a CD do teste de escape e quanto falta para a próxima tentativa.
+var _agarrado_por: int = 0
+var _cd_escape: int = 0
+var _tempo_escape: float = 0.0
+var _x_anterior: float = 0.0
+var _se_move: bool = false
 
 
 func _physics_process(delta: float) -> void:
+	_se_move = absf(global_position.x - _x_anterior) > MOVIMENTO_MINIMO_PX
+	_x_anterior = global_position.x
+	_tentar_escapar(delta)
 	if _restante.is_empty():
 		return
 	for condicao in _restante.keys():
@@ -63,13 +94,22 @@ func esta_caido() -> bool:
 	return tem(CAIDO)
 
 
+## O dono andou no último quadro?
+func esta_se_movendo() -> bool:
+	return _se_move
+
+
 ## Quanto o deslocamento cai agora (pés).
 func reducao_deslocamento_pes() -> float:
+	if tem(IMOBILIZADO) or tem(AGARRADO):
+		return REDUCAO_IMOBILIZADO_PES
 	return REDUCAO_LENTIDAO_PES if tem(LENTO) else 0.0
 
 
 ## Enfraquecer: o próximo ataque desta criatura tem desvantagem. Gasta a condição.
 func consumir_desvantagem() -> bool:
+	if tem(ENVENENADO):  # Envenenado: desvantagem em todos os ataques enquanto durar
+		return true
 	if not tem(ENFRAQUECIDO):
 		return false
 	_remover(ENFRAQUECIDO)
@@ -83,6 +123,8 @@ func consumir_desvantagem() -> bool:
 func preparar_golpe_recebido(golpe: Golpe) -> void:
 	if esta_caido():
 		golpe.vantagem = true
+	if tem(AGARRADO) and golpe.autor_id != 0 and golpe.autor_id == _agarrado_por:
+		golpe.vantagem = true  # Agarrador: vantagem contra quem agarrou
 	if tem(ATORMENTADO) and golpe.autor_id != 0 and golpe.autor_id == _atormentado_por:
 		golpe.vantagem = true
 		_remover(ATORMENTADO)
@@ -108,7 +150,90 @@ func aplicar_maestria(resultado: Combate.Resultado, lado: float) -> void:
 			if resultado.dano > 0:
 				_atormentado_por = golpe.autor_id
 				_impor(ATORMENTADO, DURACAO_RODADA)
+	_aplicar_talentos_do_golpe(resultado, lado)
 
+
+## Efeitos de talento do herói: empurrão (Brigão de Taverna, Esmagador), Lentidão e desvantagem
+## (Cortador) e a vantagem do crítico do Esmagador.
+func _aplicar_talentos_do_golpe(resultado: Combate.Resultado, lado: float) -> void:
+	var golpe := resultado.golpe
+	if golpe.empurrao_pes > 0.0:
+		empurrado.emit(Vector2(lado * EscalaDnd.pes_para_pixels(golpe.empurrao_pes), 0.0))
+		aviso.emit("Empurrado!")
+		golpe.efeito_usado.emit(golpe.empurrao_efeito)
+	if golpe.cortador and resultado.dano > 0:
+		_impor(LENTO, DURACAO_RODADA)
+		if resultado.critico:
+			_impor(ENFRAQUECIDO, DURACAO_RODADA)
+		golpe.efeito_usado.emit(Proficiencias.EFEITO_CORTADOR)
+	if golpe.esmagador and resultado.critico:
+		_atormentado_por = golpe.autor_id
+		_impor(ATORMENTADO, DURACAO_RODADA)
+	_aplicar_golpe_de_escudo(golpe, lado)
+	if golpe.agarra and resultado.acertou:
+		_agarrar(golpe)
+	if golpe.sentinela and resultado.dano > 0 and esta_se_movendo():  # Sentinela: acertou quem se movia
+		_impor(IMOBILIZADO, DURACAO_IMOBILIZADO)
+
+## Mestre em Escudos: o alvo faz salvaguarda de Força; falhou, é derrubado ou empurrado 5 pés.
+func _aplicar_golpe_de_escudo(golpe: Golpe, lado: float) -> void:
+	if golpe.escudo_cd <= 0:
+		return
+	golpe.efeito_usado.emit(Proficiencias.EFEITO_ESCUDO)
+	var bonus: int = bonus_salvaguardas.get(Atributos.FORCA, 0)
+	if Combate.passou_salvaguarda(bonus, golpe.escudo_cd, rng):
+		aviso.emit("Resistiu ao escudo!")
+	elif golpe.escudo_derruba:
+		_impor(CAIDO, DURACAO_CAIDO)
+	else:
+		empurrado.emit(Vector2(lado * EscalaDnd.pes_para_pixels(EMPURRAO_ESCUDO_PES), 0.0))
+		aviso.emit("Empurrado!")
+
+## Envenenador: salvaguarda de Constituição contra a CD do golpe. Falhou: devolve o dano de veneno e fica
+## Envenenado. Passou: 0. Quem chama soma o dano ao do acerto.
+func rolar_veneno(golpe: Golpe) -> int:
+	if golpe.veneno_potente == null or golpe.veneno_cd <= 0:
+		return 0
+	var bonus: int = bonus_salvaguardas.get(Atributos.CONSTITUICAO, 0)
+	if Combate.passou_salvaguarda(bonus, golpe.veneno_cd, rng):
+		aviso.emit("Resistiu ao veneno!")
+		return 0
+	_impor(ENVENENADO, DURACAO_ENVENENADO)
+	return golpe.veneno_potente.rolar(rng)
+
+
+## Agarrador: o soco acertado agarra o alvo. Ele não anda e tenta escapar a cada rodada.
+func _agarrar(golpe: Golpe) -> void:
+	_agarrado_por = golpe.autor_id
+	_cd_escape = golpe.agarra_cd
+	_tempo_escape = INTERVALO_ESCAPE
+	_impor(AGARRADO, DURACAO_AGARRADO)
+	golpe.efeito_usado.emit(Proficiencias.EFEITO_AGARRAR)
+
+
+## Agarrado: a cada rodada rola Força ou Destreza (o melhor) contra a CD. Solta se passar ou se quem agarrou
+## se afastou.
+func _tentar_escapar(delta: float) -> void:
+	if not tem(AGARRADO):
+		return
+	if _agarrador_longe():
+		_remover(AGARRADO)
+		return
+	_tempo_escape -= delta
+	if _tempo_escape > 0.0:
+		return
+	_tempo_escape = INTERVALO_ESCAPE
+	var bonus: int = maxi(bonus_salvaguardas.get(Atributos.FORCA, 0), bonus_salvaguardas.get(Atributos.DESTREZA, 0))
+	if Combate.passou_salvaguarda(bonus, _cd_escape, rng):
+		_remover(AGARRADO)
+		aviso.emit("Soltou-se!")
+
+
+func _agarrador_longe() -> bool:
+	var quem := instance_from_id(_agarrado_por) as Node2D
+	if quem == null:
+		return true
+	return global_position.distance_to(quem.global_position) > EscalaDnd.pes_para_pixels(ALCANCE_DO_AGARRAO_PES)
 
 # --- Interno --------------------------------------------------------------------
 

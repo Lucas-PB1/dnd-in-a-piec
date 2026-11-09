@@ -1,8 +1,6 @@
-extends SceneTree
+extends TesteBase
 ## Testa salvar e carregar: a ficha, a mochila (desgaste, pilhas, equipados) e a fase.
 ## godot --headless --debug --path . --script res://tests/teste_salvamento.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -73,11 +71,3 @@ func _nomes(inv: Inventario) -> Array[String]:
 	for item in inv.itens:
 		nomes.append(item.nome)
 	return nomes
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

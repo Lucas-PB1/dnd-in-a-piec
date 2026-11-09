@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Tiro à distância: K gasta munição e a arma fica; a mira sobe o arco; longe e perto
 ## dão desvantagem; os dois talentos de tiro tiram a parte que é deles.
 ## godot --headless --debug --path . --script res://tests/teste_tiro.gd
@@ -6,8 +6,6 @@ extends SceneTree
 const CENA_VOO := "res://features/arremesso/arma_arremessada.tscn"
 ## Mira para cima (graus) que leva a pedra da funda além do alcance normal antes de cair.
 const MIRA_LONGE := 20.0
-
-var _falhas := 0
 
 
 func _initialize() -> void:
@@ -326,11 +324,3 @@ func _no_chao(jogador: Jogador) -> void:
 		if jogador.is_on_floor():
 			return
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

@@ -4,9 +4,10 @@
 
 [resource]
 script = ExtResource("1_3ojgy")
+no_jogo = true
 id = &"atacante_selvagem"
 nome = "Atacante Selvagem"
 categoria = 0
-resumo = "Uma vez por rodada, rola o dano da arma duas vezes e fica o maior."
+resumo = "Uma vez por rodada, o primeiro acerto rola o dano duas vezes e fica com o maior."
 situacao = 0
 motivo = "Conta combinada."

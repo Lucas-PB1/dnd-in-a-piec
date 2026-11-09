@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Teste do golpe de espada e do boneco de treino (roda sem janela).
 ## godot --headless --debug --path . --script res://tests/teste_ataque.gd
 
@@ -8,7 +8,6 @@ const CA_BONECO := 10
 ## Em repouso a arma pode inclinar um pouco menos que o ângulo da animação (não entra no chão).
 const MARGEM_DESCANSO := 10.0
 
-var _falhas := 0
 var _jogador: Jogador
 var _boneco: BonecoTreino
 
@@ -219,14 +218,6 @@ func _esperar(quadros: int) -> void:
 		await physics_frame
 
 
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)
-
-
 ## Espera o ritmo da iniciativa liberar e aperta atacar.
 func _golpear() -> void:
 	for i in 120:
@@ -253,5 +244,3 @@ func _testar_ritmo_de_ataque() -> void:
 		await physics_frame
 	_checar(_jogador.nome_estado() == &"Atacando", "apertar logo antes de liberar golpeia assim que pode (buffer)")
 	await _esperar_golpe_acabar()
-
-

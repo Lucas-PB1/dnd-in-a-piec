@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Teste do Goblin Warrior: ficha do livro, arco curto de longe (sem desvantagem dentro
 ## de 80 pés; flechas não acabam), cimitarra de perto, Fuga Ágil e morte.
 ## godot --headless --debug --path . --script res://tests/teste_goblin_guerreiro.gd
@@ -11,7 +11,6 @@ const AO_ALCANCE := 30.0
 const VIDA_DE_TESTE := 999
 const POSICAO := Vector2(900, 288)
 
-var _falhas := 0
 var _jogador: Jogador
 var _goblin: Goblin
 
@@ -211,11 +210,3 @@ func _colocar_heroi_a(distancia: float) -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

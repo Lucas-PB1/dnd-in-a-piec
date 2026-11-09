@@ -4,9 +4,10 @@
 
 [resource]
 script = ExtResource("1_j4nm8")
+no_jogo = true
 id = &"brigao_de_taverna"
 nome = "Brigão de Taverna"
 categoria = 0
-resumo = "O soco passa de 1d1 para 1d4 e pode empurrar."
+resumo = "Sem arma, o soco causa 1d4 + Força, rerrola dados que tirarem 1 e empurra o alvo 5 pés (uma vez por rodada)."
 situacao = 0
 motivo = "Conta combinada."

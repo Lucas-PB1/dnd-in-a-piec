@@ -7,4 +7,4 @@ script = ExtResource("1_rcvkj")
 id = &"lider_inspirador"
 nome = "Líder Inspirador"
 resumo = "Um discurso curto dá vida temporária aos aliados."
-motivo = "Espera aliados e vida temporária."
+motivo = "Decidido com o usuário: em espera (ver docs/talentos.md)."

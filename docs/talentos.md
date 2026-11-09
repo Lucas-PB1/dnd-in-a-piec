@@ -1,5 +1,7 @@
 # Talentos do livro base
 
+> **Atenção:** este arquivo guarda as notas de planejamento e as decisões, em ordem. Os textos das seções antigas (antes de "Decisões do usuário") usam nomes e regras de planejamento (alguns de 2014). **Vale o que está no fim do arquivo (decisões confirmadas e nomes do livro) e a tabela de `tools/gerar_compendio.gd`**, conferida no PHB 2024 em português do site.
+
 Notas de como os talentos de **origem** e os **gerais** do livro base entram no jogo. Uma frase nossa por talento. A escolha fica de fora: o antecedente é que vai marcar o de origem depois.
 
 São 10 de origem e 42 gerais. Estilo de luta e dádiva épica ficam de fora. Magia fica de lado: a frase de cada um está no fim deste arquivo, e a gente só abre esse bloco quando a magia entrar. Os dois talentos de tiro já valem no disparo; a ficha começa sem nenhum talento.
@@ -84,7 +86,7 @@ Furtividade ainda não é teste. Não há descanso curto nem pontos de vida temp
 - **Artesão** (origem): proficiência com ferramentas, desconto ao comprar e um item rápido por descanso.
 - **Músico** (origem): proficiência com instrumento e uma canção que dá inspiração no fim do descanso.
 - **Cozinheiro** (geral): +1 de Constituição ou Sabedoria, comida que cura um pouco e petisco que dá vida temporária.
-- **Durável** (geral): +1 de Constituição, e cada dado de vida gasto num descanso recupera no mínimo o dobro do modificador.
+- **Durável** (geral): +1 de Constituição e uma ação bônus que gasta um dado de vida para curar (versão do PHB 2024).
 - **Líder Inspirador** (geral): um discurso curto dá vida temporária aos aliados.
 - **Curandeiro** (origem): o kit de curandeiro cura (no estilo do Fôlego) e estabiliza quem caiu.
 - **Envenenador** (geral): aplica veneno na arma. Também pede o tipo de dano veneno; `TiposDano` ainda não tem veneno.
@@ -92,3 +94,60 @@ Furtividade ainda não é teste. Não há descanso curto nem pontos de vida temp
 ## Fora por enquanto
 
 - **Combatente Montado** (geral): protege a montaria e ganha vantagem contra quem é menor. Não há montaria.
+
+## Decisões do usuário sobre os talentos de origem
+- **Iniciado em Magia**: em espera até a magia existir. Acólito, Guia e Sábio esperam junto.
+- **Músico**: em espera. A canção dá Inspiração a aliados e o jogo não tem aliados. O antecedente Artista espera junto.
+- **Curandeiro**: em espera. O kit de curandeiro cura um aliado. O antecedente Eremita espera junto.
+- **Artesão**: entra. 20% de desconto na loja (quando ela existir) e, a cada fase nova, um item aleatório cai na mochila, só entre os itens que o jogo já tem.
+- **Alerta, Resistente, Atacante Selvagem, Brigão de Taverna, Sortudo e Perito**: entram (contas acima); só documentados por enquanto.
+
+## Decisões do usuário sobre os talentos gerais (um por um)
+- **Levemente Armado**: em espera (o Guerreiro já tem o treinamento; só sobraria o +1 de atributo).
+- **Moderadamente Armado, Fortemente Armado e Treinamento com Armas Marciais**: em espera (mesmo motivo: o Guerreiro já tem os treinamentos).
+- **Resiliente, Aumento de Valor de Habilidade e Mestre em Armadura Média**: entram (planejados). O +1/+2 de atributo só vale a partir do nível 4; a Furtividade do Mestre em Armadura Média espera o teste.
+- **Mestre em Arma Grande**: entra. A arma Pesada soma a proficiência no dano. O golpe extra do crítico ou do abate reaproveita o ataque duplo do Surto de Ação (o próximo ataque sai em dobro).
+- **Mestre em Armadura Pesada, Cortador e Perfurador**: entram (planejados). Cortador reaproveita Lentidão e Enfraquecer das maestrias; Perfurador é parente do Atacante Selvagem.
+- **Esmagador e Empunhadura Dupla**: entram (planejados).
+- **Mestre em Escudo**: entra completo (+1 FOR, empurrão com o escudo por botão novo como ação bônus, soma do bônus do escudo na salvaguarda de Destreza).
+- **Investida**: entra. Um botão de alternância troca entre "Empurrão" e "Dano" (o botão mostra qual está ativo); correndo e acertando, aplica o escolhido (+1d8 ou empurrar 10 pés).
+- **Duelista Defensivo**: entra como botão de defesa. Janela de 0,75 s com +proficiência na CA; se apertado no instante exato do golpe, vira um parry com efeito visual. Tempo de espera de até 1 s.
+- **Sentinela**: entra. Um acerto num alvo que está se movendo o deixa imóvel por 1 s; se ele estava parado, não prende; se ele se mover sem ser acertado, segue normal.
+- **Mestre em Arma de Haste**: entra só com o golpe extra da outra ponta (como o ataque duplo das duas armas, com animação curta e dano menor, 1d4). O ataque a quem entra no alcance fica de fora.
+- **Atleta**: entra completo. Levanta de Caído muito mais rápido e sem tempo de recuperação ao cair ou ao tomar dano; escalada em paredes (andar em diagonal por murinhos baixos, pede suporte no cenário); pequeno aumento de velocidade.
+- **Agarrador**: entra com a condição nova Agarrado. O soco acertado agarra o alvo; o herói ataca com vantagem nele; enquanto o herói continua acertando, o alvo não sai. Os monstros precisam tentar escapar do agarrão e podem atacar mesmo agarrados.
+- **Atirador de Elite**: entra. O alcance longo deixa de dar desvantagem. A cobertura vira "o tiro atravessa obstáculos e outras criaturas, acertando também quem está atrás".
+- **Quando se escolhe um talento geral**: ao subir de nível, na subida para o nível 4. Hoje o jogo vai até o nível 3.
+- **Especialista em Besta**: entra completo (sem recarga, sem desvantagem de perto, ataque extra com a segunda besta).
+- **Especialista em Perícia**: entra (planejado). O efeito aparece conforme as perícias ganharem teste; hoje só a Percepção conta.
+- **Ator**: em espera (não há diálogo, disfarce nem NPCs).
+- **Mente Aguçada**: em espera (perícias de conhecimento sem teste; o "estudo" se parece com a Percepção passiva).
+- **Observador**: entra (planejado). A Percepção passiva do herói sobe; ler lábios fica de fora.
+- **Furtivo**: em espera (o herói não se esconde; sistema novo).
+- **Cozinheiro**: em espera (sem descanso curto, vida temporária nem comida).
+- **Durável**: entra como talento individual (não preso ao Guerreiro). Versão do PHB 2024: +1 de Constituição e uma ação bônus que gasta um dado de vida e recupera PV pelo resultado. O herói tem tantos dados de vida quanto o nível. Falta confirmar se o resultado soma o modificador de CON e a regra de vantagem nas salvaguardas contra a morte (o jogo não tem). Correção: o "mínimo de 2× o modificador" era do livro de 2014.
+- **Líder Inspirador**: em espera (sem aliados nem vida temporária).
+- **Envenenador**: entra, junto com o item **Veneno Básico** (PHB 2024: 100 PO; ação bônus para passar numa arma cortante ou perfurante; dura 1 minuto ou até causar dano; +1d4 de veneno). O talento: +1 DES ou INT, kit de envenenador, aplicar com ação bônus; quem sofre o dano faz salvaguarda de CON (CD 8 + mod. + proficiência) ou leva 2d8 de veneno e fica Envenenado até o fim do próximo turno do herói; ignora resistência a veneno. Conferir o texto no livro (uma fonte parece misturar 2014).
+- **Os 9 talentos de magia** (Adepto Elemental, Tocado pela Fada, Tocado pela Sombra, Telecinético, Telepata, Conjurador de Rituais, Franco-atirador de Magia, Conjurador de Guerra, Matador de Magos): em espera até a magia entrar no jogo.
+- **Combatente Montado**: em espera (não há montarias).
+
+### Resumo dos talentos gerais
+- **Entram (planejados):** Veloz, Resiliente, Aumento de Valor de Habilidade, Mestre em Armadura Média, Mestre em Arma Grande, Mestre em Armadura Pesada, Cortador, Perfurador, Esmagador, Empunhadura Dupla, Mestre em Escudo, Investida, Duelista Defensivo, Sentinela, Mestre em Arma de Haste, Atleta, Agarrador, Atirador de Elite, Especialista em Besta, Especialista em Perícia, Observador, Durável e Envenenador.
+- **Em espera:** Levemente Armado, Moderadamente Armado, Fortemente Armado, Treinamento com Armas Marciais, Ator, Mente Aguçada, Furtivo, Cozinheiro, Líder Inspirador, Combatente Montado e os 9 de magia.
+
+## Antecedentes (decisão do usuário)
+- **Entram (planejados), 11:** Artesão, Charlatão, Criminoso, Fazendeiro, Guarda, Mercador, Nobre, Marinheiro, Escriba, Soldado e Viajante (seus talentos de origem entram).
+- **Em espera, 5:** Acólito, Guia e Sábio (Iniciado em Magia), Artista (Músico) e Eremita (Curandeiro).
+- O Compêndio só mostra antecedentes e talentos quando o jogador conseguir escolhê-los (passo de criação com antecedente: ver `docs/pendencias.md`).
+
+## Efeitos dos talentos de origem (confirmados com o usuário)
+- **Alerta**: soma o bônus de proficiência (+2) à iniciativa; com DES +2 o intervalo de ataque vai de 0,8 s para 0,6 s.
+- **Resistente**: vida máxima +2 por nível (nível 4: +8).
+- **Atacante Selvagem**: uma vez por rodada (1,5 s), o primeiro acerto rola o dano duas vezes e fica o maior (no crítico, o dano dobrado também entra na comparação).
+- **Brigão de Taverna**: soco desarmado 1d4 + Força, rerrola dados de dano que tirem 1 no soco, e empurra 5 pés uma vez por rodada. Só vale sem arma na mão.
+- **Sortudo**: 2 pontos de sorte por fase (a proficiência). Um botão arma a sorte (como o Surto de Ação): a próxima rolagem do herói (ataque, salvaguarda ou teste) rola dois d20 e fica o melhor. Os pontos voltam a cada fase nova.
+- **Artesão**: a cada fase nova cai um item aleatório na mochila, de qualquer arma ou armadura do arsenal (se a mochila estiver cheia, não entra). O desconto de 20% espera a loja.
+- **Perito**: o jogador marca 3 perícias extras no passo Perícias da criação (entre as 18 do jogo, menos as já treinadas). Ferramentas não contam.
+
+## Nomes do livro (PHB 2024 em português)
+Os nomes do jogo seguem o livro: Robusto (era Resistente), Habilidoso (Perito), Retalhador (Cortador), Combatente com Duas Armas (Empunhadura Dupla), Mestre em Armas Grandes, Mestre em Armaduras Médias, Mestre em Armaduras Pesadas, Mestre em Escudos, Mestre em Armas de Haste, Especialista em Bestas, Mente Afiada, Chef (era Cozinheiro), Treinado em Armaduras Leves, Médias e Pesadas, Aumento no Valor de Atributo, Tocado pelas Fadas e pelas Sombras, Conjurador Ritualista, Atirador Arcano e Telepático. Os textos acima ainda usam os nomes antigos nas frases; vale o do livro. Saves antigos trocam os nomes sozinhos (`Salvamento.NOMES_ANTIGOS_DE_TALENTOS`).

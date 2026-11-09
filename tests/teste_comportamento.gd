@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Comportamento dos monstros: o aviso (brilho e pausa) antes do golpe, e a patrulha de quem
 ## perdeu o alvo. godot --headless --debug --path . --script res://tests/teste_comportamento.gd
 
@@ -16,7 +16,6 @@ const QUADROS_PATRULHA := 720
 ## A patrulha é de 15 pés (96 px); aceita um pouco além por causa do tempo de parar.
 const MARGEM_PATRULHA := 24.0
 
-var _falhas := 0
 var _jogador: Jogador
 var _cena: Main
 
@@ -168,11 +167,3 @@ func _criar(caminho: String) -> Node2D:
 ## Herói à esquerda da criatura, no chão.
 func _colocar_heroi_a(criatura: Node2D, distancia: float) -> void:
 	_jogador.posicionar_no_inicio(Vector2(criatura.global_position.x - distancia, _jogador.global_position.y))
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

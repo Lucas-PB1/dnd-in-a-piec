@@ -4,7 +4,11 @@
 
 [resource]
 script = ExtResource("1_h0w0c")
+no_jogo = true
 id = &"duravel"
 nome = "Durável"
-resumo = "+1 de Constituição; cada dado de vida gasto num descanso recupera no mínimo o dobro do modificador."
-motivo = "Espera o descanso curto."
+resumo = "+1 em Constituição. Um dado de vida por nível, que voltam a cada fase. Uma ação bônus (tecla H) gasta um e cura o valor rolado."
+situacao = 0
+motivo = "Decidido: entra como talento individual; exige o sistema de dados de vida (um por nível)."
+atributos = Array[StringName]([&"constituicao"])
+pontos_de_atributo = 1

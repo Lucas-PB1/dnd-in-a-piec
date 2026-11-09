@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_oweop")
+no_jogo = true
 id = &"mercador"
 nome = "Mercador"
 descricao = "Negociou em feiras e rotas comerciais, de olho no lucro."

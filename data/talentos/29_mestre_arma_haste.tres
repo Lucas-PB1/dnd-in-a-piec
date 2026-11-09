@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_rom2v")
+no_jogo = true
 id = &"mestre_arma_haste"
-nome = "Mestre em Arma de Haste"
-resumo = "Golpe extra com a outra ponta na ação bônus."
+nome = "Mestre em Armas de Haste"
+resumo = "+1 em Força ou Destreza. Com Bordão, Lança ou arma Pesada com Alcance, o segundo ataque do combo é um golpe extra de 1d4 contundente com a outra ponta (ação bônus)."
 situacao = 0
 motivo = "O ataque ao entrar no alcance espera essa regra."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

@@ -1,9 +1,7 @@
-extends SceneTree
+extends TesteBase
 ## Dano e morte do herói: ao apanhar toca a animação "dano"; ao morrer toca a "morte" (sem arma na
 ## mão) e só depois a tela "Você caiu!" abre; reviver volta tudo ao normal.
 ## godot --headless --debug --path . --script res://tests/teste_heroi_dano_morte.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -47,11 +45,3 @@ func _rodar() -> void:
 	await process_frame
 	print("PASSOU: dano e morte do herói" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
 	quit(_falhas)
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

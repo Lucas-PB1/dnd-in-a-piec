@@ -4,7 +4,11 @@
 
 [resource]
 script = ExtResource("1_jn7w4")
+no_jogo = true
 id = &"envenenador"
 nome = "Envenenador"
-resumo = "Aplica veneno na arma."
-motivo = "Espera o tipo de dano veneno em TiposDano."
+resumo = "+1 em Destreza ou Inteligência. Duas doses de veneno por fase: uma ação bônus (tecla N) passa a dose na arma e o acerto força salvaguarda de Constituição; falhou, leva 2d8 de veneno e fica Envenenado (desvantagem nos ataques). Também usa o item Veneno Básico."
+situacao = 0
+motivo = "Decidido: entra com o item Veneno Básico; exige o tipo veneno e a condição Envenenado."
+atributos = Array[StringName]([&"destreza", &"inteligencia"])
+pontos_de_atributo = 1

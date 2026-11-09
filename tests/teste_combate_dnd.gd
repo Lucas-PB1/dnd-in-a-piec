@@ -1,11 +1,10 @@
-extends SceneTree
+extends TesteBase
 ## Teste das regras puras de combate: dados com bônus, ataque contra CA, crítico,
 ## salvaguarda, ficha (proficiência, CA, ataque) e bloco de criatura (Gray Ooze).
 ## godot --headless --debug --path . --script res://tests/teste_combate_dnd.gd
 
 const ROLAGENS := 400
 
-var _falhas := 0
 var _rng := RandomNumberGenerator.new()
 
 
@@ -207,11 +206,3 @@ func _testar_dano_extra_com_vantagem() -> void:
 	var anulada := Combate.dano_do_acerto(golpe, rng, false)
 	rng.seed = 11
 	_checar(anulada == Dado.de_texto("1d6+2").rolar(rng, false), "vantagem e desvantagem juntas anulam o 1d4")
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

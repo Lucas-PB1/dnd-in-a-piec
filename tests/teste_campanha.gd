@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Campanha: as cinco fases têm porta, pontos de armadilha de sobra e a cota certa; a porta
 ## barra enquanto a cota está viva e abre quando morre; a última fase mostra a vitória e
 ## "Jogar de novo" volta à primeira. godot --headless --debug --path . --script res://tests/teste_campanha.gd
@@ -20,7 +20,6 @@ const ATLAS_PLATAFORMA := 2
 const MAIOR_BURACO := 3
 const VIZINHANCA := 2
 
-var _falhas := 0
 var _main: Main
 var _jogador: Jogador
 
@@ -185,11 +184,3 @@ func _achar_vitoria() -> TelaVitoria:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

@@ -24,6 +24,18 @@ signal surto_acao_pedido
 signal mente_tatica_pedido
 ## O Surto ficou ativo (aura ligada, o próximo ataque sai em dobro) ou acabou: a interface acende o botão.
 signal surto_ativo_mudou(ativo: bool)
+## Os pontos de sorte ou a sorte armada mudaram: a interface mostra e acende o botão.
+signal sorte_mudou(pontos: int, total: int, armada: bool)
+## A janela de defesa do Duelista Defensivo abriu, fechou ou voltou a ficar pronta (botão da barra).
+signal defesa_mudou(ativa: bool, pronta: bool)
+## A defesa do Duelista Defensivo fez um golpe errar: parry.
+signal aparou
+## O modo da Investida mudou: true = empurra, false = dano extra.
+signal investida_mudou(empurra: bool)
+## Os dados de vida (Durável) mudaram.
+signal dados_de_vida_mudou(restantes: int, total: int)
+## O veneno (Envenenador ou o item) mudou: doses que restam e se a arma está envenenada agora.
+signal veneno_mudou(doses: int, total: int, aplicado: bool)
 ## Atualização de nível e XP para o HUD.
 signal progressao_mudou(nivel: int, experiencia: int, proximo_nivel: int)
 ## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
@@ -97,6 +109,26 @@ var _surto_armado: bool = false
 var _golpe_do_surto_pendente: bool = false
 ## O herói está morrendo (animação de morte): não responde a nada até reviver().
 var _morrendo: bool = false
+## Segundos até cada efeito de talento por rodada voltar a valer (efeito -> tempo).
+var _recarga_efeito: Dictionary[StringName, float] = {}
+## O próximo golpe de escudo derruba (senão empurra); alterna a cada uso.
+var _escudo_derruba_agora: bool = false
+## Sortudo: pontos de sorte que restam nesta fase e se a próxima rolagem está com a sorte armada.
+## Duelista Defensivo: tempo que falta da janela de defesa e da espera depois dela.
+## Durável: dados de vida que restam. Envenenador: doses potentes e o veneno que está na arma agora.
+var _dados_vida: int = 0
+var _doses_veneno: int = 0
+var _veneno_na_arma: StringName = &""
+var _tempo_veneno: float = 0.0
+var _tempo_defesa: float = 0.0
+var _recarga_defesa: float = 0.0
+## Investida: o modo escolhido e quanto o herói já correu em linha reta (px).
+var _investida_empurra: bool = false
+var _corrida_reta_px: float = 0.0
+## O "cabo" da haste (Mestre em Armas de Haste): o soco feito com a outra ponta, montado uma vez.
+var _cabo_da_haste_arma: Arma
+var _pontos_sorte: int = 0
+var _sorte_armada: bool = false
 var _contador_coyote: float = 0.0
 var _contador_buffer: float = 0.0
 var _pedido_corrida: int = 0
@@ -131,6 +163,7 @@ func _ready() -> void:
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	_vida.morreu.connect(_morrer, CONNECT_DEFERRED)  # depois que o golpe terminar de ser tratado
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
+	_defesa.aparou.connect(_ao_aparar)
 	inventario.mudou.connect(_atualizar_equipamento)
 	configurar_ficha(Ficha.new(classe, classe.atributos_sugeridos))
 	_maquina.iniciar(self)
@@ -142,9 +175,13 @@ func _physics_process(delta: float) -> void:
 		return
 	_atualizar_contadores(delta)
 	_atualizar_invencibilidade(delta)
+	_passar_recargas_de_talento(delta)
+	_passar_defesa(delta)
+	_passar_veneno(delta)
 	_maquina.processar_fisica(delta)
 	move_and_slide()
 	_checar_aterrissagem()
+	_medir_corrida(delta)
 	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
 	_animacao.mirando = nome_estado() == &"Arremessando" and disparo_na_mao()
 	_animacao.animacao_do_golpe = ANIMACAO_CORTE if _ataque.corpo_acompanha() else &""
@@ -176,6 +213,18 @@ func configurar_ficha(nova: Ficha) -> void:
 	_vida.configurar(ficha.vida_maxima())
 	_atualizar_equipamento()
 	_repor_folego()
+	_repor_sorte()
+	_repor_dados_e_veneno()
+	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
+
+
+## A ficha mudou depois de pronta (talento ou aumento de atributo): recalcula vida, CA e HUD.
+func ao_mudar_ficha() -> void:
+	if ficha == null:
+		return
+	_vida.aumentar_maximo(ficha.vida_maxima())
+	_atualizar_equipamento()
+	_repor_dados_e_veneno()
 	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
 
 
@@ -247,6 +296,14 @@ func direcao() -> float:
 	return Input.get_axis("mover_esquerda", "mover_direita")
 
 
+## Atleta: dá para escalar agora? Tem o talento, empurra o analógico ou a seta para uma parede e encosta nela.
+func pode_escalar() -> bool:
+	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_ATLETA) or not is_on_wall():
+		return false
+	var dir := direcao()
+	return dir != 0.0 and get_wall_normal().x * dir < 0.0
+
+
 ## Direção do pedido de corrida neste quadro (-1 ou 1), ou 0: toque duplo ou "correr" segurado.
 func pediu_corrida() -> int:
 	return _pedido_corrida
@@ -265,7 +322,10 @@ func velocidade_andar() -> float:
 
 ## Correndo = Disparada (Dash) do D&D: o dobro do deslocamento.
 func velocidade_corrida() -> float:
-	return velocidade_andar() * EscalaDnd.MULTIPLICADOR_DISPARADA
+	var extra := 0.0
+	if ficha != null and ficha.tem_talento(Ficha.TALENTO_INVESTIDA):  # Disparada Aprimorada: +10 pés na corrida
+		extra = EscalaDnd.deslocamento_para_velocidade(DISPARADA_APRIMORADA_PES)
+	return velocidade_andar() * EscalaDnd.MULTIPLICADOR_DISPARADA + extra
 
 
 ## Segundos entre golpes, pela iniciativa (ex.: +2 -> 0,8 s).
@@ -330,11 +390,13 @@ func arma_secundaria() -> Arma:
 func quer_golpe_extra() -> bool:
 	if not _combo_pedido or _golpe_extra:
 		return false
+	if _extra_com_cabo():  # Mestre em Armas de Haste: a outra ponta da haste
+		return acao_bonus_livre()
 	var principal := inventario.equipado(Item.ESPACO_MAO) as Arma
 	var segunda := arma_secundaria()
 	if principal == null or principal.disparavel() or segunda == null or segunda.disparavel():
 		return false
-	var leves := principal.leve and segunda.leve
+	var leves := principal.leve and (segunda.leve or ficha.tem_talento(Ficha.TALENTO_EMPUNHADURA_DUPLA))
 	return leves and (_tem_corte_duplo() or acao_bonus_livre())
 
 
@@ -364,6 +426,8 @@ func ganhar_experiencia(quantidade: int) -> int:
 	if novos_niveis > 0:
 		_vida.aumentar_maximo(ficha.vida_maxima())
 		_texto.mostrar("Nível %d!" % ficha.nivel, TextoFlutuanteComponent.COR_CURA)
+		_dados_vida = mini(_dados_vida + novos_niveis, ficha.dados_de_vida())  # cada nível traz mais um dado de vida
+		dados_de_vida_mudou.emit(_dados_vida, ficha.dados_de_vida())
 	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
 	return ficha.nivel - nivel_anterior
 
@@ -439,11 +503,28 @@ func rolar_teste_pericia(pericia: StringName, cd: int,
 	var pode_usar_mente := _mente_tatica_ligada and ficha.nivel >= Ficha.NIVEL_HABILIDADES_GUERREIRO
 	var resultado := Pericia.resolver_teste(ficha.bonus_pericia(pericia), cd, pode_usar_mente,
 		pode_usar_mente and _usos_folego > 0, fonte)
+	if not resultado.passou and _gastar_sorte():  # Sortudo: um d20 novo, fica o melhor
+		var segundo := Pericia.resolver_teste(ficha.bonus_pericia(pericia), cd, false, false, fonte)
+		if segundo.passou:
+			resultado = segundo
 	if resultado.usou_mente_tatica:
 		_usos_folego -= 1
 		_avisar_folego()
 		_texto.mostrar("Mente Tática +%d" % resultado.d10, TextoFlutuanteComponent.COR_CURA)
 	return resultado
+
+
+## Artesão: a cada fase nova cai um item aleatório do arsenal na mochila. Mochila cheia = não entra.
+func ganhar_item_do_artesao() -> void:
+	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_ARTESAO):
+		return
+	var item := ItemAleatorio.sortear(_rng_habilidades)
+	if item == null:
+		return
+	if inventario.adicionar(item):
+		avisar("Artesão: %s" % item.nome)
+	else:
+		avisar("Mochila cheia")
 
 
 ## Descanso longo ao entrar numa fase nova: vida, Fôlego e ação bônus recuperados.
@@ -452,6 +533,8 @@ func descansar_longo() -> void:
 	_tempo_desde_acao_bonus = INF
 	_vida.curar_tudo()
 	_repor_folego()
+	_repor_sorte()
+	_repor_dados_e_veneno()
 
 
 ## Second Wind: ação bônus, cura 1d10+nível, gasta um uso mesmo com a vida cheia.
@@ -484,6 +567,52 @@ func _pode_usar_folego() -> bool:
 func _repor_folego() -> void:
 	_usos_folego = usos_folego_total()
 	_avisar_folego()
+
+
+## Pontos de sorte do Sortudo: a proficiência. Zero sem o talento.
+func pontos_sorte_total() -> int:
+	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_SORTUDO):
+		return 0
+	return Ficha.BONUS_PROFICIENCIA
+
+
+func pontos_sorte() -> int:
+	return _pontos_sorte
+
+
+func sorte_armada() -> bool:
+	return _sorte_armada
+
+
+## Arma a sorte: a próxima rolagem do herói (ataque ou teste) rola um d20 a mais e fica com o melhor.
+## false se não tem o talento, não tem ponto, já está armada ou o herói caiu.
+func armar_sorte() -> bool:
+	if pontos_sorte_total() == 0 or _pontos_sorte <= 0 or _sorte_armada or _vida.esta_morto():
+		return false
+	_sorte_armada = true
+	_avisar_sorte()
+	_texto.mostrar("Sorte!", TextoFlutuanteComponent.COR_CURA)
+	return true
+
+
+## Se a sorte está armada, gasta o ponto e diz que a rolagem vai usá-la.
+func _gastar_sorte() -> bool:
+	if not _sorte_armada:
+		return false
+	_sorte_armada = false
+	_pontos_sorte -= 1
+	_avisar_sorte()
+	return true
+
+
+func _repor_sorte() -> void:
+	_pontos_sorte = pontos_sorte_total()
+	_sorte_armada = false
+	_avisar_sorte()
+
+
+func _avisar_sorte() -> void:
+	sorte_mudou.emit(_pontos_sorte, pontos_sorte_total(), _sorte_armada)
 
 
 func _avisar_folego() -> void:
@@ -573,6 +702,7 @@ func criar_golpe() -> Golpe:
 ## Volta para o início com a vida cheia (ex.: "Tentar de novo" depois de cair).
 func reviver() -> void:
 	_apagar_surto()
+	_cancelar_defesa()
 	_morrendo = false
 	_animacao.morrendo = false
 	_mostrar_equipamento(true)
@@ -582,6 +712,8 @@ func reviver() -> void:
 	_tempo_desde_acao_bonus = INF
 	_vida.curar_tudo()
 	_repor_folego()
+	_repor_sorte()
+	_repor_dados_e_veneno()
 	reaparecer()
 
 
@@ -649,6 +781,16 @@ func _atualizar_contadores(delta: float) -> void:
 		surto_acao_pedido.emit()
 	if Input.is_action_just_pressed("mente_tatica"):
 		mente_tatica_pedido.emit()
+	if Input.is_action_just_pressed("sorte"):
+		armar_sorte()
+	if Input.is_action_just_pressed("defesa"):
+		defender()
+	if Input.is_action_just_pressed("dado_de_vida"):
+		gastar_dado_de_vida()
+	if Input.is_action_just_pressed("veneno"):
+		aplicar_veneno()
+	if Input.is_action_just_pressed("investida"):
+		alternar_investida()
 	# Toque duplo para correr, ou segurar "correr" (Shift; o analógico na borda).
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()
@@ -706,6 +848,7 @@ func _morrer() -> void:
 	_defesa.invulneravel = true
 	comecou_a_morrer.emit()
 	_apagar_surto()
+	_cancelar_defesa()
 	_ataque.cancelar()
 	_morrendo = true
 	_animacao.morrendo = true
@@ -740,9 +883,224 @@ func _atualizar_equipamento() -> void:
 	if ficha == null:
 		return
 	_defesa.classe_armadura = classe_armadura()
+	_defesa.reducao_fisica = _reducao_fisica()
+	inventario.segunda_arma_livre = ficha.tem_talento(Ficha.TALENTO_EMPUNHADURA_DUPLA)
 	_animacao.vestir(armadura_atual())
 	_escudo.equipar(escudo_atual())
 
+
+## Durável: gasta um dado de vida (ação bônus) e cura o valor rolado. false se não pode agora.
+func gastar_dado_de_vida() -> bool:
+	if ficha == null or ficha.dados_de_vida() <= 0 or _vida.esta_morto():
+		return false
+	if _dados_vida <= 0:
+		avisar("Sem dados de vida")
+		return false
+	if _vida.vida_atual >= _vida.vida_maxima:
+		avisar("Vida cheia")
+		return false
+	if not acao_bonus_livre():
+		avisar("Ação bônus")
+		return false
+	_dados_vida -= 1
+	_tempo_desde_acao_bonus = 0.0
+	var ganho := _vida.curar(_rng_folego.randi_range(1, classe.dado_vida))
+	_animacao.pulso_cura()
+	_texto.mostrar_cura("Dado de vida +%d" % ganho)
+	dados_de_vida_mudou.emit(_dados_vida, ficha.dados_de_vida())
+	return true
+
+
+func dados_de_vida_restantes() -> int:
+	return _dados_vida
+
+
+## Envenenador: passa uma dose potente na arma (ação bônus). Sem dose, usa o item Veneno Básico da mochila.
+func aplicar_veneno() -> bool:
+	if ficha == null or _vida.esta_morto() or _veneno_na_arma != &"":
+		return false
+	var arma := arma_atual()
+	if arma == null or arma.categoria == &"":
+		avisar("Veneno: precisa de arma")
+		return false
+	var tipo := _tipo_de_veneno_disponivel(arma)
+	if tipo == &"":
+		avisar("Sem veneno")
+		return false
+	if not acao_bonus_livre():
+		avisar("Ação bônus")
+		return false
+	if tipo == VENENO_POTENTE:
+		_doses_veneno -= 1
+	else:
+		inventario.extrair_uma(_item_veneno_basico())
+	_veneno_na_arma = tipo
+	_tempo_veneno = DURACAO_VENENO
+	_tempo_desde_acao_bonus = 0.0
+	_texto.mostrar("Arma envenenada", COR_VENENO)
+	_avisar_veneno()
+	return true
+
+
+func veneno_na_arma() -> StringName:
+	return _veneno_na_arma
+
+
+func doses_de_veneno() -> int:
+	return _doses_veneno
+
+
+## Há veneno para passar agora? O potente (Envenenador) vem primeiro; o básico só em arma cortante ou perfurante.
+func _tipo_de_veneno_disponivel(arma: Arma) -> StringName:
+	if _doses_veneno > 0:
+		return VENENO_POTENTE
+	var serve := arma.tipo_dano == TiposDano.CORTANTE or arma.tipo_dano == TiposDano.PERFURANTE
+	if serve and _item_veneno_basico() != null:
+		return VENENO_BASICO
+	return &""
+
+
+## Tem o item Veneno Básico na mochila? (a interface mostra o botão Veneno só se há o que passar)
+func tem_item_veneno() -> bool:
+	return _item_veneno_basico() != null
+
+
+func _item_veneno_basico() -> Item:
+	for item in inventario.itens:
+		if item.nome == NOME_VENENO_BASICO:
+			return item
+	return null
+
+
+func _aplicar_veneno_ao_golpe(golpe: Golpe) -> void:
+	if _veneno_na_arma == VENENO_POTENTE:
+		golpe.veneno_potente = Dado.new(Ficha.DADOS_VENENO_POTENTE, Ficha.FACES_VENENO_POTENTE)
+		golpe.veneno_cd = ficha.cd_veneno()
+	elif _veneno_na_arma == VENENO_BASICO:
+		golpe.veneno_extra = Dado.new(1, Ficha.FACES_VENENO_BASICO)
+
+
+func _apagar_veneno_da_arma() -> void:
+	_veneno_na_arma = &""
+	_tempo_veneno = 0.0
+	_avisar_veneno()
+
+
+func _passar_veneno(delta: float) -> void:
+	if _tempo_veneno > 0.0:
+		_tempo_veneno -= delta
+		if _tempo_veneno <= 0.0:
+			_apagar_veneno_da_arma()
+
+
+func _avisar_veneno() -> void:
+	veneno_mudou.emit(_doses_veneno, ficha.doses_de_veneno() if ficha else 0, _veneno_na_arma != &"")
+
+
+## Dados de vida e doses de veneno voltam inteiros a cada fase nova (e quando a ficha muda).
+func _repor_dados_e_veneno() -> void:
+	_dados_vida = ficha.dados_de_vida() if ficha else 0
+	_doses_veneno = ficha.doses_de_veneno() if ficha else 0
+	_apagar_veneno_da_arma()
+	dados_de_vida_mudou.emit(_dados_vida, _dados_vida)
+
+## Duelista Defensivo: abre a janela de defesa (+proficiência na CA contra golpes corpo a corpo). Pede uma
+## arma de acuidade na mão. false se não pode agora.
+func defender() -> bool:
+	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_DUELISTA_DEFENSIVO) or _tempo_defesa > 0.0 or _recarga_defesa > 0.0 or _vida.esta_morto():
+		return false
+	var arma := arma_atual()
+	if arma == null or not arma.acuidade:
+		avisar("Defesa: arma de acuidade")
+		return false
+	_tempo_defesa = DURACAO_DEFESA
+	_defesa.bonus_ca_corpo_a_corpo = Ficha.BONUS_PROFICIENCIA
+	_aura.pulso(COR_PARRY, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
+	defesa_mudou.emit(true, false)
+	return true
+
+
+func defesa_ativa() -> bool:
+	return _tempo_defesa > 0.0
+
+
+func defesa_pronta() -> bool:
+	return _tempo_defesa <= 0.0 and _recarga_defesa <= 0.0
+
+
+## Fecha a janela de defesa na hora (o herói caiu ou voltou): sem bônus de CA sobrando nem espera.
+func _cancelar_defesa() -> void:
+	_tempo_defesa = 0.0
+	_recarga_defesa = 0.0
+	_defesa.bonus_ca_corpo_a_corpo = 0
+	defesa_mudou.emit(false, true)
+
+
+func _passar_defesa(delta: float) -> void:
+	if _tempo_defesa > 0.0:
+		_tempo_defesa -= delta
+		if _tempo_defesa <= 0.0:
+			_defesa.bonus_ca_corpo_a_corpo = 0
+			_recarga_defesa = RECARGA_DEFESA
+			defesa_mudou.emit(false, false)
+	elif _recarga_defesa > 0.0:
+		_recarga_defesa -= delta
+		if _recarga_defesa <= 0.0:
+			defesa_mudou.emit(false, true)
+
+
+## O bônus de CA fez um golpe errar: parry.
+func _ao_aparar(_origem: Vector2) -> void:
+	_aura.pulso(COR_PARRY, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
+	_animacao.brilhar(COR_PARRY, TEMPO_BRILHO_SURTO)
+	_texto.mostrar("Aparado!", COR_PARRY)
+	aparou.emit()
+
+
+## Investida: alterna entre empurrar e dano extra no ataque feito correndo.
+func alternar_investida() -> bool:
+	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_INVESTIDA):
+		return false
+	_investida_empurra = not _investida_empurra
+	_texto.mostrar("Investida: %s" % ("empurrão" if _investida_empurra else "dano"), COR_PARRY)
+	investida_mudou.emit(_investida_empurra)
+	return true
+
+
+func investida_empurra() -> bool:
+	return _investida_empurra
+
+
+## Quanto correu em linha reta: zera quando para, anda devagar ou vira.
+func _medir_corrida(delta: float) -> void:
+	if esta_correndo() and velocity.x != 0.0 and signf(velocity.x) == direcao_olhar:
+		_corrida_reta_px += absf(velocity.x) * delta
+	else:
+		_corrida_reta_px = 0.0
+
+
+## Investida: o golpe feito depois de correr 10 pés em linha reta leva o efeito escolhido (uma vez por rodada).
+func _aplicar_investida(golpe: Golpe) -> void:
+	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_INVESTIDA):
+		return
+	if _corrida_reta_px < EscalaDnd.pes_para_pixels(DISTANCIA_INVESTIDA_PES) or _recarga_efeito.get(Proficiencias.EFEITO_INVESTIDA, 0.0) > 0.0:
+		return
+	if _investida_empurra:
+		golpe.empurrao_pes = maxf(golpe.empurrao_pes, EMPURRAO_INVESTIDA_PES)
+		golpe.empurrao_efeito = Proficiencias.EFEITO_INVESTIDA
+	else:
+		golpe.investida_dano = Dado.new(1, FACES_INVESTIDA)
+
+
+## O Atleta se recupera na hora de levar um golpe (sem o instante sem controle).
+func tempo_de_recuo() -> float:
+	return 0.0 if ficha != null and ficha.tem_talento(Ficha.TALENTO_ATLETA) else stats.tempo_recuo
+
+## Mestre em Armadura Pesada: com armadura pesada vestida, o dano físico sofrido cai na proficiência.
+func _reducao_fisica() -> int:
+	var armadura := armadura_atual()
+	var pesada := armadura != null and armadura.categoria == Proficiencias.ARMADURA_PESADA
+	return Ficha.BONUS_PROFICIENCIA if pesada and ficha.tem_talento(Ficha.TALENTO_MESTRE_ARMADURA_PESADA) else 0
 
 ## Pseudópode do Gray Ooze: a armadura não mágica perde 1 de CA; é destruída quando a CA
 ## que ela oferece chega a 10.
@@ -770,26 +1128,99 @@ func _comecar_golpe(extra: bool, do_surto: bool = false) -> void:
 	_contador_buffer_ataque = 0.0
 	_combo_pedido = false
 	_golpe_extra = extra
-	var arma := arma_secundaria() if extra else arma_atual()
-	_ataque.golpear(arma, _criar_golpe_de(arma, extra), extra, arma_atual() if extra else null)
+	var cabo := extra and _extra_com_cabo()
+	var arma := _cabo_da_haste() if cabo else (arma_secundaria() if extra else arma_atual())
+	_ataque.golpear(arma, _criar_golpe_de(arma, extra and not cabo), extra, arma_atual() if extra and not cabo else null)
 	golpe_iniciado.emit(arma, extra)
 
 
 func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
 	var golpe := Equipamento.golpe(ficha, inventario, arma, extra)
 	_assinar(golpe)
+	if not arma.disparavel():
+		_aplicar_investida(golpe)
+	_aplicar_veneno_ao_golpe(golpe)
 	if inventario.esta_equipado(arma):
 		golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
 	return golpe
 
 
+## O golpe com a outra ponta da haste: um soco de 1d4 contundente, com o modificador de Força inteiro.
+func _cabo_da_haste() -> Arma:
+	if _cabo_da_haste_arma == null:
+		_cabo_da_haste_arma = ataque_desarmado.duplicate() as Arma
+		_cabo_da_haste_arma.nome = "Golpe com a Haste"
+		_cabo_da_haste_arma.dados_dano = "1d4"
+		_cabo_da_haste_arma.categoria = &"simples"
+		_cabo_da_haste_arma.tipo_dano = TiposDano.CONTUNDENTE
+	return _cabo_da_haste_arma
+
+
+## O golpe extra deste herói é o da haste (tem o talento e uma arma de haste na mão)?
+func _extra_com_cabo() -> bool:
+	return ficha != null and ficha.tem_talento(Ficha.TALENTO_MESTRE_ARMAS_DE_HASTE) and ficha.e_arma_de_haste(inventario.equipado(Item.ESPACO_MAO) as Arma)
+
 ## Marca o herói como autor do golpe (e do 2º ataque do Trespassar): Atormentar dá vantagem
 ## só a quem marcou o alvo.
 func _assinar(golpe: Golpe) -> void:
 	golpe.autor_id = get_instance_id()
+	if _gastar_sorte():  # Sortudo: o ataque rola um d20 a mais e fica o melhor
+		golpe.vantagem = true
+		if golpe.trespassar:
+			golpe.trespassar.vantagem = true
+	_ligar_efeitos_de_talento(golpe)
 	if golpe.trespassar:
 		golpe.trespassar.autor_id = golpe.autor_id
+		_ligar_efeitos_de_talento(golpe.trespassar)
 
+
+## Os talentos que valem uma vez por rodada (Atacante Selvagem, Brigão de Taverna) só entram no
+## golpe se a recarga acabou; quando o golpe gasta o efeito, a recarga começa.
+func _ligar_efeitos_de_talento(golpe: Golpe) -> void:
+	if _recarga_efeito.get(Proficiencias.EFEITO_SELVAGEM, 0.0) > 0.0:
+		golpe.selvagem = false
+	if golpe.empurrao_pes > 0.0 and _recarga_efeito.get(golpe.empurrao_efeito, 0.0) > 0.0:
+		golpe.empurrao_pes = 0.0
+	if golpe.cortador and _recarga_efeito.get(Proficiencias.EFEITO_CORTADOR, 0.0) > 0.0:
+		golpe.cortador = false
+	if golpe.perfurador and _recarga_efeito.get(Proficiencias.EFEITO_PERFURADOR, 0.0) > 0.0:
+		golpe.perfurador = false
+	if golpe.grande and _recarga_efeito.get(Proficiencias.EFEITO_ARMA_GRANDE, 0.0) > 0.0:
+		golpe.grande = false
+	if golpe.agarra and _recarga_efeito.get(Proficiencias.EFEITO_AGARRAR, 0.0) > 0.0:
+		golpe.agarra = false
+	if golpe.escudo_cd > 0:
+		if _recarga_efeito.get(Proficiencias.EFEITO_ESCUDO, 0.0) > 0.0:
+			golpe.escudo_cd = 0
+		else:
+			golpe.escudo_derruba = _escudo_derruba_agora
+	if golpe.grande:
+		golpe.resolvido.connect(_ao_resolver_golpe_do_mestre.bind(golpe))
+	golpe.efeito_usado.connect(_ao_gastar_efeito)
+
+
+## Mestre em Arma Grande: crítico ou abate com arma Pesada dá um golpe extra, como o do Surto de Ação.
+func _ao_resolver_golpe_do_mestre(resultado: Combate.Resultado, abateu: bool, golpe: Golpe) -> void:
+	if not resultado.acertou or not (resultado.critico or abateu) or not golpe.grande or surto_ativo():
+		return
+	_ao_gastar_efeito(Proficiencias.EFEITO_ARMA_GRANDE)
+	_golpe_do_surto_pendente = true
+	_aura.ligar(COR_SURTO)
+	_aura.pulso(COR_SURTO, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
+	_texto.mostrar("Golpe extra!", COR_SURTO)
+
+
+func _ao_gastar_efeito(efeito: StringName) -> void:
+	if efeito == Proficiencias.EFEITO_VENENO:
+		_apagar_veneno_da_arma()  # o acerto gastou o veneno
+	if efeito == Proficiencias.EFEITO_ESCUDO:
+		_escudo_derruba_agora = not _escudo_derruba_agora  # o golpe de escudo alterna entre empurrar e derrubar
+	_recarga_efeito[efeito] = EscalaDnd.RODADA_SEGUNDOS
+
+
+func _passar_recargas_de_talento(delta: float) -> void:
+	for efeito in _recarga_efeito:
+		_recarga_efeito[efeito] = maxf(_recarga_efeito[efeito] - delta, 0.0)
 
 ## Corte Duplo (maestria) numa das armas leves: o golpe extra faz parte da ação de Ataque,
 ## sem gastar a ação bônus (sai em todo combo).
@@ -805,6 +1236,21 @@ func _tem_corte_duplo() -> bool:
 const DISTANCIA_PERTO_TIRO_PES := 5.0
 const GRUPO_INIMIGOS := &"monstros"
 const AVISO_SEM_MUNICAO := "Sem munição"
+## Duelista Defensivo: quanto dura a janela de defesa e a espera depois dela (s).
+const DURACAO_DEFESA := 0.75
+const RECARGA_DEFESA := 1.0
+const COR_PARRY := Color(0.65, 0.88, 1.0)
+## Investida: o quanto precisa correr em linha reta antes do golpe (pés) e o dano extra; Disparada Aprimorada.
+const DISTANCIA_INVESTIDA_PES := 10.0
+const DISPARADA_APRIMORADA_PES := 10.0
+const EMPURRAO_INVESTIDA_PES := 10.0
+const FACES_INVESTIDA := 8
+## Veneno: quanto tempo a arma fica envenenada (s) e os dois tipos (potente = Envenenador, básico = item).
+const DURACAO_VENENO := 15.0
+const VENENO_POTENTE := &"potente"
+const VENENO_BASICO := &"basico"
+const NOME_VENENO_BASICO := "Veneno Básico"
+const COR_VENENO := Color(0.55, 0.9, 0.4)
 
 
 func _arma_do_k() -> Arma:
@@ -874,7 +1320,7 @@ func _inimigo_em_5_pes() -> bool:
 
 
 func _besta_ignora_perto(arma: Arma) -> bool:
-	return arma.besta and ficha.tem_talento(Ficha.TALENTO_ESPECIALISTA_EM_BESTA)
+	return ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE) or (arma.besta and ficha.tem_talento(Ficha.TALENTO_ESPECIALISTA_EM_BESTA))
 
 
 ## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão

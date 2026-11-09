@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Teste do Goblin Minion: ficha do livro, arremessa as adagas de longe (com desvantagem
 ## além de 20 pés), golpeia de perto, Desengaja (Fuga Ágil) e morre.
 ## godot --headless --debug --path . --script res://tests/teste_goblin.gd
@@ -12,7 +12,6 @@ const VIDA_DE_TESTE := 999
 ## Onde o goblin fica no teste (longe do Ooze e do boneco do mapa, que são tirados).
 const POSICAO_GOBLIN := Vector2(900, 288)
 
-var _falhas := 0
 var _jogador: Jogador
 var _goblin: Goblin
 
@@ -174,11 +173,3 @@ func _colocar_heroi_a(distancia: float) -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

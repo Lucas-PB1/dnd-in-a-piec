@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_t5xqh")
+no_jogo = true
 id = &"mestre_armadura_pesada"
-nome = "Mestre em Armadura Pesada"
-resumo = "Dano contundente, cortante e perfurante sofrido leva −2."
+nome = "Mestre em Armaduras Pesadas"
+resumo = "+1 em Força ou Constituição. Com armadura pesada vestida, o dano contundente, cortante e perfurante sofrido cai em 2."
 situacao = 0
 motivo = "Regra pequena de combate."
+atributos = Array[StringName]([&"forca", &"constituicao"])
+pontos_de_atributo = 1

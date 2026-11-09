@@ -1,8 +1,6 @@
-extends SceneTree
+extends TesteBase
 ## Testa a árvore de habilidades: os dados do Guerreiro, a árvore, a tela e o caminho pela pausa.
 ## godot --headless --debug --path . --script res://tests/teste_habilidades.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -92,11 +90,3 @@ func _testar_pela_pausa() -> void:
 	_checar(not tela.visible and pausa.visible, "Esc nas habilidades volta para a pausa")
 	main.free()
 	await process_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

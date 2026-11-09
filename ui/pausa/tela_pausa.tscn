@@ -67,6 +67,13 @@ custom_minimum_size = Vector2(150, 36)
 layout_mode = 2
 text = "Habilidades"
 
+[node name="Talento" type="Button" parent="Centro/Painel/Coluna/Grade"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+text = "Escolher talento"
+
 [node name="Bestiario" type="Button" parent="Centro/Painel/Coluna/Grade"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 36)

@@ -1,8 +1,6 @@
-extends SceneTree
+extends TesteBase
 ## O Compêndio mostra o que já está disponível e não cria abas para conteúdo ainda documental.
 ## godot --headless --debug --path . --script res://tests/teste_compendio.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -36,14 +34,14 @@ func _testar_conteudo(secoes: Dictionary[String, Array], antecedentes: Array[Ant
 		_checar(antecedente.atributos.size() == 3 and antecedente.pericias.size() == 2, "%s tem 3 atributos e 2 perícias" % antecedente.nome)
 		for pericia in antecedente.pericias:
 			_checar(Pericia.ATRIBUTO.has(pericia), "%s: a perícia %s existe" % [antecedente.nome, pericia])
-	_checar(not secoes.has(Compendio.ABA_ANTECEDENTES), "antecedentes sem acesso não ganham aba")
-	_checar(not secoes.has(Compendio.ABA_TALENTOS), "talentos sem acesso não ganham aba")
+	_checar(secoes.has(Compendio.ABA_ANTECEDENTES) and secoes[Compendio.ABA_ANTECEDENTES].size() == 11, "os 11 antecedentes escolhíveis aparecem")
+	_checar(secoes.has(Compendio.ABA_TALENTOS) and secoes[Compendio.ABA_TALENTOS].size() == 30, "os 30 talentos que já funcionam aparecem")
 	_checar(secoes.has(Compendio.ABA_GUERREIRO), "o Guerreiro disponível aparece")
 	_checar(secoes[Compendio.ABA_PACOTES].size() == 2, "os pacotes iniciais selecionáveis aparecem")
 	_checar(secoes.has(Compendio.ABA_MAESTRIAS), "maestrias disponíveis aparecem")
 	_checar(secoes[Compendio.ABA_ARMAS].size() == Recursos.da_pasta("res://data/armas").size(), "o arsenal aparece no Compêndio")
 	_checar(secoes[Compendio.ABA_ARMADURAS].size() == Recursos.da_pasta("res://data/armaduras").size(), "as armaduras e escudos aparecem")
-	_checar(secoes[Compendio.ABA_ITENS].size() == Recursos.da_pasta("res://data/municoes").size(), "as munições acessíveis aparecem como itens")
+	_checar(secoes[Compendio.ABA_ITENS].size() == Recursos.da_pasta("res://data/municoes").size() + Recursos.da_pasta("res://data/itens").size(), "as munições e o Veneno Básico aparecem como itens")
 	_checar((secoes[Compendio.ABA_ITENS][0] as EntradaCompendio).tipo == "Munição", "cada munição é identificada pelo tipo")
 
 
@@ -63,8 +61,8 @@ func _testar_tela(secoes: Dictionary[String, Array]) -> void:
 		abas.current_tab = indice
 		await process_frame
 		_checar(lista.item_count == secoes[nome_aba].size(), "%s lista todas as páginas" % nome_aba)
-	_checar(not nomes_abas.has(Compendio.ABA_ANTECEDENTES), "não mostra a aba Antecedentes")
-	_checar(not nomes_abas.has(Compendio.ABA_TALENTOS), "não mostra a aba Talentos")
+	_checar(nomes_abas.has(Compendio.ABA_ANTECEDENTES), "mostra a aba Antecedentes")
+	_checar(nomes_abas.has(Compendio.ABA_TALENTOS), "mostra a aba Talentos")
 	tela.fechar()
 	_checar(not paused, "fechar despausa o jogo")
 	tela.queue_free()
@@ -81,11 +79,3 @@ func _testar_atalho_do_titulo() -> void:
 	_checar(resultado[0], "o botão do menu inicial pede o Compêndio")
 	titulo.queue_free()
 	await process_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

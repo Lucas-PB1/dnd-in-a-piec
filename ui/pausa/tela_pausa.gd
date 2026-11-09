@@ -6,6 +6,7 @@ extends Control
 
 signal mochila_escolhida
 signal bestiario_escolhido
+signal talento_pedido
 signal compendio_escolhido
 signal habilidades_escolhidas
 signal opcoes_escolhidas
@@ -19,6 +20,7 @@ signal fechou
 @onready var _botao_continuar: Button = %Continuar
 @onready var _botao_mochila: Button = %Mochila
 @onready var _botao_bestiario: Button = %Bestiario
+@onready var _botao_talento: Button = %Talento
 @onready var _botao_compendio: Button = %Compendio
 @onready var _botao_habilidades: Button = %Habilidades
 @onready var _botao_opcoes: Button = %Opcoes
@@ -34,6 +36,7 @@ func _ready() -> void:
 	_botao_mochila.pressed.connect(_escolher.bind(mochila_escolhida))
 	_botao_habilidades.pressed.connect(_escolher.bind(habilidades_escolhidas))
 	_botao_bestiario.pressed.connect(_escolher.bind(bestiario_escolhido))
+	_botao_talento.pressed.connect(_escolher.bind(talento_pedido))
 	_botao_compendio.pressed.connect(_escolher.bind(compendio_escolhido))
 	_botao_opcoes.pressed.connect(_escolher.bind(opcoes_escolhidas))
 	_botao_salvar.pressed.connect(salvar_escolhido.emit)
@@ -58,6 +61,11 @@ func fechar() -> void:
 	hide()
 	get_tree().paused = false
 	fechou.emit()
+
+
+## O botão Talento só aparece enquanto há um talento esperando escolha.
+func mostrar_talento(pendente: bool) -> void:
+	_botao_talento.visible = pendente
 
 
 ## Mensagem curta embaixo dos botões (ex.: "Jogo salvo").

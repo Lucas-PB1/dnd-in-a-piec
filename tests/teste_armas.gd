@@ -1,4 +1,4 @@
-extends SceneTree
+extends TesteBase
 ## Teste das armas do PHB (fatia 11a): dados das 29 armas, Versátil, Pesada, Alcance, Duas Mãos,
 ## pilhas no inventário, pacotes iniciais e o baú do arsenal.
 ## godot --headless --debug --path . --script res://tests/teste_armas.gd
@@ -11,8 +11,6 @@ const TOTAL_ARMADURAS := 21
 ## Até onde a ponta tem de chegar (px à frente da mão): 5 pés; com Alcance, 10 pés.
 const PONTA_NORMAL := EscalaDnd.PONTA_5_PES
 const PONTA_ALCANCE := PONTA_NORMAL + EscalaDnd.PIXELS_POR_LADRILHO
-
-var _falhas := 0
 
 
 func _initialize() -> void:
@@ -261,11 +259,3 @@ func _apertar(acao: StringName) -> void:
 	solta.action = acao
 	Input.parse_input_event(solta)
 	await process_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

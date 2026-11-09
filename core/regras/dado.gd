@@ -38,12 +38,29 @@ static func de_texto(notacao: String) -> Dado:
 
 
 ## Rola e soma (dados + bônus). Com `critico`, rola os dados em dobro (o bônus não dobra).
+## Com `rerrolar_um`, um dado que tira 1 é rolado de novo uma vez (Brigão de Taverna).
 ## Passe um `rng` com semente para resultados repetíveis.
-func rolar(rng: RandomNumberGenerator, critico: bool = false) -> int:
+func rolar(rng: RandomNumberGenerator, critico: bool = false, rerrolar_um: bool = false) -> int:
 	var vezes := quantidade * (2 if critico else 1)
 	var total := bonus
 	for i in vezes:
-		total += rng.randi_range(1, faces)
+		var valor := rng.randi_range(1, faces)
+		if rerrolar_um and valor == 1:
+			valor = rng.randi_range(1, faces)
+		total += valor
+	return total
+
+
+## Perfurador: rola os dados (um a mais no crítico), rerrola o menor e fica com o novo resultado.
+func rolar_perfurador(rng: RandomNumberGenerator, critico: bool = false) -> int:
+	var vezes := quantidade * (2 if critico else 1) + (1 if critico else 0)
+	var valores: Array[int] = []
+	for i in vezes:
+		valores.append(rng.randi_range(1, faces))
+	valores[valores.find(valores.min())] = rng.randi_range(1, faces)
+	var total := bonus
+	for valor in valores:
+		total += valor
 	return total
 
 

@@ -10,6 +10,8 @@ signal mudou
 
 ## Máximo de lugares na mochila (uma pilha ocupa 1).
 var capacidade: int
+## Empunhadura Dupla: a segunda arma na outra mão não precisa ser Leve (o herói liga ao ter o talento).
+var segunda_arma_livre: bool = false
 var itens: Array[Item] = []
 
 var _equipados: Dictionary[StringName, Item] = {}
@@ -201,7 +203,7 @@ func _destino_ao_equipar(item: Item) -> StringName:
 
 
 func _cabe_na_outra_mao(arma: Arma) -> bool:
-	if not arma.leve or arma.duas_maos or arma.disparavel() or espaco_de(arma) == Item.ESPACO_MAO:
+	if (not arma.leve and not segunda_arma_livre) or arma.duas_maos or arma.disparavel() or espaco_de(arma) == Item.ESPACO_MAO:
 		return false
 	var principal := _equipados.get(Item.ESPACO_MAO) as Arma
 	if principal == null or not principal.leve or principal.duas_maos or principal.disparavel():

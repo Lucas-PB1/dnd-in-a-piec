@@ -5,13 +5,16 @@ extends RefCounted
 const CONTUNDENTE := &"contundente"
 const CORTANTE := &"cortante"
 const PERFURANTE := &"perfurante"
+## O dano das armas e dos monstros que a armadura pesada ensina a aguentar (Mestre em Armadura Pesada).
+const FISICOS: Array[StringName] = [CONTUNDENTE, CORTANTE, PERFURANTE]
 const ACIDO := &"acido"
 const FRIO := &"frio"
 const FOGO := &"fogo"
+const VENENO := &"veneno"
 
 const NOMES := {
 	CONTUNDENTE: "contundente", CORTANTE: "cortante", PERFURANTE: "perfurante",
-	ACIDO: "ácido", FRIO: "frio", FOGO: "fogo",
+	ACIDO: "ácido", FRIO: "frio", FOGO: "fogo", VENENO: "veneno",
 }
 
 

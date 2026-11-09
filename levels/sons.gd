@@ -106,6 +106,7 @@ func ligar_jogador(jogador: Jogador) -> void:
 	jogador.golpe_iniciado.connect(_ao_golpear)
 	jogador.arma_arremessada.connect(_ao_arremessar)
 	jogador.comecou_a_morrer.connect(tocar.bind(&"morte_heroi"))
+	jogador.aparou.connect(tocar.bind(&"critico"))
 	jogador.surto_ativo_mudou.connect(_ao_mudar_surto)
 	jogador.folego_mudou.connect(_ao_mudar_folego)
 	jogador.progressao_mudou.connect(_ao_mudar_progressao)

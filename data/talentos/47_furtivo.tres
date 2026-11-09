@@ -7,4 +7,4 @@ script = ExtResource("1_tlueh")
 id = &"furtivo"
 nome = "Furtivo"
 resumo = "Vantagem em Furtividade com pouca luz; um tiro de cobertura não revela tanto."
-motivo = "Furtividade ainda não é teste do herói."
+motivo = "Decidido com o usuário: em espera (ver docs/talentos.md)."

@@ -81,9 +81,11 @@ Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
 core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante, Condicoes
-core/dados/              Item, Arma, Municao, PoseGolpe, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial
+core/dados/              Item, Arma, Municao, PoseGolpe, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial,
+                         AntecedenteRPG, TalentoRPG, EntradaCompendio
 core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd,
-                         TiposDano, Proficiencias, Equipamento
+                         TiposDano, Proficiencias, Equipamento, Pericia, Salvamento,
+                         ItemAleatorio
 core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
 features/jogador/        herói: jogador, stats, animação, câmera, ataque, escudo, arma de trás, estados/, sprites/
 features/gray_ooze/      Gray Ooze: cena, estados/, sprites/
@@ -93,10 +95,10 @@ features/bau/            baú do arsenal (E)
 features/arremesso/      arma arremessada / projétil do herói
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
 ui/                      titulo, criacao_personagem, hud, inventario, bau, comandos, derrota,
-                         controles_toque, bestiario, habilidades, pausa, compendio;
+                         controles_toque, bestiario, habilidades, pausa, compendio (+ a regra `Compendio`), talento;
                          tema_menu.tres; resumo_item.gd
 data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze, goblin_minion, goblin_warrior,
-                         armas/, armaduras/, municoes/, pacotes/
+                         armas/, armaduras/, municoes/, itens/, pacotes/, antecedentes/, talentos/
 assets/                  tiles/, armas/, armaduras/, efeitos/, shaders/; CREDITOS.md
 tools/                   geradores (armas, armaduras, criaturas, fase, pose, mão), capturar_tela,
                          ferramentas_pixel, gerar_regras_cursor.ps1
@@ -153,4 +155,5 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
 - Celular: tela larga, controles de toque (analógico ou setas + botões) e ajuste do layout; Bolsa, Menu e E respondem ao toque, com fechamento visível; ataque em movimento e pulo durante o golpe.
 - Progressão do Guerreiro níveis 1–3: XP, PV por nível, dificuldade aleatória escalada; Surto de Ação e Mente Tática no nível 2; descanso longo entre fases.
 - APK Android de depuração em `builds/android/dnd_in_a_piece.apk`; falta validar o toque num aparelho físico.
+- Nível 4 e talentos: o herói vai até o nível 4 e escolhe um talento geral (`TelaTalento`); os 30 talentos escolhíveis (origem, vindos do antecedente, e gerais) estão ligados (`docs/talentos.md`, `tools/gerar_compendio.gd`). Criação com antecedente (passo novo, aumento de atributo, perícias travadas). Compêndio na pausa e no título. Atleta escala paredes; fases com teto e laterais invisíveis e porta de verdade (arte CC0 do rubberduck); item Veneno Básico.
 - Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.

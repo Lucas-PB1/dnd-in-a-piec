@@ -1,10 +1,9 @@
-extends SceneTree
+extends TesteBase
 ## Teste das regras puras de D&D: Dado, Atributos, CompraDePontos e Ficha.
 ## godot --headless --debug --path . --script res://tests/teste_regras_dnd.gd
 
 const ROLAGENS := 300
 
-var _falhas := 0
 var _rng := RandomNumberGenerator.new()
 
 
@@ -175,11 +174,3 @@ func _testar_builds_do_guerreiro(guerreiro: ClasseRPG) -> void:
 		for atributo in Atributos.TODOS:
 			valores.append(build.atributos[atributo])
 		_checar(valores == esperados.get(build.nome), "%s: FOR, DES, CON, INT, SAB, CAR como combinado" % build.nome)
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

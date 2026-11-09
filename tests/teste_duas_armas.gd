@@ -1,10 +1,8 @@
-extends SceneTree
+extends TesteBase
 ## Fatia 11b: duas armas leves (J J) e arremesso (K, pegar com E).
 ## godot --headless --debug --path . --script res://tests/teste_duas_armas.gd
 
 const CENA_VOO := "res://features/arremesso/arma_arremessada.tscn"
-
-var _falhas := 0
 
 
 func _initialize() -> void:
@@ -240,11 +238,3 @@ func _apertar(acao: String) -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

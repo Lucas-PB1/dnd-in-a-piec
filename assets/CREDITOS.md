@@ -16,5 +16,7 @@
 | Música: Shakkar, The Old Tower Inn e Medieval Battle (`battle_8`) | OpenGameArt, a taverna e a batalha são de RandomMind | https://opengameart.org/content/shakkar, https://opengameart.org/content/medieval-the-old-tower-inn, https://opengameart.org/content/medieval-battle | CC0 (conferida na página de cada faixa) | `assets/audio/musica/` |
 | Efeitos feitos por script (impactos, apanhar, morte, magia, cura, nível, arco) | Projeto (`tools/gerar_sons.gd`) | , | próprio | `assets/audio/sintetizados/` |
 | Menus (molduras, botões, painéis) | Pixel UI pack, de Kenney Vleugels (CC0) | https://www.kenney.nl/assets/pixel-ui-pack | CC0 (crédito não é obrigatório) | `assets/ui/kenney_pixel_ui/` |
+| Porta em arco de madeira (recorte da folha de castelo `castle_tileset_part3.png`; `assets/tiles/castelo/`, gerada por `tools/recortar_porta.gd`) | rubberduck | https://opengameart.org/content/pixel-art-castle-tileset | CC0 | `assets/tiles/castelo/porta.png` |
+
 
 Estatísticas do Gray Ooze: ficha de criatura do D&D 5e (Wizards of the Coast), usada como referência de regras.

@@ -29,6 +29,14 @@ func _foi_arremessar() -> bool:
 	return false
 
 
+## Atleta: empurrando contra uma parede, troca para Escalando e retorna true.
+func _foi_escalar() -> bool:
+	if jogador.pode_escalar():
+		trocar_para.emit(&"Escalando")
+		return true
+	return false
+
+
 ## Para estados no chão: se pulou ou perdeu o chão, troca para NoAr e retorna true.
 func _foi_para_o_ar() -> bool:
 	if jogador.tentar_pular() or not jogador.is_on_floor():

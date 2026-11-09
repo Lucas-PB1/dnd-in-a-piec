@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_dfp4x")
+no_jogo = true
 id = &"duelista_defensivo"
 nome = "Duelista Defensivo"
-resumo = "Soma a proficiência na CA contra um golpe corpo a corpo."
+resumo = "+1 em Destreza. Com arma de acuidade, um botão abre uma defesa de 0,75 s: +proficiência na CA contra golpes corpo a corpo, com um parry quando o golpe erra por isso."
 situacao = 0
 motivo = "Não há reação: viraria um botão."
+atributos = Array[StringName]([&"destreza"])
+pontos_de_atributo = 1

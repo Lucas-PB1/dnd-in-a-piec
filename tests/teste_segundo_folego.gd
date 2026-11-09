@@ -1,11 +1,10 @@
-extends SceneTree
+extends TesteBase
 ## Second Wind, troca de tecla e criatura trazida para a arena.
 ## godot --headless --path . --script res://tests/teste_segundo_folego.gd
 
 const ARQUIVO_TESTE := "user://teste_comandos.cfg"
 const QUADROS_ACAO_BONUS := 100
 
-var _falhas := 0
 var _principal: Main
 var _jogador: Jogador
 
@@ -202,11 +201,3 @@ func _apertar_folego() -> void:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		_falhas += 1
-		print("  ERRO - ", descricao)

@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_0sjll")
+no_jogo = true
 id = &"especialista_em_besta"
-nome = "Especialista em Besta"
-resumo = "Inimigo a 5 pés não dá desvantagem no tiro de besta; a ação bônus dispara a Besta de Mão."
+nome = "Especialista em Bestas"
+resumo = "+1 em Destreza. A besta não perde com inimigo colado e a Besta de Mão ganha o ataque extra."
 situacao = 0
 motivo = "A arma à distância já dispara."
+atributos = Array[StringName]([&"destreza"])
+pontos_de_atributo = 1

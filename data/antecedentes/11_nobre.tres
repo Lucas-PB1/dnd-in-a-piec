@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_jxkit")
+no_jogo = true
 id = &"nobre"
 nome = "Nobre"
 descricao = "Cresceu entre privilégios, etiqueta e intrigas de família."

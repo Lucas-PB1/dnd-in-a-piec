@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_4kavo")
 id = &"conjurador_de_rituais"
-nome = "Conjurador de Rituais"
+nome = "Conjurador Ritualista"
 resumo = "Um livro com magias que só saem como ritual."
 motivo = "Espera a magia."

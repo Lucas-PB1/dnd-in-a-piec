@@ -1,9 +1,7 @@
-extends SceneTree
+extends TesteBase
 ## Testa o bestiário: o registro de derrotas, a tela (silhueta ou ficha), o caminho pela pausa
 ## com o Esc voltando, e o save guardando o que foi descoberto.
 ## godot --headless --debug --path . --script res://tests/teste_bestiario.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -107,11 +105,3 @@ func _testar_no_jogo() -> void:
 	_checar(lido.foi_derrotada("Gray Ooze"), "o save guarda o bestiário")
 	main.free()
 	await process_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

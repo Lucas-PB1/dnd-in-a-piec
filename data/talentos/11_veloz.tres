@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_hvlfj")
+no_jogo = true
 id = &"veloz"
 nome = "Veloz"
-resumo = "Deslocamento +10 pés."
+resumo = "Deslocamento +10 pés (30 vira 40)."
 situacao = 0
 motivo = "Conta combinada; é de nível 4 e a escolha de talento ainda não existe."
+atributos = Array[StringName]([&"destreza", &"constituicao"])
+pontos_de_atributo = 1

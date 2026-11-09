@@ -4,8 +4,11 @@
 
 [resource]
 script = ExtResource("1_yahap")
+no_jogo = true
 id = &"esmagador"
 nome = "Esmagador"
-resumo = "Acerto contundente empurra 5 pés; crítico dá vantagem no próximo ataque contra o alvo."
+resumo = "+1 em Força ou Constituição. O acerto contundente empurra o alvo 5 pés (uma vez por rodada); o crítico dá vantagem ao próximo ataque contra ele."
 situacao = 0
 motivo = "O Empurrar da maestria já move."
+atributos = Array[StringName]([&"forca", &"constituicao"])
+pontos_de_atributo = 1

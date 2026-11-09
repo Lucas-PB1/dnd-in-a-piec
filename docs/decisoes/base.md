@@ -18,3 +18,7 @@ decisão deste tema mudar.**
 | Movimento suave | Interpolação de física ligada. | Sem tremedeira em monitores de 144 Hz. |
 | Componentes de combate | `core/componentes/`: `TremorComponent` (treme o sprite ao levar dano), `HitboxComponent` (entrega um `Golpe`, 1x por alvo por golpe), `HurtboxComponent` (só emite `golpe_recebido`), `DefesaComponent` (CA, resolve, tira vida, `invulneravel`), `HealthComponent`, `TextoFlutuanteComponent`, `CondicoesComponent`. Camadas de física: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo`, 4 `hurtbox_jogador`, 5 `inimigo`. | Reutilizável por herói, inimigos e boneco. |
 | Nome do jogo | **"DnD in a Piece"**, em `project.godot` (`application/config/name`); a tela de título lê de lá. "D&D" é marca da Wizards of the Coast: trocar o nome se um dia for publicar. | Pedido do usuário. |
+
+## Limites do mapa e porta
+- Toda `Fase` cria o nó `Limites` (`StaticBody2D` no mundo, camada 1) com três `WorldBoundaryShape2D`: lateral esquerda e direita (a partir da área jogável, sem as paredes das pontas) e um teto 96 px acima do topo. Servem ao Atleta, que escala sem limite de altura, e a qualquer corpo que tente sair do mapa.
+- A saída tem um desenho de porta (`Porta/Desenho`, 50x81 px, arte CC0 do rubberduck); a área da porta e a cota continuam como eram.

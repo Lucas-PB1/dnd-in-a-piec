@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_ayfub")
 id = &"tocado_pela_fada"
-nome = "Tocado pela Fada"
+nome = "Tocado pelas Fadas"
 resumo = "+1 num atributo mental, um truque e duas magias de 1º círculo, uma delas Passo Nebuloso."
 motivo = "Espera a magia."

@@ -23,3 +23,26 @@ e `tests/teste_combate_dnd.gd`.
 | Condições | `CondicoesComponent` (Ooze, Goblin, boneco): **Caído** (meia rodada deitado = levantar gasta metade do deslocamento; ataques contra ele com **vantagem**), **Lento**, **Enfraquecido**, **Atormentado**. Ícones 8x8 acima do alvo (`assets/efeitos/condicoes.png`) e avisos no texto flutuante (textos que saem juntos empilham). | Escolhas do usuário. |
 | Talentos | Anotações em `docs/talentos.md` (origem e geral do livro base). Cinco já têm conta (Resistente, Alerta, Atacante Selvagem, Brigão de Taverna, Veloz). **Atirador de Elite** e **Especialista em Besta** já valem no tiro (`Ficha.talentos`, lista vazia até o antecedente). Magia fica de lado: abrir esse bloco do doc na fatia dela. A escolha só quando existir antecedente. | Pedido do usuário. |
 | Desarmado | Mão vazia = `data/ataque_desarmado.tres` ("1d1" + FOR = soco, contundente, não sofre Corrosão, alcance curto, sem sprite de arma). | Livro. |
+
+## Nível 4 e talentos
+- A campanha vai até o nível 4 (2700 XP, tabela do livro). O nível 4 do Guerreiro dá uma escolha de talento geral ou o Aumento de Valor de Habilidade (+2, ou +1 em dois). Os talentos de origem virão do antecedente.
+- `Ficha.escolhas_de_talento_pendentes()`, `pode_escolher_talento()` e `escolher_talento()` guardam o nome em `ficha.talentos` e somam o aumento (teto 20). Só são escolhíveis os talentos gerais com situação "planejado" (`TalentoRPG.escolhivel()`). O que cada talento aumenta está em `tools/gerar_compendio.gd` (`ATRIBUTOS_DO_TALENTO`; conferir no livro).
+- Os efeitos dos talentos ainda não estão ligados: a escolha só grava o talento e o atributo.
+
+## Talentos de origem (efeitos ligados)
+- `Ficha` guarda o nome do talento e aplica: Alerta em `iniciativa()`, Resistente em `vida_maxima()`, Brigão de Taverna em `dado_dano()` (soco = arma sem categoria) e nas marcas do `Golpe` (`rerrolar_um`, `empurrao_pes`), Atacante Selvagem na marca `selvagem`.
+- Efeitos "uma vez por rodada" (1,5 s): o `Golpe` avisa `efeito_usado`; o herói começa a recarga e desliga a marca no golpe seguinte enquanto recarrega (`Jogador._recarga_efeito`).
+- Sortudo: `Jogador.armar_sorte()` (tecla G, botão da barra). O próximo golpe do herói sai com vantagem, ou o próximo teste de perícia falho rola de novo; gasta 1 ponto. Salvaguardas do herói ainda não usam a sorte. O desconto de 20% do Artesão espera a loja. A defesa do Sortudo (forçar o atacante a rolar pior) não existe.
+- Perito: `TelaCriacao` mostra todas as perícias do jogo quando o antecedente dá o Perito; o jogador marca as 2 da classe mais 3 quaisquer, e pelo menos 2 têm de ser da lista do Guerreiro.
+
+## Talentos gerais ligados (lotes 1 e 2)
+- Na ficha: Resiliente (`salvaguardas_extras`), Veloz (+10 pés), Mestre em Armadura Média (teto de DES +3), Mestre em Arma Grande (+proficiência no dano da arma Pesada), Aumento de Valor de Habilidade.
+- No golpe (`Golpe`: `grande`, `cortador`, `perfurador`, `esmagador`, `empurrao_pes`/`empurrao_efeito`): a `Ficha` liga as marcas; o alvo aplica (Lento, desvantagem, empurrão, vantagem) em `CondicoesComponent`; o herói desliga a marca enquanto a recarga de 1,5 s do efeito corre. `Dado.rolar_perfurador` rola o Perfurador.
+- Mestre em Armadura Pesada: `DefesaComponent.reducao_fisica` (o herói liga com armadura pesada vestida). Empunhadura Dupla: `Inventario.segunda_arma_livre`.
+- Mestre em Arma Grande: crítico ou abate (`Golpe.resolvido`) deixa um golpe extra pendente, o mesmo mecanismo do Surto de Ação.
+
+## Talentos gerais: lotes 3 e 4
+- Condições novas em `CondicoesComponent` (sem ícone, aparecem como aviso): Preso (Sentinela, 1 s, só se o alvo estava se movendo), Agarrado (Agarrador; tentativa de escape a cada rodada, solta se o herói se afasta), Envenenado (Envenenador; `consumir_desvantagem()` devolve true sem gastar). Tipo de dano `veneno` em `TiposDano`.
+- No `Golpe`: `sentinela`, `investida_dano`, `escudo_cd`, `agarra`/`agarra_cd`, `veneno_extra`, `veneno_potente`/`veneno_cd`, `corpo_a_corpo`. O herói liga/desliga e cuida das recargas de 1,5 s; o alvo aplica os efeitos.
+- Duelista Defensivo: `DefesaComponent.bonus_ca_corpo_a_corpo` na janela de 0,75 s; `aparou` quando o bônus faz um golpe errar. Investida: a corrida em linha reta é medida em `Jogador._corrida_reta_px`. Haste: `Jogador._cabo_da_haste()` é uma `Arma` montada (1d4 contundente). Durável e Envenenador: `Jogador` guarda dados de vida e doses, repostos a cada fase.
+- A escalada do Atleta (`Escalando`) e o tiro que atravessa do Atirador de Elite estão prontos.

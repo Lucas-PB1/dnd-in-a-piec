@@ -1,9 +1,7 @@
-extends SceneTree
+extends TesteBase
 ## Som: volumes (e o arquivo de opções), barramentos, efeitos tocando nos eventos certos, música
 ## por tela e por fase, e a aba Som das Opções.
 ## godot --headless --debug --path . --script res://tests/teste_som.gd
-
-var _falhas: int = 0
 
 
 func _initialize() -> void:
@@ -112,11 +110,3 @@ func _testar_no_jogo() -> void:
 	OpcoesSom.aplicar()
 	main.free()
 	await process_frame
-
-
-func _checar(condicao: bool, descricao: String) -> void:
-	if condicao:
-		print("  ok   - ", descricao)
-	else:
-		print("  ERRO - ", descricao)
-		_falhas += 1

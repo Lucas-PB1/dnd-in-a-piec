@@ -20,6 +20,11 @@ const ACOES: Array[StringName] = [
 	&"correr",
 	&"surto_acao",
 	&"mente_tatica",
+	&"sorte",
+	&"defesa",
+	&"investida",
+	&"dado_de_vida",
+	&"veneno",
 ]
 
 const NOMES: Dictionary[StringName, String] = {
@@ -36,6 +41,11 @@ const NOMES: Dictionary[StringName, String] = {
 	&"correr": "Correr (segurar)",
 	&"surto_acao": "Surto de Ação",
 	&"mente_tatica": "Mente Tática",
+	&"sorte": "Sorte",
+	&"defesa": "Defesa (parry)",
+	&"investida": "Investida (modo)",
+	&"dado_de_vida": "Dado de vida",
+	&"veneno": "Veneno",
 }
 
 

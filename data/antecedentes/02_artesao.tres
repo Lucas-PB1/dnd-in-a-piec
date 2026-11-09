@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_f7ffo")
+no_jogo = true
 id = &"artesao"
 nome = "Artesão"
 descricao = "Aprendeu um ofício numa oficina e cresceu entre ferramentas e clientes."

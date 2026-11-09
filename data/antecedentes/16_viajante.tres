@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_k7h0u")
+no_jogo = true
 id = &"viajante"
 nome = "Viajante"
 descricao = "Cresceu sem teto fixo, sobrevivendo de favores e de bom senso nas estradas."

@@ -14,6 +14,17 @@ const ESCUDO := &"escudo"
 
 ## Maestrias de arma (D&D 2024). Efeitos: CondicoesComponent, HitboxComponent (Trespassar),
 ## Combate (Raspão) e o golpe extra do herói (Corte Duplo).
+## Efeitos de talento que valem uma vez por rodada (o golpe avisa quando gasta um).
+const EFEITO_SELVAGEM := &"atacante_selvagem"
+const EFEITO_BRIGAO := &"brigao_de_taverna"
+const EFEITO_ARMA_GRANDE := &"mestre_arma_grande"
+const EFEITO_CORTADOR := &"cortador"
+const EFEITO_PERFURADOR := &"perfurador"
+const EFEITO_ESMAGADOR := &"esmagador"
+const EFEITO_ESCUDO := &"golpe_de_escudo"
+const EFEITO_INVESTIDA := &"investida"
+const EFEITO_VENENO := &"veneno"
+const EFEITO_AGARRAR := &"agarrar"
 const TRESPASSAR := &"trespassar"   # Cleave
 const RASPAO := &"raspao"           # Graze
 const CORTE_DUPLO := &"corte_duplo" # Nick

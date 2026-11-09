@@ -5,7 +5,6 @@
 [resource]
 script = ExtResource("1_4hqrk")
 id = &"levemente_armado"
-nome = "Levemente Armado"
+nome = "Treinado em Armaduras Leves"
 resumo = "+1 num atributo e treinamento com armadura leve."
-situacao = 0
-motivo = "A ficha já sabe somar treinamentos."
+motivo = "Decidido: em espera, porque o Guerreiro já tem esse treinamento e só sobraria o +1 de atributo."

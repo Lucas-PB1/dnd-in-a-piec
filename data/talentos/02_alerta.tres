@@ -4,9 +4,10 @@
 
 [resource]
 script = ExtResource("1_82vn6")
+no_jogo = true
 id = &"alerta"
 nome = "Alerta"
 categoria = 0
-resumo = "Soma a proficiência na iniciativa; aqui encurta o intervalo entre ataques."
+resumo = "Soma o bônus de proficiência à iniciativa: o herói ataca mais rápido."
 situacao = 0
 motivo = "Conta combinada; não há rolagem de iniciativa."

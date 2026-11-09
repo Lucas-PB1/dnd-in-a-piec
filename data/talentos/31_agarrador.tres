@@ -4,7 +4,11 @@
 
 [resource]
 script = ExtResource("1_xytai")
+no_jogo = true
 id = &"agarrador"
 nome = "Agarrador"
-resumo = "Vantagem em ataques contra quem você agarra e agarrar sem soltar a arma."
-motivo = "Espera a condição Agarrado."
+resumo = "+1 em Força ou Destreza. O soco acertado agarra o alvo (uma vez por rodada): ele fica sem deslocamento, tenta escapar a cada rodada (CD 8 + Força + proficiência) e o herói o ataca com vantagem."
+situacao = 0
+motivo = "Decidido com o usuário (ver docs/talentos.md)."
+atributos = Array[StringName]([&"forca", &"destreza"])
+pontos_de_atributo = 1

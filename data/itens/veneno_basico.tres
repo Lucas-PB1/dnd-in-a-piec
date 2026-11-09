@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Item" format=3]
+
+[ext_resource type="Script" path="res://core/dados/item.gd" id="1_item"]
+
+[resource]
+script = ExtResource("1_item")
+nome = "Veneno Básico"
+descricao = "Frasco de veneno (PHB 2024, 100 PO). Ação bônus: passa numa arma cortante ou perfurante; o próximo acerto em até 15 s causa +1d4 de dano de veneno."
+empilhavel = true
