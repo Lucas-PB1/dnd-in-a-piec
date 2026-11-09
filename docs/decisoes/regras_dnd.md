@@ -52,3 +52,7 @@ e `tests/teste_combate_dnd.gd`.
 - Cada inimigo da cota solta **ouro** (`CriaturaRPG.ouro`, sorteado de 0,5 a 1,5 vezes) e, às vezes, uma **arma** (`Saque`).
 - O modificador de **Carisma** do herói: ouro ±10% por ponto (mínimo 50%); chance de arma 15% + 3% por ponto (entre 5% e 50%).
 - A arma cai direto na mochila (se estiver cheia, avisa "Mochila cheia" e se perde). Ouro na HUD e na ficha.
+
+## Salvaguarda no lugar de ataque e herói agarrado (fatia do Ankheg)
+- `Golpe.cd_salvaguarda` > 0 faz o alvo **rolar a salvaguarda** do `atributo_salvaguarda` (d20 + bônus da ficha) em vez de o ataque rolar contra a CA: falhou, dano inteiro; passou, metade (`Combate.resolver_salvaguarda`); resistência ao tipo reduz de novo. O herói usa `Defesa.bonus_salvaguardas`, preenchido da `Ficha` ao mudar a ficha.
+- **Herói agarrado** (`AgarraoDoHeroi`, regra pura): um golpe com o efeito Agarrar que acerta quem não tem `Condicoes` (o herói) avisa o dono (`Defesa.agarrado`). Agarrado não anda nem pula, mas **pode golpear**. A cada rodada rola Força ou Destreza (o melhor bônus) contra a CD; **pular antecipa a tentativa** depois de meia rodada. Solta se quem agarrou some.

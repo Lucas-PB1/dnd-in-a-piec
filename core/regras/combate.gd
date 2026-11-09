@@ -24,6 +24,8 @@ class Resultado:
 	var dano: int
 	## Errou, mas a maestria Raspão causou dano mesmo assim.
 	var raspao: bool
+	## Golpe de salvaguarda: o alvo passou (levou metade).
+	var salvou: bool
 
 
 ## Rola o ataque do `golpe` contra a `ca` do alvo (e o dano, se acertar), aplicando
@@ -78,6 +80,25 @@ static func _aplicar_raspao(r: Resultado, golpe: Golpe, resistencias: Array[Stri
 	r.resistido = golpe.tipo_dano in resistencias
 	if r.resistido:
 		r.dano = TiposDano.aplicar_resistencia(r.dano)
+
+
+## Golpe de salvaguarda (Borrifo Ácido): o alvo rola d20 + `bonus` contra a CD do golpe; falhou, dano inteiro; passou, metade.
+## `acertou` fica true quando há dano (o alvo reage e mostra o número como num acerto).
+static func resolver_salvaguarda(golpe: Golpe, bonus: int, rng: RandomNumberGenerator,
+		resistencias: Array[StringName] = []) -> Resultado:
+	var r := Resultado.new()
+	r.golpe = golpe
+	r.d20 = rolar_d20(rng)
+	r.total = r.d20 + bonus
+	r.salvou = r.total >= golpe.cd_salvaguarda
+	r.dano = dano_do_acerto(golpe, rng, false)
+	if r.salvou:
+		r.dano = TiposDano.aplicar_resistencia(r.dano)
+	r.resistido = golpe.tipo_dano in resistencias
+	if r.resistido:
+		r.dano = TiposDano.aplicar_resistencia(r.dano)
+	r.acertou = r.dano > 0
+	return r
 
 
 ## Rola uma salvaguarda: true se d20 + `bonus` alcançar a `cd`.

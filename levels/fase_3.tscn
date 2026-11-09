@@ -13,6 +13,7 @@ nome_ambiente = "Pântano"
 missao = "Limpe o pântano"
 quantidade = 3
 tipos_permitidos = Array[StringName]([&"ooze", &"minion", &"kobold"])
+chefe = &"ankheg"
 deslocamento_loja = Vector2(150, 0)
 
 [node name="Terreno" type="TileMapLayer" parent="." unique_id=1948491741]
@@ -42,6 +43,9 @@ position = Vector2(1072, 288)
 
 [node name="Armadilha9" type="Marker2D" parent="." unique_id=1415188365 groups=["armadilha"]]
 position = Vector2(1296, 288)
+
+[node name="Chefe" type="Marker2D" parent="."]
+position = Vector2(1200, 288)
 
 [node name="Porta" type="Area2D" parent="." unique_id=215379523]
 position = Vector2(1392, 288)

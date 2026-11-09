@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EntradaBestiario" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/dados/entrada_bestiario.gd" id="1_entrada"]
+[ext_resource type="Resource" path="res://data/ankheg.tres" id="2_criatura"]
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_base.png" id="3_folha"]
+
+[sub_resource type="AtlasTexture" id="Retrato"]
+atlas = ExtResource("3_folha")
+region = Rect2(0, 0, 186, 186)
+
+[resource]
+script = ExtResource("1_entrada")
+criatura = ExtResource("2_criatura")
+retrato = SubResource("Retrato")
+tipo_texto = "Monstruosidade grande, imparcial"
+descricao = "Inseto escavador do tamanho de um boi, de mandíbulas pingando ácido. Surge debaixo do chão, morde e agarra, e cospe um jato de ácido em linha."
+dica = "Quando a terra se mexer, saia de cima dela. Pule o jato de ácido ou passe na Destreza, e vença a agarrada antes da próxima mordida (ele morde com vantagem em quem está preso)."

@@ -123,6 +123,8 @@ var _escudo_derruba_agora: bool = false
 var _sorte := SorteDoHeroi.new()
 var _dados_de_vida := DadosDeVidaDoHeroi.new()
 var _veneno := VenenoDoHeroi.new()
+var _agarrao := AgarraoDoHeroi.new()
+var _rng_agarrao := RandomNumberGenerator.new()
 var _janela_defesa := JanelaDeDefesa.new()
 var _investida := InvestidaDoHeroi.new()
 ## O "cabo" da haste (Mestre em Armas de Haste): o soco feito com a outra ponta, montado uma vez.
@@ -162,6 +164,7 @@ func _ready() -> void:
 	_vida.morreu.connect(_morrer, CONNECT_DEFERRED)  # depois que o golpe terminar de ser tratado
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_defesa.aparou.connect(_ao_aparar)
+	_defesa.agarrado.connect(_ao_ser_agarrado)
 	inventario.mudou.connect(_atualizar_equipamento)
 	configurar_ficha(Ficha.new(classe, classe.atributos_sugeridos))
 	_maquina.iniciar(self)
@@ -176,7 +179,9 @@ func _physics_process(delta: float) -> void:
 	_passar_recargas_de_talento(delta)
 	_passar_defesa(delta)
 	_passar_veneno(delta)
+	_passar_agarrao(delta)
 	_maquina.processar_fisica(delta)
+	_prender_se_agarrado()
 	move_and_slide()
 	_checar_aterrissagem()
 	_medir_corrida(delta)
@@ -225,6 +230,7 @@ func ao_mudar_ficha() -> void:
 	if ficha == null:
 		return
 	_vida.aumentar_maximo(ficha.vida_maxima())
+	_atualizar_salvaguardas()
 	_atualizar_equipamento()
 	_repor_dados_e_veneno()
 	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
@@ -714,6 +720,7 @@ func criar_golpe() -> Golpe:
 
 ## Volta para o início com a vida cheia (ex.: "Tentar de novo" depois de cair).
 func reviver() -> void:
+	_agarrao.soltar()
 	_apagar_surto()
 	_cancelar_defesa()
 	_morrendo = false
@@ -769,6 +776,12 @@ func mover_horizontal(dir: float, maxima: float, delta: float, virar: bool = tru
 
 
 # --- Interno --------------------------------------------------------------------
+
+
+## Agarrado (Ankheg): o corpo fica onde está até escapar.
+func esta_agarrado() -> bool:
+	return _agarrao.esta_agarrado()
+
 
 func _atualizar_contadores(delta: float) -> void:
 	# Coyote time: um tempinho de "graça" depois de sair da beirada.
@@ -858,6 +871,7 @@ func _atualizar_invencibilidade(delta: float) -> void:
 
 ## Vida zerou: avisa quem monta o jogo. Sem ninguém escutando, revive sozinho.
 func _morrer() -> void:
+	_agarrao.soltar()
 	_defesa.invulneravel = true
 	comecou_a_morrer.emit()
 	_apagar_surto()
@@ -1280,3 +1294,44 @@ func _ao_corroer_arma(penalidade: int, limite: int, arma: Arma) -> void:
 		_texto.mostrar("%s derreteu!" % arma.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
 	else:
 		_texto.mostrar("%s corroída -%d" % [arma.nome, inventario.penalidade(arma)], TextoFlutuanteComponent.COR_ERRO)
+
+
+# --- Agarrado ---------------------------------------------------------------------
+
+func _ao_ser_agarrado(autor_id: int, cd: int) -> void:
+	_agarrao.agarrar(autor_id, cd)
+	_texto.mostrar("Agarrado!", TextoFlutuanteComponent.COR_CONDICAO)
+
+
+## A cada rodada tenta escapar; pular antecipa. Se quem agarrou sumiu, solta.
+func _passar_agarrao(delta: float) -> void:
+	if not _agarrao.esta_agarrado():
+		return
+	if instance_from_id(_agarrao.autor_id()) == null:
+		_agarrao.soltar()
+		return
+	var hora := _agarrao.passar(delta)
+	if hora or (Input.is_action_just_pressed(&"pular") and _agarrao.pode_antecipar()):
+		_tentar_escapar_do_agarrao()
+
+
+func _tentar_escapar_do_agarrao() -> void:
+	var bonus := maxi(ficha.bonus_salvaguarda(Atributos.FORCA), ficha.bonus_salvaguarda(Atributos.DESTREZA))
+	if _agarrao.tentar_escapar(bonus, _rng_agarrao):
+		_texto.mostrar("Soltou-se!", TextoFlutuanteComponent.COR_CONDICAO)
+	else:
+		_texto.mostrar("Preso!", TextoFlutuanteComponent.COR_CONDICAO)
+
+
+## Agarrado não anda nem pula (ainda pode golpear).
+func _prender_se_agarrado() -> void:
+	if not _agarrao.esta_agarrado():
+		return
+	velocity.x = 0.0
+	velocity.y = maxf(velocity.y, 0.0)
+
+
+## A defesa rola as salvaguardas do herói (Borrifo Ácido) com os bônus da ficha.
+func _atualizar_salvaguardas() -> void:
+	for atributo in Atributos.TODOS:
+		_defesa.bonus_salvaguardas[atributo] = ficha.bonus_salvaguarda(atributo)

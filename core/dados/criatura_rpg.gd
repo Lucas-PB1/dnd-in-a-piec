@@ -95,6 +95,23 @@ extends Resource
 ## Até onde patrulha a partir de onde começou (pés). 0 = espera parado.
 @export var patrulha_pes: float = 0.0
 
+@export_group("Salvaguarda em linha")
+## Borrifo Ácido (Ankheg): ataque que não rola para acertar; quem está na linha rola a salvaguarda contra a CD. 0 = não tem.
+@export var linha_cd: int = 0
+@export var linha_nome: String = "Borrifo"
+@export var linha_dano: String = "1d6"
+@export var linha_tipo_dano: StringName = TiposDano.ACIDO
+@export var linha_atributo: StringName = Atributos.DESTREZA
+## Tamanho da linha (pés).
+@export var linha_comprimento_pes: float = 30.0
+@export var linha_largura_pes: float = 5.0
+## Recarga X-6 do livro: no começo de cada rodada rola 1d6 e volta com este número ou mais. 0 = não recarrega.
+@export var linha_recarga: int = 6
+
+@export_group("Escavação")
+## Deslocamento de escavação (pés por rodada). 0 = não escava.
+@export var escavacao_pes: float = 0.0
+
 @export_group("Ações bônus")
 ## Fuga Ágil (Goblin): Desengajar depois de atacar (salta para longe do alvo).
 @export var fuga_agil: bool = false
@@ -135,6 +152,15 @@ func golpe() -> Golpe:
 	if ataque_agarra_cd > 0:
 		ataque.efeitos.append(EfeitosDeTalento.Agarrar.new(ataque_agarra_cd))
 	return ataque
+
+
+## O Borrifo Ácido: golpe de salvaguarda (sem rolagem de acerto).
+func golpe_linha() -> Golpe:
+	var borrifo := Golpe.new(linha_nome, 0, _dado_ou_padrao(linha_dano), linha_tipo_dano)
+	borrifo.cd_salvaguarda = linha_cd
+	borrifo.atributo_salvaguarda = linha_atributo
+	borrifo.corpo_a_corpo = false
+	return borrifo
 
 
 ## O tiro (arco). O bônus para acertar é o do ataque corpo a corpo.

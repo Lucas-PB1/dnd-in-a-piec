@@ -69,3 +69,12 @@ Fonte: `history-lilac.vercel.app`, arquivos `Monster Manual/09 - Monsters (H).md
 - Quando um aliado já segura o herói de perto (corpo a corpo) do MESMO lado em que este monstro está, a menos de
   8 ladrilhos, ele corre (Disparada) para o lado oposto do herói, passando por ele (monstros não colidem com o herói),
   e volta a perseguir (estado `Flanqueando`, regra `Flanqueio.lado`). No máximo uma manobra a cada 6 s; ferido não flanqueia.
+
+## Chefe da fase 3: Ankheg (Monster Manual 2024, ficha conferida com o usuário no Códice, `Monster Manual/02 - Monstros (A)`)
+Monstruosidade Grande, Imparcial · **ND 2 (450 XP)** · CA 14 · **PV 45 (6d10+12)** · 30 pés, escavação 10 pés · FOR 17 DES 11 CON 14 INT 1 SAB 13 CAR 6 · Visão no Escuro e Sentido Sísmico 60 pés · iniciativa +0.
+- **Mordida:** +5 (**vantagem se o alvo está Agarrado** por ele), 1,5 m, 10 (2d6+3) cortante + 3 (1d6) ácido; alvo Grande ou menor fica **Agarrado (CD 13)**.
+- **Borrifo Ácido (Recarga 6):** salvaguarda de Destreza CD 12, linha de 30 pés x 5 pés, 14 (4d6) ácido, metade se passar.
+- **Escavador de Túneis:** atravessa rocha à metade da escavação; no jogo é a mecânica "cava, avança por baixo e emerge".
+- **No código:** `features/ankheg/` (`ankheg.gd`, cena, 8 estados, arte SpriteCook em `sprites/`). Ficha em `data/ankheg.tres`; o Borrifo e a escavação são campos novos da `CriaturaRPG` (`linha_*`, `escavacao_pes`).
+- **Luta (decisões de jogo, não do livro):** Perseguindo decide: cavar (herói a 150 px ou mais, a cada 9 s) → morder (ao alcance) → borrifar (herói na linha de 30 pés, Borrifo recarregado) → andar. Cavando: some (sem colisão nem hurtbox), avança por baixo no deslocamento de escavação **em Disparada** (20 pés/rodada) e a terra mexendo é o aviso; Emergindo: 0,6 s de tremor no ponto e então sai mordendo **sem aviso e com vantagem**. A recarga rola 1d6 a cada rodada (volta com 6). Chefe não "se assusta" com golpe (só pisca); Derrubar o deita.
+- **Missão:** `Fase.chefe` (`&"ankheg"`) + marcador `Chefe` na fase; o chefe entra na cota da porta e a missão vira "derrote o Ankheg" (`Missao.chefe`). A HUD mostra a barra de vida dele no alto (`Hud.mostrar_chefe`).

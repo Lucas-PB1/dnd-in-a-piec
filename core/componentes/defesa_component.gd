@@ -8,6 +8,8 @@ extends Node
 signal golpe_resolvido(resultado: Combate.Resultado, origem: Vector2)
 ## O bônus de CA do Duelista Defensivo fez um golpe errar: a defesa virou um parry.
 signal aparou(origem: Vector2)
+## Um golpe com Agarrar acertou quem não tem Condições (o herói): quem agarrou e a CD do escape.
+signal agarrado(autor_id: int, cd: int)
 
 ## Classe de Armadura.
 @export var classe_armadura: int = 10
@@ -21,6 +23,8 @@ signal aparou(origem: Vector2)
 @export var condicoes: CondicoesComponent
 ## Mestre em Armadura Pesada: dano contundente, cortante e perfurante cai nisto (0 = não reduz).
 @export var reducao_fisica: int = 0
+## Bônus de salvaguarda por atributo de quem não tem Condições (o herói). Com Condições, valem os dela.
+var bonus_salvaguardas: Dictionary[StringName, int] = {}
 ## Duelista Defensivo: soma temporária à CA contra golpes corpo a corpo (0 = fora da janela de defesa).
 var bonus_ca_corpo_a_corpo: int = 0
 
@@ -40,8 +44,8 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 	if condicoes:
 		condicoes.preparar_golpe_recebido(golpe)
 	var bonus_ca := bonus_ca_corpo_a_corpo if golpe.corpo_a_corpo else 0
-	var resultado := Combate.resolver_ataque(golpe, classe_armadura + bonus_ca, rng, resistencias)
-	if bonus_ca > 0 and not resultado.acertou and resultado.d20 != Combate.FALHA_AUTOMATICA and resultado.total >= classe_armadura:
+	var resultado := _resolver(golpe, bonus_ca)
+	if golpe.cd_salvaguarda == 0 and bonus_ca > 0 and not resultado.acertou and resultado.d20 != Combate.FALHA_AUTOMATICA and resultado.total >= classe_armadura:
 		aparou.emit(origem)
 	if resultado.dano > 0 and reducao_fisica > 0 and golpe.tipo_dano in TiposDano.FISICOS:
 		resultado.dano = maxi(resultado.dano - reducao_fisica, 0)
@@ -49,9 +53,32 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 		for efeito in golpe.efeitos:
 			resultado.dano += efeito.dano_no_alvo(golpe, resultado, condicoes)
 	golpe.acertou_algum = golpe.acertou_algum or resultado.acertou
+	if condicoes == null and resultado.acertou:
+		_avisar_agarrao(golpe)
 	if resultado.dano > 0 and vida:
 		vida.receber_dano(resultado.dano)
 	if condicoes and not (vida and vida.esta_morto()):
 		condicoes.aplicar_maestria(resultado, signf(condicoes.global_position.x - origem.x))
 	golpe.resolvido.emit(resultado, resultado.dano > 0 and vida != null and vida.esta_morto())
 	golpe_resolvido.emit(resultado, origem)
+
+
+## Ataque contra a CA, ou salvaguarda contra a CD do golpe (Borrifo Ácido).
+func _resolver(golpe: Golpe, bonus_ca: int) -> Combate.Resultado:
+	if golpe.cd_salvaguarda > 0:
+		return Combate.resolver_salvaguarda(golpe, _bonus_de_salvaguarda(golpe.atributo_salvaguarda), rng, resistencias)
+	return Combate.resolver_ataque(golpe, classe_armadura + bonus_ca, rng, resistencias)
+
+
+func _bonus_de_salvaguarda(atributo: StringName) -> int:
+	if condicoes:
+		return condicoes.bonus_salvaguardas.get(atributo, 0)
+	return bonus_salvaguardas.get(atributo, 0)
+
+
+## Quem não tem Condições não guarda o agarrão: avisa o dono, que cuida disso.
+func _avisar_agarrao(golpe: Golpe) -> void:
+	var efeito := golpe.efeito(Proficiencias.EFEITO_AGARRAR) as EfeitosDeTalento.Agarrar
+	if efeito != null:
+		agarrado.emit(golpe.autor_id, efeito.cd)
+		golpe.efeito_usado.emit(efeito.id)

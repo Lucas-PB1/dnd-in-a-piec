@@ -17,6 +17,7 @@ func _rodar() -> void:
 	missao.registrar_morte()  # morte a mais não passa do total
 	_checar(missao.cumprida() and missao.feitos == 3 and "cumprida" in missao.texto(), "terceira morte cumpre e não passa do total")
 	_checar(not Missao.new("X", 0).existe(), "sem inimigos não há missão")
+	_checar(Missao.new("Limpe o pântano", 4, "Ankheg").texto() == "Limpe o pântano: derrote o Ankheg", "na fase de chefe o texto pede o chefe")
 	var cena: Main = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false
 	root.add_child(cena)

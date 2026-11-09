@@ -1,0 +1,159 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/ankheg/ankheg.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/ankheg.tres" id="2_criatura"]
+[ext_resource type="SpriteFrames" path="res://features/ankheg/sprites/ankheg_frames.tres" id="3_frames"]
+[ext_resource type="Script" path="res://core/componentes/dissolver_component.gd" id="4_dissolver"]
+[ext_resource type="Script" path="res://core/componentes/health_component.gd" id="5_vida"]
+[ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="6_hurtbox"]
+[ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="7_defesa"]
+[ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="8_texto"]
+[ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="9_hitbox"]
+[ext_resource type="Script" path="res://core/componentes/condicoes_component.gd" id="10_condicoes"]
+[ext_resource type="Texture2D" path="res://assets/efeitos/condicoes.png" id="11_icones"]
+[ext_resource type="Script" path="res://core/estados/maquina_estados.gd" id="12_maquina"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_parado.gd" id="13_parado"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_perseguindo.gd" id="14_perseguindo"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_mordendo.gd" id="15_mordendo"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_borrifando.gd" id="16_borrifando"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_cavando.gd" id="17_cavando"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_emergindo.gd" id="18_emergindo"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_caido.gd" id="19_caido"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_morrendo.gd" id="20_morrendo"]
+
+[sub_resource type="RectangleShape2D" id="FormaCorpo"]
+size = Vector2(64, 40)
+
+[sub_resource type="RectangleShape2D" id="FormaAlvo"]
+size = Vector2(76, 46)
+
+[sub_resource type="RectangleShape2D" id="FormaGolpe"]
+resource_local_to_scene = true
+size = Vector2(32, 40)
+
+[sub_resource type="RectangleShape2D" id="FormaLinha"]
+resource_local_to_scene = true
+size = Vector2(192, 32)
+
+[node name="Ankheg" type="CharacterBody2D"]
+collision_layer = 16
+script = ExtResource("1_script")
+criatura = ExtResource("2_criatura")
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+position = Vector2(0, -20)
+shape = SubResource("FormaCorpo")
+
+[node name="Sombra" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 0.3)
+polygon = PackedVector2Array(40, 0, 34, 2, 20, 3.5, 0, 4, -20, 3.5, -34, 2, -40, 0, -34, -2, -20, -3.5, 0, -4, 20, -3.5, 34, -2)
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.65, 0.65)
+sprite_frames = ExtResource("3_frames")
+animation = &"parado"
+autoplay = "parado"
+offset = Vector2(0, -90)
+
+[node name="Terra" type="Node2D" parent="."]
+visible = false
+
+[node name="Monte" type="Polygon2D" parent="Terra"]
+color = Color(0.36, 0.25, 0.14, 1)
+polygon = PackedVector2Array(-26, 0, -14, -9, -4, -14, 6, -12, 16, -8, 26, 0)
+
+[node name="Poeira" type="CPUParticles2D" parent="Terra"]
+position = Vector2(0, -8)
+amount = 18
+lifetime = 0.6
+direction = Vector2(0, -1)
+spread = 50.0
+gravity = Vector2(0, 220)
+initial_velocity_min = 30.0
+initial_velocity_max = 70.0
+scale_amount_min = 2.0
+scale_amount_max = 3.5
+color = Color(0.5, 0.36, 0.2, 1)
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("5_vida")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("6_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -23)
+shape = SubResource("FormaAlvo")
+
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "vida", "condicoes")]
+script = ExtResource("7_defesa")
+hurtbox = NodePath("../Hurtbox")
+vida = NodePath("../Vida")
+condicoes = NodePath("../Condicoes")
+
+[node name="Texto" type="Node2D" parent="."]
+position = Vector2(0, -64)
+script = ExtResource("8_texto")
+
+[node name="Condicoes" type="Node2D" parent="."]
+position = Vector2(0, -58)
+script = ExtResource("10_condicoes")
+icones = ExtResource("11_icones")
+
+[node name="Golpe" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("9_hitbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Golpe"]
+position = Vector2(52, -20)
+shape = SubResource("FormaGolpe")
+
+[node name="Linha" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("9_hitbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Linha"]
+position = Vector2(132, -30)
+shape = SubResource("FormaLinha")
+
+[node name="Jato" type="Polygon2D" parent="Linha"]
+visible = false
+color = Color(0.45, 0.85, 0.2, 0.55)
+
+[node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]
+script = ExtResource("12_maquina")
+estado_inicial = NodePath("Parado")
+
+[node name="Parado" type="Node" parent="MaquinaEstados"]
+script = ExtResource("13_parado")
+
+[node name="Perseguindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("14_perseguindo")
+
+[node name="Mordendo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("15_mordendo")
+
+[node name="Borrifando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("16_borrifando")
+
+[node name="Cavando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("17_cavando")
+
+[node name="Emergindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("18_emergindo")
+
+[node name="Caido" type="Node" parent="MaquinaEstados"]
+script = ExtResource("19_caido")
+
+[node name="Morrendo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("20_morrendo")
+
+[node name="Dissolver" type="Node2D" parent="." node_paths=PackedStringArray("sprite", "sombra")]
+script = ExtResource("4_dissolver")
+sprite = NodePath("../Sprite")
+sombra = NodePath("../Sombra")

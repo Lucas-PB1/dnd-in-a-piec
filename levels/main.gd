@@ -15,6 +15,7 @@ const CENA_GOBLIN_GUERREIRO := preload("res://features/goblin/goblin_guerreiro.t
 const CENA_HOBGOBLIN := preload("res://features/goblin/hobgoblin_guerreiro.tscn")
 const CENA_BUGBEAR := preload("res://features/goblin/bugbear_guerreiro.tscn")
 const CENA_KOBOLD := preload("res://features/goblin/kobold_guerreiro.tscn")
+const CENA_ANKHEG := preload("res://features/ankheg/ankheg.tscn")
 const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_1.tscn"),
 	preload("res://levels/fase_2.tscn"),
@@ -30,6 +31,7 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 	preload("res://data/bestiario/hobgoblin_warrior.tres"),
 	preload("res://data/bestiario/bugbear_warrior.tres"),
 	preload("res://data/bestiario/kobold_warrior.tres"),
+	preload("res://data/bestiario/ankheg.tres"),
 ]
 ## Talentos do livro (a tela de escolha do nível 4 lê daqui).
 const PASTA_TALENTOS := "res://data/talentos"
@@ -43,6 +45,7 @@ const TIPO_WARRIOR := &"warrior"
 const TIPO_HOBGOBLIN := &"hobgoblin"
 const TIPO_BUGBEAR := &"bugbear"
 const TIPO_KOBOLD := &"kobold"
+const TIPO_ANKHEG := &"ankheg"
 ## Cena de cada tipo que a fase pode sortear. Tipo novo = uma linha aqui (e o nome em `Fase.tipos_permitidos`).
 const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_OOZE: CENA_OOZE,
@@ -51,6 +54,7 @@ const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_HOBGOBLIN: CENA_HOBGOBLIN,
 	TIPO_BUGBEAR: CENA_BUGBEAR,
 	TIPO_KOBOLD: CENA_KOBOLD,
+	TIPO_ANKHEG: CENA_ANKHEG,
 }
 const INIMIGOS_EXTRA_POR_NIVEL := 1
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
@@ -164,7 +168,7 @@ func _ready() -> void:
 	_comandos.opcoes_toque_mudaram.connect(_atualizar_controles_toque)
 	_comandos.editar_toque_pedido.connect(_editar_toque)
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
-	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior"]), _cenas_criaturas())
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior", "Ankheg"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_atualizar_botoes_toque()
 	_ligar_porta()
@@ -376,23 +380,45 @@ func _nascer_armadilhas() -> void:
 	var tipos := _tipos_da_fase(nivel)
 	var escolhas := Armadilha.sortear(pontos, quantidade, tipos, _rng_da_fase())
 	for escolha in escolhas:
-		var tipo: StringName = escolha.tipo
-		var monstro: Node2D = _cena_do_tipo(tipo).instantiate()
-		monstro.add_to_group(GRUPO_MONSTROS)
-		add_child(monstro)
-		monstro.global_position = escolha.posicao
-		var id := monstro.get_instance_id()
-		_ids_da_cota.append(id)
-		var criatura := monstro.get("criatura") as CriaturaRPG
-		var experiencia := criatura.experiencia if criatura else 0
-		var ouro := criatura.ouro if criatura else 0
-		_ligar_morte_da_cota(monstro, id, experiencia, ouro)
-		if monstro.has_method(&"definir_alvo"):
-			monstro.call(&"definir_alvo", _jogador)
-		_passar_percepcao(monstro)
-		_passar_luz_do_sol(monstro)
-	_missao = Missao.new(_fase.missao, _ids_da_cota.size())
+		_nascer_da_cota(escolha.tipo, escolha.posicao)
+	var nome_do_chefe := _nascer_chefe()
+	_missao = Missao.new(_fase.missao, _ids_da_cota.size(), nome_do_chefe)
 	_mostrar_missao()
+
+
+## Põe um monstro da cota da fase no `lugar` e o liga à porta, ao XP, ao ouro e ao herói.
+func _nascer_da_cota(tipo: StringName, lugar: Vector2) -> Node2D:
+	var monstro: Node2D = _cena_do_tipo(tipo).instantiate()
+	monstro.add_to_group(GRUPO_MONSTROS)
+	add_child(monstro)
+	monstro.global_position = lugar
+	var id := monstro.get_instance_id()
+	_ids_da_cota.append(id)
+	var criatura := monstro.get("criatura") as CriaturaRPG
+	var experiencia := criatura.experiencia if criatura else 0
+	var ouro := criatura.ouro if criatura else 0
+	_ligar_morte_da_cota(monstro, id, experiencia, ouro)
+	if monstro.has_method(&"definir_alvo"):
+		monstro.call(&"definir_alvo", _jogador)
+	_passar_percepcao(monstro)
+	_passar_luz_do_sol(monstro)
+	return monstro
+
+
+## A fase de chefe: o chefe nasce no marcador, conta na cota (a porta só abre quando ele cai) e mostra a barra de vida.
+## Devolve o nome do chefe ("" se a fase não tem).
+func _nascer_chefe() -> String:
+	_hud.esconder_chefe()
+	if _fase.chefe == &"":
+		return ""
+	var chefe := _nascer_da_cota(_fase.chefe, _fase.posicao_chefe())
+	var criatura := chefe.get("criatura") as CriaturaRPG
+	var nome := criatura.nome if criatura else String(_fase.chefe)
+	if chefe.has_signal(&"vida_mudou"):
+		chefe.connect(&"vida_mudou", _hud.mostrar_chefe.bind(nome))
+		chefe.connect(&"morreu", _hud.esconder_chefe)
+		_hud.mostrar_chefe(chefe.call(&"vida_atual"), chefe.call(&"vida_maxima"), nome)
+	return nome
 
 
 ## A linha da missão na HUD (some se a fase não tem inimigos).
@@ -571,7 +597,7 @@ func _passar_luz_do_sol(monstro: Node) -> void:
 
 ## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
 func _cenas_criaturas() -> Array[PackedScene]:
-	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD]
+	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD, CENA_ANKHEG]
 	return cenas
 
 
@@ -833,6 +859,7 @@ func trazer_criatura(cena: PackedScene) -> void:
 
 ## Apaga os monstros que estão na fase (a cota e os trazidos). A porta fica livre.
 func tirar_criaturas() -> void:
+	_hud.esconder_chefe()
 	_ids_da_cota.clear()
 	_missao = Missao.new()
 	_mostrar_missao()

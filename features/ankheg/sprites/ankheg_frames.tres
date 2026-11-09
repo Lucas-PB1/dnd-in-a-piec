@@ -1,0 +1,258 @@
+[gd_resource type="SpriteFrames" load_steps=37 format=3]
+
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_parado.png" id="1"]
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_andar.png" id="2"]
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_mordida.png" id="3"]
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_cuspe.png" id="4"]
+
+[sub_resource type="AtlasTexture" id="parado_0"]
+atlas = ExtResource("1")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="parado_1"]
+atlas = ExtResource("1")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="parado_2"]
+atlas = ExtResource("1")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="parado_3"]
+atlas = ExtResource("1")
+region = Rect2(600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="parado_4"]
+atlas = ExtResource("1")
+region = Rect2(800, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="parado_5"]
+atlas = ExtResource("1")
+region = Rect2(1000, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="parado_6"]
+atlas = ExtResource("1")
+region = Rect2(1200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="parado_7"]
+atlas = ExtResource("1")
+region = Rect2(1400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_0"]
+atlas = ExtResource("2")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_1"]
+atlas = ExtResource("2")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_2"]
+atlas = ExtResource("2")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_3"]
+atlas = ExtResource("2")
+region = Rect2(600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_4"]
+atlas = ExtResource("2")
+region = Rect2(800, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_5"]
+atlas = ExtResource("2")
+region = Rect2(1000, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_6"]
+atlas = ExtResource("2")
+region = Rect2(1200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="andar_7"]
+atlas = ExtResource("2")
+region = Rect2(1400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_0"]
+atlas = ExtResource("3")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_1"]
+atlas = ExtResource("3")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_2"]
+atlas = ExtResource("3")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_3"]
+atlas = ExtResource("3")
+region = Rect2(600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_4"]
+atlas = ExtResource("3")
+region = Rect2(800, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_5"]
+atlas = ExtResource("3")
+region = Rect2(1000, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_6"]
+atlas = ExtResource("3")
+region = Rect2(1200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="mordida_7"]
+atlas = ExtResource("3")
+region = Rect2(1400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_0"]
+atlas = ExtResource("4")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_1"]
+atlas = ExtResource("4")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_2"]
+atlas = ExtResource("4")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_3"]
+atlas = ExtResource("4")
+region = Rect2(600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_4"]
+atlas = ExtResource("4")
+region = Rect2(800, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_5"]
+atlas = ExtResource("4")
+region = Rect2(1000, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_6"]
+atlas = ExtResource("4")
+region = Rect2(1200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cuspe_7"]
+atlas = ExtResource("4")
+region = Rect2(1400, 0, 200, 200)
+
+[resource]
+animations = [
+{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("parado_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_7")
+}],
+"loop": true,
+"name": &"parado",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("andar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_7")
+}],
+"loop": true,
+"name": &"andar",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("mordida_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("mordida_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("mordida_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("mordida_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("mordida_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("mordida_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("mordida_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("mordida_7")
+}],
+"loop": false,
+"name": &"mordida",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("cuspe_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("cuspe_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("cuspe_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("cuspe_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("cuspe_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("cuspe_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("cuspe_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("cuspe_7")
+}],
+"loop": false,
+"name": &"cuspe",
+"speed": 10.0
+}
+]

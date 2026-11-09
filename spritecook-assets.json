@@ -215,6 +215,36 @@
       "sha12": "3106867b0cf5",
       "label": "minion_parado (8 quadros 88x88, preset idle; aprovado)",
       "file": "features/goblin/sprites/minion_parado_sc.png"
+    },
+    {
+      "asset_id": "e1a697d4-ca27-4d78-9920-e655690e9a7e",
+      "sha12": "",
+      "label": "ankheg_base (186x186, platformer, 12 créditos; aprovado)",
+      "file": "features/ankheg/sprites/ankheg_base.png"
+    },
+    {
+      "asset_id": "284e712e-b053-44d1-9d6d-234328bd2e92",
+      "sha12": "",
+      "label": "ankheg_parado (8 quadros 200x200, custom, 20 créditos)",
+      "file": "features/ankheg/sprites/ankheg_parado.png"
+    },
+    {
+      "asset_id": "657a337b-aee0-42cc-9004-ba33323d00e0",
+      "sha12": "",
+      "label": "ankheg_andar (8 quadros 200x200, custom, 14 créditos)",
+      "file": "features/ankheg/sprites/ankheg_andar.png"
+    },
+    {
+      "asset_id": "b0daf238-f10f-4c67-a0d7-ed4b32e3ed55",
+      "sha12": "",
+      "label": "ankheg_mordida (8 quadros 200x200, custom, 14 créditos)",
+      "file": "features/ankheg/sprites/ankheg_mordida.png"
+    },
+    {
+      "asset_id": "0f8d7466-da38-456e-96c8-7a8021cb360f",
+      "sha12": "",
+      "label": "ankheg_cuspe (8 quadros 200x200, custom, 14 créditos)",
+      "file": "features/ankheg/sprites/ankheg_cuspe.png"
     }
   ]
 }

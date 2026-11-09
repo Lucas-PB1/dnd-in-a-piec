@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_script"]
 
@@ -23,6 +23,13 @@ corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="PreenchimentoXp"]
 bg_color = Color(0.3, 0.55, 0.95, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="PreenchimentoChefe"]
+bg_color = Color(0.5, 0.75, 0.2, 1)
 corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
@@ -194,3 +201,37 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 12
 text = "Sorte"
 
+
+[node name="Chefe" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -110.0
+offset_top = 6.0
+offset_right = 110.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/separation = 1
+
+[node name="NomeChefe" type="Label" parent="Chefe"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.95, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.12, 0.03, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "Chefe"
+horizontal_alignment = 1
+
+[node name="BarraChefe" type="ProgressBar" parent="Chefe"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("FundoBarra")
+theme_override_styles/fill = SubResource("PreenchimentoChefe")
+max_value = 1.0
+step = 1.0
+value = 1.0
+show_percentage = false

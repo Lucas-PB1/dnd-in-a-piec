@@ -30,6 +30,8 @@ const CAMADA_MUNDO := 1
 @export var quantidade: int = 0
 ## Tipos que o sorteio pode colocar: "ooze", "minion", "warrior", "hobgoblin", "bugbear", "kobold".
 @export var tipos_permitidos: Array[StringName] = []
+## Chefe da fase (id do tipo, ex.: "ankheg"; vazio = sem chefe). Nasce no marcador "Chefe" e entra na cota da porta.
+@export var chefe: StringName = &""
 ## A fase é ao ar livre de dia: quem tem Sensibilidade à Luz Solar (Kobold) ataca com desvantagem.
 @export var luz_do_sol: bool = false
 ## Onde fica a banca do lojista em relação ao ponto de partida (px): à vista, em chão firme e longe do baú (a 70 px do
@@ -104,6 +106,12 @@ func posicao_porta() -> Vector2:
 	if porta == null:
 		return posicao_inicio()
 	return porta.global_position
+
+
+## Onde o chefe nasce (o marcador "Chefe"). Sem marcador, devolve o início.
+func posicao_chefe() -> Vector2:
+	var marcador := get_node_or_null("Chefe") as Node2D
+	return marcador.global_position if marcador else posicao_inicio()
 
 
 ## Pontos onde um inimigo pode nascer, da esquerda para a direita.

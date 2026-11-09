@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Ankheg"
+experiencia = 450
+ouro = 60
+tipo = "Large Monstrosity, Unaligned"
+classe_armadura = 14
+dados_vida = "6d10+12"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 6,
+&"constituicao": 14,
+&"destreza": 11,
+&"forca": 17,
+&"inteligencia": 1,
+&"sabedoria": 13
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = 0
+deslocamento_pes = 30.0
+percepcao_pes = 60.0
+ataque_nome = "Mordida"
+ataque_bonus = 5
+ataque_dano = "2d6+3"
+ataque_tipo_dano = &"cortante"
+ataque_alcance_pes = 5.0
+ataque_dano_adicional = "1d6"
+ataque_agarra_cd = 13
+aviso_ataque = 0.5
+linha_cd = 12
+linha_nome = "Borrifo Ácido"
+linha_dano = "4d6"
+linha_tipo_dano = &"acido"
+linha_atributo = &"destreza"
+linha_comprimento_pes = 30.0
+linha_largura_pes = 5.0
+linha_recarga = 6
+escavacao_pes = 10.0

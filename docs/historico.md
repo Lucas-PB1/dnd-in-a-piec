@@ -109,3 +109,4 @@ O que já foi feito, em ordem. **Acrescente uma linha ao fechar cada fatia.** O 
 - IA dos monstros: flanqueio em grupo (estado `Flanqueando`, só manobra, sem vantagem). Teste `teste_flanqueio.gd`.
 - Bugbear Warrior com arte própria (Gemini): correr, agarrar, parado e arremessar; limpeza de franja nas tiras.
 - Kobold Warrior com arte própria (Gemini): correr, estocada, parado e arremessar. Os três minions novos têm arte própria.
+- Primeiro chefe, o Ankheg (fase 3): ficha do livro, arte do SpriteCook (base + parado, andar, mordida, cuspe; 74 créditos), mordida que agarra o herói (ele tenta escapar a cada rodada, pular antecipa), Borrifo Ácido por salvaguarda de Destreza, escavação com emboscada, missão "derrote o Ankheg", barra de vida do chefe e entrada no bestiário e em Trazer. Teste `teste_ankheg.gd`.

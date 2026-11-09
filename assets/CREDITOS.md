@@ -11,6 +11,7 @@
 | Goblin Warrior (soldado de lado: parado, andar, golpe com espada, morte). A flecha que ele atira é a do Aerial Arsenal | **MoikMellah** | https://opengameart.org/content/goblin-corps-mv-platformer-set (Goblin Corps) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/goblin/sprites/fonte_goblin_corps/` |
 | Herói | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/jogador/sprites/` |
 | Chão da floresta | Gerado no SpriteCook (tileset) | https://spritecook.ai | Conta do usuário | `assets/tiles/spritecook/` |
+| Ankheg (chefe da fase 3) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/ankheg/sprites/` |
 | Efeitos sonoros de RPG (espadas, passos, tecidos, portas) | Kenney Vleugels (CC0) | https://opengameart.org/content/50-rpg-sound-effects | CC0 | `assets/audio/kenney_rpg/` |
 | Sons de interface (cliques, abrir, fechar, confirmar) | Kenney Vleugels (CC0) | https://opengameart.org/content/interface-sounds | CC0 | `assets/audio/kenney_interface/` |
 | Música: Shakkar, The Old Tower Inn e Medieval Battle (`battle_8`) | OpenGameArt, a taverna e a batalha são de RandomMind | https://opengameart.org/content/shakkar, https://opengameart.org/content/medieval-the-old-tower-inn, https://opengameart.org/content/medieval-battle | CC0 (conferida na página de cada faixa) | `assets/audio/musica/` |

@@ -54,6 +54,11 @@ var corpo_a_corpo: bool = true
 ## Efeitos de talento e de item que o golpe leva (ver `EfeitoDeGolpe`). O dono do golpe monta a lista; o combate pergunta a ela.
 var efeitos: Array[EfeitoDeGolpe] = []
 
+## Salvaguarda no lugar de ataque (Borrifo Ácido): CD maior que 0 faz o alvo rolar a salvaguarda do atributo; passou, leva
+## metade. Sem rolagem de acerto.
+var cd_salvaguarda: int = 0
+var atributo_salvaguarda: StringName = Atributos.DESTREZA
+
 
 ## O golpe leva o efeito com este id?
 func tem(id_do_efeito: StringName) -> bool:

@@ -37,3 +37,6 @@ decisão deste tema mudar.** Telas em `ui/`; regra geral: a tela não conhece o 
 
 ## Controles de toque: tamanho e folga
 - Botões de ação com raio 30 a 40 e slots 30, analógico 58: dá para acertar com o polegar. `ControlesToque.MARGEM_BORDA` (20 px do jogo) é a folga mínima até a borda, também para posições salvas; no celular, `_folga_do_sistema()` soma a área ocupada pelo recorte e pelas barras. Atalhos novos: Sorte (G), Defesa (B), Investida (V), nos slots 4 a 6.
+
+## Barra de vida do chefe
+Na fase de chefe, a HUD mostra no alto, ao centro, o nome e a barra verde de vida (`Hud.mostrar_chefe` / `esconder_chefe`); a main liga o sinal `vida_mudou` do chefe e a esconde quando ele morre.

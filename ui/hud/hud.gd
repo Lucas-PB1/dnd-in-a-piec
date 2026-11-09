@@ -1,6 +1,6 @@
 class_name Hud
 extends CanvasLayer
-## Informações na tela durante o jogo: nome e classe, barra de vida, Fôlego em quadradinhos, barra de XP e o estado das habilidades.
+## Informações na tela durante o jogo: nome e classe, barra de vida, Fôlego em quadradinhos, barra de XP, o estado das habilidades e a barra do chefe.
 
 ## Quadradinhos do Fôlego (px) e as cores de aceso e apagado.
 const LADO_PONTO := 9.0
@@ -23,6 +23,9 @@ const COR_MISSAO_CUMPRIDA := Color(0.55, 0.95, 0.62, 1.0)
 @onready var _barra_vida: ProgressBar = %BarraVida
 @onready var _barra_xp: ProgressBar = %BarraXp
 @onready var _pontos_folego: HBoxContainer = %Pontos
+@onready var _chefe: VBoxContainer = %Chefe
+@onready var _nome_chefe: Label = %NomeChefe
+@onready var _barra_chefe: ProgressBar = %BarraChefe
 
 
 ## Mostra "Nome (Classe)".
@@ -35,6 +38,19 @@ func mostrar_vida(atual: int, maxima: int) -> void:
 	_vida.text = "PV %d/%d" % [atual, maxima]
 	_barra_vida.max_value = maxi(maxima, 1)
 	_barra_vida.value = atual
+
+
+## A barra de vida do chefe, no alto da tela (o nome e os pontos de vida que restam).
+func mostrar_chefe(atual: int, maxima: int, nome: String) -> void:
+	_chefe.visible = true
+	_nome_chefe.text = nome
+	_barra_chefe.max_value = maxi(maxima, 1)
+	_barra_chefe.value = atual
+
+
+## O chefe caiu (ou a fase não tem): some a barra.
+func esconder_chefe() -> void:
+	_chefe.visible = false
 
 
 ## Mostra os usos do Second Wind ("Fôlego 2/2"). Total 0 some com a linha.
