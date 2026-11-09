@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Hobgoblin Warrior"
+experiencia = 100
+ouro = 8
+tipo = "Medium Fey (Goblinoid), Lawful Evil"
+classe_armadura = 18
+dados_vida = "2d8+2"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 9,
+&"constituicao": 12,
+&"destreza": 12,
+&"forca": 13,
+&"inteligencia": 10,
+&"sabedoria": 10
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = 3
+deslocamento_pes = 30.0
+percepcao_pes = 60.0
+resistencias = Array[StringName]([])
+corrosao_por_toque = 0
+corrosao_limite = 5
+ataque_nome = "Espada Longa"
+ataque_bonus = 3
+ataque_dano = "2d10+1"
+ataque_tipo_dano = &"cortante"
+ataque_alcance_pes = 5.0
+ataque_corroi_armadura = false
+disparos = -1
+disparo_nome = "Arco Longo"
+disparo_normal_pes = 150.0
+disparo_longo_pes = 600.0
+disparo_dano = "1d8+1"
+disparo_tipo_dano = &"perfurante"
+disparo_dano_adicional = "3d4"
+taticas_de_matilha = true
+patrulha_pes = 15.0

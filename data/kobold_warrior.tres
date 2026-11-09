@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+[ext_resource type="Resource" path="res://data/armas/adaga.tres" id="2_adaga"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Kobold Warrior"
+experiencia = 25
+ouro = 2
+tipo = "Small Dragon, Neutral"
+classe_armadura = 14
+dados_vida = "3d6-3"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 8,
+&"constituicao": 9,
+&"destreza": 15,
+&"forca": 7,
+&"inteligencia": 8,
+&"sabedoria": 7
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = 2
+deslocamento_pes = 30.0
+percepcao_pes = 60.0
+resistencias = Array[StringName]([])
+corrosao_por_toque = 0
+corrosao_limite = 5
+ataque_nome = "Adaga"
+ataque_bonus = 4
+ataque_dano = "1d4+2"
+ataque_tipo_dano = &"perfurante"
+ataque_alcance_pes = 5.0
+ataque_corroi_armadura = false
+arremessos = 3
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+arma_arremesso = ExtResource("2_adaga")
+taticas_de_matilha = true
+sensivel_ao_sol = true
+patrulha_pes = 15.0

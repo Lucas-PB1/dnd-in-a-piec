@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+[ext_resource type="Resource" path="res://data/armas/martelo_leve.tres" id="2_martelo"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Bugbear Warrior"
+experiencia = 200
+ouro = 15
+tipo = "Medium Fey (Goblinoid), Chaotic Evil"
+classe_armadura = 14
+dados_vida = "6d8+6"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 9,
+&"constituicao": 13,
+&"destreza": 14,
+&"forca": 15,
+&"inteligencia": 8,
+&"sabedoria": 11
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = 2
+deslocamento_pes = 30.0
+percepcao_pes = 60.0
+resistencias = Array[StringName]([])
+corrosao_por_toque = 0
+corrosao_limite = 5
+ataque_nome = "Agarrar"
+ataque_bonus = 4
+ataque_dano = "2d6+2"
+ataque_tipo_dano = &"contundente"
+ataque_alcance_pes = 10.0
+ataque_corroi_armadura = false
+ataque_agarra_cd = 12
+arremessos = 3
+arremesso_normal_pes = 20.0
+arremesso_longo_pes = 60.0
+arma_arremesso = ExtResource("2_martelo")
+arremesso_nome = "Martelo Leve"
+arremesso_dano = "3d4+2"
+arremesso_tipo_dano = &"contundente"
+tem_furtividade = true
+bonus_furtividade = 6
+patrulha_pes = 15.0

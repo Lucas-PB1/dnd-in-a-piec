@@ -73,6 +73,18 @@
       "file": "features/jogador/sprites/heroi_corte_duplo_v1.png"
     },
     {
+      "asset_id": "e3c42f0b-1e71-4fec-b4ac-60d5c7bd7fc6",
+      "sha12": "22711387d8b3",
+      "label": "lojista parado (8 quadros 88x88, animate_game_art, 20 créditos, saldo 336; tools/montar_lojista.gd reduz para 75)",
+      "file": "features/loja/lojista_idle_sc.png"
+    },
+    {
+      "asset_id": "de5df9a3-c969-4f0b-a194-508cc1c44c5a",
+      "sha12": "bca95d33d14a",
+      "label": "lojista (personagem 78x78, generate_character platformer, 12 créditos, saldo 356; a base da animação)",
+      "file": "(base do lojista; só no SpriteCook, a arte usada é lojista_idle_sc.png)"
+    },
+    {
       "asset_id": "eedd06cd-3406-420b-ba68-6369b7178263",
       "sha12": "9a2546d91f1e",
       "label": "heroi_guarda_dupla_v1 (8 quadros 84x84, guarda com duas armas, 20 créditos, saldo 368; quase igual ao idle, braços pouco dobrados; não ligado ao jogo)",

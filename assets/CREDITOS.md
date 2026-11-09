@@ -20,3 +20,15 @@
 
 
 Estatísticas do Gray Ooze: ficha de criatura do D&D 5e (Wizards of the Coast), usada como referência de regras.
+
+## Hobgoblin Warrior (features/goblin/sprites/hobgoblin_*.png)
+Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
+
+## Bugbear Warrior (features/goblin/sprites/bugbear_*.png)
+Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
+
+## Kobold Warrior (features/goblin/sprites/kobold_*.png)
+Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.

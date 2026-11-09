@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EntradaBestiario" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/dados/entrada_bestiario.gd" id="1_entrada"]
+[ext_resource type="Resource" path="res://data/hobgoblin_warrior.tres" id="2_criatura"]
+[ext_resource type="Texture2D" path="res://features/goblin/sprites/warrior_parado_sc.png" id="3_folha"]
+
+[sub_resource type="AtlasTexture" id="Retrato"]
+atlas = ExtResource("3_folha")
+region = Rect2(0, 0, 76, 76)
+
+[resource]
+script = ExtResource("1_entrada")
+criatura = ExtResource("2_criatura")
+retrato = SubResource("Retrato")
+tipo_texto = "Fada média (goblinoide), leal e mau"
+descricao = "Soldado disciplinado de meia-armadura e escudo. Golpeia forte com a espada longa e atira com o arco longo, com veneno na flecha."
+dica = "Ele ganha vantagem se um aliado estiver colado em você: separe o grupo. A CA 18 é alta, então acerte quando ele estiver no aviso do golpe."
