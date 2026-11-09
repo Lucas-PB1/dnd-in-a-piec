@@ -80,3 +80,14 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 - Talentos de origem prontos (Alerta, Resistente, Atacante Selvagem, Brigão, Sortudo, Artesão, Perito). Faltam: loja com 20% de desconto do Artesão; salvaguardas do herói com a sorte; verificar no aparelho o botão "Sorte" nos atalhos (layouts salvos antigos precisam pôr a Sorte num slot em Opções > Atalhos). Próximos: efeitos dos 23 talentos gerais do nível 4.
 - Talentos gerais: todos os 30 escolhíveis estão ligados e completos. Falta validar no aparelho os botões novos (Defesa, Investida, Dado de vida, Veneno), o tamanho dos botões e a escalada no toque (empurrar o analógico contra a parede); a loja do Artesão; a porta ainda não muda de aparência quando a cota abre (aberta ou fechada).
 - Dívidas que sobraram da auditoria: `jogador.gd` ainda tem ~1250 linhas (arremesso e disparo, Surto, Fôlego e golpes ainda moram nele: o próximo corte é um componente de ataque e um de disparo); as perícias do herói não têm teste rolado no jogo (só a Percepção passiva); `Compendio` está em `ui/` porque usa `ResumoItem`.
+
+## Épico: 10 fases, chefes, ouro, loja e armas mágicas (pedido do usuário, 2026-11-09)
+Decisões dele: chefe a cada 3 fases (3, 6, 9) e um **super chefe na 10**, cada um com jogabilidade diferente;
+missão visível por fase ("derrote todos os inimigos" e variações); inimigos comuns variam com o ambiente;
+inimigos soltam **ouro e armas**; **loja no início da fase** (comprar e vender); armas mágicas **+1, +2, +3**
+(só bônus de ataque/dano e um efeito de cor); a chance de drop de arma e a quantidade de ouro sofrem **influência
+direta do Carisma** (regra da casa, pedida por ele). Inimigos candidatos (Monster Manual 2024, do Códice dele,
+history-lilac.vercel.app): Kobold Warrior, Skeleton, Zombie, Hobgoblin Warrior, Rust Monster, Bugbear Warrior,
+Animated Armor; chefes Ankheg (ND 2) e outros até ND 3. Ainda por decidir: plano de criaturas e ordem das fatias.
+Fatias sugeridas: (1) ouro e drops + regra do Carisma; (2) armas mágicas +1/+2/+3; (3) loja no início da fase
+(desconto 20% do Artesão); (4) missões por fase; (5) criaturas novas por ambiente; (6) chefes das fases 3, 6, 9; (7) fases 6 a 10 e super chefe.

@@ -38,6 +38,8 @@ signal dados_de_vida_mudou(restantes: int, total: int)
 signal veneno_mudou(doses: int, total: int, aplicado: bool)
 ## Atualização de nível e XP para o HUD.
 signal progressao_mudou(nivel: int, experiencia: int, proximo_nivel: int)
+## O ouro do herói mudou (saque, loja).
+signal ouro_mudou(ouro: int)
 ## Emitido quando a vida chega a zero. Quem monta o jogo decide (ex.: tela "Você caiu!" e
 ## depois reviver()). Se ninguém escutar (cena aberta sozinha), o herói revive sozinho.
 signal caiu
@@ -60,8 +62,13 @@ const DURACAO_MORTE := 1.4
 ## Quanto o herói desliza para o lado ao cair (px/s por segundo): ele freia e fica deitado onde caiu.
 const FREIO_DA_MORTE := 900.0
 const ANIMACAO_CORTE := &"corte"
+## Com duas armas, a da frente descansa erguida (graus; negativo = ponta para cima), como a de trás.
+const ANGULO_GUARDA_DUPLA := -25.0
 const QUADROS_CORTE := 8
 const QUADRO_DO_ACERTO_CORTE := 5
+## Golpe extra das duas armas: o corpo (`corte_duplo`, 8 quadros) estica o braço até o quadro 3 e volta à guarda.
+const ANIMACAO_CORTE_DUPLO := &"corte_duplo"
+const QUADRO_DO_ACERTO_CORTE_DUPLO := 3
 ## O anel da ativação do Surto de Ação dura meio segundo.
 const DURACAO_ANEL_SURTO := 0.5
 const TEMPO_BRILHO_SURTO := 0.5
@@ -175,11 +182,14 @@ func _physics_process(delta: float) -> void:
 	_medir_corrida(delta)
 	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
 	_animacao.mirando = nome_estado() == &"Arremessando" and disparo_na_mao()
-	_animacao.animacao_do_golpe = ANIMACAO_CORTE if _ataque.corpo_acompanha() else &""
+	var corte := ANIMACAO_CORTE_DUPLO if _ataque.golpe_cruzado() else ANIMACAO_CORTE
+	_animacao.animacao_do_golpe = corte if _ataque.corpo_acompanha() else &""
 	if _ataque.corpo_acompanha():
-		_animacao.quadro_do_golpe = _ataque.quadro_do_corpo(QUADROS_CORTE, QUADRO_DO_ACERTO_CORTE)
+		var acerto := QUADRO_DO_ACERTO_CORTE_DUPLO if _ataque.golpe_cruzado() else QUADRO_DO_ACERTO_CORTE
+		_animacao.quadro_do_golpe = _ataque.quadro_do_corpo(QUADROS_CORTE, acerto)
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
-	_ataque.seguir_mao(_animacao.ponto_da_mao(), _animacao.angulo_descanso(), direcao_olhar, arma_atual())
+	var angulo_guarda := ANGULO_GUARDA_DUPLA if arma_secundaria() != null else _animacao.angulo_descanso()
+	_ataque.seguir_mao(_animacao.ponto_da_mao(), angulo_guarda, direcao_olhar, arma_atual())
 	var na_tras: Arma = null if _ataque.golpe_da_secundaria() else arma_secundaria()
 	_arma_tras.mostrar(na_tras, _animacao.ponto_da_mao_de_tras(), direcao_olhar)
 	_escudo.seguir_mao(_animacao.ponto_da_mao_de_tras(), direcao_olhar)
@@ -207,6 +217,7 @@ func configurar_ficha(nova: Ficha) -> void:
 	_repor_sorte()
 	_repor_dados_e_veneno()
 	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
+	ouro_mudou.emit(ficha.ouro)
 
 
 ## A ficha mudou depois de pronta (talento ou aumento de atributo): recalcula vida, CA e HUD.
@@ -421,6 +432,23 @@ func ganhar_experiencia(quantidade: int) -> int:
 		dados_de_vida_mudou.emit(_dados_de_vida.restantes, ficha.dados_de_vida())
 	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
 	return ficha.nivel - nivel_anterior
+
+
+## Soma o ouro do saque e avisa a tela.
+func ganhar_ouro(quantidade: int) -> void:
+	if ficha == null or quantidade <= 0:
+		return
+	ficha.ouro += quantidade
+	_texto.mostrar("+%d po" % quantidade, COR_SURTO)
+	ouro_mudou.emit(ficha.ouro)
+
+
+## Põe na mochila a arma do saque; se não couber, avisa e a arma se perde.
+func receber_saque(arma: Item) -> void:
+	if arma == null:
+		return
+	var coube := inventario.adicionar(arma)
+	_texto.mostrar(arma.nome if coube else "Mochila cheia", COR_SURTO if coube else TextoFlutuanteComponent.COR_ERRO)
 
 
 ## Mente Tática só é ativa a partir do nível 2.

@@ -4,10 +4,10 @@ extends Sprite2D
 ## No golpe extra o dono passa null: quem gira é o AtaqueJogador, para não desenhar duas.
 
 ## Empurra a arma para trás do tronco, para não entrar no corpo na passada.
-const AFASTAMENTO := 6.0
-## Inclinada para baixo e para trás (graus, herói olhando para a direita). Arma comprida
-## inclina menos, para a ponta não entrar no chão.
-const ANGULO := 125.0
+const AFASTAMENTO := 0.0
+## Guarda de duas armas: lâmina erguida para cima e para trás, espelho da arma da frente (graus, herói olhando para a direita). Arma comprida
+## inclina menos se algum dia apontar para baixo, para a ponta não entrar no chão.
+const ANGULO := -155.0
 ## A ponta fica pelo menos isto (px) acima do chão.
 const FOLGA_DO_CHAO := 2.0
 

@@ -95,6 +95,7 @@ func _ready() -> void:
 	_jogador.vida_mudou.connect(_hud.mostrar_vida)
 	_jogador.folego_mudou.connect(_hud.mostrar_folego)
 	_jogador.progressao_mudou.connect(_ao_mudar_progressao)
+	_jogador.ouro_mudou.connect(_hud.mostrar_ouro)
 	_jogador.surto_acao_pedido.connect(_usar_surto_acao)
 	_jogador.mente_tatica_pedido.connect(_alternar_mente_tatica)
 	_jogador.surto_ativo_mudou.connect(_ao_surto_ativo_mudou)
@@ -353,7 +354,8 @@ func _nascer_armadilhas() -> void:
 		_ids_da_cota.append(id)
 		var criatura := monstro.get("criatura") as CriaturaRPG
 		var experiencia := criatura.experiencia if criatura else 0
-		_ligar_morte_da_cota(monstro, tipo, id, experiencia)
+		var ouro := criatura.ouro if criatura else 0
+		_ligar_morte_da_cota(monstro, tipo, id, experiencia, ouro)
 		if monstro.has_method(&"definir_alvo"):
 			monstro.call(&"definir_alvo", _jogador)
 		_passar_percepcao(monstro)
@@ -371,17 +373,18 @@ func quantidade_inimigos_da_fase(nivel: int) -> int:
 	return mini(_fase.quantidade + (nivel - 1) * INIMIGOS_EXTRA_POR_NIVEL, pontos.size())
 
 
-func _ligar_morte_da_cota(monstro: Node2D, tipo: StringName, id: int, experiencia: int) -> void:
+func _ligar_morte_da_cota(monstro: Node2D, tipo: StringName, id: int, experiencia: int, ouro: int) -> void:
 	_registrar_no_bestiario(monstro)
 	if tipo == TIPO_MINION or tipo == TIPO_WARRIOR:
-		(monstro as Goblin).morreu.connect(_ao_morreu_da_cota.bind(id, experiencia))
+		(monstro as Goblin).morreu.connect(_ao_morreu_da_cota.bind(id, experiencia, ouro))
 	else:
-		(monstro as GrayOoze).morreu.connect(_ao_morreu_da_cota.bind(id, experiencia))
+		(monstro as GrayOoze).morreu.connect(_ao_morreu_da_cota.bind(id, experiencia, ouro))
 
 
-func _ao_morreu_da_cota(id: int, experiencia: int) -> void:
+func _ao_morreu_da_cota(id: int, experiencia: int, ouro: int) -> void:
 	_ids_da_cota.erase(id)
 	_jogador.ganhar_experiencia(experiencia)
+	_soltar_saque(ouro)
 	# Adia: quem morreu ainda está emitindo o sinal e não pode ser apagado agora.
 	if _heroi_na_porta:
 		_tentar_atravessar.call_deferred()
@@ -476,6 +479,14 @@ func _alternar_mente_tatica() -> void:
 	_jogador.definir_mente_tatica(not _jogador.mente_tatica_ligada())
 	_jogador.avisar("Mente Tática %s" % ("ligada" if _jogador.mente_tatica_ligada() else "desligada"))
 	_atualizar_botoes_toque()
+
+
+## O herói recebe o ouro e, às vezes, uma arma do inimigo derrotado; o Carisma dele melhora a sorte (Saque).
+func _soltar_saque(ouro: int) -> void:
+	var carisma := _jogador.ficha.modificador(Atributos.CARISMA)
+	var rng := _rng_da_fase()
+	_jogador.ganhar_ouro(Saque.ouro(ouro, carisma, rng))
+	_jogador.receber_saque(Saque.arma(carisma, rng))
 
 
 func _rng_da_fase() -> RandomNumberGenerator:

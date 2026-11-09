@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://ui/inventario/tela_inventario.gd" id="1_script"]
 [ext_resource type="Theme" path="res://ui/tema_menu.tres" id="2_tema"]
+[ext_resource type="Script" path="res://ui/inventario/slots_de_equipamento.gd" id="3_slots"]
+[ext_resource type="Script" path="res://ui/inventario/ficha_visual.gd" id="4_ficha"]
 
 [node name="TelaInventario" type="Control"]
 layout_mode = 3
@@ -41,6 +43,20 @@ theme_override_constants/separation = 6
 layout_mode = 2
 theme_override_constants/separation = 12
 
+[node name="Equipado" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas"]
+custom_minimum_size = Vector2(138, 0)
+layout_mode = 2
+
+[node name="TituloEquipado" type="Label" parent="Centro/Painel/Coluna/Colunas/Equipado"]
+layout_mode = 2
+theme_type_variation = &"Titulo"
+text = "Equipado"
+
+[node name="Slots" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas/Equipado"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("3_slots")
+
 [node name="Itens" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas"]
 layout_mode = 2
 
@@ -52,7 +68,7 @@ text = "Inventário"
 
 [node name="Lista" type="ItemList" parent="Centro/Painel/Coluna/Colunas/Itens"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 200)
+custom_minimum_size = Vector2(172, 200)
 fixed_icon_size = Vector2i(16, 16)
 layout_mode = 2
 
@@ -112,12 +128,16 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="TextoFicha" type="Label" parent="Centro/Painel/Coluna/Colunas/Direita/PainelFicha"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 0)
+[node name="RolagemFicha" type="ScrollContainer" parent="Centro/Painel/Coluna/Colunas/Direita/PainelFicha"]
+custom_minimum_size = Vector2(248, 232)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
-autowrap_mode = 3
+horizontal_scroll_mode = 0
+
+[node name="FichaVisual" type="VBoxContainer" parent="Centro/Painel/Coluna/Colunas/Direita/PainelFicha/RolagemFicha"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("4_ficha")
 
 [node name="Rodape" type="HBoxContainer" parent="Centro/Painel/Coluna"]
 layout_mode = 2

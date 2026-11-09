@@ -2,13 +2,15 @@ class_name ItemAleatorio
 extends RefCounted
 ## Sorteia uma arma ou armadura do arsenal do jogo (Artesão: um item novo a cada fase). Regra pura.
 
+const PASTAS_ARMAS: Array[String] = ["res://data/armas"]
 const PASTAS: Array[String] = ["res://data/armas", "res://data/armaduras"]
 
 
-## Uma cópia nova de um item sorteado entre todas as armas e armaduras. null se não houver nenhum.
-static func sortear(rng: RandomNumberGenerator) -> Item:
+## Uma cópia nova de um item sorteado entre todas as armas e armaduras (ou só armas, com `so_armas`).
+## null se não houver nenhum.
+static func sortear(rng: RandomNumberGenerator, so_armas: bool = false) -> Item:
 	var todos: Array[Item] = []
-	for pasta in PASTAS:
+	for pasta in PASTAS_ARMAS if so_armas else PASTAS:
 		for recurso in Recursos.da_pasta(pasta):
 			todos.append(recurso as Item)
 	if todos.is_empty():

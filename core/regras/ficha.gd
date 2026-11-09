@@ -37,6 +37,8 @@ var nome: String
 var classe: ClasseRPG
 var nivel: int = 1
 var experiencia: int = 0
+## Ouro (peças) que o herói leva; vem do saque dos inimigos e gasta na loja.
+var ouro: int = 0
 var atributos: Dictionary[StringName, int] = {}
 ## Maestria em Armas: nomes dos tipos de arma que o personagem domina (Guerreiro: 3,
 ## escolhidos na criação). Só com elas a maestria da arma vale.

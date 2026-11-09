@@ -91,9 +91,19 @@ func desequipar(espaco: StringName) -> bool:
 	if not _equipados.has(espaco):
 		return false
 	_equipados.erase(espaco)
+	_promover_segunda_arma(espaco)
 	mudou.emit()
 	return true
 
+
+## Saiu a arma da mão principal e há uma arma na outra mão: ela passa a ser a principal (escudo fica onde está).
+func _promover_segunda_arma(espaco_liberado: StringName) -> void:
+	if espaco_liberado != Item.ESPACO_MAO or _equipados.has(Item.ESPACO_MAO):
+		return
+	var segunda: Item = _equipados.get(Item.ESPACO_MAO_SECUNDARIA)
+	if segunda is Arma:
+		_equipados.erase(Item.ESPACO_MAO_SECUNDARIA)
+		_equipados[Item.ESPACO_MAO] = segunda
 
 ## Joga o item fora (some do inventário). Se estava equipado, desequipa antes.
 func descartar(item: Item) -> bool:
@@ -102,6 +112,7 @@ func descartar(item: Item) -> bool:
 	var espaco := espaco_de(item)
 	if espaco != &"":
 		_equipados.erase(espaco)
+	_promover_segunda_arma(espaco)
 	itens.erase(item)
 	_penalidades.erase(item)
 	_quantidades.erase(item)

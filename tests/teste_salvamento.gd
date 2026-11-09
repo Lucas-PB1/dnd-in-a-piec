@@ -17,6 +17,7 @@ func _rodar() -> void:
 	var ficha := Ficha.new(classe, {Atributos.FORCA: 15, Atributos.CONSTITUICAO: 14}, "Aldric")
 	ficha.definir_nivel_inicial(2)
 	ficha.experiencia += 40
+	ficha.ouro = 37
 	ficha.pericias.append(&"percepcao")
 	ficha.armas_dominadas.append("Espada Longa")
 	var inventario := _montar_mochila()
@@ -27,6 +28,7 @@ func _rodar() -> void:
 	_checar(Salvamento.fase_de(dados) == 3, "a fase salva volta (3)")
 	var nova := Salvamento.montar_ficha(dados)
 	_checar(nova != null and nova.nome == "Aldric" and nova.nivel == 2 and nova.experiencia == ficha.experiencia, "ficha: nome, nível e XP")
+	_checar(nova.ouro == 37, "ficha: o ouro volta do save")
 	_checar(nova.atributos[Atributos.FORCA] == 15 and nova.atributos[Atributos.CONSTITUICAO] == 14, "ficha: atributos")
 	_checar(nova.pericias == ficha.pericias and nova.armas_dominadas == ficha.armas_dominadas, "ficha: perícias e armas dominadas")
 	_checar(nova.classe == classe, "ficha: a mesma classe")

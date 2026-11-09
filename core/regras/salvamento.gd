@@ -71,6 +71,7 @@ static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: i
 			"classe": ficha.classe.resource_path,
 			"nivel": ficha.nivel,
 			"experiencia": ficha.experiencia,
+			"ouro": ficha.ouro,
 			"atributos": ficha.atributos,
 			"armas_dominadas": ficha.armas_dominadas,
 			"talentos": ficha.talentos,
@@ -102,6 +103,7 @@ static func montar_ficha(dados: Dictionary) -> Ficha:
 	var ficha := Ficha.new(classe, atributos, str(f.get("nome", Ficha.NOME_PADRAO)))
 	ficha.nivel = clampi(int(f.get("nivel", 1)), 1, Ficha.NIVEL_MAXIMO)
 	ficha.experiencia = int(f.get("experiencia", 0))
+	ficha.ouro = maxi(int(f.get("ouro", 0)), 0)
 	ficha.armas_dominadas.assign(f.get("armas_dominadas", []))
 	for nome in f.get("talentos", []):
 		ficha.talentos.append(id_do_talento(str(nome)))

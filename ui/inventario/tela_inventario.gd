@@ -9,13 +9,13 @@ signal abrir_pedido
 ## Emitido ao fechar a tela para quem controla a interface de toque.
 signal fechou
 
-const MARCA_EQUIPADO := "[E] "
-const MARCA_PROFICIENTE := "*"
+const FAIXA_DO_EQUIPADO := 0.35
 
 var _inventario: Inventario
 var _ficha: Ficha
 var _desarmado: Arma
-var _texto_vida: String = ""
+var _vida_atual: int = 0
+var _vida_maxima: int = 0
 
 @onready var _titulo: Label = %Titulo
 @onready var _lista: ItemList = %Lista
@@ -28,7 +28,8 @@ var _texto_vida: String = ""
 @onready var _aba_item: Button = %AbaItem
 @onready var _aba_ficha: Button = %AbaFicha
 @onready var _botao_fechar: Button = %Fechar
-@onready var _texto_ficha: Label = %TextoFicha
+@onready var _slots: SlotsDeEquipamento = %Slots
+@onready var _ficha_visual: FichaVisual = %FichaVisual
 @onready var _confirmacao: ConfirmationDialog = %Confirmacao
 
 
@@ -41,6 +42,7 @@ func _ready() -> void:
 	_aba_item.pressed.connect(_mostrar_item.bind(true))
 	_aba_ficha.pressed.connect(_mostrar_item.bind(false))
 	_botao_fechar.pressed.connect(fechar)
+	_slots.slot_escolhido.connect(_selecionar_item)
 	_confirmacao.confirmed.connect(jogar_fora_selecionado)
 
 
@@ -62,7 +64,8 @@ func abrir(inventario: Inventario, ficha: Ficha, vida_atual: int, vida_maxima: i
 	_inventario = inventario
 	_ficha = ficha
 	_desarmado = desarmado
-	_texto_vida = "PV %d/%d" % [vida_atual, vida_maxima]
+	_vida_atual = vida_atual
+	_vida_maxima = vida_maxima
 	_inventario.mudou.connect(_atualizar)
 	_mostrar_item(true)
 	_atualizar()
@@ -136,13 +139,32 @@ func _atualizar() -> void:
 	var anterior := _lista.get_selected_items()
 	_lista.clear()
 	for item in _inventario.itens:
-		var marca := MARCA_EQUIPADO if _inventario.esta_equipado(item) else ""
-		_lista.add_item(marca + _nome_com_quantidade(item), item.icone)
+		_adicionar_na_lista(item)
 	if not anterior.is_empty() and _lista.item_count > 0:
 		_lista.select(mini(anterior[0], _lista.item_count - 1))
 	_titulo.text = "Inventário (%d/%d)" % [_inventario.itens.size(), _inventario.capacidade]
+	_slots.mostrar(_inventario, _desarmado.nome)
 	_atualizar_detalhes()
 	_atualizar_ficha()
+
+
+## Um item na lista: ícone, nome e, se está equipado, o selo da mão ([P], [S], [C]) na cor do slot dela.
+func _adicionar_na_lista(item: Item) -> void:
+	var espaco := _inventario.espaco_de(item)
+	var marca := "[%s] " % EstiloCartao.selo_do_espaco(espaco) if espaco != &"" else ""
+	var indice := _lista.add_item(marca + _nome_com_quantidade(item), item.icone)
+	if espaco != &"":  # faixa na cor do slot (o texto continua legível, inclusive selecionado)
+		_lista.set_item_custom_bg_color(indice, Color(EstiloCartao.cor_do_espaco(espaco), FAIXA_DO_EQUIPADO))
+
+
+## O jogador clicou num slot: seleciona o item na mochila e mostra os detalhes (dá para desequipar).
+func _selecionar_item(item: Item) -> void:
+	var indice := _inventario.itens.find(item)
+	if indice < 0:
+		return
+	_lista.select(indice)
+	_mostrar_item(true)
+	_atualizar_detalhes()
 
 
 func _atualizar_detalhes() -> void:
@@ -160,85 +182,10 @@ func _ajustar_botao_equipar(item: Item) -> void:
 
 
 func _atualizar_ficha() -> void:
-	var arma := Equipamento.arma(_inventario, _desarmado)
-	var proximo_nivel := str(_ficha.xp_proximo_nivel()) if _ficha.xp_proximo_nivel() > 0 else "máx."
-	var linhas: PackedStringArray = [
-		"%s, %s" % [_ficha.nome, _ficha.classe.nome],
-		"Nível %d · XP %d/%s" % [_ficha.nivel, _ficha.experiencia, proximo_nivel],
-		"%s   CA %d   %d pés" % [_texto_vida, Equipamento.classe_armadura(_ficha, _inventario),
-			int(Equipamento.deslocamento_pes(_ficha, _inventario))],
-		_atributos_entre(0, 3),
-		_atributos_entre(3, 6),
-		_linha_equipamento(arma),
-	]
-	linhas.append("Ataque %s   Dano %s" % [_texto_ataque(arma), Equipamento.texto_dano(_ficha, _inventario, arma)])
-	if not _ficha.armas_dominadas.is_empty():
-		linhas.append("Maestrias: %s" % ", ".join(_ficha.armas_dominadas))
-	if not _ficha.pericias.is_empty():
-		linhas.append("Perícias: %s" % ", ".join(_nomes_das_pericias()))
-	_texto_ficha.text = "\n".join(linhas)
-
-
-func _nomes_das_pericias() -> PackedStringArray:
-	var nomes: PackedStringArray = []
-	for pericia in _ficha.pericias:
-		nomes.append(Pericia.nome_de(pericia))
-	return nomes
-
-
-func _atributos_entre(inicio: int, fim: int) -> String:
-	var partes: PackedStringArray = []
-	for i in range(inicio, fim):
-		partes.append(_atributo_curto(Atributos.TODOS[i]))
-	return "   ".join(partes)
-
-
-## "DES +2, prof. +2" ou, se a arma gastou na Corrosão, "DES +2, prof. +2, corroída -3".
-## O número do ataque já soma isso; a conta fica escrita para a proficiência não sumir.
-func _texto_ataque(arma: Arma) -> String:
-	var ataque := Equipamento.bonus_ataque(_ficha, _inventario, arma)
-	var atributo := _ficha.atributo_do_ataque(arma)
-	var partes: PackedStringArray = ["%s %s" % [Atributos.SIGLAS[atributo], Atributos.texto_modificador(_ficha.atributos[atributo])]]
-	if _ficha.proficiente_com(arma):
-		partes.append("prof. +%d" % Ficha.BONUS_PROFICIENCIA)
-	else:
-		partes.append("sem prof.")
-	var desgaste := _inventario.penalidade(arma)
-	if desgaste > 0:
-		partes.append("corroída -%d" % desgaste)
-	return "%s (%s)" % [Atributos.texto_bonus(ataque), ", ".join(partes)]
-
-
-## "FOR 15 +2*" — o * marca salvaguarda em que a classe é proficiente.
-func _atributo_curto(atributo: StringName) -> String:
-	var valor: int = _ficha.atributos[atributo]
-	var marca := MARCA_PROFICIENTE if _ficha.proficiente_em_salvaguarda(atributo) else ""
-	return "%s %d %s%s" % [Atributos.SIGLAS[atributo], valor, Atributos.texto_modificador(valor), marca]
-
-
-func _linha_equipamento(arma: Arma) -> String:
-	var mao := "Mão: %s%s" % [arma.nome, " (duas mãos)" if _usa_duas_maos(arma) else ""]
-	var corpo := "Corpo: %s" % _nome_ou_nada(Equipamento.armadura(_inventario))
-	var extra := ""
-	var escudo := Equipamento.escudo(_inventario)
-	if escudo:
-		extra = "   Escudo: %s" % escudo.nome
-	var segunda := Equipamento.arma_secundaria(_inventario)
-	if segunda:
-		extra = "   Outra: %s" % segunda.nome
-	return "%s   %s%s" % [mao, corpo, extra]
-
-
-func _nome_ou_nada(item: Item) -> String:
-	return item.nome if item else "(nada)"
+	_ficha_visual.mostrar(_ficha, _inventario, _desarmado, _vida_atual, _vida_maxima)
 
 
 ## "Azagaia ×8" para pilhas; só o nome para o resto.
 func _nome_com_quantidade(item: Item) -> String:
 	var quantidade := _inventario.quantidade_de(item)
 	return "%s ×%d" % [item.nome, quantidade] if quantidade > 1 else item.nome
-
-
-## Arma de Duas Mãos, ou Versátil com a mão secundária livre.
-func _usa_duas_maos(arma: Arma) -> bool:
-	return arma.duas_maos or Equipamento.duas_maos(_inventario, arma)

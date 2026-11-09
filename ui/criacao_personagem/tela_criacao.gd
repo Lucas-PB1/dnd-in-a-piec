@@ -68,6 +68,11 @@ var _ids_pericias: Array[StringName] = []
 @onready var _escolha_pacote: OptionButton = %Pacote
 @onready var _pontos: Label = %Pontos
 @onready var _grade: GridContainer = %Grade
+## Texto abaixo da grade com o que o atributo tocado faz (nasce na primeira vez).
+var _dica_atributo: Label
+const LARGURA_DICA := 520.0
+const TAMANHO_FONTE_DICA := 12
+const COR_DICA := Color(0.85, 0.75, 0.55, 1.0)
 @onready var _previa: Label = %Previa
 @onready var _proficiencias: Label = %Proficiencias
 @onready var _leva: Label = %Leva
@@ -529,14 +534,40 @@ func _falta_algo() -> String:
 func _criar_linha(atributo: StringName) -> void:
 	var celula := HBoxContainer.new()  # sigla, valor, modificador, - e +: um atributo por célula da grade
 	celula.add_theme_constant_override(&"separation", SEPARACAO_CELULA)
-	celula.add_child(_rotulo(Atributos.SIGLAS[atributo]))
+	var sigla := _rotulo(Atributos.SIGLAS[atributo])
+	sigla.tooltip_text = Atributos.dica(atributo)
+	sigla.mouse_filter = Control.MOUSE_FILTER_STOP
+	sigla.gui_input.connect(_ao_tocar_sigla.bind(atributo))
+	celula.add_child(sigla)
 	_rotulos_valor[atributo] = _rotulo("")
 	_rotulos_mod[atributo] = _rotulo("")
 	_botoes_menos[atributo] = _botao("-", mudar_atributo.bind(atributo, -1))
 	_botoes_mais[atributo] = _botao("+", mudar_atributo.bind(atributo, 1))
+	_botoes_menos[atributo].pressed.connect(_mostrar_dica.bind(atributo))
+	_botoes_mais[atributo].pressed.connect(_mostrar_dica.bind(atributo))
 	for no in [_rotulos_valor[atributo], _rotulos_mod[atributo], _botoes_menos[atributo], _botoes_mais[atributo]]:
 		celula.add_child(no)
 	_grade.add_child(celula)
+
+
+## Tocar ou clicar na sigla mostra o que o atributo faz (no celular não há dica ao passar o mouse).
+func _ao_tocar_sigla(evento: InputEvent, atributo: StringName) -> void:
+	if evento is InputEventMouseButton and (evento as InputEventMouseButton).pressed:
+		_mostrar_dica(atributo)
+
+
+## A linha de texto abaixo da grade diz o que o atributo faz; nasce na primeira vez que é preciso.
+func _mostrar_dica(atributo: StringName) -> void:
+	if _dica_atributo == null:
+		_dica_atributo = Label.new()
+		_dica_atributo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_dica_atributo.custom_minimum_size = Vector2(LARGURA_DICA, 0)
+		_dica_atributo.add_theme_font_size_override(&"font_size", TAMANHO_FONTE_DICA)
+		_dica_atributo.add_theme_color_override(&"font_color", COR_DICA)
+		var pai := _grade.get_parent()
+		pai.add_child(_dica_atributo)
+		pai.move_child(_dica_atributo, _grade.get_index() + 1)
+	_dica_atributo.text = Atributos.dica(atributo)
 
 
 ## Um botão por distribuição pronta da classe. Só refaz se a classe mudou.

@@ -6,6 +6,7 @@
 script = ExtResource("1_criatura")
 nome = "Goblin Warrior"
 experiencia = 100
+ouro = 8
 tipo = "Small Fey (Goblinoid), Chaotic Neutral"
 classe_armadura = 15
 dados_vida = "3d6"

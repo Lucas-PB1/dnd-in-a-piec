@@ -113,9 +113,10 @@ func _testar_arremesso(cena: Node, jogador: Jogador) -> void:
 	await _esperar(5)
 	while not jogador.pode_golpear():
 		await physics_frame
+	var arremessada := jogador.inventario.equipado(Item.ESPACO_MAO)
 	await _apertar("arremessar")
 	await _esperar(3)
-	_checar(jogador.inventario.equipado(Item.ESPACO_MAO) != adaga, "K tira a Adaga da mão")
+	_checar(arremessada not in jogador.inventario.itens, "K tira a Adaga da mão (a outra arma, se houver, vira a principal)")
 	var voo := _achar_voo(cena)
 	_checar(voo != null, "a Adaga está no ar")
 	if voo == null:

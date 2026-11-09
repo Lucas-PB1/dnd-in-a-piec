@@ -11,6 +11,7 @@ const COR_PONTO_VAZIO := Color(0.15, 0.2, 0.17, 0.9)
 @onready var _vida: Label = %Vida
 @onready var _folego: Label = %Folego
 @onready var _progressao: Label = %Progressao
+@onready var _ouro: Label = %Ouro
 @onready var _surto: Label = %Surto
 @onready var _sorte: Label = %Sorte
 @onready var _investida: Label = %Investida
@@ -52,6 +53,11 @@ func mostrar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> voi
 	_progressao.text = "Nível %d · XP %d/%d" % [nivel, experiencia, proximo_nivel]
 	_barra_xp.max_value = maxi(proximo_nivel, 1)
 	_barra_xp.value = experiencia
+
+
+## Mostra o ouro em peças ("Ouro 12").
+func mostrar_ouro(ouro: int) -> void:
+	_ouro.text = "Ouro %d" % ouro
 
 
 ## Um quadradinho por uso do Fôlego: aceso se ainda há, apagado se já foi gasto.

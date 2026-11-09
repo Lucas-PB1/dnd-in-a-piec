@@ -136,10 +136,16 @@ func mao_fora_do_lugar() -> bool:
 	return _golpeando or (_carga >= 0.0 and not _disparando)
 
 
-## No golpe de corte da arma da mão (não no extra, nem nas armas desenhadas quadro a quadro), o corpo do
+## No golpe de corte (da mão ou o extra das duas armas; não nas armas desenhadas quadro a quadro), o corpo do
 ## herói faz o movimento: a mão sobe e desce no desenho, e a arma vai presa a ela.
 func corpo_acompanha() -> bool:
-	return _golpeando and not _golpe_secundario and _arma != null and _arma.efeito == Arma.EFEITO_CORTE and _arma.quadros.is_empty()
+	var da_vez := _cruzada != null or not _golpe_secundario
+	return _golpeando and da_vez and _arma != null and _arma.efeito == Arma.EFEITO_CORTE and _arma.quadros.is_empty()
+
+
+## O golpe extra das duas armas (cruzado) tem o corpo próprio, `corte_duplo`.
+func golpe_cruzado() -> bool:
+	return _golpeando and _cruzada != null
 
 
 ## Quadro do corpo no instante do golpe: os quadros antes de `quadro_do_acerto` (a preparação) cobrem o tempo

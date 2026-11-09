@@ -47,3 +47,8 @@ e `tests/teste_combate_dnd.gd`.
 - No `Golpe`: `sentinela`, `investida_dano`, `escudo_cd`, `agarra`/`agarra_cd`, `veneno_extra`, `veneno_potente`/`veneno_cd`, `corpo_a_corpo`. O herói liga/desliga e cuida das recargas de 1,5 s; o alvo aplica os efeitos.
 - Duelista Defensivo: `DefesaComponent.bonus_ca_corpo_a_corpo` na janela de 0,75 s; `aparou` quando o bônus faz um golpe errar. Investida: a corrida em linha reta é medida em `Jogador._corrida_reta_px`. Haste: `Jogador._cabo_da_haste()` é uma `Arma` montada (1d4 contundente). Durável e Envenenador: `Jogador` guarda dados de vida e doses, repostos a cada fase.
 - A escalada do Atleta (`Escalando`) e o tiro que atravessa do Atirador de Elite estão prontos.
+
+## Saque e Carisma (regra da casa, pedida pelo usuário)
+- Cada inimigo da cota solta **ouro** (`CriaturaRPG.ouro`, sorteado de 0,5 a 1,5 vezes) e, às vezes, uma **arma** (`Saque`).
+- O modificador de **Carisma** do herói: ouro ±10% por ponto (mínimo 50%); chance de arma 15% + 3% por ponto (entre 5% e 50%).
+- A arma cai direto na mochila (se estiver cheia, avisa "Mochila cheia" e se perde). Ouro na HUD e na ficha.

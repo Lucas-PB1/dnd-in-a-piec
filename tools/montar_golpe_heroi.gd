@@ -12,6 +12,10 @@ const ORIGEM := PASTA + "heroi_corte_v4.png"
 const DESTINO := PASTA + "heroi_corte.png"
 const FRAMES := PASTA + "heroi_frames.tres"
 const ANIMACAO := &"corte"
+## Golpe extra das duas armas: o corpo faz o movimento (heroi_corte_duplo_v2.png, também de 8 quadros).
+const ORIGEM_DUPLO := PASTA + "heroi_corte_duplo_v2.png"
+const DESTINO_DUPLO := PASTA + "heroi_corte_duplo.png"
+const ANIMACAO_DUPLA := &"corte_duplo"
 const QUADROS := 8
 const LADO_ORIGEM := 84
 const LADO := 80
@@ -29,18 +33,24 @@ const ANIMACOES_PRONTAS := {
 
 
 func _initialize() -> void:
-	var folha := Image.load_from_file(ProjectSettings.globalize_path(ORIGEM))
-	var saida := Image.create(LADO * QUADROS, LADO, false, Image.FORMAT_RGBA8)
-	for i in QUADROS:
-		var origem := Rect2i(Vector2i(i * LADO_ORIGEM, 0) + RECORTE, Vector2i(LADO, LADO))
-		saida.blit_rect(folha, origem, Vector2i(i * LADO, 0))
-	saida.save_png(ProjectSettings.globalize_path(DESTINO))
-	print("Folha salva em ", DESTINO, ". Rode --import e depois rode este script de novo para ligar a animação.")
-	if not ResourceLoader.exists(DESTINO):
+	_recortar(ORIGEM, DESTINO)
+	_recortar(ORIGEM_DUPLO, DESTINO_DUPLO)
+	print("Folhas salvas. Rode --import e depois rode este script de novo para ligar as animações.")
+	if not ResourceLoader.exists(DESTINO) or not ResourceLoader.exists(DESTINO_DUPLO):
 		quit()
 		return
 	_ligar_animacao()
 	quit()
+
+
+## Recorta cada quadro de 84x84 da folha do SpriteCook para 80x80, com os pés no lugar certo.
+func _recortar(origem_png: String, destino_png: String) -> void:
+	var folha := Image.load_from_file(ProjectSettings.globalize_path(origem_png))
+	var saida := Image.create(LADO * QUADROS, LADO, false, Image.FORMAT_RGBA8)
+	for i in QUADROS:
+		var origem := Rect2i(Vector2i(i * LADO_ORIGEM, 0) + RECORTE, Vector2i(LADO, LADO))
+		saida.blit_rect(folha, origem, Vector2i(i * LADO, 0))
+	saida.save_png(ProjectSettings.globalize_path(destino_png))
 
 
 func _ligar_animacao() -> void:
@@ -50,6 +60,7 @@ func _ligar_animacao() -> void:
 		return
 	var frames: SpriteFrames = load(FRAMES)
 	_adicionar(frames, ANIMACAO, textura, QUADROS, VELOCIDADE)
+	_adicionar(frames, ANIMACAO_DUPLA, load(DESTINO_DUPLO), QUADROS, VELOCIDADE)
 	for nome in ANIMACOES_PRONTAS:
 		var dados: Array = ANIMACOES_PRONTAS[nome]
 		_adicionar(frames, nome, load(PASTA + dados[0]), dados[1], dados[2])

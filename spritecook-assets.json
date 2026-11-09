@@ -67,6 +67,24 @@
       "file": "features/jogador/sprites/heroi_corte_v4.png"
     },
     {
+      "asset_id": "c51aaa8e-842d-454e-b9f6-ddc06e0678bc",
+      "sha12": "85ed7814d2c3",
+      "label": "heroi_corte_duplo_v1 (8 quadros 84x84, animate_game_art, 20 créditos; PARCIAL: sem arma e de lado nos quadros 1-4 (socos para a frente), mas no 5 abre os dois braços e nos 6-7 vira de costas; ainda não ligado)",
+      "file": "features/jogador/sprites/heroi_corte_duplo_v1.png"
+    },
+    {
+      "asset_id": "eedd06cd-3406-420b-ba68-6369b7178263",
+      "sha12": "9a2546d91f1e",
+      "label": "heroi_guarda_dupla_v1 (8 quadros 84x84, guarda com duas armas, 20 créditos, saldo 368; quase igual ao idle, braços pouco dobrados; não ligado ao jogo)",
+      "file": "features/jogador/sprites/heroi_guarda_dupla_v1.png"
+    },
+    {
+      "asset_id": "a7901908-399d-467b-af9e-c89104c2041f",
+      "sha12": "10652c19e409",
+      "label": "heroi_corte_duplo_v2 (8 quadros 84x84, animate_game_art com pedido apertado, 20 créditos; BOM: sempre de lado, sem arma, sem braços abertos nem de costas; movimento discreto dos braços à frente)",
+      "file": "features/jogador/sprites/heroi_corte_duplo_v2.png"
+    },
+    {
       "asset_id": "cfa912f2-2123-46c8-b7f3-09d82a8b1c3b",
       "sha12": "7f17eaf6bdfe",
       "label": "heroi_dano (8 quadros 80x80, preset hurt; aprovado)",

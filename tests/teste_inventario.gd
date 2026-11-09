@@ -45,6 +45,15 @@ func _initialize() -> void:
 		and troca.equipado(Item.ESPACO_MAO_SECUNDARIA) == outra_espada,
 		"com as duas mãos ocupadas, equipar troca a mão principal")
 
+	# Sair da mão principal promove a arma da outra mão
+	troca.desequipar(Item.ESPACO_MAO)
+	_checar(troca.equipado(Item.ESPACO_MAO) == outra_espada and troca.equipado(Item.ESPACO_MAO_SECUNDARIA) == null,
+		"desequipar a mão principal faz a arma da outra mão virar a principal")
+	troca.equipar(terceira)
+	troca.descartar(troca.equipado(Item.ESPACO_MAO))
+	_checar(troca.equipado(Item.ESPACO_MAO) != null and troca.equipado(Item.ESPACO_MAO_SECUNDARIA) == null,
+		"jogar fora a arma principal também promove a outra")
+
 	if _falhas == 0:
 		print("PASSOU: todos os testes do inventário")
 	else:
