@@ -47,7 +47,7 @@ static func golpe(ficha: Ficha, inventario: Inventario, com_arma: Arma, ataque_e
 		duas_maos(inventario, com_arma), ataque_extra)
 	# Mestre em Escudos: com escudo na outra mão, o acerto corpo a corpo também golpeia com ele.
 	if ficha.tem_talento(Ficha.TALENTO_MESTRE_ESCUDOS) and escudo(inventario) != null and not com_arma.disparavel() and not ataque_extra:
-		montado.escudo_cd = ficha.cd_golpe_de_escudo()
+		montado.efeitos.append(EfeitosDeTalento.GolpeDeEscudo.new(ficha.cd_golpe_de_escudo()))
 	return montado
 
 

@@ -49,41 +49,35 @@ var trespassar: Golpe
 ## Algum alvo foi acertado por este golpe (o Trespassar só vale depois de acertar o 1º).
 var acertou_algum: bool = false
 
-## Talentos que mexem no golpe. O dono liga (e desliga enquanto o efeito recarrega).
-## Atacante Selvagem: rola o dano duas vezes e fica o maior.
-var selvagem: bool = false
-## Brigão de Taverna: rerrola os dados de dano que tirarem 1.
-var rerrolar_um: bool = false
-## Brigão de Taverna: o acerto empurra o alvo isto (pés); 0 = não empurra.
-var empurrao_pes: float = 0.0
-## Qual talento deu o empurrão (para a recarga de uma vez por rodada).
-var empurrao_efeito: StringName = &""
-## Mestre em Arma Grande: arma Pesada; crítico ou abate dá um golpe extra.
-var grande: bool = false
-## Cortador: o acerto cortante aplica Lentidão; o crítico dá desvantagem ao próximo ataque do alvo.
-var cortador: bool = false
-## Perfurador: rerrola o menor dado de dano; o crítico rola um dado a mais.
-var perfurador: bool = false
-## Esmagador: o crítico dá vantagem ao próximo ataque contra o alvo (o empurrão usa `empurrao_pes`).
-var esmagador: bool = false
-## Mestre em Escudos: CD do teste de Força do alvo depois do acerto (0 = sem golpe de escudo) e se falhar derruba em vez de empurrar.
-var escudo_cd: int = 0
-var escudo_derruba: bool = false
-## Sentinela: o acerto num alvo que está se movendo o deixa imóvel por um instante.
-var sentinela: bool = false
-## Investida: dado extra de dano do ataque em investida (null = não é uma investida de dano).
-var investida_dano: Dado
 ## Falso nos golpes que vêm de longe (flecha, adaga arremessada): o Duelista Defensivo só vale no corpo a corpo.
 var corpo_a_corpo: bool = true
-## Veneno Básico: dado de dano de veneno extra (1d4) enquanto a arma está envenenada. Null = sem veneno.
-var veneno_extra: Dado
-## Envenenador: dano de veneno (2d8) e a CD da salvaguarda de Constituição do alvo; falhou, leva o dano e fica Envenenado.
-var veneno_potente: Dado
-var veneno_cd: int = 0
-## Agarrador: o soco acertado também agarra o alvo (CD do teste de escape dele).
-var agarra: bool = false
-var agarra_cd: int = 0
+## Efeitos de talento e de item que o golpe leva (ver `EfeitoDeGolpe`). O dono do golpe monta a lista; o combate pergunta a ela.
+var efeitos: Array[EfeitoDeGolpe] = []
 
+
+## O golpe leva o efeito com este id?
+func tem(id_do_efeito: StringName) -> bool:
+	return efeito(id_do_efeito) != null
+
+
+## O efeito com este id, ou null.
+func efeito(id_do_efeito: StringName) -> EfeitoDeGolpe:
+	for candidato in efeitos:
+		if candidato.id == id_do_efeito:
+			return candidato
+	return null
+
+
+func rerrola_um() -> bool:
+	return efeitos.any(func(e: EfeitoDeGolpe) -> bool: return e.rerrola_um())
+
+
+func rerrola_menor() -> bool:
+	return efeitos.any(func(e: EfeitoDeGolpe) -> bool: return e.rerrola_menor())
+
+
+func rola_duas_vezes() -> bool:
+	return efeitos.any(func(e: EfeitoDeGolpe) -> bool: return e.rola_duas_vezes())
 
 func _init(nome_golpe: String, bonus: int, dado_dano: Dado, tipo: StringName = TiposDano.CONTUNDENTE,
 		corroivel: bool = false) -> void:

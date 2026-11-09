@@ -30,14 +30,15 @@ e `tests/teste_combate_dnd.gd`.
 - Os efeitos dos talentos ainda não estão ligados: a escolha só grava o talento e o atributo.
 
 ## Talentos de origem (efeitos ligados)
-- `Ficha` guarda o nome do talento e aplica: Alerta em `iniciativa()`, Resistente em `vida_maxima()`, Brigão de Taverna em `dado_dano()` (soco = arma sem categoria) e nas marcas do `Golpe` (`rerrolar_um`, `empurrao_pes`), Atacante Selvagem na marca `selvagem`.
+- `Ficha` guarda o **id** do talento (`TalentoRPG.id`, não o nome de tela) e aplica: Alerta em `iniciativa()`, Resistente em `vida_maxima()`, Brigão de Taverna em `dado_dano()` (soco = arma sem categoria) e nas marcas do `Golpe` (`rerrolar_um`, `empurrao_pes`), Atacante Selvagem na marca `selvagem`.
 - Efeitos "uma vez por rodada" (1,5 s): o `Golpe` avisa `efeito_usado`; o herói começa a recarga e desliga a marca no golpe seguinte enquanto recarrega (`Jogador._recarga_efeito`).
 - Sortudo: `Jogador.armar_sorte()` (tecla G, botão da barra). O próximo golpe do herói sai com vantagem, ou o próximo teste de perícia falho rola de novo; gasta 1 ponto. Salvaguardas do herói ainda não usam a sorte. O desconto de 20% do Artesão espera a loja. A defesa do Sortudo (forçar o atacante a rolar pior) não existe.
 - Perito: `TelaCriacao` mostra todas as perícias do jogo quando o antecedente dá o Perito; o jogador marca as 2 da classe mais 3 quaisquer, e pelo menos 2 têm de ser da lista do Guerreiro.
 
 ## Talentos gerais ligados (lotes 1 e 2)
 - Na ficha: Resiliente (`salvaguardas_extras`), Veloz (+10 pés), Mestre em Armadura Média (teto de DES +3), Mestre em Arma Grande (+proficiência no dano da arma Pesada), Aumento de Valor de Habilidade.
-- No golpe (`Golpe`: `grande`, `cortador`, `perfurador`, `esmagador`, `empurrao_pes`/`empurrao_efeito`): a `Ficha` liga as marcas; o alvo aplica (Lento, desvantagem, empurrão, vantagem) em `CondicoesComponent`; o herói desliga a marca enquanto a recarga de 1,5 s do efeito corre. `Dado.rolar_perfurador` rola o Perfurador.
+- O `Golpe` leva uma lista de `EfeitoDeGolpe` (`core/regras/efeitos/`; cada talento é uma classe em `EfeitosDeTalento`): a `Ficha` monta a lista, o herói tira os efeitos "uma vez por rodada" que ainda recarregam (`por_rodada`), e o alvo e o `Combate` perguntam a cada efeito (`ao_acertar`, `dano_no_alvo`, `rerrola_um`, `rola_duas_vezes`, `dano_extra`). Talento novo = uma classe nova e uma linha em `Ficha._juntar_efeitos_de_talento`.
+- O estado dos talentos do herói (Sorte, dados de vida, veneno, janela de defesa, Investida, recargas) vive em classes puras de `features/jogador/talentos/` com teste próprio (`teste_regras_do_heroi`); o `Jogador` só liga com a tela e o corpo. Saves antigos com nomes de talento migram em `Salvamento.id_do_talento`.
 - Mestre em Armadura Pesada: `DefesaComponent.reducao_fisica` (o herói liga com armadura pesada vestida). Empunhadura Dupla: `Inventario.segunda_arma_livre`.
 - Mestre em Arma Grande: crítico ou abate (`Golpe.resolvido`) deixa um golpe extra pendente, o mesmo mecanismo do Surto de Ação.
 

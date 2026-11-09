@@ -157,3 +157,10 @@ func _rodar() -> void:
 - **`.tscn` à mão**: só mudanças pequenas (um nó, um `ext_resource`). Estruturas grandes por
   script gerador ou no editor.
 - **Commit**: um por fatia, em português, só com o ok do usuário; nunca force-push.
+
+## Receita: um talento novo (efeito no golpe)
+1. Dados: uma linha em `tools/gerar_compendio.gd` (id, nome do livro, texto) e os atributos em `ATRIBUTOS_DO_TALENTO`; rode o gerador.
+2. Id: uma constante `TALENTO_*` em `Ficha` (o id do `TalentoRPG`, em `StringName`).
+3. Efeito: uma classe em `core/regras/efeitos/efeitos_de_talento.gd` que estende `EfeitoDeGolpe` e sobrescreve só o que usa; `Ficha._juntar_efeitos_de_talento` a coloca no golpe. O `id` do efeito serve à recarga de uma vez por rodada (`por_rodada`).
+4. Estado no herói (botão, doses, tempo): uma classe pura em `features/jogador/talentos/`, com teste em `tests/teste_regras_do_heroi.gd`.
+5. Teste do efeito em `tests/` (`extends TesteBase`) e uma linha em `TALENTOS_FUNCIONANDO` do gerador quando o jogador já puder escolher.

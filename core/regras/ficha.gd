@@ -113,11 +113,8 @@ const VELOZ_PES := 10.0
 const TETO_DESTREZA_MESTRE_MEDIA := 3
 ## Resistente: vida máxima extra por nível.
 const VIDA_POR_NIVEL_RESISTENTE := 2
-## Brigão de Taverna: o soco passa a ser 1d4 e empurra isto (pés).
+## Brigão de Taverna: o soco passa a ser 1d4.
 const FACES_SOCO_BRIGAO := 4
-const EMPURRAO_BRIGAO_PES := 5.0
-## Esmagador: o acerto contundente empurra isto (pés).
-const EMPURRAO_ESMAGADOR_PES := 5.0
 
 
 func _init(classe_rpg: ClasseRPG, valores: Dictionary, nome_personagem: String = NOME_PADRAO) -> void:
@@ -328,23 +325,7 @@ func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null, duas_
 	golpe.desvantagem = desvantagem_por_armadura(armadura) or fraco_para(arma)
 	golpe.maestria = maestria_de(arma)
 	golpe.cd_maestria = cd_maestria(arma)
-	golpe.selvagem = tem_talento(TALENTO_ATACANTE_SELVAGEM)
-	golpe.sentinela = tem_talento(TALENTO_SENTINELA)
-	if arma.categoria == &"" and tem_talento(TALENTO_AGARRADOR):  # o soco desarmado também agarra
-		golpe.agarra = true
-		golpe.agarra_cd = cd_agarrar()
-	if _e_soco_do_brigao(arma):
-		golpe.rerrolar_um = true
-		golpe.empurrao_pes = EMPURRAO_BRIGAO_PES
-		golpe.empurrao_efeito = Proficiencias.EFEITO_BRIGAO
-	golpe.grande = tem_talento(TALENTO_MESTRE_ARMA_GRANDE) and not arma.disparavel()  # o golpe extra vale com qualquer arma corpo a corpo
-	golpe.cortador = tem_talento(TALENTO_CORTADOR) and arma.tipo_dano == TiposDano.CORTANTE
-	golpe.perfurador = tem_talento(TALENTO_PERFURADOR) and arma.tipo_dano == TiposDano.PERFURANTE
-	if tem_talento(TALENTO_ESMAGADOR) and arma.tipo_dano == TiposDano.CONTUNDENTE:
-		golpe.esmagador = true
-		if golpe.empurrao_pes == 0.0:
-			golpe.empurrao_pes = EMPURRAO_ESMAGADOR_PES
-			golpe.empurrao_efeito = Proficiencias.EFEITO_ESMAGADOR
+	_juntar_efeitos_de_talento(golpe, arma)
 	if golpe.maestria == Proficiencias.RASPAO:
 		golpe.dano_raspao = maxi(bonus_dano(arma), 0)
 	if golpe.maestria == Proficiencias.TRESPASSAR and not ataque_extra:
@@ -381,6 +362,28 @@ func e_arma_de_haste(arma: Arma) -> bool:
 ## CD do teste de Força do alvo no golpe de escudo (Mestre em Escudos): 8 + Força + proficiência.
 func cd_golpe_de_escudo() -> int:
 	return CD_BASE_MAESTRIA + modificador(Atributos.FORCA) + BONUS_PROFICIENCIA
+
+## Põe no golpe os efeitos dos talentos do herói que valem para esta arma (cada um é uma classe de `EfeitosDeTalento`).
+func _juntar_efeitos_de_talento(golpe: Golpe, arma: Arma) -> void:
+	if tem_talento(TALENTO_ATACANTE_SELVAGEM):
+		golpe.efeitos.append(EfeitosDeTalento.AtacanteSelvagem.new())
+	if tem_talento(TALENTO_SENTINELA):
+		golpe.efeitos.append(EfeitosDeTalento.Sentinela.new())
+	if arma.categoria == &"" and tem_talento(TALENTO_AGARRADOR):  # o soco desarmado também agarra
+		golpe.efeitos.append(EfeitosDeTalento.Agarrar.new(cd_agarrar()))
+	if _e_soco_do_brigao(arma):
+		golpe.efeitos.append(EfeitosDeTalento.BrigaoRerrola.new())
+		golpe.efeitos.append(EfeitosDeTalento.BrigaoEmpurra.new())
+	if tem_talento(TALENTO_MESTRE_ARMA_GRANDE) and not arma.disparavel():  # o golpe extra vale com qualquer arma corpo a corpo
+		golpe.efeitos.append(EfeitosDeTalento.MestreArmasGrandes.new())
+	if tem_talento(TALENTO_CORTADOR) and arma.tipo_dano == TiposDano.CORTANTE:
+		golpe.efeitos.append(EfeitosDeTalento.Retalhador.new())
+	if tem_talento(TALENTO_PERFURADOR) and arma.tipo_dano == TiposDano.PERFURANTE:
+		golpe.efeitos.append(EfeitosDeTalento.Perfurador.new())
+	if tem_talento(TALENTO_ESMAGADOR) and arma.tipo_dano == TiposDano.CONTUNDENTE:
+		golpe.efeitos.append(EfeitosDeTalento.EsmagadorCritico.new())
+		if not golpe.tem(Proficiencias.EFEITO_BRIGAO):  # o soco do Brigão já empurra
+			golpe.efeitos.append(EfeitosDeTalento.EsmagadorEmpurra.new())
 
 ## Domina este tipo de arma (Maestria em Armas)? Só vale se a arma tem maestria.
 func domina(arma: Arma) -> bool:

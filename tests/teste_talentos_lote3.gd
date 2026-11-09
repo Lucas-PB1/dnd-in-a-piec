@@ -31,10 +31,10 @@ func _arma(nome: String) -> Arma:
 
 func _testar_sentinela() -> void:
 	var ficha := _ficha()
-	_checar(not ficha.golpe_com(_arma("espada_longa")).sentinela, "sem o talento o golpe não prende")
+	_checar(not ficha.golpe_com(_arma("espada_longa")).tem(&"sentinela"), "sem o talento o golpe não prende")
 	ficha.talentos.append(Ficha.TALENTO_SENTINELA)
 	var golpe := ficha.golpe_com(_arma("espada_longa"))
-	_checar(golpe.sentinela, "com a Sentinela o golpe leva a marca")
+	_checar(golpe.tem(&"sentinela"), "com a Sentinela o golpe leva a marca")
 	var alvo := Node2D.new()
 	var condicoes := CondicoesComponent.new()
 	alvo.add_child(condicoes)
@@ -126,15 +126,15 @@ func _testar_no_heroi() -> void:
 	_checar(not jogador.alternar_investida(), "sem o talento a Investida não alterna")
 	jogador.ficha.talentos.append(Ficha.TALENTO_INVESTIDA)
 	var parado := jogador.criar_golpe()
-	_checar(parado.investida_dano == null and parado.empurrao_pes == 0.0, "parado, o golpe não leva a Investida")
-	jogador._corrida_reta_px = 100.0
+	_checar(not parado.tem(Proficiencias.EFEITO_INVESTIDA), "parado, o golpe não leva a Investida")
+	jogador._investida.corrida_px = 100.0
 	var de_dano := jogador.criar_golpe()
-	_checar(de_dano.investida_dano != null and de_dano.investida_dano.faces == 8, "depois de correr 10 pés, o golpe soma 1d8")
+	_checar(de_dano.tem(Proficiencias.EFEITO_INVESTIDA) and not (de_dano.efeito(Proficiencias.EFEITO_INVESTIDA) as EfeitosDeTalento.Investida).empurra, "depois de correr 10 pés, o golpe soma 1d8")
 	_checar(jogador.alternar_investida() and jogador.investida_empurra(), "o botão troca para o empurrão")
 	var de_empurrao := jogador.criar_golpe()
-	_checar(de_empurrao.empurrao_pes == 10.0 and de_empurrao.investida_dano == null, "no modo empurrão o golpe empurra 10 pés")
+	_checar((de_empurrao.efeito(Proficiencias.EFEITO_INVESTIDA) as EfeitosDeTalento.Investida).empurra, "no modo empurrão o golpe empurra 10 pés")
 	de_empurrao.efeito_usado.emit(Proficiencias.EFEITO_INVESTIDA)
-	_checar(jogador.criar_golpe().empurrao_pes == 0.0, "gasta a Investida, a próxima espera a rodada")
+	_checar(not jogador.criar_golpe().tem(Proficiencias.EFEITO_INVESTIDA), "gasta a Investida, a próxima espera a rodada")
 	# Mestre em Armas de Haste
 	jogador.ficha.talentos.append(Ficha.TALENTO_MESTRE_ARMAS_DE_HASTE)
 	var glaive := (_arma("glaive")).duplicate() as Arma

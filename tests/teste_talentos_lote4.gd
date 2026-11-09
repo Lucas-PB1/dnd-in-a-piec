@@ -37,7 +37,7 @@ func _testar_regras_do_veneno() -> void:
 	_checar(ficha.dados_de_vida() == 4 and ficha.doses_de_veneno() == 2, "Durável: 4 dados no nível 4; Envenenador: 2 doses")
 	_checar(ficha.cd_veneno() == 8 + 2 + 2, "CD do veneno: 8 + melhor de DES e INT + proficiência")
 	var golpe := Golpe.new("x", 0, Dado.new(1, 1))
-	golpe.veneno_extra = Dado.new(1, 4)
+	golpe.efeitos.append(EfeitosDeTalento.VenenoBasico.new())
 	var usos: Array[StringName] = []
 	golpe.efeito_usado.connect(func(e: StringName) -> void: usos.append(e))
 	var rng := RandomNumberGenerator.new()
@@ -50,11 +50,11 @@ func _testar_regras_do_veneno() -> void:
 func _testar_agarrador() -> void:
 	var soco: Arma = load("res://data/ataque_desarmado.tres")
 	var ficha := _ficha()
-	_checar(not ficha.golpe_com(soco).agarra, "sem o talento o soco não agarra")
+	_checar(not ficha.golpe_com(soco).tem(Proficiencias.EFEITO_AGARRAR), "sem o talento o soco não agarra")
 	ficha.talentos.append(Ficha.TALENTO_AGARRADOR)
 	var golpe := ficha.golpe_com(soco)
-	_checar(golpe.agarra and golpe.agarra_cd == 8 + ficha.modificador(Atributos.FORCA) + Ficha.BONUS_PROFICIENCIA, "com o Agarrador o soco agarra, com CD 8 + FOR + proficiência")
-	_checar(not ficha.golpe_com(_arma("espada_longa")).agarra, "com uma arma na mão não agarra")
+	_checar(golpe.tem(Proficiencias.EFEITO_AGARRAR) and (golpe.efeito(Proficiencias.EFEITO_AGARRAR) as EfeitosDeTalento.Agarrar).cd == 8 + ficha.modificador(Atributos.FORCA) + Ficha.BONUS_PROFICIENCIA, "com o Agarrador o soco agarra, com CD 8 + FOR + proficiência")
+	_checar(not ficha.golpe_com(_arma("espada_longa")).tem(Proficiencias.EFEITO_AGARRAR), "com uma arma na mão não agarra")
 	var heroi := Node2D.new()
 	root.add_child(heroi)
 	var alvo := Node2D.new()
@@ -62,7 +62,7 @@ func _testar_agarrador() -> void:
 	alvo.add_child(condicoes)
 	root.add_child(alvo)
 	golpe.autor_id = heroi.get_instance_id()
-	golpe.agarra_cd = 100  # ninguém escapa
+	(golpe.efeito(Proficiencias.EFEITO_AGARRAR) as EfeitosDeTalento.Agarrar).cd = 100  # ninguém escapa
 	var resultado := Combate.Resultado.new()
 	resultado.golpe = golpe
 	resultado.acertou = true
@@ -84,7 +84,7 @@ func _testar_agarrador() -> void:
 	for i in 120:
 		await physics_frame
 	_checar(not condicoes.tem(CondicoesComponent.AGARRADO), "com bônus enorme, escapa na próxima tentativa (a cada rodada)")
-	golpe.agarra_cd = 100
+	(golpe.efeito(Proficiencias.EFEITO_AGARRAR) as EfeitosDeTalento.Agarrar).cd = 100
 	condicoes.bonus_salvaguardas.clear()
 	condicoes.aplicar_maestria(resultado, 1.0)
 	heroi.position.x = 500.0  # o herói se afastou
@@ -92,14 +92,10 @@ func _testar_agarrador() -> void:
 	await physics_frame
 	_checar(not condicoes.tem(CondicoesComponent.AGARRADO), "se o herói se afasta, o agarrão se desfaz")
 	# Envenenado: desvantagem enquanto durar.
-	var veneno := Golpe.new("v", 0, Dado.new(1, 1))
-	veneno.veneno_potente = Dado.new(2, 8)
-	veneno.veneno_cd = 100
-	_checar(condicoes.rolar_veneno(veneno) >= 2 and condicoes.tem(CondicoesComponent.ENVENENADO), "falhou na salvaguarda: leva o dano de veneno e fica Envenenado")
+	_checar(condicoes.rolar_veneno(Dado.new(2, 8), 100) >= 2 and condicoes.tem(CondicoesComponent.ENVENENADO), "falhou na salvaguarda: leva o dano de veneno e fica Envenenado")
 	_checar(condicoes.consumir_desvantagem() and condicoes.consumir_desvantagem(), "Envenenado dá desvantagem em todo ataque enquanto dura")
 	condicoes.bonus_salvaguardas[Atributos.CONSTITUICAO] = 100
-	veneno.veneno_cd = 5
-	_checar(condicoes.rolar_veneno(veneno) == 0, "passou na salvaguarda: sem dano extra")
+	_checar(condicoes.rolar_veneno(Dado.new(2, 8), 5) == 0, "passou na salvaguarda: sem dano extra")
 	heroi.queue_free()
 	alvo.queue_free()
 	await process_frame
@@ -136,18 +132,18 @@ func _testar_no_heroi() -> void:
 	jogador.inventario.adicionar(frasco)
 	_checar(jogador.tem_item_veneno(), "o item Veneno Básico fica na mochila")
 	jogador.descansar_longo()
-	_checar(jogador.aplicar_veneno() and jogador.veneno_na_arma() == Jogador.VENENO_BASICO, "o Veneno Básico é passado na espada")
+	_checar(jogador.aplicar_veneno() and jogador.veneno_na_arma() == VenenoDoHeroi.BASICO, "o Veneno Básico é passado na espada")
 	_checar(not jogador.tem_item_veneno(), "e o frasco é gasto")
-	_checar(jogador.criar_golpe().veneno_extra != null, "o golpe leva +1d4 de veneno")
+	_checar(jogador.criar_golpe().tem(Proficiencias.EFEITO_VENENO), "o golpe leva +1d4 de veneno")
 	jogador.criar_golpe().efeito_usado.emit(Proficiencias.EFEITO_VENENO)
 	_checar(jogador.veneno_na_arma() == &"", "o primeiro acerto gasta o veneno")
 	jogador.ficha.talentos.append(Ficha.TALENTO_ENVENENADOR)
 	jogador.descansar_longo()
 	_checar(jogador.doses_de_veneno() == 2, "o Envenenador começa a fase com 2 doses")
 	jogador.descansar_longo()
-	_checar(jogador.aplicar_veneno() and jogador.veneno_na_arma() == Jogador.VENENO_POTENTE and jogador.doses_de_veneno() == 1, "a dose potente é passada (sobram 1)")
+	_checar(jogador.aplicar_veneno() and jogador.veneno_na_arma() == VenenoDoHeroi.POTENTE and jogador.doses_de_veneno() == 1, "a dose potente é passada (sobram 1)")
 	var potente := jogador.criar_golpe()
-	_checar(potente.veneno_potente != null and potente.veneno_potente.quantidade == 2 and potente.veneno_potente.faces == 8 and potente.veneno_cd == jogador.ficha.cd_veneno(),
+	_checar(potente.tem(Proficiencias.EFEITO_VENENO) and (potente.efeito(Proficiencias.EFEITO_VENENO) as EfeitosDeTalento.VenenoPotente).cd == jogador.ficha.cd_veneno(),
 		"o golpe leva 2d8 de veneno e a CD do Envenenador")
 	main.free()
 	await process_frame

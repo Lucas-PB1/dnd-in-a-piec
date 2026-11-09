@@ -90,13 +90,13 @@ func _testar_mestre_escudos() -> void:
 	inventario.adicionar(escudo)
 	inventario.equipar(espada)
 	inventario.equipar(escudo)
-	_checar(Equipamento.golpe(ficha, inventario, espada).escudo_cd == 0, "sem o talento o golpe não leva escudo")
+	_checar(not Equipamento.golpe(ficha, inventario, espada).tem(Proficiencias.EFEITO_ESCUDO), "sem o talento o golpe não leva escudo")
 	ficha.talentos.append(Ficha.TALENTO_MESTRE_ESCUDOS)
 	var golpe := Equipamento.golpe(ficha, inventario, espada)
-	_checar(golpe.escudo_cd == 8 + ficha.modificador(Atributos.FORCA) + Ficha.BONUS_PROFICIENCIA, "com escudo e o talento, o golpe leva a CD 8 + FOR + proficiência")
+	_checar((golpe.efeito(Proficiencias.EFEITO_ESCUDO) as EfeitosDeTalento.GolpeDeEscudo).cd == 8 + ficha.modificador(Atributos.FORCA) + Ficha.BONUS_PROFICIENCIA, "com escudo e o talento, o golpe leva a CD 8 + FOR + proficiência")
 	var condicoes := CondicoesComponent.new()
 	root.add_child(condicoes)
-	golpe.escudo_cd = 100  # ninguém passa
+	(golpe.efeito(Proficiencias.EFEITO_ESCUDO) as EfeitosDeTalento.GolpeDeEscudo).cd = 100  # ninguém passa
 	var empurroes: Array[Vector2] = []
 	condicoes.empurrado.connect(func(d: Vector2) -> void: empurroes.append(d))
 	var resultado := Combate.Resultado.new()
@@ -105,7 +105,7 @@ func _testar_mestre_escudos() -> void:
 	resultado.dano = 3
 	condicoes.aplicar_maestria(resultado, 1.0)
 	_checar(empurroes.size() == 1 and not condicoes.tem(CondicoesComponent.CAIDO), "falhou no teste: o alvo é empurrado 5 pés")
-	golpe.escudo_derruba = true
+	(golpe.efeito(Proficiencias.EFEITO_ESCUDO) as EfeitosDeTalento.GolpeDeEscudo).derruba = true
 	condicoes.aplicar_maestria(resultado, 1.0)
 	_checar(condicoes.tem(CondicoesComponent.CAIDO), "na vez de derrubar, o alvo cai")
 	condicoes.queue_free()
@@ -121,13 +121,13 @@ func _testar_armas_e_armaduras() -> void:
 	var antes := ficha.dado_dano(grande).bonus
 	ficha.talentos.append(Ficha.TALENTO_MESTRE_ARMA_GRANDE)
 	_checar(ficha.dado_dano(grande).bonus == antes + Ficha.BONUS_PROFICIENCIA, "Mestre em Arma Grande: a arma Pesada soma a proficiência no dano")
-	_checar(ficha.golpe_com(grande).grande and ficha.golpe_com(_arma("cimitarra")).grande and not ficha.golpe_com(_arma("arco_longo")).grande, "o golpe extra vale com qualquer arma corpo a corpo, não com arco")
+	_checar(ficha.golpe_com(grande).tem(Proficiencias.EFEITO_ARMA_GRANDE) and ficha.golpe_com(_arma("cimitarra")).tem(Proficiencias.EFEITO_ARMA_GRANDE) and not ficha.golpe_com(_arma("arco_longo")).tem(Proficiencias.EFEITO_ARMA_GRANDE), "o golpe extra vale com qualquer arma corpo a corpo, não com arco")
 	_checar(ficha.dado_dano(_arma("cimitarra")).bonus == ficha.dado_dano(_arma("cimitarra")).bonus and ficha.dado_dano(grande).bonus == antes + Ficha.BONUS_PROFICIENCIA, "mas a proficiência no dano é só da arma Pesada")
 	ficha.talentos.append(Ficha.TALENTO_CORTADOR)
 	ficha.talentos.append(Ficha.TALENTO_PERFURADOR)
 	ficha.talentos.append(Ficha.TALENTO_ESMAGADOR)
-	_checar(ficha.golpe_com(grande).cortador and not ficha.golpe_com(grande).perfurador, "Cortador vale em arma cortante e não em perfurante")
-	_checar(ficha.golpe_com(_arma("mangual")).esmagador and ficha.golpe_com(_arma("mangual")).empurrao_pes == 5.0, "Esmagador vale em arma contundente e empurra 5 pés")
+	_checar(ficha.golpe_com(grande).tem(Proficiencias.EFEITO_CORTADOR) and not ficha.golpe_com(grande).tem(Proficiencias.EFEITO_PERFURADOR), "Cortador vale em arma cortante e não em perfurante")
+	_checar(ficha.golpe_com(_arma("mangual")).tem(Proficiencias.EFEITO_ESMAGADOR) and ficha.golpe_com(_arma("mangual")).tem(&"esmagador_critico"), "Esmagador vale em arma contundente e empurra 5 pés")
 	var condicoes := CondicoesComponent.new()
 	root.add_child(condicoes)
 	var golpe := ficha.golpe_com(grande)
@@ -190,13 +190,13 @@ func _testar_no_heroi() -> void:
 	var grande := _arma("espada_grande")
 	jogador.inventario.adicionar(grande.duplicate())
 	var golpe := jogador.ficha.golpe_com(grande)
-	_checar(golpe.grande, "o golpe da arma Pesada leva a marca do Mestre em Arma Grande")
+	_checar(golpe.tem(Proficiencias.EFEITO_ARMA_GRANDE), "o golpe da arma Pesada leva a marca do Mestre em Arma Grande")
 	var atual := jogador.criar_golpe()
 	var resultado := Combate.Resultado.new()
 	resultado.golpe = atual
 	resultado.acertou = true
 	resultado.critico = true
-	if atual.grande:
+	if atual.tem(Proficiencias.EFEITO_ARMA_GRANDE):
 		atual.resolvido.emit(resultado, false)
 		_checar(jogador.quer_golpe_do_surto(), "um crítico com arma Pesada deixa um golpe extra pendente (como o Surto)")
 	else:

@@ -81,6 +81,7 @@ Regras na skill `godot-estrutura-pastas`. Hoje:
 ```
 core/estados/            Estado, MaquinaEstados (genéricos)
 core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante, Condicoes
+core/regras/efeitos/     EfeitoDeGolpe e EfeitosDeTalento (um efeito de talento por classe, que o Golpe carrega)
 core/dados/              Item, Arma, Municao, PoseGolpe, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial,
                          AntecedenteRPG, TalentoRPG, EntradaCompendio
 core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd,
@@ -88,6 +89,7 @@ core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Gol
                          ItemAleatorio
 core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
 features/jogador/        herói: jogador, stats, animação, câmera, ataque, escudo, arma de trás, estados/, sprites/
+features/jogador/talentos/ regras puras dos talentos do herói (recargas, Sorte, dados de vida, veneno, defesa, Investida)
 features/gray_ooze/      Gray Ooze: cena, estados/, sprites/
 features/goblin/         Goblin Minion e Goblin Warrior: cenas, adaga, flecha, estados/, sprites/
 features/boneco_treino/  boneco de treino

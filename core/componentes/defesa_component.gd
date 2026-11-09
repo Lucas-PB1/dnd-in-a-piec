@@ -45,8 +45,9 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 		aparou.emit(origem)
 	if resultado.dano > 0 and reducao_fisica > 0 and golpe.tipo_dano in TiposDano.FISICOS:
 		resultado.dano = maxi(resultado.dano - reducao_fisica, 0)
-	if condicoes and resultado.acertou and golpe.veneno_potente != null:  # Envenenador: salvaguarda de Constituição
-		resultado.dano += condicoes.rolar_veneno(golpe)
+	if condicoes and resultado.acertou:  # efeitos que dependem da salvaguarda do alvo (Envenenador)
+		for efeito in golpe.efeitos:
+			resultado.dano += efeito.dano_no_alvo(golpe, resultado, condicoes)
 	golpe.acertou_algum = golpe.acertou_algum or resultado.acertou
 	if resultado.dano > 0 and vida:
 		vida.receber_dano(resultado.dano)

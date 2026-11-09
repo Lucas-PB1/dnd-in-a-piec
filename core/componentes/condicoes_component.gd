@@ -46,8 +46,6 @@ const ALCANCE_DO_AGARRAO_PES := 10.0
 const MOVIMENTO_MINIMO_PX := 0.2
 ## Empurrar: até 10 pés para longe de quem bateu.
 const EMPURRAO_PES := 10.0
-## Mestre em Escudos: o golpe de escudo empurra isto (pés).
-const EMPURRAO_ESCUDO_PES := 5.0
 ## Tamanho de cada ícone na arte e espaço entre eles (px).
 const TAMANHO_ICONE := 8
 const ESPACO_ICONE := 1
@@ -150,65 +148,49 @@ func aplicar_maestria(resultado: Combate.Resultado, lado: float) -> void:
 			if resultado.dano > 0:
 				_atormentado_por = golpe.autor_id
 				_impor(ATORMENTADO, DURACAO_RODADA)
-	_aplicar_talentos_do_golpe(resultado, lado)
+	for efeito in golpe.efeitos:  # talentos: empurrão, Lento, Preso, Agarrado...
+		efeito.ao_acertar(golpe, resultado, self, lado)
 
 
-## Efeitos de talento do herói: empurrão (Brigão de Taverna, Esmagador), Lentidão e desvantagem
-## (Cortador) e a vantagem do crítico do Esmagador.
-func _aplicar_talentos_do_golpe(resultado: Combate.Resultado, lado: float) -> void:
-	var golpe := resultado.golpe
-	if golpe.empurrao_pes > 0.0:
-		empurrado.emit(Vector2(lado * EscalaDnd.pes_para_pixels(golpe.empurrao_pes), 0.0))
-		aviso.emit("Empurrado!")
-		golpe.efeito_usado.emit(golpe.empurrao_efeito)
-	if golpe.cortador and resultado.dano > 0:
-		_impor(LENTO, DURACAO_RODADA)
-		if resultado.critico:
-			_impor(ENFRAQUECIDO, DURACAO_RODADA)
-		golpe.efeito_usado.emit(Proficiencias.EFEITO_CORTADOR)
-	if golpe.esmagador and resultado.critico:
-		_atormentado_por = golpe.autor_id
-		_impor(ATORMENTADO, DURACAO_RODADA)
-	_aplicar_golpe_de_escudo(golpe, lado)
-	if golpe.agarra and resultado.acertou:
-		_agarrar(golpe)
-	if golpe.sentinela and resultado.dano > 0 and esta_se_movendo():  # Sentinela: acertou quem se movia
-		_impor(IMOBILIZADO, DURACAO_IMOBILIZADO)
+## Empurra o dono `pes` pés para o `lado` (maestria Empurrar, talentos).
+func empurrar(pes: float, lado: float) -> void:
+	empurrado.emit(Vector2(lado * EscalaDnd.pes_para_pixels(pes), 0.0))
+	aviso.emit("Empurrado!")
 
-## Mestre em Escudos: o alvo faz salvaguarda de Força; falhou, é derrubado ou empurrado 5 pés.
-func _aplicar_golpe_de_escudo(golpe: Golpe, lado: float) -> void:
-	if golpe.escudo_cd <= 0:
-		return
-	golpe.efeito_usado.emit(Proficiencias.EFEITO_ESCUDO)
-	var bonus: int = bonus_salvaguardas.get(Atributos.FORCA, 0)
-	if Combate.passou_salvaguarda(bonus, golpe.escudo_cd, rng):
-		aviso.emit("Resistiu ao escudo!")
-	elif golpe.escudo_derruba:
-		_impor(CAIDO, DURACAO_CAIDO)
-	else:
-		empurrado.emit(Vector2(lado * EscalaDnd.pes_para_pixels(EMPURRAO_ESCUDO_PES), 0.0))
-		aviso.emit("Empurrado!")
 
-## Envenenador: salvaguarda de Constituição contra a CD do golpe. Falhou: devolve o dano de veneno e fica
-## Envenenado. Passou: 0. Quem chama soma o dano ao do acerto.
-func rolar_veneno(golpe: Golpe) -> int:
-	if golpe.veneno_potente == null or golpe.veneno_cd <= 0:
-		return 0
-	var bonus: int = bonus_salvaguardas.get(Atributos.CONSTITUICAO, 0)
-	if Combate.passou_salvaguarda(bonus, golpe.veneno_cd, rng):
+## Põe uma condição (renova se já tiver). Os efeitos de talento usam.
+func impor(condicao: StringName, duracao: float) -> void:
+	_impor(condicao, duracao)
+
+
+## O dono passa na salvaguarda do `atributo` contra a `cd`?
+func salvou(atributo: StringName, cd: int) -> bool:
+	return Combate.passou_salvaguarda(bonus_salvaguardas.get(atributo, 0), cd, rng)
+
+
+## Esmagador: o próximo ataque de quem acertou contra o dono tem vantagem.
+func atormentar(autor_id: int) -> void:
+	_atormentado_por = autor_id
+	_impor(ATORMENTADO, DURACAO_RODADA)
+
+
+## Envenenador: salvaguarda de Constituição contra a CD. Falhou: fica Envenenado e devolve o dano de veneno. Passou: 0.
+func rolar_veneno(dano: Dado, cd: int) -> int:
+	if salvou(Atributos.CONSTITUICAO, cd):
 		aviso.emit("Resistiu ao veneno!")
 		return 0
 	_impor(ENVENENADO, DURACAO_ENVENENADO)
-	return golpe.veneno_potente.rolar(rng)
+	return dano.rolar(rng)
 
 
-## Agarrador: o soco acertado agarra o alvo. Ele não anda e tenta escapar a cada rodada.
-func _agarrar(golpe: Golpe) -> void:
-	_agarrado_por = golpe.autor_id
-	_cd_escape = golpe.agarra_cd
+## Agarrador: o dono fica agarrado por `autor_id`; não anda e tenta escapar a cada rodada contra a `cd`.
+func agarrar(autor_id: int, cd: int) -> void:
+	_agarrado_por = autor_id
+	_cd_escape = cd
 	_tempo_escape = INTERVALO_ESCAPE
 	_impor(AGARRADO, DURACAO_AGARRADO)
-	golpe.efeito_usado.emit(Proficiencias.EFEITO_AGARRAR)
+
+
 
 
 ## Agarrado: a cada rodada rola Força ou Destreza (o melhor) contra a CD. Solta se passar ou se quem agarrou

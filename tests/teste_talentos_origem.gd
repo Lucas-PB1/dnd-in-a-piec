@@ -54,16 +54,16 @@ func _testar_brigao() -> void:
 	var ficha := _ficha()
 	_checar(ficha.dado_dano(soco).faces == 1, "sem o talento o soco é 1d1")
 	var golpe_antes := ficha.golpe_com(soco)
-	_checar(not golpe_antes.rerrolar_um and golpe_antes.empurrao_pes == 0.0, "sem o talento o soco não empurra nem rerrola")
+	_checar(not golpe_antes.rerrola_um() and not golpe_antes.tem(Proficiencias.EFEITO_BRIGAO), "sem o talento o soco não empurra nem rerrola")
 	ficha.talentos.append(Ficha.TALENTO_BRIGAO)
 	var dado := ficha.dado_dano(soco)
 	_checar(dado.quantidade == 1 and dado.faces == 4 and dado.bonus == ficha.modificador(Atributos.FORCA),
 		"Brigão: o soco passa a 1d4 + Força")
 	var golpe := ficha.golpe_com(soco)
-	_checar(golpe.rerrolar_um and golpe.empurrao_pes == 5.0, "o golpe do soco rerrola 1 e empurra 5 pés")
+	_checar(golpe.rerrola_um() and golpe.tem(Proficiencias.EFEITO_BRIGAO), "o golpe do soco rerrola 1 e empurra 5 pés")
 	var espada: Arma = load("res://data/armas/espada_longa.tres")
 	var golpe_espada := ficha.golpe_com(espada)
-	_checar(not golpe_espada.rerrolar_um and golpe_espada.empurrao_pes == 0.0, "com arma na mão o Brigão não vale")
+	_checar(not golpe_espada.rerrola_um() and not golpe_espada.tem(Proficiencias.EFEITO_BRIGAO), "com arma na mão o Brigão não vale")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	var dado_d4 := Dado.new(1, 4)
@@ -88,7 +88,7 @@ func _testar_atacante_selvagem() -> void:
 	for i in 600:
 		soma_normal += Combate.dano_do_acerto(golpe, rng, false)
 	_checar(usos.is_empty(), "sem o talento o golpe não avisa gasto de efeito")
-	golpe.selvagem = true
+	golpe.efeitos.append(EfeitosDeTalento.AtacanteSelvagem.new())
 	var soma_selvagem := 0
 	for i in 600:
 		soma_selvagem += Combate.dano_do_acerto(golpe, rng, false)
@@ -105,12 +105,12 @@ func _testar_recarga_no_heroi() -> void:
 	var jogador: Jogador = main.get_node("Jogador")
 	jogador.ficha.talentos.append(Ficha.TALENTO_ATACANTE_SELVAGEM)
 	var primeiro := jogador.criar_golpe()
-	_checar(primeiro.selvagem, "o herói com o talento monta o golpe com o efeito ligado")
+	_checar(primeiro.rola_duas_vezes(), "o herói com o talento monta o golpe com o efeito ligado")
 	primeiro.efeito_usado.emit(Proficiencias.EFEITO_SELVAGEM)
-	_checar(not jogador.criar_golpe().selvagem, "depois de gastar, o efeito fica desligado na mesma rodada")
+	_checar(not jogador.criar_golpe().rola_duas_vezes(), "depois de gastar, o efeito fica desligado na mesma rodada")
 	for i in 100:
 		await physics_frame
-	_checar(jogador.criar_golpe().selvagem, "passada a rodada (1,5 s) o efeito volta")
+	_checar(jogador.criar_golpe().rola_duas_vezes(), "passada a rodada (1,5 s) o efeito volta")
 	main.free()
 	await process_frame
 
