@@ -2,8 +2,8 @@ class_name Sons
 extends Node
 ## Efeitos sonoros do jogo. Escuta o que acontece (golpes resolvidos, o herói pulando, morrendo,
 ## usando habilidades, os botões dos menus) e toca o som certo; não muda regra nenhuma. Cada
-## efeito tem algumas variações e um leve sorteio de tom, para não soar repetido. Monstros novos
-## ganham os sons sem mudar nada neles (como o Impacto).
+## efeito tem algumas variações e um leve sorteio de tom, para não soar repetido. Sons de monstro
+## usam `tocar_em` (volume pela distância ao herói).
 
 const RPG := "res://assets/audio/kenney_rpg/OGG/"
 const SINTETIZADO := "res://assets/audio/sintetizados/"
@@ -73,6 +73,11 @@ const INTERVALO_PASSO_ANDANDO := 0.34
 const INTERVALO_PASSO_CORRENDO := 0.22
 const VELOCIDADE_MINIMA_PASSO := 40.0
 const CAMADA_HURTBOX_JOGADOR := 8
+## Mixagem por distância (só sons de monstro): cheio até N ladrilhos, some aos M.
+const DISTANCIA_CHEIA_PX := EscalaDnd.PIXELS_POR_LADRILHO * 6.0
+const DISTANCIA_MUDA_PX := EscalaDnd.PIXELS_POR_LADRILHO * 20.0
+## Abaixo disto o som nem toca (economiza voz e evita estalo no -infinito).
+const ATENUACAO_MUDA_DB := -40.0
 ## Sinais que só os chefes têm: o rugido ao despertar e o tremor do chão.
 const SINAL_DESPERTAR := &"despertou"
 const SINAL_TREMOR := &"abalou_o_chao"
@@ -176,6 +181,27 @@ func tocar(nome: StringName, volume_extra: float = 0.0, tom: float = 1.0) -> voi
 	tocados[nome] = tocados.get(nome, 0) + 1
 
 
+## Som de monstro: volume cai com a distância até o herói (UI e herói usam `tocar` sem isto).
+func tocar_em(nome: StringName, origem: Vector2, tom: float = 1.0) -> void:
+	var extra := atenuacao_por_distancia(origem)
+	if extra <= ATENUACAO_MUDA_DB:
+		return
+	tocar(nome, extra, tom)
+
+
+## Quanto baixar (dB) um som em `origem` por causa da distância ao herói. 0 = cheio.
+func atenuacao_por_distancia(origem: Vector2) -> float:
+	if _jogador == null or not is_instance_valid(_jogador):
+		return 0.0
+	var distancia := origem.distance_to(_jogador.global_position)
+	if distancia <= DISTANCIA_CHEIA_PX:
+		return 0.0
+	if distancia >= DISTANCIA_MUDA_PX:
+		return ATENUACAO_MUDA_DB
+	var t := (distancia - DISTANCIA_CHEIA_PX) / (DISTANCIA_MUDA_PX - DISTANCIA_CHEIA_PX)
+	return linear_to_db(lerpf(1.0, 0.01, t))
+
+
 func _carregar(caminho: String) -> AudioStream:
 	if not _cache.has(caminho):
 		_cache[caminho] = load(caminho) as AudioStream
@@ -247,12 +273,20 @@ func _escutar_aviso_de_criatura(no: Node) -> void:
 func _escutar_chefe(no: Node) -> void:
 	if not no.has_signal(SINAL_TREMOR):
 		return
-	if no.has_signal(SINAL_DESPERTAR) and not no.is_connected(SINAL_DESPERTAR, _ao_despertar_chefe):
-		no.connect(SINAL_DESPERTAR, _ao_despertar_chefe)
-	if not no.is_connected(SINAL_TREMOR, _ao_tremer):
-		no.connect(SINAL_TREMOR, _ao_tremer)
-	if no.has_signal(&"morreu") and not no.is_connected(&"morreu", _ao_morrer_chefe):
-		no.connect(&"morreu", _ao_morrer_chefe)
+	if no.has_signal(SINAL_DESPERTAR) and not _ja_escuta(no, SINAL_DESPERTAR, &"_ao_despertar_chefe"):
+		no.connect(SINAL_DESPERTAR, _ao_despertar_chefe.bind(no))
+	if not _ja_escuta(no, SINAL_TREMOR, &"_ao_tremer"):
+		no.connect(SINAL_TREMOR, _ao_tremer.bind(no))
+	if no.has_signal(&"morreu") and not _ja_escuta(no, &"morreu", &"_ao_morrer_chefe"):
+		no.connect(&"morreu", _ao_morrer_chefe.bind(no))
+
+
+func _ja_escuta(no: Node, sinal: StringName, metodo: StringName) -> bool:
+	for info in no.get_signal_connection_list(sinal):
+		var ligado: Callable = info["callable"]
+		if ligado.get_object() == self and ligado.get_method() == metodo:
+			return true
+	return false
 
 
 ## True se este nó já escuta o sinal com este método (ignora argumentos de `bind`).
@@ -269,27 +303,28 @@ func _ao_clicar_botao() -> void:
 	tocar(&"clique")
 
 
-func _ao_despertar_chefe() -> void:
-	tocar(&"rugido")
+func _ao_despertar_chefe(chefe: Node) -> void:
+	tocar_em(&"rugido", _posicao_do_no(chefe))
 
 
-func _ao_morrer_chefe() -> void:
-	tocar(&"rugido_morte")
+func _ao_morrer_chefe(chefe: Node) -> void:
+	tocar_em(&"rugido_morte", _posicao_do_no(chefe))
 
 
 func _ao_ligar_golpe_de_criatura(_golpe: Golpe, hitbox: HitboxComponent) -> void:
+	var origem := _posicao_do_no(hitbox)
 	var voz := _voz_da_ficha(_ficha_do_no(hitbox))
 	if voz.is_empty():
-		tocar(&"golpe_monstro")
+		tocar_em(&"golpe_monstro", origem)
 		return
-	tocar(voz[1], 0.0, float(voz[2]))
+	tocar_em(voz[1], origem, float(voz[2]))
 
 
 func _ao_aviso_de_criatura(criatura: Node) -> void:
 	var voz := _voz_da_ficha(_ficha_do_no(criatura))
 	if voz.is_empty():
 		return
-	tocar(voz[0], 0.0, float(voz[2]))
+	tocar_em(voz[0], _posicao_do_no(criatura), float(voz[2]))
 
 
 ## Sobe na árvore até achar um nó com `criatura` (ficha).
@@ -309,8 +344,14 @@ func _voz_da_ficha(ficha: CriaturaRPG) -> Array:
 	return VOZ_DA_CRIATURA[ficha.nome]
 
 
-func _ao_tremer(_forca: float, _duracao: float) -> void:
-	tocar(&"tremor")
+func _posicao_do_no(no: Node) -> Vector2:
+	if no is Node2D:
+		return (no as Node2D).global_position
+	return _jogador.global_position if _jogador != null else Vector2.ZERO
+
+
+func _ao_tremer(_forca: float, _duracao: float, chefe: Node) -> void:
+	tocar_em(&"tremor", _posicao_do_no(chefe))
 
 
 func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2, defesa: DefesaComponent) -> void:
@@ -332,8 +373,8 @@ func _ao_arremessar(_arma: Arma, _golpe: Golpe, _penalidade: int, _origem: Vecto
 	tocar(&"tiro" if municao != null else &"arremesso")
 
 
-func _ao_morrer_criatura(_onde: Vector2) -> void:
-	tocar(&"estouro")
+func _ao_morrer_criatura(onde: Vector2) -> void:
+	tocar_em(&"estouro", onde)
 
 
 ## O Surto acendeu (ativação) ou o segundo golpe saiu (acabou).

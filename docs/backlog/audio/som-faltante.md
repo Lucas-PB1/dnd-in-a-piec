@@ -8,7 +8,7 @@ area: audio
 # Som: o que falta
 
 ## Falta
-Mixagem por distância, mais faixas (batalha só na Ruína e Fortaleza).
+Mais faixas (batalha só na Ruína e Fortaleza).
 
 ## Onde
 `levels/sons.gd`, `levels/musica.gd`, `data/` / `assets/audio/`

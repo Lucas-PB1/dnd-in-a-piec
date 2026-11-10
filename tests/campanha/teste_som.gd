@@ -109,9 +109,14 @@ func _testar_no_jogo() -> void:
 		jogador.inventario.adicionar(Salvamento.item_chamado("Adaga").duplicate() as Item)
 	)
 	_checar(sons.tocados.get(&"pegar_item", 0) == 1, "pacote/save em silêncio não toca pegar")
+	# Distância: perto cheio, longe some
+	_checar(is_equal_approx(sons.atenuacao_por_distancia(jogador.global_position), 0.0), "perto do herói a atenuação é zero")
+	_checar(sons.atenuacao_por_distancia(jogador.global_position + Vector2(Sons.DISTANCIA_MUDA_PX, 0.0)) <= Sons.ATENUACAO_MUDA_DB, "longe demais o som some")
+	_checar(sons.atenuacao_por_distancia(jogador.global_position + Vector2(Sons.DISTANCIA_CHEIA_PX + 64.0, 0.0)) < 0.0, "no meio o volume já cai")
 	# Criaturas e chefes
 	var goblin: Goblin = load("res://features/goblin/goblin.tscn").instantiate()
 	main.add_child(goblin)
+	goblin.global_position = jogador.global_position + Vector2(40.0, 0.0)
 	await process_frame
 	sons.tocados.clear()
 	goblin.preparar_aviso()
@@ -119,15 +124,21 @@ func _testar_no_jogo() -> void:
 	var hitbox_goblin: HitboxComponent = goblin.find_children("*", "HitboxComponent", true, false)[0]
 	hitbox_goblin.ligar(Golpe.new("Adaga", 4, Dado.de_texto("1d4")))
 	_checar(sons.tocados.get(&"ataque_goblin", 0) == 1, "o golpe do goblin toca a voz de ataque")
-	goblin.queue_free()
+	goblin.global_position = jogador.global_position + Vector2(Sons.DISTANCIA_MUDA_PX + 32.0, 0.0)
+	sons.tocados.clear()
+	goblin.preparar_aviso()
+	_checar(sons.tocados.get(&"aviso_goblin", 0) == 0, "goblin longe demais não soa o aviso")
+	goblin.free()
 	var chefe := Node2D.new()
 	for sinal in [&"despertou", &"morreu"]:
 		chefe.add_user_signal(sinal)
 	chefe.add_user_signal(&"abalou_o_chao", [{"name": "forca", "type": TYPE_FLOAT}, {"name": "duracao", "type": TYPE_FLOAT}])
 	main.add_child(chefe)
+	chefe.global_position = jogador.global_position
 	var hitbox := HitboxComponent.new()
 	hitbox.collision_mask = 8
 	main.add_child(hitbox)
+	hitbox.global_position = jogador.global_position
 	await process_frame
 	chefe.emit_signal(&"despertou")
 	chefe.emit_signal(&"abalou_o_chao", 1.0, 0.2)

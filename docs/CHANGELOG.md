@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Áudio: **mixagem por distância** — vozes/golpe/rugido/tremor/estouro de monstro caem de 6 a 20 ladrilhos do herói (`Sons.tocar_em`).
 - Áudio: **vozes dos minions** no aviso e no golpe (Goblin/Kobold/Hobgoblin, Bugbear/Ooze, Skeleton/Zombie) com packs CC0; chefes seguem no rugido.
 - Áudio: **ambiente por tema** (Floresta / Ruínas / Subterrâneo / Covil) em loop baixo sob a música; some no título, derrota e vitória. WAV sintetizados.
 - Áudio: música de **derrota** (Robin Lamb, CC0) ao cair; SFX Kenney de **pegar item** e **equipar** (`Inventario.item_obtido` / `item_equipado`, silêncio em pacote/save).
