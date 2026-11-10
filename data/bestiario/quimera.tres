@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EntradaBestiario" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/dados/entrada_bestiario.gd" id="1_entrada"]
+[ext_resource type="Resource" path="res://data/quimera.tres" id="2_criatura"]
+[ext_resource type="Texture2D" path="res://features/quimera/sprites/quimera_parado.png" id="3_folha"]
+
+[sub_resource type="AtlasTexture" id="Retrato"]
+atlas = ExtResource("3_folha")
+region = Rect2(0, 0, 178, 179)
+
+[resource]
+script = ExtResource("1_entrada")
+criatura = ExtResource("2_criatura")
+retrato = SubResource("Retrato")
+tipo_texto = "Monstruosidade grande, caótica e má"
+descricao = "Leão, bode e dragão num só corpo: a juba rosna na frente, a cabeça de bode ataca com os chifres e a cauda guarda uma cabeça de dragão que cospe fogo. É o terror do covil."
+dica = "Ela se encolhe antes de cada ataque: use esse aviso para esquivar. A cabeçada derruba, e a mordida em quem está no chão dói em dobro. O Sopro de Fogo (cone de 15 pés, salvaguarda de Destreza CD 15) volta de tempos em tempos: saia do cone ou aguente metade do dano."

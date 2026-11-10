@@ -20,6 +20,9 @@ const COR_PAINEL := Color(0.16, 0.16, 0.2)
 const ARTE_HEROI := "res://features/jogador/sprites/heroi_base.png"
 const ARTE_WARRIOR := "res://features/goblin/sprites/warrior_base_spritecook.png"
 
+## Centro do corpo (x) da última tira medida por `_quadros`.
+var _ancora_ultima: float = 0.0
+
 
 func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
@@ -29,14 +32,16 @@ func _initialize() -> void:
 		return
 	var altura := int(args[2])
 	var animacoes: Dictionary = {}  # nome -> Array[Image]
+	var ancoras: Dictionary = {}  # nome -> x (px, no quadro já na escala) do centro do corpo no quadro de referência
 	for i in range(4, args.size()):
 		var partes: PackedStringArray = args[i].rsplit(":", true, 3)
 		animacoes[partes[1]] = _quadros(partes[0], int(partes[2]), int(partes[3]), altura)
-	var canvas := _tamanho_comum(animacoes)
+		ancoras[partes[1]] = _ancora_ultima
+	var canvas := _tamanho_comum(animacoes, ancoras)
 	print("Quadro comum: %dx%d" % [canvas.x, canvas.y])
 	var prontas: Dictionary = {}
 	for nome in animacoes:
-		prontas[nome] = _no_canvas(animacoes[nome], canvas)
+		prontas[nome] = _no_canvas(animacoes[nome], canvas, ancoras[nome])
 		_salvar_tira(prontas[nome], canvas, "%s/%s_%s.png" % [args[0], args[1], nome])
 	_salvar_previa(prontas, canvas, args[3])
 	quit(0)
@@ -53,6 +58,9 @@ func _quadros(caminho: String, quantidade: int, referencia: int, altura: int) ->
 	var fatias := _separar_por_formas(tira, quantidade, passo)
 	var escala := float(altura) / fatias[referencia].get_used_rect().size.y
 	var recorte := _uniao(fatias)
+	# O corpo (e não a união dos quadros, que muda com o fogo, o bote e as asas) é que fica no meio: assim o personagem não
+	# "pula de lado" ao trocar de animação.
+	_ancora_ultima = (fatias[referencia].get_used_rect().get_center().x - recorte.position.x) * escala
 	var saida: Array[Image] = []
 	for fatia in fatias:
 		var quadro := fatia.get_region(recorte)
@@ -122,20 +130,24 @@ func _uniao(fatias: Array[Image]) -> Rect2i:
 	return uniao
 
 
-func _tamanho_comum(animacoes: Dictionary) -> Vector2i:
-	var maior := Vector2i.ZERO
+## Quadro comum: largura simétrica em volta da âncora (o centro do corpo) que cabe todas as animações; altura do mais alto.
+func _tamanho_comum(animacoes: Dictionary, ancoras: Dictionary) -> Vector2i:
+	var meia_largura := 0.0
+	var altura := 0
 	for nome in animacoes:
 		var quadros: Array[Image] = animacoes[nome]
-		maior = Vector2i(maxi(maior.x, quadros[0].get_width()), maxi(maior.y, quadros[0].get_height()))
-	return maior
+		var ancora: float = ancoras[nome]
+		meia_largura = maxf(meia_largura, maxf(ancora, quadros[0].get_width() - ancora))
+		altura = maxi(altura, quadros[0].get_height())
+	return Vector2i(ceili(meia_largura) * 2, altura)
 
 
-## Pés embaixo, no centro: todo quadro vai para o mesmo tamanho de quadro.
-func _no_canvas(quadros: Array[Image], canvas: Vector2i) -> Array[Image]:
+## Pés embaixo, corpo (âncora) no centro: todo quadro vai para o mesmo tamanho de quadro.
+func _no_canvas(quadros: Array[Image], canvas: Vector2i, ancora: float) -> Array[Image]:
 	var saida: Array[Image] = []
 	for quadro in quadros:
 		var folha := Image.create_empty(canvas.x, canvas.y, false, Image.FORMAT_RGBA8)
-		var destino := Vector2i((canvas.x - quadro.get_width()) / 2, canvas.y - quadro.get_height())
+		var destino := Vector2i(roundi(canvas.x / 2.0 - ancora), canvas.y - quadro.get_height())
 		folha.blit_rect(quadro, Rect2i(Vector2i.ZERO, quadro.get_size()), destino)
 		saida.append(folha)
 	return saida

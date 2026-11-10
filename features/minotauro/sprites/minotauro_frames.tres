@@ -1,9 +1,42 @@
-[gd_resource type="SpriteFrames" load_steps=33 format=3]
+[gd_resource type="SpriteFrames" load_steps=42 format=3]
 
 [ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_parado.png" id="1"]
 [ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_investida.png" id="2"]
 [ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_chifrada.png" id="3"]
 [ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_glaive.png" id="4"]
+[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_andar.png" id="5"]
+
+[sub_resource type="AtlasTexture" id="andar_0"]
+atlas = ExtResource("5")
+region = Rect2(0, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="andar_1"]
+atlas = ExtResource("5")
+region = Rect2(190, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="andar_2"]
+atlas = ExtResource("5")
+region = Rect2(380, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="andar_3"]
+atlas = ExtResource("5")
+region = Rect2(570, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="andar_4"]
+atlas = ExtResource("5")
+region = Rect2(760, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="andar_5"]
+atlas = ExtResource("5")
+region = Rect2(950, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="andar_6"]
+atlas = ExtResource("5")
+region = Rect2(1140, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="andar_7"]
+atlas = ExtResource("5")
+region = Rect2(1330, 0, 190, 190)
 
 [sub_resource type="AtlasTexture" id="parado_0"]
 atlas = ExtResource("1")
@@ -166,16 +199,28 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("investida_4")
+"texture": SubResource("andar_0")
 }, {
 "duration": 1.0,
-"texture": SubResource("investida_5")
+"texture": SubResource("andar_1")
 }, {
 "duration": 1.0,
-"texture": SubResource("investida_6")
+"texture": SubResource("andar_2")
 }, {
 "duration": 1.0,
-"texture": SubResource("investida_7")
+"texture": SubResource("andar_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_7")
 }],
 "loop": true,
 "name": &"andar",

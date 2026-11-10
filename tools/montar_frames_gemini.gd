@@ -1,7 +1,7 @@
 extends SceneTree
 ## Monta o SpriteFrames de uma criatura feita com tiras do Gemini (saída de montar_tiras_gemini.gd).
-## Cada tira tem quadros lado a lado, todos do mesmo tamanho. `dano` e `morrer` não têm arte: `dano` repete o
-## 1º quadro de `parado` (a cena já treme e pisca por código).
+## Cada tira tem quadros lado a lado, todos do mesmo tamanho. Sem tira de `dano`, ela repete o 1º quadro de `parado`
+## (a cena já treme e pisca por código).
 ## Rodar (sem --debug):
 ##   godot --headless --path . --script res://tools/montar_frames_gemini.gd -- PASTA PREFIXO LARGURA_QUADRO \
 ##       nome:arquivo.png:quadros:fps:loop ...   (loop = 1 ou 0)
@@ -30,7 +30,8 @@ func _initialize() -> void:
 		if d[0] == "parado":
 			parado = tira
 		_adicionar(quadros, StringName(d[0]), tira, largura, int(d[2]), float(d[3]), d[4] == "1")
-	_adicionar(quadros, ANIMACAO_DANO, parado, largura, 1, FPS_DANO, false)
+	if not quadros.has_animation(ANIMACAO_DANO):  # a criatura que ganhou arte de dano (Quimera) mantém a dela
+		_adicionar(quadros, ANIMACAO_DANO, parado, largura, 1, FPS_DANO, false)
 	ResourceSaver.save(quadros, "%s%s_frames.tres" % [pasta, args[1]])
 	var corpo := (parado.get_image()).get_region(Rect2i(0, 0, largura, altura)).get_used_rect()
 	print("quadro %dx%d, corpo %s, offset = (%s, %s)" % [largura, altura, corpo,

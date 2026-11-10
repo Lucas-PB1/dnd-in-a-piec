@@ -39,3 +39,11 @@ reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 (o pacote traz `license cc0 - public domain.txt`, copiado para `LICENCA_CC0.txt`). Fonte: https://opengameart.org/node/72366
 (arquivo `opp3_cave_tiles.zip`, baixado em 2026-11-09). Usados só os arquivos de `environment/tiles/cave`, o fundo `bg_cave.png`
 e o baú; as guias do pacote não são usadas (o aviso do autor diz que podem ter ladrilhos antigos fora do domínio público).
+
+## Skeleton (features/goblin/sprites/skeleton_*.png)
+Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
+
+## Zombie (features/goblin/sprites/zombie_*.png)
+Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.

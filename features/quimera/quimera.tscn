@@ -1,0 +1,150 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/quimera/quimera.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/quimera.tres" id="2_criatura"]
+[ext_resource type="SpriteFrames" path="res://features/quimera/sprites/quimera_frames.tres" id="3_frames"]
+[ext_resource type="Script" path="res://core/componentes/dissolver_component.gd" id="4_dissolver"]
+[ext_resource type="Script" path="res://core/componentes/health_component.gd" id="5_vida"]
+[ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="6_hurtbox"]
+[ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="7_defesa"]
+[ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="8_texto"]
+[ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="9_hitbox"]
+[ext_resource type="Script" path="res://core/componentes/condicoes_component.gd" id="10_condicoes"]
+[ext_resource type="Texture2D" path="res://assets/efeitos/condicoes.png" id="11_icones"]
+[ext_resource type="Script" path="res://core/estados/maquina_estados.gd" id="12_maquina"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_parado.gd" id="13_parado"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_rugindo.gd" id="14_rugindo"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_perseguindo.gd" id="15_perseguindo"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_atacando.gd" id="16_atacando"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_soprando.gd" id="17_soprando"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_pulando.gd" id="18_pulando"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_caido.gd" id="19_caido"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_morrendo.gd" id="20_morrendo"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_bote.gd" id="21_bote"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_investindo.gd" id="22_investindo"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_voando.gd" id="23_voando"]
+[ext_resource type="Script" path="res://features/quimera/estados/estado_quimera_mergulhando.gd" id="24_mergulhando"]
+
+[sub_resource type="RectangleShape2D" id="FormaCorpo"]
+size = Vector2(96, 64)
+
+[sub_resource type="RectangleShape2D" id="FormaAlvo"]
+size = Vector2(120, 100)
+
+[sub_resource type="RectangleShape2D" id="FormaGolpe"]
+resource_local_to_scene = true
+size = Vector2(88, 80)
+
+[sub_resource type="RectangleShape2D" id="FormaSopro"]
+resource_local_to_scene = true
+size = Vector2(96, 96)
+
+[node name="Quimera" type="CharacterBody2D"]
+collision_layer = 16
+script = ExtResource("1_script")
+criatura = ExtResource("2_criatura")
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+position = Vector2(0, -32)
+shape = SubResource("FormaCorpo")
+
+[node name="Sombra" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 0.3)
+polygon = PackedVector2Array(70, 0, 60, 2, 34, 3.5, 0, 4, -34, 3.5, -60, 2, -70, 0, -60, -2, -34, -3.5, 0, -4, 34, -3.5, 60, -2)
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("3_frames")
+animation = &"parado"
+autoplay = "parado"
+offset = Vector2(0.5, -88.5)
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("5_vida")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("6_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -50)
+shape = SubResource("FormaAlvo")
+
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "vida", "condicoes")]
+script = ExtResource("7_defesa")
+hurtbox = NodePath("../Hurtbox")
+vida = NodePath("../Vida")
+condicoes = NodePath("../Condicoes")
+
+[node name="Texto" type="Node2D" parent="."]
+position = Vector2(0, -125)
+script = ExtResource("8_texto")
+
+[node name="Condicoes" type="Node2D" parent="."]
+position = Vector2(0, -118)
+script = ExtResource("10_condicoes")
+icones = ExtResource("11_icones")
+
+[node name="Golpe" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("9_hitbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Golpe"]
+position = Vector2(44, -40)
+shape = SubResource("FormaGolpe")
+
+[node name="Sopro" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("9_hitbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Sopro"]
+position = Vector2(104, -48)
+shape = SubResource("FormaSopro")
+
+[node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]
+script = ExtResource("12_maquina")
+estado_inicial = NodePath("Parado")
+
+[node name="Parado" type="Node" parent="MaquinaEstados"]
+script = ExtResource("13_parado")
+
+[node name="Rugindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("14_rugindo")
+
+[node name="Perseguindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("15_perseguindo")
+
+[node name="Atacando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("16_atacando")
+
+[node name="Soprando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("17_soprando")
+
+[node name="Pulando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("18_pulando")
+
+[node name="Caido" type="Node" parent="MaquinaEstados"]
+script = ExtResource("19_caido")
+
+[node name="Morrendo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("20_morrendo")
+
+[node name="Bote" type="Node" parent="MaquinaEstados"]
+script = ExtResource("21_bote")
+
+[node name="Investindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("22_investindo")
+
+[node name="Voando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("23_voando")
+
+[node name="Mergulhando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("24_mergulhando")
+
+[node name="Dissolver" type="Node2D" parent="." node_paths=PackedStringArray("sprite", "sombra")]
+script = ExtResource("4_dissolver")
+sprite = NodePath("../Sprite")
+sombra = NodePath("../Sombra")

@@ -29,7 +29,7 @@ func _habilidade(id: StringName) -> HabilidadeClasse:
 
 func _testar_dados() -> void:
 	var habilidades := _guerreiro().habilidades
-	_checar(habilidades.size() == 7, "o Guerreiro tem 7 habilidades na árvore")
+	_checar(habilidades.size() == 9, "o Guerreiro tem 9 habilidades na árvore")
 	var ids: Array[StringName] = []
 	for habilidade in habilidades:
 		ids.append(habilidade.id)

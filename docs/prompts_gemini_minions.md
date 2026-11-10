@@ -1,4 +1,4 @@
-# Prompts do Gemini: minions novos (Hobgoblin, Bugbear, Kobold)
+# Prompts do Gemini: minions novos (Hobgoblin, Bugbear, Kobold, Skeleton)
 
 Estilo de referência: a base do Goblin Warrior (`features/goblin/sprites/warrior_base_spritecook.png`):
 pixel art de personagem inteiro, de lado (olhando para a direita), contorno escuro, poucas cores,
@@ -91,3 +91,26 @@ animação) e `tools/montar_frames_gemini.gd` (gera o `*_frames.tres`; `arremess
 - `tools/limpar_arte_gemini.gd` aceita um 5º argumento (altura da arte nova na comparação) e a prévia de
   `tools/montar_tiras_gemini.gd` deixa a última linha (herói) mais alta que as outras.
 - Cena `kobold_guerreiro.tscn`: estocada 0,14–0,36 s, adaga arremessada solta em 0,2 s.
+
+## Skeleton e Zombie (os dois mais urgentes: acompanhantes do Wight na fase 9, também nas fases 8 e 10)
+Mesmo fluxo e mesma regra: anexe o Hobgoblin chibi aprovado e o Goblin Warrior como referência de estilo, base primeiro, depois as tiras.
+Ficha (Monster Manual 2024, conferir no Códice antes de implementar): **Skeleton** Médio, morto-vivo, CA 14, 13 PV, Espada Curta
+e Arco Curto; **Zombie** Médio, morto-vivo, CA 8, 15 PV, Pancada (Slam), Fortitude de Morto-Vivo.
+
+### 4. Skeleton (base)
+"[Parte comum] A skeleton warrior: a walking human skeleton in bone-white and pale grey, round empty eye sockets with a faint
+cold-blue glint, a grinning skull, a few scraps of rusted chainmail on the chest and a cracked round helmet, holding a notched
+shortsword in the right hand and a small cracked wooden shield on the left arm, a shortbow slung on the back. Thin bony limbs
+but still chibi: big skull about one third of the total height, short legs. Eerie but readable. About 1.2 times taller than the
+reference goblin."
+Tiras (N quadros, bloco comum das tiras do Hobgoblin): **parado (4)**: leve balanço dos ossos, mandíbula mexendo; **andar (6)**:
+passada dura e quebradiça; **golpe (5)**: ergue a espada curta, corta para a frente, volta; **arco (5)**: saca o arco curto,
+puxa a corda, solta, abaixa; **morte (5)**: balança, os ossos se soltam e o corpo desmonta numa pilha (o último quadro é a pilha de ossos).
+
+### 5. Zombie (base)
+"[Parte comum] A zombie: a shambling rotting undead commoner, sickly green-grey skin with dark patches, torn brown peasant
+clothes, one arm hanging low and the other stretched forward, sunken glowing yellow eyes, slack open mouth, tattered hair,
+a hunched forward-leaning posture. Chibi: big head about one third of the total height, short legs, a hand with no weapon.
+Slightly bulkier and a bit taller than the reference goblin (about 1.2 times)."
+Tiras: **parado (4)**: cambaleia no lugar, cabeça pendendo; **andar (6)**: arrasta os pés com os braços à frente; **pancada (5)**:
+levanta o braço e desce com força na frente, volta; **morte (5)**: cambaleia, tomba para trás e fica deitado (último quadro: caído).

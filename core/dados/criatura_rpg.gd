@@ -29,6 +29,10 @@ extends Resource
 @export var resistencias: Array[StringName] = []
 ## Tipos de dano a que é imune (Wight: veneno).
 @export var imunidades_dano: Array[StringName] = []
+## Tipos de dano a que é vulnerável (dobra o dano). Skeleton: contundente.
+@export var vulnerabilidades: Array[StringName] = []
+## Fortitude dos Mortos-Vivos (Zombie): ao chegar a 0 PV, salvaguarda de Constituição (CD 5 + dano) e fica com 1 PV, salvo dano radiante ou crítico.
+@export var fortitude_morto_vivo: bool = false
 ## Condições a que é imune (Gray Ooze: caido, agarrado, imobilizado; Wight: envenenado). Ids de `CondicoesComponent`.
 @export var imunidades_condicoes: Array[StringName] = []
 
@@ -100,7 +104,8 @@ extends Resource
 @export var patrulha_pes: float = 0.0
 
 @export_group("Salvaguarda em linha")
-## Borrifo Ácido (Ankheg): ataque que não rola para acertar; quem está na linha rola a salvaguarda contra a CD. 0 = não tem.
+## Salvaguarda em área, sem rolagem de acerto: Borrifo Ácido do Ankheg (linha) e Sopro de Fogo da Quimera (cone, aproximado
+## por um retângulo). Quem está na área rola a salvaguarda contra a CD; falhou, dano inteiro; passou, metade. 0 = não tem.
 @export var linha_cd: int = 0
 @export var linha_nome: String = "Borrifo"
 @export var linha_dano: String = "1d6"
@@ -125,6 +130,13 @@ extends Resource
 @export var chifrada_dano_com_carreira: String = ""
 ## Recarga X-6 do livro (Chifrada: 5). 0 = sem recarga.
 @export var chifrada_recarga: int = 5
+
+@export_group("Garra")
+## Segundo ataque corpo a corpo (Garra da Quimera), ao lado do ataque principal (a Mordida). Dano vazio = não tem.
+@export var garra_dano: String = ""
+@export var garra_nome: String = "Garra"
+@export var garra_bonus: int = 0
+@export var garra_tipo_dano: StringName = TiposDano.CORTANTE
 
 @export_group("Drenar Vida")
 ## Drenar Vida do Wight: salvaguarda contra a CD; falhou, o dano (necrótico) também reduz o máximo de PV do alvo. Dano vazio = não tem.
@@ -188,6 +200,11 @@ func golpe_chifrada(com_carreira: bool) -> Golpe:
 		_anexar_dano_adicional(chifrada, chifrada_dano_com_carreira)
 		chifrada.efeitos.append(EfeitosDeTalento.Derrubada.new())
 	return chifrada
+
+
+## A Garra (ataque comum, só com outro nome, bônus e dano).
+func golpe_garra() -> Golpe:
+	return Golpe.new(garra_nome, garra_bonus, _dado_ou_padrao(garra_dano), garra_tipo_dano)
 
 
 ## O Drenar Vida: salvaguarda em vez de ataque, e o dano também reduz o máximo de PV de quem falha.

@@ -231,10 +231,8 @@ func _preparar_campos() -> void:
 	for classe in classes:
 		_escolha_classe.add_item(classe.nome)
 	_escolha_classe.item_selected.connect(escolher_classe)
-	_escolha_nivel.add_item("Nível 1 · %d XP" % Ficha.XP_POR_NIVEL[1])
-	_escolha_nivel.add_item("Nível 2 · %d XP" % Ficha.XP_POR_NIVEL[2])
-	_escolha_nivel.add_item("Nível 3 · %d XP" % Ficha.XP_POR_NIVEL[3])
-	_escolha_nivel.add_item("Nível 4 · %d XP" % Ficha.XP_POR_NIVEL[4])
+	for n in range(1, Ficha.NIVEL_MAXIMO + 1):
+		_escolha_nivel.add_item("Nível %d · %d XP" % [n, Ficha.XP_POR_NIVEL[n]])
 	_escolha_nivel.select(0)
 	_escolha_nivel.item_selected.connect(escolher_nivel)
 	_escolha_pacote.item_selected.connect(escolher_pacote)

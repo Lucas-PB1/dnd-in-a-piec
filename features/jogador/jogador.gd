@@ -110,10 +110,14 @@ var _usos_folego: int = 0
 var _rng_folego := RandomNumberGenerator.new()
 var _rng_habilidades := RandomNumberGenerator.new()
 var _mente_tatica_ligada: bool = false
+## Segundos que faltam da Mudança Tática (bônus de deslocamento depois do Fôlego).
+var _tempo_mudanca_tatica: float = 0.0
 ## Surto de Ação armado: o próximo ataque ganha um segundo golpe logo atrás do primeiro.
 var _surto_armado: bool = false
-## O primeiro golpe do Surto já saiu e o segundo ainda vai sair.
-var _golpe_do_surto_pendente: bool = false
+## Golpes da mesma ação de Atacar que ainda vão sair logo atrás do atual (Ataque Extra, Surto de Ação, Mestre em Arma Grande).
+var _golpes_encadeados: int = 0
+## O Surto de Ação já abriu a ação de Atacar e a aura segue acesa até o último golpe.
+var _surto_em_curso: bool = false
 ## O herói está morrendo (animação de morte): não responde a nada até reviver().
 var _morrendo: bool = false
 ## Estado dos talentos (regras puras em features/jogador/talentos/): o herói só liga com a tela e o corpo.
@@ -333,7 +337,10 @@ func correr_segurado() -> bool:
 ## Velocidade andando (px/s): o deslocamento de D&D da ficha (30 pés -> ~128 px/s).
 ## Armadura que pede mais Força do que o herói tem tira 10 pés.
 func velocidade_andar() -> float:
-	return EscalaDnd.deslocamento_para_velocidade(Equipamento.deslocamento_pes(ficha, inventario))
+	var pes := Equipamento.deslocamento_pes(ficha, inventario)
+	if _tempo_mudanca_tatica > 0.0:
+		pes += MUDANCA_TATICA_PES
+	return EscalaDnd.deslocamento_para_velocidade(pes)
 
 
 ## Correndo = Disparada (Dash) do D&D: o dobro do deslocamento.
@@ -490,29 +497,38 @@ func armar_surto() -> bool:
 
 ## A aura do Surto está ligada (armado, ou o segundo golpe ainda vai sair).
 func surto_ativo() -> bool:
-	return _surto_armado or _golpe_do_surto_pendente
+	return _surto_armado or _surto_em_curso
 
 
-## O primeiro golpe do Surto acabou e o segundo ainda não saiu: o estado Atacando chama já.
+## Ainda há golpe da mesma ação de Atacar a sair (Ataque Extra, Surto de Ação): o estado Atacando chama já.
 func quer_golpe_do_surto() -> bool:
-	return _golpe_do_surto_pendente and not esta_golpeando()
+	return _golpes_encadeados > 0 and not esta_golpeando()
 
 
-## O segundo golpe do Surto: a mesma arma, na hora, com rolagem nova. Gasta o Surto e apaga a aura.
+## O próximo golpe encadeado: a mesma arma, na hora, com rolagem nova. Com o Surto em curso, o último
+## golpe gasta o Surto e apaga a aura.
 func iniciar_golpe_do_surto() -> void:
-	_golpe_do_surto_pendente = false
-	_aura.pulso(COR_SURTO, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
-	_aura.desligar()
-	_animacao.brilhar(COR_SURTO, TEMPO_BRILHO_SURTO)
+	_golpes_encadeados -= 1
+	if _surto_em_curso:
+		_aura.pulso(COR_SURTO, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
+		_animacao.brilhar(COR_SURTO, TEMPO_BRILHO_SURTO)
 	_comecar_golpe(false, true)
-	surto_ativo_mudou.emit(false)
+	if _golpes_encadeados <= 0:
+		_encerrar_surto_em_curso()
 
 
-## O ataque foi interrompido (levou dano, por exemplo): o segundo golpe se perde e a aura apaga.
+## O ataque foi interrompido (levou dano, por exemplo): os golpes que faltavam se perdem e a aura apaga.
 func cancelar_golpe_do_surto() -> void:
-	if not _golpe_do_surto_pendente:
+	if _golpes_encadeados <= 0:
 		return
-	_golpe_do_surto_pendente = false
+	_golpes_encadeados = 0
+	_encerrar_surto_em_curso()
+
+
+func _encerrar_surto_em_curso() -> void:
+	if not _surto_em_curso:
+		return
+	_surto_em_curso = false
 	_aura.desligar()
 	surto_ativo_mudou.emit(false)
 
@@ -521,11 +537,11 @@ func cancelar_golpe_do_surto() -> void:
 func _apagar_surto() -> void:
 	var estava_ativo := surto_ativo()
 	_surto_armado = false
-	_golpe_do_surto_pendente = false
+	_surto_em_curso = false
+	_golpes_encadeados = 0
 	_aura.desligar()
 	if estava_ativo:
 		surto_ativo_mudou.emit(false)
-
 
 ## Rola um teste de perícia e aplica Mente Tática automaticamente se estiver ligada.
 func rolar_teste_pericia(pericia: StringName, cd: int,
@@ -582,6 +598,7 @@ func usar_folego() -> bool:
 	_animacao.pulso_cura()
 	_aura.pulso(COR_FOLEGO_AURA, FAISCAS_FOLEGO, TEMPO_ANEL_FOLEGO, true)
 	_texto.mostrar_cura("Fôlego +%d" % ganho)
+	_iniciar_mudanca_tatica()
 	_avisar_folego()
 	return true
 
@@ -800,6 +817,7 @@ func _atualizar_contadores(delta: float) -> void:
 	# Ritmo de ataque (iniciativa) e buffer do botão de atacar.
 	_tempo_desde_golpe += delta
 	_tempo_desde_acao_bonus += delta
+	_tempo_mudanca_tatica = maxf(_tempo_mudanca_tatica - delta, 0.0)
 	if Input.is_action_just_pressed("atacar"):
 		_contador_buffer_ataque = stats.tempo_buffer_ataque
 		if nome_estado() == &"Atacando" and not _golpe_extra:
@@ -1027,7 +1045,7 @@ func defender() -> bool:
 		avisar("Defesa: arma de acuidade")
 		return false
 	_janela_defesa.abrir()
-	_defesa.bonus_ca_corpo_a_corpo = Ficha.BONUS_PROFICIENCIA
+	_defesa.bonus_ca_corpo_a_corpo = ficha.bonus_proficiencia()
 	_aura.pulso(COR_PARRY, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
 	defesa_mudou.emit(true, false)
 	return true
@@ -1100,7 +1118,7 @@ func tempo_de_recuo() -> float:
 func _reducao_fisica() -> int:
 	var armadura := armadura_atual()
 	var pesada := armadura != null and armadura.categoria == Proficiencias.ARMADURA_PESADA
-	return Ficha.BONUS_PROFICIENCIA if pesada and ficha.tem_talento(Ficha.TALENTO_MESTRE_ARMADURA_PESADA) else 0
+	return ficha.bonus_proficiencia() if pesada and ficha.tem_talento(Ficha.TALENTO_MESTRE_ARMADURA_PESADA) else 0
 
 ## Pseudópode do Gray Ooze: a armadura não mágica perde 1 de CA; é destruída quando a CA
 ## que ela oferece chega a 10.
@@ -1118,9 +1136,8 @@ func _corroer_armadura() -> void:
 ## Começa o golpe da arma da mão (ou o extra, da outra mão). O extra sem Corte Duplo gasta
 ## a ação bônus: o próximo só depois de 1 rodada.
 func _comecar_golpe(extra: bool, do_surto: bool = false) -> void:
-	if not extra and not do_surto and _surto_armado:
-		_surto_armado = false  # este golpe abre o Surto; o segundo vem logo atrás
-		_golpe_do_surto_pendente = true
+	if not extra and not do_surto:
+		_abrir_acao_de_atacar()
 	if not extra:
 		_tempo_desde_golpe = 0.0
 	elif not _tem_corte_duplo():
@@ -1191,7 +1208,8 @@ func _ao_resolver_golpe_do_mestre(resultado: Combate.Resultado, abateu: bool, go
 	if not resultado.acertou or not (resultado.critico or abateu) or not golpe.tem(Proficiencias.EFEITO_ARMA_GRANDE) or surto_ativo():
 		return
 	_ao_gastar_efeito(Proficiencias.EFEITO_ARMA_GRANDE)
-	_golpe_do_surto_pendente = true
+	_golpes_encadeados += 1
+	_surto_em_curso = true
 	_aura.ligar(COR_SURTO)
 	_aura.pulso(COR_SURTO, FAISCAS_SEGUNDO_GOLPE, DURACAO_ANEL_SURTO)
 	_texto.mostrar("Golpe extra!", COR_SURTO)
@@ -1224,6 +1242,10 @@ const GRUPO_INIMIGOS := &"monstros"
 const AVISO_SEM_MUNICAO := "Sem munição"
 const COR_PARRY := Color(0.65, 0.88, 1.0)
 const DISPARADA_APRIMORADA_PES := 10.0
+## Mudança Tática (nível 5): ao usar o Fôlego, +15 pés de deslocamento por 3 s (regra da casa; no livro é um
+## movimento livre sem ataque de oportunidade, que o jogo não tem).
+const MUDANCA_TATICA_PES := 15.0
+const MUDANCA_TATICA_SEGUNDOS := 3.0
 const COR_VENENO := Color(0.55, 0.9, 0.4)
 
 
@@ -1357,3 +1379,27 @@ func _prender_se_agarrado() -> void:
 func _atualizar_salvaguardas() -> void:
 	for atributo in Atributos.TODOS:
 		_defesa.bonus_salvaguardas[atributo] = ficha.bonus_salvaguarda(atributo)
+
+
+## Uma nova ação de Atacar: o Ataque Extra faz dela dois golpes, e o Surto de Ação dobra a ação inteira
+## (quatro golpes no nível 5). O golpe da outra mão (ação bônus) não entra na conta.
+func _abrir_acao_de_atacar() -> void:
+	var golpes := ficha.golpes_por_ataque() if ficha != null else 1
+	if _surto_armado:
+		_surto_armado = false
+		_surto_em_curso = true
+		golpes *= 2
+	_golpes_encadeados = golpes - 1
+
+
+## Mudança Tática: o Fôlego também dá pressa por alguns segundos, a partir do nível 5.
+func _iniciar_mudanca_tatica() -> void:
+	if ficha == null or ficha.nivel < Ficha.NIVEL_ATAQUE_EXTRA:
+		return
+	_tempo_mudanca_tatica = MUDANCA_TATICA_SEGUNDOS
+	_texto.mostrar("Mudança Tática!", COR_FOLEGO_AURA)
+
+
+## A Mudança Tática está valendo (bônus de deslocamento).
+func mudanca_tatica_ativa() -> bool:
+	return _tempo_mudanca_tatica > 0.0

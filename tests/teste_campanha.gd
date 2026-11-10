@@ -5,7 +5,7 @@ extends TesteBase
 
 const CENAS_FASE: Array[String] = [
 	"res://levels/fase_1.tscn", "res://levels/fase_2.tscn", "res://levels/fase_3.tscn",
-	"res://levels/fase_4.tscn", "res://levels/fase_5.tscn", "res://levels/fase_6.tscn", "res://levels/fase_7.tscn", "res://levels/fase_8.tscn", "res://levels/fase_9.tscn",
+	"res://levels/fase_4.tscn", "res://levels/fase_5.tscn", "res://levels/fase_6.tscn", "res://levels/fase_7.tscn", "res://levels/fase_8.tscn", "res://levels/fase_9.tscn", "res://levels/fase_10.tscn",
 ]
 const SEMENTE := 7
 const VIDA_DE_TESTE := 999
@@ -13,7 +13,7 @@ const DANO_QUE_MATA := 999
 ## Quadros para uma morte (a animação do goblin dura ~1,9 s) e para a porta reagir.
 const QUADROS_MORTE := 300
 const QUADROS_CURTOS := 20
-const ULTIMA := 8
+const ULTIMA := 9
 const ALTURA_LADRILHO := 32.0
 const ATLAS_PLATAFORMA := 2
 ## Maior buraco (ladrilhos) que dá para atravessar pulando, e colunas ao lado de uma plataforma onde se pode subir.
@@ -149,6 +149,7 @@ func _testar_vitoria_e_jogar_de_novo() -> void:
 	_jogador.posicionar_no_inicio(_fase().posicao_inicio())
 	_matar_todos()
 	await _esperar(QUADROS_MORTE)
+	_fechar_tela_de_talento()
 	_jogador.posicionar_no_inicio(_fase().posicao_porta())
 	await _esperar(QUADROS_CURTOS)
 	var tela := _achar_vitoria()
@@ -184,3 +185,10 @@ func _achar_vitoria() -> TelaVitoria:
 func _esperar(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
+
+
+## Matar a fase inteira dá XP até o nível 4: a tela de talento abre e pausa o jogo; aqui só a fechamos.
+func _fechar_tela_de_talento() -> void:
+	var tela: TelaTalento = _main.get_node("Interface/TelaTalento")
+	if tela.visible:
+		tela.fechar()

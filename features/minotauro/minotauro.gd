@@ -195,7 +195,7 @@ func correr_no_ar() -> void:
 
 func tocar(animacao: StringName) -> void:
 	if not _sprite.sprite_frames.has_animation(animacao):
-		animacao = &"parado"  # sem a animação (o Minotauro ainda não tem `andar`), fica na pose parada
+		animacao = &"parado"  # animação que a arte não tem: fica na pose parada
 	if _sprite.animation == animacao and _sprite.is_playing():
 		return
 	_sprite.animation = animacao

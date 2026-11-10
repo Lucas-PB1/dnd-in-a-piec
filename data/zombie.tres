@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Zombie"
+experiencia = 50
+ouro = 2
+tipo = "Medium Undead, Neutral Evil"
+classe_armadura = 8
+dados_vida = "2d8+6"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 5,
+&"constituicao": 16,
+&"destreza": 6,
+&"forca": 13,
+&"inteligencia": 3,
+&"sabedoria": 6
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = -2
+deslocamento_pes = 20.0
+percepcao_pes = 60.0
+resistencias = Array[StringName]([])
+imunidades_dano = Array[StringName]([&"veneno"])
+imunidades_condicoes = Array[StringName]([&"envenenado"])
+fortitude_morto_vivo = true
+corrosao_por_toque = 0
+corrosao_limite = 5
+ataque_nome = "Pancada"
+ataque_bonus = 3
+ataque_dano = "1d8+1"
+ataque_tipo_dano = &"contundente"
+ataque_alcance_pes = 5.0
+ataque_corroi_armadura = false
+taticas_de_matilha = false
+patrulha_pes = 15.0

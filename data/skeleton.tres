@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Skeleton"
+experiencia = 50
+ouro = 4
+tipo = "Medium Undead, Lawful Evil"
+classe_armadura = 14
+dados_vida = "2d8+4"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 5,
+&"constituicao": 15,
+&"destreza": 16,
+&"forca": 10,
+&"inteligencia": 6,
+&"sabedoria": 8
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = 3
+deslocamento_pes = 30.0
+percepcao_pes = 60.0
+resistencias = Array[StringName]([])
+imunidades_dano = Array[StringName]([&"veneno"])
+vulnerabilidades = Array[StringName]([&"contundente"])
+imunidades_condicoes = Array[StringName]([&"envenenado"])
+corrosao_por_toque = 0
+corrosao_limite = 5
+ataque_nome = "Espada Curta"
+ataque_bonus = 5
+ataque_dano = "1d6+3"
+ataque_tipo_dano = &"perfurante"
+ataque_alcance_pes = 5.0
+ataque_corroi_armadura = false
+disparos = -1
+disparo_nome = "Arco Curto"
+disparo_normal_pes = 80.0
+disparo_longo_pes = 320.0
+disparo_dano = "1d6+3"
+disparo_tipo_dano = &"perfurante"
+taticas_de_matilha = false
+patrulha_pes = 15.0

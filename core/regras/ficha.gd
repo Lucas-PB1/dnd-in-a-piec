@@ -4,16 +4,22 @@ extends RefCounted
 
 ## Dano mínimo de um acerto (com modificador negativo o total poderia dar 0).
 const DANO_MINIMO := Combate.DANO_MINIMO
-## Bônus de proficiência nos níveis 1 a 3.
+## Bônus de proficiência nos níveis 1 a 4.
 const BONUS_PROFICIENCIA := 2
+## Do nível 5 em diante o bônus de proficiência sobe para +3 (tabela do livro).
+const BONUS_PROFICIENCIA_NIVEL_5 := 3
+const NIVEL_BONUS_PROFICIENCIA_MAIOR := 5
 ## Nível que libera as habilidades de segundo nível do Guerreiro.
 const NIVEL_HABILIDADES_GUERREIRO := 2
 ## Limite de nível desta campanha.
-const NIVEL_MAXIMO := 4
-## XP total necessário para cada nível desta fatia (tabela do livro).
-const XP_POR_NIVEL := {1: 0, 2: 300, 3: 900, 4: 2700}
-## No nível 4 o Guerreiro escolhe um talento geral (ou o Aumento de Valor de Habilidade).
-const NIVEL_TALENTO_GERAL := 4
+const NIVEL_MAXIMO := 6
+## XP total necessário para cada nível. Níveis 1–4: tabela do livro. Níveis 5 e 6: regra da casa
+## (o livro pede 6500 e 14000, que a campanha de dez fases nunca alcança).
+const XP_POR_NIVEL := {1: 0, 2: 300, 3: 900, 4: 2700, 5: 3600, 6: 4800}
+## Nos níveis 4 e 6 o Guerreiro escolhe um talento geral (ou o Aumento de Valor de Habilidade).
+const NIVEIS_TALENTO_GERAL: Array[int] = [4, 6]
+## Nível do Ataque Extra e da Mudança Tática.
+const NIVEL_ATAQUE_EXTRA := 5
 ## Teto de um atributo.
 const ATRIBUTO_MAXIMO := 20
 ## Base da CD das maestrias (8 + modificador + proficiência).
@@ -138,6 +144,16 @@ static func nome_valido(texto: String) -> bool:
 	return not limpar_nome(texto).is_empty()
 
 
+## Bônus de proficiência do nível atual: +2 até o nível 4, +3 do 5 em diante.
+func bonus_proficiencia() -> int:
+	return BONUS_PROFICIENCIA_NIVEL_5 if nivel >= NIVEL_BONUS_PROFICIENCIA_MAIOR else BONUS_PROFICIENCIA
+
+
+## Ataque Extra: a ação de Atacar vale dois golpes.
+func golpes_por_ataque() -> int:
+	return 2 if nivel >= NIVEL_ATAQUE_EXTRA else 1
+
+
 func modificador(atributo: StringName) -> int:
 	return Atributos.modificador(atributos[atributo])
 
@@ -200,7 +216,7 @@ func tem_talento(talento: StringName) -> bool:
 
 ## Escolhas de talento geral que o nível já liberou e o jogador ainda não fez.
 func escolhas_de_talento_pendentes() -> int:
-	var liberadas := 1 if nivel >= NIVEL_TALENTO_GERAL else 0
+	var liberadas := NIVEIS_TALENTO_GERAL.filter(func(n: int) -> bool: return nivel >= n).size()
 	return maxi(liberadas - escolhas_de_talento_feitas, 0)
 
 
@@ -311,7 +327,7 @@ func proficiente_com(arma: Arma) -> bool:
 ## Bônus para acertar: o mesmo modificador do dano + proficiência, se for proficiente com
 ## a arma (sem proficiência a arma ainda funciona, só não soma o +2).
 func bonus_ataque(arma: Arma) -> int:
-	var proficiencia := BONUS_PROFICIENCIA if proficiente_com(arma) else 0
+	var proficiencia := bonus_proficiencia() if proficiente_com(arma) else 0
 	return proficiencia + bonus_dano(arma) + arma.bonus_magico
 
 
@@ -338,17 +354,17 @@ func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null, duas_
 
 ## CD do teste de escape do agarrado (Agarrador): 8 + Força + proficiência.
 func cd_agarrar() -> int:
-	return CD_BASE_MAESTRIA + modificador(Atributos.FORCA) + BONUS_PROFICIENCIA
+	return CD_BASE_MAESTRIA + modificador(Atributos.FORCA) + bonus_proficiencia()
 
 
 ## CD da salvaguarda de Constituição do Envenenador: 8 + o melhor entre Destreza e Inteligência + proficiência.
 func cd_veneno() -> int:
-	return CD_BASE_MAESTRIA + maxi(modificador(Atributos.DESTREZA), modificador(Atributos.INTELIGENCIA)) + BONUS_PROFICIENCIA
+	return CD_BASE_MAESTRIA + maxi(modificador(Atributos.DESTREZA), modificador(Atributos.INTELIGENCIA)) + bonus_proficiencia()
 
 
 ## Doses de veneno potente por fase: a proficiência. Zero sem o Envenenador.
 func doses_de_veneno() -> int:
-	return BONUS_PROFICIENCIA if tem_talento(TALENTO_ENVENENADOR) else 0
+	return bonus_proficiencia() if tem_talento(TALENTO_ENVENENADOR) else 0
 
 
 ## Dados de vida: um por nível (o Durável deixa gastá-los para curar).
@@ -363,7 +379,7 @@ func e_arma_de_haste(arma: Arma) -> bool:
 
 ## CD do teste de Força do alvo no golpe de escudo (Mestre em Escudos): 8 + Força + proficiência.
 func cd_golpe_de_escudo() -> int:
-	return CD_BASE_MAESTRIA + modificador(Atributos.FORCA) + BONUS_PROFICIENCIA
+	return CD_BASE_MAESTRIA + modificador(Atributos.FORCA) + bonus_proficiencia()
 
 ## Põe no golpe os efeitos dos talentos do herói que valem para esta arma (cada um é uma classe de `EfeitosDeTalento`).
 func _juntar_efeitos_de_talento(golpe: Golpe, arma: Arma) -> void:
@@ -399,7 +415,7 @@ func maestria_de(arma: Arma) -> StringName:
 
 ## CD da salvaguarda das maestrias (Derrubar): 8 + modificador do ataque + proficiência.
 func cd_maestria(arma: Arma) -> int:
-	return CD_BASE_MAESTRIA + bonus_dano(arma) + BONUS_PROFICIENCIA
+	return CD_BASE_MAESTRIA + bonus_dano(arma) + bonus_proficiencia()
 
 
 ## Arma Pesada pede FOR 13: abaixo disso, o ataque tem desvantagem.
@@ -409,7 +425,7 @@ func fraco_para(arma: Arma) -> bool:
 
 ## Iniciativa = modificador de Destreza (+ a proficiência com o Alerta). Define o ritmo dos ataques (EscalaDnd).
 func iniciativa() -> int:
-	var bonus := BONUS_PROFICIENCIA if tem_talento(TALENTO_ALERTA) else 0
+	var bonus := bonus_proficiencia() if tem_talento(TALENTO_ALERTA) else 0
 	return modificador(Atributos.DESTREZA) + bonus
 
 
@@ -469,7 +485,7 @@ func falta_forca_para(armadura: Armadura) -> bool:
 func _bonus_no_dano(arma: Arma, ataque_extra: bool) -> int:
 	var bonus := bonus_dano(arma)
 	if arma.pesada and tem_talento(TALENTO_MESTRE_ARMA_GRANDE):
-		bonus += BONUS_PROFICIENCIA  # Mestre em Arma Grande: a proficiência soma ao dano
+		bonus += bonus_proficiencia()  # Mestre em Arma Grande: a proficiência soma ao dano
 	return (mini(bonus, 0) if ataque_extra else bonus) + arma.bonus_magico  # o bônus mágico soma até no ataque extra
 
 
@@ -492,7 +508,7 @@ func proficiente_em_salvaguarda(atributo: StringName) -> bool:
 
 ## Bônus da salvaguarda: modificador + proficiência (se a classe for proficiente nela).
 func bonus_salvaguarda(atributo: StringName) -> int:
-	var extra := BONUS_PROFICIENCIA if proficiente_em_salvaguarda(atributo) else 0
+	var extra := bonus_proficiencia() if proficiente_em_salvaguarda(atributo) else 0
 	return modificador(atributo) + extra
 
 
@@ -506,9 +522,9 @@ func bonus_pericia(pericia: StringName) -> int:
 	var atributo := Pericia.atributo_de(pericia)
 	if atributo == &"":
 		return 0
-	var extra := BONUS_PROFICIENCIA if proficiente_na_pericia(pericia) else 0
+	var extra := bonus_proficiencia() if proficiente_na_pericia(pericia) else 0
 	if pericia in pericias_especializadas:
-		extra += BONUS_PROFICIENCIA
+		extra += bonus_proficiencia()
 	return modificador(atributo) + extra
 
 

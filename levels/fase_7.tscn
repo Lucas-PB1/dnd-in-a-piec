@@ -193,7 +193,7 @@ indice = 7
 nome_ambiente = "Mina"
 missao = "Atravesse a mina"
 quantidade = 4
-tipos_permitidos = Array[StringName]([&"warrior", &"hobgoblin", &"bugbear"])
+tipos_permitidos = Array[StringName]([&"ooze", &"warrior", &"bugbear", &"skeleton"])
 deslocamento_loja = Vector2(150, 0)
 
 [node name="Terreno" type="TileMapLayer" parent="." unique_id=1526417167]

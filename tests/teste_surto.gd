@@ -5,6 +5,8 @@ extends TesteBase
 
 ## Tempo (s) que o ataque leva para terminar com folga, golpe duplo incluído.
 const ESPERA_ATAQUE := 1.6
+## Quatro golpes (Ataque Extra com Surto de Ação) levam o dobro.
+const ESPERA_ATAQUE_LONGO := 3.4
 
 var _main: Main
 var _jogador: Jogador
@@ -33,6 +35,7 @@ func _rodar() -> void:
 	await _testar_surto()
 	await _testar_botoes_acesos()
 	_testar_folego()
+	await _testar_ataque_extra()
 	DirAccess.remove_absolute(OpcoesToque.caminho)
 	_main.free()
 	print("PASSOU: Surto de Ação, Fôlego e Mente Tática" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
@@ -52,12 +55,12 @@ func _preparar_cenario() -> void:
 	_jogador.direcao_olhar = 1
 
 
-func _atacar_e_esperar() -> void:
+func _atacar_e_esperar(espera: float = ESPERA_ATAQUE) -> void:
 	_resolvidos = 0
 	Input.action_press(&"atacar")
 	await _esperar_quadros(3)
 	Input.action_release(&"atacar")
-	await create_timer(ESPERA_ATAQUE).timeout
+	await create_timer(espera).timeout
 
 
 func _testar_golpe_normal() -> void:
@@ -108,3 +111,23 @@ func _testar_folego() -> void:
 func _esperar_quadros(quadros: int) -> void:
 	for i in quadros:
 		await physics_frame
+
+
+## Nível 5: a ação de Atacar rola dois golpes, com o Surto de Ação quatro; a Mudança Tática acelera depois do Fôlego.
+func _testar_ataque_extra() -> void:
+	_jogador.ficha.nivel = Ficha.NIVEL_ATAQUE_EXTRA
+	_jogador.global_position = _main.get_node("BonecoTreino").global_position + Vector2(-34.0, 0.0)
+	_jogador.direcao_olhar = 1
+	await _esperar_quadros(10)
+	await _atacar_e_esperar()
+	_checar(_resolvidos == 2, "Ataque Extra: um ataque rola dois golpes (%d)" % _resolvidos)
+	_jogador.armar_surto()
+	await _atacar_e_esperar(ESPERA_ATAQUE_LONGO)
+	_checar(_resolvidos == 4, "Ataque Extra com Surto de Ação: quatro golpes (%d)" % _resolvidos)
+	_checar(not _jogador.surto_ativo(), "depois do quarto golpe a aura apaga")
+	var andar := _jogador.velocidade_andar()
+	_jogador.get_node("Vida").receber_dano(1)
+	_jogador.usar_folego()
+	_checar(_jogador.mudanca_tatica_ativa() and _jogador.velocidade_andar() > andar, "o Fôlego do nível 5 dá Mudança Tática: deslocamento maior")
+	await create_timer(Jogador.MUDANCA_TATICA_SEGUNDOS + 0.3).timeout
+	_checar(not _jogador.mudanca_tatica_ativa() and is_equal_approx(_jogador.velocidade_andar(), andar), "e a pressa passa depois de alguns segundos")

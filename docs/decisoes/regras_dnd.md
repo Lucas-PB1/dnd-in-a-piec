@@ -8,8 +8,8 @@ e `tests/teste_combate_dnd.gd`.
 |---|---|---|
 | Regras de D&D 5e | Classes puras em `core/regras/`: `Dado` ("1d6", "2d8+1"), `Atributos` (mod = (valor-10)/2 para baixo), `CompraDePontos` (27 pts, 8 a 15, custos do livro), `Ficha` (vida, dano, ataque, CA, maestrias, perícias), `Pericia`. | Testável sem abrir o jogo. |
 | Vida | Nível 1 = **dado de vida máximo da classe + mod. CON** (Guerreiro d10, `data/classe_guerreiro.tres`). Mínimo 1. `HealthComponent`: dano, `vida_mudou`, `morreu`. | Regra do livro; usuário escolheu d10. |
-| Níveis e XP | Campanha limitada aos níveis 1–3. Marcos oficiais: 0, 300 e 900 XP. Cada nível após o primeiro acrescenta o valor fixo médio do d10 (6) + CON aos PV máximos e atuais. A cota da fase concede XP por criatura (Goblin 50, Ooze 100, Warrior 100); o nível aumenta na hora. A criação também pode começar nos níveis 2 ou 3, já no marco de XP correspondente. | PHB 2024; simplificado à faixa da campanha. [Progressão de personagem](https://www.dndbeyond.com/sources/dnd/br-2024/creating-a-character). |
-| Progressão do Guerreiro | Proficiência continua +2 até o nível 3. Fôlego segue com 2 usos; cura 1d10 + nível. A subclasse do Guerreiro no nível 3 ainda não está no jogo. | PHB 2024; conteúdo de subclasse fica para outra fatia. |
+| Níveis e XP | Campanha até o nível 6 (ver abaixo). Marcos: 0, 300, 900, 2700, 3600, 4800 XP. Cada nível após o primeiro acrescenta o valor fixo médio do d10 (6) + CON aos PV máximos e atuais. A cota da fase concede XP por criatura (Goblin 50, Ooze 100, Warrior 100); o nível aumenta na hora. A criação também pode começar nos níveis 2 ou 3, já no marco de XP correspondente. | PHB 2024; simplificado à faixa da campanha. [Progressão de personagem](https://www.dndbeyond.com/sources/dnd/br-2024/creating-a-character). |
+| Progressão do Guerreiro | Proficiência +2 até o nível 4 e +3 do 5 em diante. Fôlego segue com 2 usos; cura 1d10 + nível. A subclasse do Guerreiro no nível 3 ainda não está no jogo. | PHB 2024; conteúdo de subclasse fica para outra fatia. |
 | Surto de Ação | A partir do nível 2, uma vez por fase, o próximo ataque corpo a corpo sai **em dobro**: dois golpes seguidos, cada um com a sua rolagem (aproxima do livro, onde o Surto dá uma ação extra e o Ataque pode ser feito de novo). A entrada numa fase nova conta como descanso longo e recupera PV, Fôlego e Surto. | Pedido do usuário; difere um pouco do PHB 2024 (só o ataque dobra). |
 | Mente Tática | A partir do nível 2, ligada (tecla T ou botão) tenta automaticamente 1d10 depois de uma falha em teste de habilidade. O teste inclui o d10; só consome um uso de Fôlego se virar sucesso. Desligado, não rola o dado. O resolvedor está em `Pericia`; interações da campanha ainda não fazem testes de habilidade do herói. | PHB 2024; automatização do gasto escolhida pelo usuário. |
 | Dano | **Dados da arma + mod.** Arma com `acuidade` usa o maior entre FOR e DES. À distância usa DES. **Mínimo 1** por acerto. | Livro; mínimo 1 é regra da casa. |
@@ -25,7 +25,7 @@ e `tests/teste_combate_dnd.gd`.
 | Desarmado | Mão vazia = `data/ataque_desarmado.tres` ("1d1" + FOR = soco, contundente, não sofre Corrosão, alcance curto, sem sprite de arma). | Livro. |
 
 ## Nível 4 e talentos
-- A campanha vai até o nível 4 (2700 XP, tabela do livro). O nível 4 do Guerreiro dá uma escolha de talento geral ou o Aumento de Valor de Habilidade (+2, ou +1 em dois). Os talentos de origem virão do antecedente.
+- O nível 4 do Guerreiro dá uma escolha de talento geral ou o Aumento de Valor de Habilidade (+2, ou +1 em dois). Os talentos de origem virão do antecedente.
 - `Ficha.escolhas_de_talento_pendentes()`, `pode_escolher_talento()` e `escolher_talento()` guardam o nome em `ficha.talentos` e somam o aumento (teto 20). Só são escolhíveis os talentos gerais com situação "planejado" (`TalentoRPG.escolhivel()`). O que cada talento aumenta está em `tools/gerar_compendio.gd` (`ATRIBUTOS_DO_TALENTO`; conferir no livro).
 - Os efeitos dos talentos ainda não estão ligados: a escolha só grava o talento e o atributo.
 
@@ -63,3 +63,10 @@ e `tests/teste_combate_dnd.gd`.
 ## Máximo de PV drenado (Drenar Vida do Wight)
 - `HealthComponent.reduzir_maximo(q)` corta o máximo (mínimo 1) e a vida atual; `maximo_drenado` guarda o total. Subir de nível respeita o drenado; `restaurar_maximo()` devolve tudo e é chamado no `descansar_longo` do herói. O `DefesaComponent` aplica quando o golpe tem o efeito `DrenarVida` e o alvo falhou na salvaguarda.
 - Novo tipo de dano: **necrótico** (`TiposDano.NECROTICO`).
+
+## Níveis 5 e 6 (regra da casa nos limites de XP)
+- A campanha vai até o **nível 6**. XP: 0, 300, 900, 2700 (livro) e **3600 e 4800** (casa; o livro pede 6500 e 14000, inalcançáveis em dez fases de ~8000 XP). Com a rampa de mobs, o herói chega à fase 10 já no nível 6.
+- **Bônus de proficiência +3** do nível 5 em diante (`Ficha.bonus_proficiencia()`; a constante `BONUS_PROFICIENCIA` = +2 vale até o nível 4). Sobe ataque, CD, salvaguardas, perícias, Sortudo etc.
+- **Ataque Extra (nível 5)**: a ação de Atacar rola **dois golpes** seguidos (`Ficha.golpes_por_ataque()`; cada um com a sua rolagem). Com o **Surto de Ação** a ação inteira dobra: **quatro golpes**. O golpe da outra mão (arma dupla, ação bônus) **não** é multiplicado. Contador `Jogador._golpes_encadeados`; o estado Atacando encadeia os golpes. Crítico/abate do Mestre em Arma Grande soma mais um golpe.
+- **Mudança Tática (nível 5)**: usar o Fôlego dá **+15 pés de deslocamento por 3 s** (casa; no livro é um movimento livre sem ataque de oportunidade, que o jogo não tem).
+- **Nível 6**: segunda escolha de talento geral (`Ficha.NIVEIS_TALENTO_GERAL` = 4 e 6).

@@ -147,7 +147,7 @@ func _sorteios_iguais(um: Array[Dictionary], outro: Array[Dictionary]) -> bool:
 
 
 func _testar_fases() -> void:
-	var quantidades: Array[int] = [1, 2, 3, 3, 4, 4, 4, 5, 2]
+	var quantidades: Array[int] = [1, 2, 3, 3, 4, 4, 4, 5, 2, 3]
 	for i in quantidades.size():
 		var fase: Fase = load("res://levels/fase_%d.tscn" % [i + 1]).instantiate()
 		root.add_child(fase)
@@ -155,7 +155,7 @@ func _testar_fases() -> void:
 		_checar(fase.quantidade == quantidades[i] and fase.pontos_armadilha().size() > fase.quantidade,
 			"fase %d ocupa %d e sobra ponto de armadilha" % [i + 1, fase.quantidade])
 		_checar(pode_warrior == (i >= 3), "Warrior só entra no sorteio a partir da ruína")
-		_checar(fase.indice == i + 1 and fase.ultima == (i == 8), "a última fase é a cripta")
+		_checar(fase.indice == i + 1 and fase.ultima == (i == 9), "a última fase é o covil")
 		fase.free()
 
 

@@ -37,6 +37,7 @@ const AMBIENTES := {
 	"Mina": [&"fortaleza", Color(0.62, 0.5, 0.42)],
 	"Caverna Úmida": [&"fortaleza", Color(0.42, 0.6, 0.62)],
 	"Cripta": [&"fortaleza", Color(0.5, 0.55, 0.7)],
+	"Covil": [&"fortaleza", Color(0.9, 0.42, 0.32)],
 }
 
 

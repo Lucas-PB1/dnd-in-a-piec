@@ -56,7 +56,7 @@ static func _avisos_arma(partes: PackedStringArray, arma: Arma, ficha: Ficha, in
 	if ficha.fraco_para(arma):
 		partes.append("Pesada: FOR abaixo de %d, desvantagem" % Ficha.FORCA_MINIMA_ARMA_PESADA)
 	if not ficha.proficiente_com(arma):
-		partes.append("Sem proficiência: -%d no ataque" % Ficha.BONUS_PROFICIENCIA)
+		partes.append("Sem proficiência: -%d no ataque" % ficha.bonus_proficiencia())
 	if inventario and inventario.penalidade(arma) > 0:
 		partes.append("Corroída: -%d no ataque" % inventario.penalidade(arma))
 

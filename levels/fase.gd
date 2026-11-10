@@ -28,7 +28,7 @@ const CAMADA_MUNDO := 1
 @export var missao: String = ""
 ## Quantos pontos de armadilha ocupar ao entrar. Há mais pontos do que este número.
 @export var quantidade: int = 0
-## Tipos que o sorteio pode colocar: "ooze", "minion", "warrior", "hobgoblin", "bugbear", "kobold".
+## Tipos que o sorteio pode colocar: "ooze", "minion", "warrior", "hobgoblin", "bugbear", "kobold", "skeleton", "zombie".
 @export var tipos_permitidos: Array[StringName] = []
 ## Chefe da fase (id do tipo, ex.: "ankheg"; vazio = sem chefe). Nasce no marcador "Chefe" e entra na cota da porta.
 @export var chefe: StringName = &""

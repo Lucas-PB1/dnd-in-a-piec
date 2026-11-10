@@ -11,7 +11,7 @@ var armada: bool = false
 static func total(ficha: Ficha) -> int:
 	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_SORTUDO):
 		return 0
-	return Ficha.BONUS_PROFICIENCIA
+	return ficha.bonus_proficiencia()
 
 
 func repor(ficha: Ficha) -> void:

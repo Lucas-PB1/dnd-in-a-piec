@@ -40,12 +40,19 @@ const VARIANTES_TERRA: Array[int] = [TERRA, 6, 7, 8]
 const OOZE := &"ooze"
 const MINION := &"minion"
 const WARRIOR := &"warrior"
-const TIPOS_SEM_ARCO: Array[StringName] = [OOZE, MINION]
+const KOBOLD := &"kobold"
+const TIPOS_SEM_ARCO: Array[StringName] = [OOZE, MINION, KOBOLD]
 const HOBGOBLIN := &"hobgoblin"
 const BUGBEAR := &"bugbear"
-const TIPOS_TODOS: Array[StringName] = [OOZE, MINION, WARRIOR]
+const SKELETON := &"skeleton"
+const ZOMBIE := &"zombie"
+const TIPOS_RUINA: Array[StringName] = [OOZE, MINION, WARRIOR, HOBGOBLIN]
+const TIPOS_FORTALEZA: Array[StringName] = [OOZE, MINION, WARRIOR, HOBGOBLIN, BUGBEAR]
 const TIPOS_PEDRA: Array[StringName] = [WARRIOR, HOBGOBLIN, BUGBEAR]
-const TIPOS_SUBTERRANEO: Array[StringName] = [OOZE, WARRIOR, HOBGOBLIN, BUGBEAR]
+const TIPOS_MINA: Array[StringName] = [OOZE, WARRIOR, BUGBEAR, SKELETON]
+const TIPOS_CAVERNA: Array[StringName] = [OOZE, WARRIOR, BUGBEAR, SKELETON, ZOMBIE]
+const TIPOS_CRIPTA: Array[StringName] = [SKELETON, ZOMBIE, WARRIOR, HOBGOBLIN]
+const TIPOS_COVIL: Array[StringName] = [WARRIOR, HOBGOBLIN, BUGBEAR, SKELETON, ZOMBIE]
 
 ## Enfeites das Ruínas: recortes da folha CC0 do castelo (rubberduck, ver assets/CREDITOS.md). Sem colisão, atrás do terreno.
 const FOLHA_CASTELO := "res://assets/tiles/castelo/castle_tileset_part3.png"
@@ -125,7 +132,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Ruína", "arquivo": "res://levels/fase_4.tscn", "no": "Fase",
-			"tema": 3, "indice": 4, "ultima": false, "quantidade": 3, "tipos": TIPOS_TODOS,
+			"tema": 3, "indice": 4, "ultima": false, "quantidade": 3, "tipos": TIPOS_RUINA,
 			"largura": 48, "inicio": 2,
 			"buracos": [Vector2i(6, 2), Vector2i(18, 2)], "plataformas": [Vector2i(30, 3)],
 			"chao": [8, 38], "plataforma": [31], "arco": [25], "porta": 42,
@@ -133,7 +140,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Fortaleza", "arquivo": "res://levels/fase_5.tscn", "no": "Fase",
-			"tema": 4, "indice": 5, "ultima": false, "quantidade": 4, "tipos": TIPOS_TODOS,
+			"tema": 4, "indice": 5, "ultima": false, "quantidade": 4, "tipos": TIPOS_FORTALEZA,
 			"largura": 50, "inicio": 2,
 			"buracos": [Vector2i(8, 2), Vector2i(26, 2)], "plataformas": [Vector2i(19, 3)],
 			"chao": [10, 12, 40], "plataforma": [21], "arco": [33], "porta": 44,
@@ -159,7 +166,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Mina", "arquivo": "res://levels/fase_7.tscn", "no": "Fase",
-			"tema": 4, "indice": 7, "ultima": false, "quantidade": 4, "tipos": TIPOS_PEDRA, "missao": "Atravesse a mina",
+			"tema": 4, "indice": 7, "ultima": false, "quantidade": 4, "tipos": TIPOS_MINA, "missao": "Atravesse a mina",
 			"largura": 60, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(9, 2), Vector2i(26, 3), Vector2i(41, 2)], "plataformas": [],
 			"chao": [13, 30, 39, 44], "plataforma": [], "porta": 56,
@@ -168,7 +175,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Caverna Úmida", "arquivo": "res://levels/fase_8.tscn", "no": "Fase",
-			"tema": 3, "indice": 8, "ultima": false, "quantidade": 5, "tipos": TIPOS_SUBTERRANEO, "missao": "Atravesse a caverna",
+			"tema": 3, "indice": 8, "ultima": false, "quantidade": 5, "tipos": TIPOS_CAVERNA, "missao": "Atravesse a caverna",
 			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(8, 3), Vector2i(22, 2), Vector2i(37, 3), Vector2i(50, 2)], "plataformas": [],
 			"chao": [11, 19, 30, 44, 53], "plataforma": [], "porta": 60,
@@ -178,15 +185,27 @@ func _fases() -> Array[Dictionary]:
 		{
 			# A cripta do Wight, a fase 9 do plano.
 			"nome": "Cripta", "arquivo": "res://levels/fase_9.tscn", "no": "Fase",
-			"tema": 3, "indice": 9, "ultima": true, "quantidade": 2, "tipos": TIPOS_PEDRA, "missao": "Desça à cripta",
+			"tema": 3, "indice": 9, "ultima": false, "quantidade": 2, "tipos": TIPOS_CRIPTA, "missao": "Desça à cripta",
 			"largura": 54, "inicio": 2,
 			"buracos": [Vector2i(12, 2)], "plataformas": [],
 			"chao": [15, 30], "plataforma": [], "porta": 50,
-			# Arena do Wight (colunas 32 a 53, chão reto): ele espera na coluna 44; os acompanhantes (Skeleton/Zombie ainda não
-			# existem: Goblin Minion no lugar) surgem perto dele quando ele percebe o herói.
-			"chefe": [&"wight", 44], "acompanhantes": [&"minion", &"minion"],
+			# Arena do Wight (colunas 32 a 53, chão reto): ele espera na coluna 44; os acompanhantes (1 Skeleton e 1 Zombie;
+			# o Zombie vem do sorteio da cripta também) surgem perto dele quando ele percebe o herói.
+			"chefe": [&"wight", 44], "acompanhantes": [&"skeleton", &"zombie"],
 			"degraus": [[18, 3, 1], [21, 2, 2]], "altas": [[24, 4, 2]], "pontos": [[22, 6], [36, 6]],
 			"enfeites": [["tocha", 6, 64], ["tocha", 15, 64], ["janela", 20, 100], ["tocha", 29, 64], ["estandarte_azul", 36, 150], ["tocha", 40, 64], ["tocha", 48, 64]],
+		},
+		{
+			# O covil da Quimera, a fase 10 (final). Arena larga e reta (colunas 30 a 63): ela espera na coluna 46. A lava (dano de
+			# fogo no chão) ainda não existe: o fundo avermelhado é só clima (ver docs/pendencias.md).
+			"nome": "Covil", "arquivo": "res://levels/fase_10.tscn", "no": "Fase",
+			"tema": 4, "indice": 10, "ultima": true, "quantidade": 3, "tipos": TIPOS_COVIL, "missao": "Enfrente a Quimera",
+			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),
+			"buracos": [Vector2i(9, 3)], "plataformas": [],
+			"chao": [13, 22], "plataforma": [], "porta": 60,
+			"chefe": [&"quimera", 46],
+			"degraus": [[16, 3, 1], [19, 2, 2]], "altas": [[25, 4, 2]], "pontos": [[18, 6], [27, 6]],
+			"enfeites": [["tocha", 6, 64], ["tocha", 14, 64], ["tocha", 24, 64], ["tocha", 34, 64], ["tocha", 44, 64], ["tocha", 54, 64]],
 		}
 	]
 	return fases

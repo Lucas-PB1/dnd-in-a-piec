@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://features/goblin/goblin_guerreiro.tscn" id="1_base"]
+[ext_resource type="Resource" path="res://data/zombie.tres" id="2_criatura"]
+[ext_resource type="SpriteFrames" path="res://features/goblin/sprites/zombie_frames.tres" id="3_frames"]
+
+[sub_resource type="RectangleShape2D" id="FormaCorpo"]
+size = Vector2(18, 50)
+
+[sub_resource type="RectangleShape2D" id="FormaAlvo"]
+size = Vector2(24, 54)
+
+[node name="ZombieGuerreiro" instance=ExtResource("1_base")]
+criatura = ExtResource("2_criatura")
+escala_arte = 1.0
+inicio_acerto = 0.2
+altura_golpe = 30.0
+meia_largura_corpo = 10.0
+
+[node name="Colisao" parent="." index="0"]
+position = Vector2(0, -25)
+shape = SubResource("FormaCorpo")
+
+[node name="Sprite" parent="." index="2"]
+scale = Vector2(1, 1)
+sprite_frames = ExtResource("3_frames")
+offset = Vector2(0, -29)
+
+[node name="Forma" parent="Hurtbox" index="0"]
+position = Vector2(0, -27)
+shape = SubResource("FormaAlvo")
+
+[node name="Texto" parent="." index="6"]
+position = Vector2(0, -64)
+
+[node name="Condicoes" parent="." index="7"]
+position = Vector2(0, -58)
+
+[node name="MaquinaEstados" parent="." index="9" node_paths=PackedStringArray("estado_inicial")]
+estado_inicial = NodePath("Parado")

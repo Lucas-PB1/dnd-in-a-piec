@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EntradaBestiario" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/dados/entrada_bestiario.gd" id="1_entrada"]
+[ext_resource type="Resource" path="res://data/zombie.tres" id="2_criatura"]
+[ext_resource type="Texture2D" path="res://features/goblin/sprites/zombie_parado.png" id="3_folha"]
+
+[sub_resource type="AtlasTexture" id="Retrato"]
+atlas = ExtResource("3_folha")
+region = Rect2(0, 0, 70, 58)
+
+[resource]
+script = ExtResource("1_entrada")
+criatura = ExtResource("2_criatura")
+retrato = SubResource("Retrato")
+tipo_texto = "Morto-vivo médio, neutro e mau"
+descricao = "Cadáver que se arrasta sem pensar. Lento e fácil de acertar (CA 8), mas aguenta pancada: a Pancada dói."
+dica = "Quando um golpe o derrubaria, ele pode ficar com 1 PV (Fortitude dos Mortos-Vivos). Só não vale contra dano radiante e acerto crítico: termine com um crítico."

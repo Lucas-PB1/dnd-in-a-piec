@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ClasseRPG" load_steps=17 format=3]
+[gd_resource type="Resource" script_class="ClasseRPG" load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="1_classe"]
 [ext_resource type="Script" path="res://core/dados/pacote_inicial.gd" id="2_pacote"]
@@ -88,7 +88,7 @@ script = ExtResource("6_habilidade")
 id = &"surto_acao"
 nome = "Surto de Ação"
 nivel_minimo = 2
-descricao = "Imobiliza todos os inimigos por 1 segundo, uma vez por fase. Útil para sair de uma cilada ou recuperar o fôlego."
+descricao = "Uma vez por fase: o próximo ataque sai em dobro (dois golpes seguidos, cada um com a sua rolagem)."
 acao = &"surto_acao"
 requer = Array[StringName]([&"segundo_folego"])
 em_breve = false
@@ -113,6 +113,26 @@ acao = &""
 requer = Array[StringName]([&"surto_acao", &"mente_tatica"])
 em_breve = true
 
+[sub_resource type="Resource" id="Hab_ataque_extra"]
+script = ExtResource("6_habilidade")
+id = &"ataque_extra"
+nome = "Ataque Extra"
+nivel_minimo = 5
+descricao = "Cada ataque vira dois golpes seguidos, cada um com a sua rolagem. Com o Surto de Ação são quatro. O golpe da outra mão (arma dupla) não dobra."
+acao = &""
+requer = Array[StringName]([&"surto_acao"])
+em_breve = false
+
+[sub_resource type="Resource" id="Hab_mudanca_tatica"]
+script = ExtResource("6_habilidade")
+id = &"mudanca_tatica"
+nome = "Mudança Tática"
+nivel_minimo = 5
+descricao = "Ao usar o Segundo Fôlego você ganha +15 pés de deslocamento por 3 segundos."
+acao = &""
+requer = Array[StringName]([&"segundo_folego"])
+em_breve = false
+
 [resource]
 script = ExtResource("1_classe")
 nome = "Guerreiro"
@@ -130,7 +150,7 @@ proficiencias_armas = Array[StringName]([&"simples", &"marcial"])
 treinamento_armaduras = Array[StringName]([&"leve", &"media", &"pesada", &"escudo"])
 pacotes_iniciais = Array[ExtResource("2_pacote")]([ExtResource("3_pacote_a"), ExtResource("4_pacote_b")])
 builds_sugeridos = Array[ExtResource("5_build")]([SubResource("BuildMedia"), SubResource("BuildPesada"), SubResource("BuildLeve")])
-habilidades = Array[ExtResource("6_habilidade")]([SubResource("Hab_segundo_folego"), SubResource("Hab_maestria_armas"), SubResource("Hab_treinamento"), SubResource("Hab_pericias"), SubResource("Hab_surto_acao"), SubResource("Hab_mente_tatica"), SubResource("Hab_subclasse")])
+habilidades = Array[ExtResource("6_habilidade")]([SubResource("Hab_segundo_folego"), SubResource("Hab_maestria_armas"), SubResource("Hab_treinamento"), SubResource("Hab_pericias"), SubResource("Hab_surto_acao"), SubResource("Hab_mente_tatica"), SubResource("Hab_subclasse"), SubResource("Hab_ataque_extra"), SubResource("Hab_mudanca_tatica")])
 quantidade_maestrias = 3
 pericias_escolhiveis = Array[StringName]([&"acrobacia", &"lidar_com_animais", &"atletismo", &"historia", &"intuicao", &"intimidacao", &"persuasao", &"percepcao", &"sobrevivencia"])
 quantidade_pericias = 2

@@ -146,7 +146,7 @@ func _ataque(ficha: Ficha, inventario: Inventario, arma: Arma) -> Label:
 func _texto_do_ataque(ficha: Ficha, inventario: Inventario, arma: Arma) -> String:
 	var atributo := ficha.atributo_do_ataque(arma)
 	var partes: PackedStringArray = ["%s %s" % [Atributos.SIGLAS[atributo], Atributos.texto_modificador(ficha.atributos[atributo])]]
-	partes.append("prof. +%d" % Ficha.BONUS_PROFICIENCIA if ficha.proficiente_com(arma) else "sem prof.")
+	partes.append("prof. +%d" % ficha.bonus_proficiencia() if ficha.proficiente_com(arma) else "sem prof.")
 	var desgaste := inventario.penalidade(arma)
 	if desgaste > 0:
 		partes.append("corroída -%d" % desgaste)

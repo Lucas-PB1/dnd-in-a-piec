@@ -12,6 +12,8 @@ signal morreu
 const CENA_ADAGA := preload("res://features/goblin/adaga_goblin.tscn")
 const CENA_FLECHA := preload("res://core/projeteis/flecha.tscn")
 const FLECHA := preload("res://data/municoes/flecha.tres")
+## Texto flutuante quando a Fortitude dos Mortos-Vivos segura a criatura.
+const TEXTO_FORTITUDE := "Fortitude!"
 ## Quanto à frente (px) o raio procura chão antes de descer do penhasco.
 const DISTANCIA_BEIRA := 14.0
 const FOLGA_PE := 6.0
@@ -136,6 +138,11 @@ func _ready() -> void:
 	_vida.configurar(criatura.vida_maxima(_rng))
 	_defesa.classe_armadura = criatura.classe_armadura
 	_defesa.resistencias = criatura.resistencias
+	_defesa.imunidades = criatura.imunidades_dano
+	_defesa.vulnerabilidades = criatura.vulnerabilidades
+	_defesa.fortitude_morto_vivo = criatura.fortitude_morto_vivo
+	_defesa.fortitude_usada.connect(func() -> void: _texto.mostrar(TEXTO_FORTITUDE, TextoFlutuanteComponent.COR_CONDICAO))
+	_condicoes.imunidades = criatura.imunidades_condicoes
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
 	_dissolver.terminou.connect(terminar_de_morrer)
@@ -415,6 +422,11 @@ func tocar(animacao: StringName) -> void:
 		return
 	_sprite.animation = animacao  # trocar a animação volta para o quadro 0
 	_sprite.play()
+
+
+## A arte tem esta animação (a morte própria, p. ex.)?
+func tem_animacao(animacao: StringName) -> bool:
+	return _sprite.sprite_frames.has_animation(animacao)
 
 
 func animacao_terminou() -> bool:

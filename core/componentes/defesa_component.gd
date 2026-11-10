@@ -12,6 +12,10 @@ signal aparou(origem: Vector2)
 signal agarrado(autor_id: int, cd: int)
 ## Um golpe com Derrubada acertou quem não tem Condições (o herói): de quem veio.
 signal derrubado(autor_id: int)
+## A Fortitude dos Mortos-Vivos segurou a criatura em 1 PV.
+signal fortitude_usada
+
+const CD_BASE_FORTITUDE := 5
 
 ## Classe de Armadura.
 @export var classe_armadura: int = 10
@@ -19,6 +23,10 @@ signal derrubado(autor_id: int)
 @export var resistencias: Array[StringName] = []
 ## Tipos de dano a que é imune (o dano vira 0), ex.: [&"veneno"] no Wight.
 @export var imunidades: Array[StringName] = []
+## Tipos de dano a que é vulnerável (o dano dobra), ex.: [&"contundente"] no Skeleton.
+@export var vulnerabilidades: Array[StringName] = []
+## Fortitude dos Mortos-Vivos: ver `CriaturaRPG.fortitude_morto_vivo`.
+@export var fortitude_morto_vivo: bool = false
 ## Área que recebe os golpes.
 @export var hurtbox: HurtboxComponent
 ## Vida que perde o dano. Vazio = não perde vida (ex.: boneco de treino).
@@ -53,6 +61,8 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 		aparou.emit(origem)
 	if golpe.tipo_dano in imunidades:
 		resultado.dano = 0
+	elif golpe.tipo_dano in vulnerabilidades and not resultado.resistido:
+		resultado.dano *= 2
 	if resultado.dano > 0 and reducao_fisica > 0 and golpe.tipo_dano in TiposDano.FISICOS:
 		resultado.dano = maxi(resultado.dano - reducao_fisica, 0)
 	if condicoes and resultado.acertou:  # efeitos que dependem da salvaguarda do alvo (Envenenador)
@@ -62,6 +72,7 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 	if condicoes == null and resultado.acertou:
 		_avisar_agarrao(golpe)
 		_avisar_derrubada(golpe)
+	_aplicar_fortitude(golpe, resultado)
 	if resultado.dano > 0 and vida:
 		vida.receber_dano(resultado.dano)
 	if vida and resultado.acertou and not resultado.salvou and golpe.tem(Proficiencias.EFEITO_DRENAR_VIDA):
@@ -97,3 +108,16 @@ func _avisar_agarrao(golpe: Golpe) -> void:
 	if efeito != null:
 		agarrado.emit(golpe.autor_id, efeito.cd)
 		golpe.efeito_usado.emit(efeito.id)
+
+
+## Fortitude dos Mortos-Vivos: o golpe mataria, então salvaguarda de Constituição (CD 5 + dano); se passar, sobra 1 PV.
+## Não vale contra dano radiante nem acerto crítico.
+func _aplicar_fortitude(golpe: Golpe, resultado: Combate.Resultado) -> void:
+	if not fortitude_morto_vivo or vida == null or resultado.dano < vida.vida_atual:
+		return
+	if resultado.critico or golpe.tipo_dano == TiposDano.RADIANTE:
+		return
+	var cd := CD_BASE_FORTITUDE + resultado.dano
+	if Combate.passou_salvaguarda(_bonus_de_salvaguarda(Atributos.CONSTITUICAO), cd, rng):
+		resultado.dano = vida.vida_atual - 1
+		fortitude_usada.emit()

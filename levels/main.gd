@@ -15,9 +15,12 @@ const CENA_GOBLIN_GUERREIRO := preload("res://features/goblin/goblin_guerreiro.t
 const CENA_HOBGOBLIN := preload("res://features/goblin/hobgoblin_guerreiro.tscn")
 const CENA_BUGBEAR := preload("res://features/goblin/bugbear_guerreiro.tscn")
 const CENA_KOBOLD := preload("res://features/goblin/kobold_guerreiro.tscn")
+const CENA_SKELETON := preload("res://features/goblin/skeleton_guerreiro.tscn")
+const CENA_ZOMBIE := preload("res://features/goblin/zombie_guerreiro.tscn")
 const CENA_ANKHEG := preload("res://features/ankheg/ankheg.tscn")
 const CENA_MINOTAURO := preload("res://features/minotauro/minotauro.tscn")
 const CENA_WIGHT := preload("res://features/wight/wight.tscn")
+const CENA_QUIMERA := preload("res://features/quimera/quimera.tscn")
 const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_1.tscn"),
 	preload("res://levels/fase_2.tscn"),
@@ -28,6 +31,7 @@ const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_7.tscn"),
 	preload("res://levels/fase_8.tscn"),
 	preload("res://levels/fase_9.tscn"),
+	preload("res://levels/fase_10.tscn"),
 ]
 ## Páginas do bestiário, na ordem da lista.
 const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
@@ -37,9 +41,12 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 	preload("res://data/bestiario/hobgoblin_warrior.tres"),
 	preload("res://data/bestiario/bugbear_warrior.tres"),
 	preload("res://data/bestiario/kobold_warrior.tres"),
+	preload("res://data/bestiario/skeleton.tres"),
+	preload("res://data/bestiario/zombie.tres"),
 	preload("res://data/bestiario/ankheg.tres"),
 	preload("res://data/bestiario/minotauro.tres"),
 	preload("res://data/bestiario/wight.tres"),
+	preload("res://data/bestiario/quimera.tres"),
 ]
 ## Talentos do livro (a tela de escolha do nível 4 lê daqui).
 const PASTA_TALENTOS := "res://data/talentos"
@@ -53,9 +60,12 @@ const TIPO_WARRIOR := &"warrior"
 const TIPO_HOBGOBLIN := &"hobgoblin"
 const TIPO_BUGBEAR := &"bugbear"
 const TIPO_KOBOLD := &"kobold"
+const TIPO_SKELETON := &"skeleton"
+const TIPO_ZOMBIE := &"zombie"
 const TIPO_ANKHEG := &"ankheg"
 const TIPO_MINOTAURO := &"minotauro"
 const TIPO_WIGHT := &"wight"
+const TIPO_QUIMERA := &"quimera"
 ## Cena de cada tipo que a fase pode sortear. Tipo novo = uma linha aqui (e o nome em `Fase.tipos_permitidos`).
 const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_OOZE: CENA_OOZE,
@@ -64,9 +74,12 @@ const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_HOBGOBLIN: CENA_HOBGOBLIN,
 	TIPO_BUGBEAR: CENA_BUGBEAR,
 	TIPO_KOBOLD: CENA_KOBOLD,
+	TIPO_SKELETON: CENA_SKELETON,
+	TIPO_ZOMBIE: CENA_ZOMBIE,
 	TIPO_ANKHEG: CENA_ANKHEG,
 	TIPO_MINOTAURO: CENA_MINOTAURO,
 	TIPO_WIGHT: CENA_WIGHT,
+	TIPO_QUIMERA: CENA_QUIMERA,
 }
 const INIMIGOS_EXTRA_POR_NIVEL := 1
 ## Distância (px) dos primeiros acompanhantes do chefe até ele.
@@ -182,7 +195,7 @@ func _ready() -> void:
 	_comandos.opcoes_toque_mudaram.connect(_atualizar_controles_toque)
 	_comandos.editar_toque_pedido.connect(_editar_toque)
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
-	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior", "Ankheg", "Minotauro", "Wight"]), _cenas_criaturas())
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior", "Skeleton", "Zombie", "Ankheg", "Minotauro", "Wight", "Quimera"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_atualizar_botoes_toque()
 	_ligar_porta()
@@ -652,7 +665,7 @@ func _passar_luz_do_sol(monstro: Node) -> void:
 
 ## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
 func _cenas_criaturas() -> Array[PackedScene]:
-	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD, CENA_ANKHEG, CENA_MINOTAURO, CENA_WIGHT]
+	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD, CENA_SKELETON, CENA_ZOMBIE, CENA_ANKHEG, CENA_MINOTAURO, CENA_WIGHT, CENA_QUIMERA]
 	return cenas
 
 

@@ -12,10 +12,12 @@ const FRIO := &"frio"
 const FOGO := &"fogo"
 const VENENO := &"veneno"
 const NECROTICO := &"necrotico"
+const RADIANTE := &"radiante"
 
 const NOMES := {
 	CONTUNDENTE: "contundente", CORTANTE: "cortante", PERFURANTE: "perfurante",
 	ACIDO: "ácido", FRIO: "frio", FOGO: "fogo", VENENO: "veneno", NECROTICO: "necrótico",
+	RADIANTE: "radiante",
 }
 
 

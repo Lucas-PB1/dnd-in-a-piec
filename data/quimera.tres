@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Quimera"
+experiencia = 2300
+ouro = 400
+tipo = "Large Monstrosity, Chaotic Evil"
+classe_armadura = 14
+dados_vida = "12d10+48"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 10,
+&"constituicao": 19,
+&"destreza": 11,
+&"forca": 19,
+&"inteligencia": 3,
+&"sabedoria": 14
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 3
+iniciativa = 0
+deslocamento_pes = 30.0
+percepcao_pes = 120.0
+ataque_nome = "Mordida"
+ataque_bonus = 7
+ataque_dano = "2d6+4"
+ataque_tipo_dano = &"perfurante"
+ataque_alcance_pes = 5.0
+dano_extra_com_vantagem = "2d6"
+aviso_ataque = 0.45
+chifrada_nome = "Cabeçada"
+chifrada_bonus = 7
+chifrada_dano = "1d12+4"
+chifrada_tipo_dano = &"contundente"
+chifrada_alcance_pes = 5.0
+chifrada_recarga = 0
+garra_nome = "Garra"
+garra_bonus = 7
+garra_dano = "1d6+4"
+garra_tipo_dano = &"cortante"
+linha_cd = 15
+linha_nome = "Sopro de Fogo"
+linha_dano = "7d8"
+linha_tipo_dano = &"fogo"
+linha_atributo = &"destreza"
+linha_comprimento_pes = 15.0
+linha_largura_pes = 15.0
+linha_recarga = 5

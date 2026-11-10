@@ -295,6 +295,12 @@
       "file": "features/minotauro/sprites/minotauro_glaive.png"
     },
     {
+      "asset_id": "2584a4ca-cfe4-4e03-80df-82bf4436b87f",
+      "sha12": "",
+      "label": "minotauro_andar (8 quadros 190x190, custom, 20 créditos)",
+      "file": "features/minotauro/sprites/minotauro_andar.png"
+    },
+    {
       "asset_id": "434120c9-5320-4ee2-bbc6-b8bbabf5c03e",
       "sha12": "",
       "label": "wight_base (80x80, platformer, 12 créditos; aprovada)",

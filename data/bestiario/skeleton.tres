@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EntradaBestiario" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://core/dados/entrada_bestiario.gd" id="1_entrada"]
+[ext_resource type="Resource" path="res://data/skeleton.tres" id="2_criatura"]
+[ext_resource type="Texture2D" path="res://features/goblin/sprites/skeleton_parado.png" id="3_folha"]
+
+[sub_resource type="AtlasTexture" id="Retrato"]
+atlas = ExtResource("3_folha")
+region = Rect2(0, 0, 102, 57)
+
+[resource]
+script = ExtResource("1_entrada")
+criatura = ExtResource("2_criatura")
+retrato = SubResource("Retrato")
+tipo_texto = "Morto-vivo médio, leal e mau"
+descricao = "Ossos reanimados que ainda carregam o equipamento que tinham em vida. Golpeia com a espada curta e atira com o arco curto, sem veneno e sem cansaço."
+dica = "É vulnerável a dano contundente: um golpe de maça ou martelo causa o dobro. Veneno não faz nada nele."
