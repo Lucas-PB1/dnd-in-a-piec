@@ -156,6 +156,10 @@ enum Tamanho { MINUSCULO, PEQUENO, MEDIO, GRANDE, ENORME, IMENSO }
 ## Deslocamento de escavação (pés por rodada). 0 = não escava.
 @export var escavacao_pes: float = 0.0
 
+@export_group("Voo")
+## Deslocamento de voo (pés por rodada). 0 = não voa.
+@export var voo_pes: float = 0.0
+
 @export_group("Ações bônus")
 ## Fuga Ágil (Goblin): Desengajar depois de atacar (salta para longe do alvo).
 @export var fuga_agil: bool = false

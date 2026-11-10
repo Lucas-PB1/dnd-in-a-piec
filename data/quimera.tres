@@ -24,6 +24,7 @@ salvaguardas_proficientes = Array[StringName]([])
 bonus_proficiencia = 3
 iniciativa = 0
 deslocamento_pes = 30.0
+voo_pes = 60.0
 percepcao_pes = 120.0
 ataque_nome = "Mordida"
 ataque_bonus = 7

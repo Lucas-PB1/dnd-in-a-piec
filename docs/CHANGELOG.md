@@ -174,3 +174,7 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 ## Fatia: capacidade Táticas de Matilha (`MatilhaDeCriatura`)
 - `MatilhaDeCriatura` em `core/regras/criaturas/`: flag da ficha + aliados do grupo `monstros` (não só Goblin). Goblin/Hobgoblin/Kobold usam.
 - Backlog `capacidades-matilha` fechado. Teste `tests/criaturas/teste_matilha_de_criatura.gd`.
+
+## Fatia: capacidade voo (`VooDeCriatura`)
+- Campo `voo_pes` em `CriaturaRPG`; Quimera = 60. `VooDeCriatura`: velocidade, altura-alvo e `sobre_o_alvo`. Mergulho/animação na feature.
+- Backlog `capacidades-voo` fechado. Teste `tests/criaturas/teste_voo_de_criatura.gd`.

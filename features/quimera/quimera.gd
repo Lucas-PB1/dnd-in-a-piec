@@ -41,16 +41,13 @@ const FATOR_AVISO_FURIA := 0.7
 ## Diferença de altura (px) até a qual o bote e a investida valem; e quanto antes do herói o bote e o mergulho miram (px).
 const DESNIVEL_MAXIMO := 96.0
 const MARGEM_DE_MIRA := 30.0
-## Voo: aceleração (px/s²), ganho do controle de altura e de pontaria, velocidade de subida e de ajuste lateral (px/s) e
-## quanto sobre o herói (px) conta como "em cima".
+## Voo: aceleração (px/s²), ganho do controle de altura e de pontaria, velocidade de subida e de ajuste lateral (px/s).
+## Margem “em cima” e fração de altura mínima vêm de `VooDeCriatura`.
 const ACELERACAO_VOO := 900.0
 const ACELERACAO_MERGULHO := 2400.0
 const GANHO_DO_CONTROLE := 4.0
 const VELOCIDADE_SUBIDA := 240.0
 const VELOCIDADE_AJUSTE := 360.0
-const MARGEM_SOBRE_ALVO := 40.0
-## Fração da altura de voo que ela precisa ter ganho antes de mergulhar.
-const FRACAO_ALTURA_MINIMA := 0.7
 ## Tremor da câmera no mergulho (px).
 const FORCA_ABALO_MERGULHO := 7.0
 ## Camada "mundo" do chão.
@@ -136,6 +133,8 @@ var _despertou: bool = false
 var _saltador: SaltadorDeMonstro
 ## Cabeçada / investida da ficha (`chifrada_*`).
 var _investida: InvestidaDeCriatura
+## Voo da ficha (`voo_pes`).
+var _voo: VooDeCriatura
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _dissolver: DissolverComponent = $Dissolver
@@ -156,6 +155,7 @@ func _ready() -> void:
 	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
 	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
 	_investida = InvestidaDeCriatura.new(criatura)
+	_voo = VooDeCriatura.new(criatura, altura_de_voo)
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	_vida.vida_mudou.connect(_ao_mudar_vida)
 	_golpe.alvo_atingido.connect(func(_alvo: HurtboxComponent) -> void: _golpe_acertou = true)
@@ -398,21 +398,23 @@ func terminar_voo() -> void:
 	voando = false
 
 
-## Sobe até a altura de voo e voa (60 pés por rodada, o dobro de andar) para cima do herói.
+## Sobe até a altura de voo e voa (`voo_pes` da ficha) para cima do herói.
 func voar_para_alvo() -> void:
 	virar_para_alvo()
+	_voo.altura_px = altura_de_voo
 	var passo := ACELERACAO_VOO * get_physics_process_delta_time()
 	var dx := alvo.global_position.x - global_position.x
-	var vx := signf(dx) * _velocidade_de_andar() * EscalaDnd.MULTIPLICADOR_DISPARADA if absf(dx) > MARGEM_SOBRE_ALVO else 0.0
-	velocity.x = move_toward(velocity.x, vx, passo)
-	var dy := alvo.global_position.y - altura_de_voo - global_position.y
+	velocity.x = move_toward(velocity.x, _voo.velocidade_horizontal_desejada(dx), passo)
+	var dy := _voo.altura_alvo_y(alvo.global_position.y) - global_position.y
 	velocity.y = move_toward(velocity.y, clampf(dy * GANHO_DO_CONTROLE, -VELOCIDADE_SUBIDA, VELOCIDADE_SUBIDA), passo)
 
 
 ## Está em cima do herói e já na altura de voo: hora de mergulhar.
 func sobre_o_alvo() -> bool:
-	return alvo != null and absf(alvo.global_position.x - global_position.x) <= MARGEM_SOBRE_ALVO \
-		and global_position.y <= alvo.global_position.y - altura_de_voo * FRACAO_ALTURA_MINIMA
+	if alvo == null:
+		return false
+	_voo.altura_px = altura_de_voo
+	return _voo.sobre_o_alvo(global_position, alvo.global_position)
 
 
 ## Cai sobre o herói: acelera para baixo e corrige a pontaria na horizontal.
@@ -553,6 +555,8 @@ func _padrao_valido(padrao: StringName) -> bool:
 		PADRAO_INVESTIDA:
 			return InvestidaDeCriatura.tem_chifrada(criatura) and mesma_altura \
 				and _tem_chao_na(float(direcao_olhar))
+		PADRAO_VOO:
+			return _voo.tem()
 	return true
 
 
