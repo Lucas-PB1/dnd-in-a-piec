@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo | Tam. |
 |---|---|---|
-| 9 | `criaturas/minions-recolor.md` | M |
 | 10 | `criaturas/ataques-novos-monstros.md` | M |
 
 ### Regras do livro
@@ -34,7 +33,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 | 50 | `regras/racas-especies.md` | G |
 | 51 | `regras/magia.md` | G |
 | 52 | `regras/descanso-curto.md` | P |
-| 54 | `criaturas/amorfo-ooze.md` | P |
 | 55 | `regras/desvantagem-furtividade-armadura.md` | P |
 | 56 | `regras/pericias-em-jogo.md` | M |
 
@@ -51,6 +49,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Depois
 | Pri | Arquivo |
 |---|---|
-| 95–100 | `depois/gamepad`, `ios`, `renomear-jogo`, `porta-aparencia-cota`, `municao-comum-inventario`, `atirador-elite-obstaculos` |
+| 95–100 | `depois/gamepad`, `ios`, `renomear-jogo`, `porta-aparencia-cota`, `municao-comum-inventario`, `atirador-elite-obstaculos`, `minions-recolor` (em espera: inimigos atuais ok) |
 
 Novo item: copie `_modelo.md` para a pasta da `area`.

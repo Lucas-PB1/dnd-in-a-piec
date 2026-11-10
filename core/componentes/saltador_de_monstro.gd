@@ -4,8 +4,6 @@ extends RefCounted
 ## pura `SaltoDnd` (altura e distância vêm da Força) e dá o impulso. O dono chama `passar_tempo` a cada quadro de física,
 ## `planejar` ao andar, `iniciar` ao saltar e `correr_no_ar` enquanto está no ar.
 
-## Camada "mundo" do chão.
-const MASCARA_MUNDO := 1
 ## Passo da sondagem do chão (px), folga acima do degrau (px), espera entre saltos (s) e quanto o alvo precisa estar
 ## abaixo dos pés (px) para valer descer.
 const PASSO_SONDA := 8.0
@@ -16,14 +14,16 @@ const DESNIVEL_ALVO_PX := 24.0
 var _corpo: CharacterBody2D
 var _forca: int
 var _gravidade: float
+var _mascara_chao: int
 var _tempo_desde_salto: float = INF
 var _velocidade_no_ar: float = 0.0
 
 
-func _init(corpo: CharacterBody2D, forca: int, gravidade: float) -> void:
+func _init(corpo: CharacterBody2D, forca: int, gravidade: float, mascara_chao: int = 1) -> void:
 	_corpo = corpo
 	_forca = forca
 	_gravidade = gravidade
+	_mascara_chao = mascara_chao
 
 
 func passar_tempo(delta: float) -> void:
@@ -41,7 +41,7 @@ func planejar(alvo: Node2D, direcao: float, bloqueado: bool, inicio_px: float,
 	var distancia_max := SaltoDnd.distancia_px(_forca)
 	var quantidade := ceili(distancia_max / PASSO_SONDA) + 1
 	var perfil := SensorDeTerreno.perfil(_corpo.get_world_2d().direct_space_state, _corpo.global_position, direcao,
-		inicio_px, PASSO_SONDA, quantidade, altura_max, SaltoDnd.queda_segura_px(), MASCARA_MUNDO)
+		inicio_px, PASSO_SONDA, quantidade, altura_max, SaltoDnd.queda_segura_px(), _mascara_chao)
 	var alvo_embaixo := not proibir_descer and alvo != null \
 		and alvo.global_position.y - _corpo.global_position.y >= DESNIVEL_ALVO_PX
 	return SaltoDnd.planejar(perfil, PASSO_SONDA, inicio_px, altura_max, distancia_max, alvo_embaixo)

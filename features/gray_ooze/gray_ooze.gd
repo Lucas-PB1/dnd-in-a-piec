@@ -13,7 +13,8 @@ signal avisou_ataque
 const DISTANCIA_BEIRA := 14.0
 const FOLGA_PE := 6.0
 const PROFUNDIDADE_BEIRA := 20.0
-const MASCARA_MUNDO := 1
+## Amorfo: sonda e pisa só o chão sólido (sem pranchas one-way).
+const MASCARA_CHAO := 1  # MontagemDeCriatura.mascara_do_chao(false)
 const GRUPO_ALIADOS := &"monstros"
 const CHEGOU_ANDAR := 6.0
 const MOTIVO_FERIDO := TaticaDeCriatura.MOTIVO_FERIDO
@@ -65,7 +66,8 @@ var _escala_sprite: Vector2
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
-	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
+	MontagemDeCriatura.configurar_colisao_chao(self, false)  # Amorfo
+	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade, false)
 	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
 	MontagemDeCriatura.ligar_sinais_padrao(
 		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
@@ -249,7 +251,7 @@ func _tem_chao_na(direcao: float) -> bool:
 		return true
 	var origem := global_position + Vector2(direcao * DISTANCIA_BEIRA, -FOLGA_PE)
 	var consulta := PhysicsRayQueryParameters2D.create(origem, origem + Vector2(0.0, PROFUNDIDADE_BEIRA + FOLGA_PE))
-	consulta.collision_mask = MASCARA_MUNDO
+	consulta.collision_mask = MASCARA_CHAO
 	return not mundo.direct_space_state.intersect_ray(consulta).is_empty()
 
 
@@ -347,7 +349,7 @@ func _tem_espaco_atras() -> bool:
 	var peito := global_position + Vector2(0.0, -altura_peito)
 	return _tem_chao_na(costas) and SensorDeTerreno.linha_livre(
 		get_world_2d().direct_space_state, peito,
-		peito + Vector2(costas * TaticaDeCriatura.ESPACO_ATRAS_PX, 0.0), MASCARA_MUNDO,
+		peito + Vector2(costas * TaticaDeCriatura.ESPACO_ATRAS_PX, 0.0), MASCARA_CHAO,
 	)
 
 

@@ -166,6 +166,7 @@ func _ready() -> void:
 	if classe == null:
 		classe = ClasseRPG.new()
 	posicao_inicial = global_position
+	MontagemDeCriatura.configurar_colisao_chao(self)
 	_toque_duplo = ToqueDuplo.new(stats.janela_toque_duplo)
 	aterrissou.connect(_animacao.tocar_aterrissagem)
 	_vida.vida_mudou.connect(vida_mudou.emit)

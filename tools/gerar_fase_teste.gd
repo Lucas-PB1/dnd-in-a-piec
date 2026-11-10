@@ -558,8 +558,12 @@ func _trocar(linha: String, x: int, caractere: String) -> String:
 func _criar_tileset() -> TileSet:
 	var tileset := TileSet.new()
 	tileset.tile_size = Vector2i(TAM, TAM)
+	# Camada 0 = chão sólido (physics layer "mundo"); camada 1 = prancha one-way ("plataforma").
+	# O Gray Ooze (Amorfo) só mascara o mundo e atravessa as pranchas.
 	tileset.add_physics_layer()
 	tileset.set_physics_layer_collision_layer(0, 1)
+	tileset.add_physics_layer()
+	tileset.set_physics_layer_collision_layer(1, 1 << 5)  # bit da layer 6
 	var fonte := TileSetAtlasSource.new()
 	fonte.texture = load("res://assets/tiles/ladrilhos.png")
 	fonte.texture_region_size = Vector2i(TAM, TAM)
@@ -569,10 +573,11 @@ func _criar_tileset() -> TileSet:
 			var coord := Vector2i(tipo, tema)
 			fonte.create_tile(coord)
 			var dados := fonte.get_tile_data(coord, 0)
-			dados.add_collision_polygon(0)
 			var e_plataforma: bool = tipo == PLATAFORMA
-			dados.set_collision_polygon_points(0, 0, _retangulo_colisao(ALTURA_PRANCHA if e_plataforma else TAM))
-			dados.set_collision_polygon_one_way(0, 0, e_plataforma)
+			var camada_fisica := 1 if e_plataforma else 0
+			dados.add_collision_polygon(camada_fisica)
+			dados.set_collision_polygon_points(camada_fisica, 0, _retangulo_colisao(ALTURA_PRANCHA if e_plataforma else TAM))
+			dados.set_collision_polygon_one_way(camada_fisica, 0, e_plataforma)
 	return tileset
 
 

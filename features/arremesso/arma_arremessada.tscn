@@ -14,7 +14,7 @@ size = Vector2(28, 28)
 
 [node name="ArmaArremessada" type="CharacterBody2D"]
 collision_layer = 0
-collision_mask = 1
+collision_mask = 33
 floor_snap_length = 4.0
 script = ExtResource("1_voo")
 

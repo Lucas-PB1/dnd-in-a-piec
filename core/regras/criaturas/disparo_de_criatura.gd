@@ -6,8 +6,8 @@ extends RefCounted
 
 const CENA_FLECHA := preload("res://core/projeteis/flecha.tscn")
 const MUNICAO_FLECHA := preload("res://data/municoes/flecha.tres")
-## Camada "mundo" para a linha de tiro.
-const MASCARA_MUNDO := 1
+## Chão sólido + pranchas (bloqueiam a linha de tiro).
+const MASCARA_CHAO := 1 | (1 << 5)  # MontagemDeCriatura.mascara_do_chao()
 
 var _criatura: CriaturaRPG
 ## Cópias do disparo da ficha. Menor que 0 = não acaba.
@@ -54,7 +54,7 @@ static func linha_de_tiro_livre(
 	origem: Vector2,
 	destino: Vector2,
 ) -> bool:
-	return SensorDeTerreno.linha_livre(espaco, origem, destino, MASCARA_MUNDO)
+	return SensorDeTerreno.linha_livre(espaco, origem, destino, MASCARA_CHAO)
 
 
 ## True se tinha flecha e gastou uma (munição infinita não muda a conta).

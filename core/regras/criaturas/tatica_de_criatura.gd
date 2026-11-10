@@ -4,7 +4,7 @@ extends RefCounted
 ## Regras puras: `Abrigo`, `Flanqueio`, `EstrategiaDeMonstro`. A feature liga estados e movimento.
 ## Política (ADR): clã Goblin e Gray Ooze ligam as três; chefes ficam de fora até fatia própria.
 
-const MASCARA_MUNDO := 1
+const MASCARA_CHAO := 1 | (1 << 5)  # MontagemDeCriatura.mascara_do_chao()
 ## Cobertura: janela do tiro do herói (s), passo e alcance da busca (px), intervalo entre buscas (s),
 ## distância mínima do alvo para valer se esconder (px).
 const JANELA_DISPARO := 3.0
@@ -87,7 +87,7 @@ func protegido_do_disparo(
 	altura_peito: float,
 ) -> bool:
 	return not SensorDeTerreno.linha_livre(
-		espaco, _origem_disparo, posicao + Vector2(0.0, -altura_peito), MASCARA_MUNDO
+		espaco, _origem_disparo, posicao + Vector2(0.0, -altura_peito), MASCARA_CHAO
 	)
 
 
@@ -110,7 +110,7 @@ func quer_cobertura(
 		return true
 	_x_abrigo = BuscaDeAbrigo.procurar(
 		espaco, posicao, altura_peito, _origem_disparo,
-		PASSO_ABRIGO, ceili(ALCANCE_ABRIGO_PX / PASSO_ABRIGO), MASCARA_MUNDO,
+		PASSO_ABRIGO, ceili(ALCANCE_ABRIGO_PX / PASSO_ABRIGO), MASCARA_CHAO,
 	)
 	return not is_nan(_x_abrigo)
 

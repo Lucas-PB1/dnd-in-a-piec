@@ -106,7 +106,7 @@ shape = SubResource("FormaChifres")
 
 [node name="Impacto" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 1
+collision_mask = 33
 
 [node name="Forma" type="CollisionShape2D" parent="Impacto"]
 position = Vector2(47, -32)

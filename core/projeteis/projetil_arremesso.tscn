@@ -11,7 +11,7 @@ size = Vector2(14, 14)
 
 [node name="ProjetilArremesso" type="CharacterBody2D"]
 collision_layer = 0
-collision_mask = 1
+collision_mask = 33
 script = ExtResource("1_projetil")
 
 [node name="Corpo" type="CollisionShape2D" parent="."]

@@ -13,7 +13,7 @@ signal vida_mudou(atual: int, maxima: int)
 signal abalou_o_chao(forca: float, duracao: float)
 
 ## Camada "mundo" do chão.
-const MASCARA_MUNDO := 1
+const MASCARA_CHAO := 1 | (1 << 5)  # MontagemDeCriatura.mascara_do_chao()
 const FOLGA_PE := 6.0
 const PROFUNDIDADE_BEIRA := 20.0
 ## Quanto à frente da borda do corpo (px) o raio procura chão antes de descer do penhasco.
@@ -95,6 +95,7 @@ var _ataque_linha: LinhaDeCriatura
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
+	MontagemDeCriatura.configurar_colisao_chao(self)
 	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
 	_ataque_linha = LinhaDeCriatura.new(criatura)
 	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
@@ -319,7 +320,7 @@ func revelar() -> void:
 		return
 	_escondido = false
 	collision_layer = _camada_corpo
-	collision_mask = MASCARA_MUNDO
+	MontagemDeCriatura.configurar_colisao_chao(self)
 	_hurtbox.collision_layer = _camada_hurtbox
 	_sprite.visible = true
 	_sombra.visible = true
@@ -349,7 +350,7 @@ func chao_em(x: float) -> float:
 	var de := Vector2(x, global_position.y - ALCANCE_DO_CHAO)
 	var ate := Vector2(x, global_position.y + ALCANCE_DO_CHAO)
 	var consulta := PhysicsRayQueryParameters2D.create(de, ate)
-	consulta.collision_mask = MASCARA_MUNDO
+	consulta.collision_mask = MASCARA_CHAO
 	var acerto := get_world_2d().direct_space_state.intersect_ray(consulta)
 	return NAN if acerto.is_empty() else (acerto["position"] as Vector2).y
 
@@ -426,7 +427,7 @@ func _distancia_horizontal() -> float:
 func _tem_chao_na(direcao: float) -> bool:
 	var origem := global_position + Vector2(direcao * (meia_largura_corpo + DISTANCIA_BEIRA), -FOLGA_PE)
 	var consulta := PhysicsRayQueryParameters2D.create(origem, origem + Vector2(0.0, PROFUNDIDADE_BEIRA + FOLGA_PE))
-	consulta.collision_mask = MASCARA_MUNDO
+	consulta.collision_mask = MASCARA_CHAO
 	return not get_world_2d().direct_space_state.intersect_ray(consulta).is_empty()
 
 

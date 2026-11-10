@@ -6,6 +6,23 @@ extends RefCounted
 
 ## Texto flutuante quando a Fortitude dos Mortos-Vivos salva.
 const TEXTO_FORTITUDE := "Fortitude!"
+## Camadas de física do chão (ver `project.godot`): sólido vs prancha one-way.
+const CAMADA_MUNDO := 1
+const CAMADA_PLATAFORMA := 6
+
+
+## Máscara de colisão com o chão. `pisa_plataforma=false` = Amorfo (só o sólido).
+static func mascara_do_chao(pisa_plataforma: bool = true) -> int:
+	var mascara := 1 << (CAMADA_MUNDO - 1)
+	if pisa_plataforma:
+		mascara |= 1 << (CAMADA_PLATAFORMA - 1)
+	return mascara
+
+
+## Liga as camadas de chão no corpo. Ooze usa `pisa_plataforma=false` (Amorfo).
+static func configurar_colisao_chao(corpo: CharacterBody2D, pisa_plataforma: bool = true) -> void:
+	corpo.set_collision_mask_value(CAMADA_MUNDO, true)
+	corpo.set_collision_mask_value(CAMADA_PLATAFORMA, pisa_plataforma)
 
 
 ## Vida, CA, resistências, imunidades, vulnerabilidades, fortitude e tamanho a partir da ficha.
@@ -61,14 +78,15 @@ static func ligar_sinais_padrao(
 	dissolver.terminou.connect(ao_dissolver)
 
 
-## Saltador com a Força da ficha.
+## Saltador com a Força da ficha. `pisa_plataforma=false` sonda só o chão sólido (Amorfo).
 static func criar_saltador(
 	corpo: CharacterBody2D,
 	criatura: CriaturaRPG,
 	gravidade: float,
+	pisa_plataforma: bool = true,
 ) -> SaltadorDeMonstro:
 	var forca := criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int
-	return SaltadorDeMonstro.new(corpo, forca, gravidade)
+	return SaltadorDeMonstro.new(corpo, forca, gravidade, mascara_do_chao(pisa_plataforma))
 
 
 ## Deslocamento em pés por rodada já com Lentidão / Agarrado / Imobilizado.
