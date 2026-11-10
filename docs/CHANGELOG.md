@@ -182,3 +182,6 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 ## Fatia: capacidade linha/área (`LinhaDeCriatura`)
 - `LinhaDeCriatura` em `core/regras/criaturas/`: recarga X-6, dimensões, `golpe` e `alvo_na_area`. Ankheg (Borrifo) e Quimera (Sopro) usam; hitbox/VFX e estados ficam na feature.
 - Backlog `capacidades-linha-area` fechado. Teste `tests/criaturas/teste_linha_de_criatura.gd`.
+
+## Limpeza: backlog sem “validar sensação”
+- Removidos itens que só pediam jogar/anotar (`validar-chefes`, `balance-quimera`, `equilibrio-niveis-5-6`, `validar-apk`). Regra no `docs/backlog/README.md`: feedback de sensação não vira pendência.

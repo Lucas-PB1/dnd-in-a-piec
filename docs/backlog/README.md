@@ -8,6 +8,11 @@ Legenda `size`: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias).
 Pastas = `area`: `arte/`, `audio/`, `criaturas/`, `depois/`, `divida/`, `fases/`, `heroi/`, `mobile/`, `regras/`.  
 Na raiz só `README.md` e `_modelo.md`.
 
+## O que não entra no backlog
+
+Sensação, balance fino e “testar no aparelho” vivem do **feedback do usuário com o tempo**.  
+Não crie item só para “validar / jogar / anotar / aprovar sensação”. Quando vier um problema concreto, aí sim abre fatia (ou ajusta na hora).
+
 ## Como a IA escolhe (`/proxima-fatia`)
 
 1. Liste `docs/backlog/**/*.md` (ignore `_modelo.md` e este README).
@@ -20,7 +25,6 @@ Na raiz só `README.md` e `_modelo.md`.
 ### Próximas
 | Pri | Arquivo | Tam. |
 |---|---|---|
-| 1 | `mobile/validar-apk.md` | P |
 | 2 | `heroi/subclasse-guerreiro.md` | M |
 | 3 | `fases/testes-pericia-fases.md` | M |
 | 4 | `criaturas/ia-salto-terreno.md` | M |
@@ -49,8 +53,7 @@ Na raiz só `README.md` e `_modelo.md`.
 ### Dívidas técnicas
 | Pri | Arquivo |
 |---|---|
-| 89 | `divida/capacidades-linha-area.md` |
-| 90+ | `divida/dry-*` … `validar-chefes` |
+| 90+ | `divida/dry-*`, `split-jogador-gd`, `sinais-heroi-orfaos`, `projetil-altura-nascimento`, `quimera-anim-dano`, `renomear-features-goblin` … |
 
 ### Depois
 | Pri | Arquivo |
