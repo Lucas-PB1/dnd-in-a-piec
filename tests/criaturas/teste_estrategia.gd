@@ -28,6 +28,11 @@ func _testar_regra() -> void:
 	_checar(EstrategiaDeMonstro.deve_recuar_ferido(3, 10, 1), "com 1/3 da vida e aliado vivo: recua")
 	_checar(not EstrategiaDeMonstro.deve_recuar_ferido(4, 10, 1), "acima de 1/3 da vida: luta")
 	_checar(not EstrategiaDeMonstro.deve_recuar_ferido(3, 10, 0), "sem aliado: luta até o fim")
+	_checar(EstrategiaDeMonstro.vantagem_de_terreno(100.0, 140.0), "40 px abaixo: vantagem de terreno")
+	_checar(not EstrategiaDeMonstro.vantagem_de_terreno(100.0, 120.0), "menos de 1 ladrilho: sem vantagem")
+	_checar(EstrategiaDeMonstro.quer_manter_altura(true, true, false), "atirador no alto fora do melee: mantém")
+	_checar(not EstrategiaDeMonstro.quer_manter_altura(true, true, true), "herói no corpo a corpo: não mantém só por altura")
+	_checar(not EstrategiaDeMonstro.quer_manter_altura(false, true, false), "sem ataque à distância: desce")
 
 
 func _testar_fichas() -> void:

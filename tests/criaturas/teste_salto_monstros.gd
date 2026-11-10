@@ -21,6 +21,9 @@ func _rodar() -> void:
 	await _testar_descida()
 	await _testar_muro_alto()
 	await _testar_degrau_dos_outros()
+	await _testar_patrulha_salta_vao()
+	await _testar_fuga_salta_vao()
+	await _testar_mantem_altura()
 	print("PASSOU: todos os testes do salto dos monstros" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
 	quit(1 if _falhas > 0 else 0)
 
@@ -161,3 +164,79 @@ func _testar_degrau_dos_outros() -> void:
 		_checar(passou and absf(monstro.global_position.y - (CHAO_Y - LADRILHO)) < 4.0, "%s sobe o degrau de 1 ladrilho atrás do alvo" % nome)
 		mundo.queue_free()
 		await physics_frame
+
+
+## Sem alvo: a patrulha salta um vão no caminho do extremo (à direita).
+func _testar_patrulha_salta_vao() -> void:
+	var m := _montar_mundo([Vector3(0, 280, CHAO_Y), Vector3(330, 900, CHAO_Y)] as Array[Vector3],
+		Vector2(2000, CHAO_Y), Vector2(200, CHAO_Y))
+	var goblin: Goblin = m[1]
+	goblin.definir_alvo(null)
+	goblin.criatura.patrulha_pes = 40.0
+	# O 1º extremo é à esquerda; descarta e pega o da direita (com o vão no caminho).
+	goblin.garantir_destino_patrulha()
+	goblin.limpar_destino_patrulha()
+	goblin.garantir_destino_patrulha()
+	goblin.get_node("MaquinaEstados").trocar(&"Patrulhando")
+	var passou := await _esperar_ate(func() -> bool: return goblin.global_position.x > 360.0)
+	_checar(passou and goblin.is_on_floor(), "patrulha salta o vão e segue até o extremo")
+	m[0].queue_free()
+	await physics_frame
+
+
+## Fuga Ágil: Desengaja saltando um vão nas costas (perto da beira, recuo de 15 pés basta).
+func _testar_fuga_salta_vao() -> void:
+	var m := _montar_mundo([Vector3(0, 280, CHAO_Y), Vector3(330, 900, CHAO_Y)] as Array[Vector3],
+		Vector2(420, CHAO_Y), Vector2(345, CHAO_Y))
+	var goblin: Goblin = m[1]
+	goblin.criatura.fuga_agil = true
+	await _esperar_ate(func() -> bool: return goblin.is_on_floor())
+	goblin.global_position.x = 345.0
+	goblin.direcao_olhar = 1
+	goblin.parar()
+	goblin.get_node("MaquinaEstados").trocar(&"Desengajando")
+	var passou := await _esperar_ate(func() -> bool: return goblin.global_position.x < 270.0 and goblin.is_on_floor())
+	_checar(passou, "Fuga Ágil salta o vão para trás")
+	m[0].queue_free()
+	await physics_frame
+
+
+## Atirador no alto (≥ 1 ladrilho) não desce atrás do herói; atira mesmo "perto" do arco.
+## Plataforma curta + chão fino: o herói fica além da beira (linha de tiro livre) e a < 20 pés.
+func _testar_mantem_altura() -> void:
+	var mundo := Node2D.new()
+	root.add_child(mundo)
+	for bloco in [Vector3(0, 250, CHAO_Y - 2 * LADRILHO), Vector3(0, 900, CHAO_Y)]:
+		var corpo := StaticBody2D.new()
+		var forma := CollisionShape2D.new()
+		var retangulo := RectangleShape2D.new()
+		retangulo.size = Vector2(bloco.y - bloco.x, LADRILHO)
+		forma.shape = retangulo
+		corpo.add_child(forma)
+		corpo.position = Vector2((bloco.x + bloco.y) / 2.0, bloco.z + LADRILHO / 2.0)
+		corpo.collision_layer = 1
+		mundo.add_child(corpo)
+	var alvo := Node2D.new()
+	mundo.add_child(alvo)
+	alvo.global_position = Vector2(320, CHAO_Y)
+	var ficha: CriaturaRPG = (load("res://data/hobgoblin_warrior.tres") as CriaturaRPG).duplicate()
+	var goblin: Goblin = load(CENA_HOBGOBLIN).instantiate()
+	goblin.criatura = ficha
+	mundo.add_child(goblin)
+	goblin.global_position = Vector2(200, CHAO_Y - 2 * LADRILHO)
+	goblin.definir_alvo(alvo)
+	await _esperar_ate(func() -> bool: return goblin.is_on_floor())
+	var y0 := goblin.global_position.y
+	_checar(goblin.quer_manter_altura(), "Hobgoblin no alto quer manter a altura")
+	var dist := absf(goblin.global_position.x - alvo.global_position.x)
+	_checar(dist <= EscalaDnd.pes_para_pixels(20.0), "cenário: herói na faixa 'perto' do arco")
+	_checar(goblin.pode_atirar(), "no alto, atira mesmo com o herói 'perto' na horizontal")
+	var desceu := false
+	for i in 120:
+		await physics_frame
+		if goblin.global_position.y > y0 + LADRILHO:
+			desceu = true
+			break
+	_checar(not desceu, "atirador em vantagem de terreno não desce atrás do herói")
+	mundo.queue_free()
+	await physics_frame

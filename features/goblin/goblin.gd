@@ -66,9 +66,15 @@ var _tempo_desde_ataque: float = INF
 var _saltador: SaltadorDeMonstro
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _empurrao_restante: float = 0.0
-## Patrulha: onde começou (X, sorteado ao 1º passo) e o lado do próximo extremo.
+## Patrulha: onde começou (X, sorteado ao 1º passo), o lado do próximo extremo e o X atual do extremo.
 var _base_x: float = INF
 var _lado_patrulha: int = 1
+var _destino_patrulha: float = INF
+## Salto: direção do impulso (pode ser a do recuo) e estado para voltar ao pousar.
+var _direcao_salto: float = 1.0
+var _retorno_do_salto: StringName = &"Perseguindo"
+## Fuga Ágil: segundos que ainda faltam no Desengajar (sobrevive a um salto no meio).
+var _fuga_restante_s: float = 0.0
 ## Arremesso da ficha (adagas etc.).
 var _arremesso: ArremessoDeCriatura
 ## Disparo e Sensibilidade à Luz Solar (ficha).
@@ -234,9 +240,24 @@ func pode_arremessar() -> bool:
 
 
 ## Tem flecha, o alvo está longe o bastante para valer o arco e dentro do alcance longo.
+## No alto com vantagem de terreno, atira mesmo "perto" do arco: descer só quando o herói alcança o corpo a corpo.
 func pode_atirar() -> bool:
-	return _disparo.tem_flecha() and alvo != null and not _perto_para_oarco() and _linha_de_tiro_livre() \
-		and _disparo.no_alcance_longo(_distancia_horizontal())
+	if not _disparo.tem_flecha() or alvo == null or not _linha_de_tiro_livre():
+		return false
+	if not _disparo.no_alcance_longo(_distancia_horizontal()):
+		return false
+	if quer_manter_altura():
+		return not alvo_ao_alcance()
+	return not _perto_para_oarco()
+
+
+## Atirador/arremessador no alto (≥ 1 ladrilho): fica e ataca à distância até o herói chegar no corpo a corpo.
+func quer_manter_altura() -> bool:
+	if alvo == null:
+		return false
+	var no_alto := EstrategiaDeMonstro.vantagem_de_terreno(global_position.y, alvo.global_position.y)
+	var a_distancia := _disparo.tem_flecha() or _arremesso.tem_arma()
+	return EstrategiaDeMonstro.quer_manter_altura(a_distancia, no_alto, alvo_ao_alcance())
 
 
 ## Nada do mundo entre o peito de quem atira e o do alvo: senão o tiro bateria na parede.
@@ -314,7 +335,7 @@ func virar_para_alvo() -> void:
 ## Anda na direção do alvo no deslocamento da ficha, menos a Lentidão (maestria).
 func andar_para_alvo() -> void:
 	virar_para_alvo()
-	if not _tem_chao_na(float(direcao_olhar)):
+	if not tem_chao_na(float(direcao_olhar)):
 		parar()
 		return
 	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes())
@@ -322,7 +343,7 @@ func andar_para_alvo() -> void:
 
 ## Fuga Ágil: corre de costas para longe do alvo (Disparada), ainda olhando para ele.
 func recuar() -> void:
-	if not _tem_chao_na(-float(direcao_olhar)):
+	if not tem_chao_na(-float(direcao_olhar)):
 		parar()
 		return
 	velocity.x = -direcao_olhar * _fuga_agil.velocidade_px(_deslocamento_pes())
@@ -333,31 +354,57 @@ func tempo_de_fuga() -> float:
 	return _fuga_agil.tempo_de_fuga(_deslocamento_pes())
 
 
+## Começa (ou reinicia) o cronômetro do Desengajar.
+func iniciar_fuga() -> void:
+	_fuga_restante_s = tempo_de_fuga()
+
+
+func fuga_restante() -> float:
+	return _fuga_restante_s
+
+
+## True quando o tempo da fuga acabou.
+func tick_fuga(delta: float) -> bool:
+	_fuga_restante_s = maxf(_fuga_restante_s - delta, 0.0)
+	return _fuga_restante_s <= 0.0
+
+
+func limpar_fuga() -> void:
+	_fuga_restante_s = 0.0
+
+
 func parar() -> void:
 	velocity.x = 0.0
 
 
-## Diante de uma parede, degrau, vão ou queda, decide se vale saltar (regra em `SaltoDnd`). Sem alvo, no ar ou
-## sem obstáculo à frente, devolve um plano vazio.
-func planejar_salto() -> SaltoDnd.Plano:
-	virar_para_alvo()
-	var direcao := float(direcao_olhar)
-	var bloqueado := is_on_wall() or not _tem_chao_na(direcao)
-	return _saltador.planejar(alvo, direcao, bloqueado, DISTANCIA_BEIRA)
+## Diante de parede, degrau, vão ou queda na `direcao` (0 = olha o alvo), decide se vale saltar.
+## Sem obstáculo, no ar ou em recarga: plano vazio. Em vantagem de terreno, não desce queda grande.
+func planejar_salto(direcao: float = 0.0) -> SaltoDnd.Plano:
+	if is_zero_approx(direcao):
+		virar_para_alvo()
+		direcao = float(direcao_olhar)
+	var bloqueado := is_on_wall() or not tem_chao_na(direcao)
+	return _saltador.planejar(alvo, direcao, bloqueado, DISTANCIA_BEIRA, quer_manter_altura())
 
 
-## Dá o impulso do plano: corre na velocidade da ficha e sobe o bastante para o degrau ou para cobrir o vão.
-func iniciar_salto(plano: SaltoDnd.Plano) -> void:
-	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes()), meia_largura_corpo)
+## Dá o impulso do plano na `direcao` (0 = olhar atual) e guarda para onde voltar ao pousar.
+func iniciar_salto(plano: SaltoDnd.Plano, direcao: float = 0.0, retorno: StringName = &"Perseguindo") -> void:
+	_direcao_salto = direcao if not is_zero_approx(direcao) else float(direcao_olhar)
+	_retorno_do_salto = retorno
+	_saltador.iniciar(plano, _direcao_salto, EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes()), meia_largura_corpo)
 
 
-## No ar do salto: mantém a corrida (uma batida na parede zera o x).
+## No ar do salto: mantém a corrida na direção do impulso.
 func correr_no_ar() -> void:
-	_saltador.correr_no_ar(float(direcao_olhar))
+	_saltador.correr_no_ar(_direcao_salto)
 
 
-## False na beira: o próximo passo não tem chão. Empurrão ainda pode derrubar.
-func _tem_chao_na(direcao: float) -> bool:
+func estado_apos_salto() -> StringName:
+	return _retorno_do_salto
+
+
+## False na beira: o próximo passo na `direcao` não tem chão. Empurrão ainda pode derrubar.
+func tem_chao_na(direcao: float) -> bool:
 	var mundo := get_world_2d()
 	if mundo == null:
 		return true
@@ -464,14 +511,26 @@ func proximo_extremo_patrulha() -> float:
 	return _base_x + _lado_patrulha * EscalaDnd.pes_para_pixels(criatura.patrulha_pes)
 
 
-## Anda até `x` devagar, vigiando (ou correndo, em Disparada). True quando chegou, bateu numa parede ou acabou o chão.
+## X do extremo atual; se ainda não havia, escolhe o próximo.
+func garantir_destino_patrulha() -> float:
+	if _destino_patrulha == INF:
+		_destino_patrulha = proximo_extremo_patrulha()
+	return _destino_patrulha
+
+
+func limpar_destino_patrulha() -> void:
+	_destino_patrulha = INF
+
+
+## Anda até `x` devagar, vigiando (ou correndo, em Disparada). True quando chegou.
+## Parede ou beira sem salto: também true (a patrulha trata o salto antes de chamar isto).
 func andar_ate(x: float, correndo: bool = false) -> bool:
 	var falta := x - global_position.x
 	if absf(falta) <= CHEGOU_PATRULHA:
 		parar()
 		return true
 	direcao_olhar = 1 if falta > 0.0 else -1
-	if is_on_wall() or not _tem_chao_na(float(direcao_olhar)):
+	if is_on_wall() or not tem_chao_na(float(direcao_olhar)):
 		parar()
 		return true
 	var fracao := EscalaDnd.MULTIPLICADOR_DISPARADA if correndo else FRACAO_PATRULHA
@@ -574,7 +633,7 @@ func afastado_o_bastante() -> bool:
 func _tem_espaco_atras() -> bool:
 	var costas := -float(direcao_olhar)
 	var peito := global_position + Vector2(0.0, -altura_mao)
-	return _tem_chao_na(costas) and SensorDeTerreno.linha_livre(get_world_2d().direct_space_state, peito,
+	return tem_chao_na(costas) and SensorDeTerreno.linha_livre(get_world_2d().direct_space_state, peito,
 		peito + Vector2(costas * TaticaDeCriatura.ESPACO_ATRAS_PX, 0.0), MASCARA_MUNDO)
 
 

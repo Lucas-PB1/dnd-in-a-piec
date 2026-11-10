@@ -31,16 +31,19 @@ func passar_tempo(delta: float) -> void:
 
 
 ## Diante de parede, degrau, vão ou queda (`bloqueado`), decide se vale saltar. `inicio_px` é onde a sondagem começa à
-## frente do centro do corpo. Sem alvo, no ar ou sem obstáculo, devolve um plano vazio.
-func planejar(alvo: Node2D, direcao: float, bloqueado: bool, inicio_px: float) -> SaltoDnd.Plano:
-	if alvo == null or not _corpo.is_on_floor() or not bloqueado or _tempo_desde_salto < INTERVALO_SALTO:
+## frente do centro do corpo. Sem obstáculo, no ar ou em recarga, devolve um plano vazio. Sem `alvo`, sobe degrau e
+## atravessa vão, mas não desce queda grande. `proibir_descer` força o mesmo (vantagem de terreno).
+func planejar(alvo: Node2D, direcao: float, bloqueado: bool, inicio_px: float,
+		proibir_descer: bool = false) -> SaltoDnd.Plano:
+	if not _corpo.is_on_floor() or not bloqueado or _tempo_desde_salto < INTERVALO_SALTO:
 		return SaltoDnd.Plano.new()
 	var altura_max := SaltoDnd.altura_px(_forca)
 	var distancia_max := SaltoDnd.distancia_px(_forca)
 	var quantidade := ceili(distancia_max / PASSO_SONDA) + 1
 	var perfil := SensorDeTerreno.perfil(_corpo.get_world_2d().direct_space_state, _corpo.global_position, direcao,
 		inicio_px, PASSO_SONDA, quantidade, altura_max, SaltoDnd.queda_segura_px(), MASCARA_MUNDO)
-	var alvo_embaixo := alvo.global_position.y - _corpo.global_position.y >= DESNIVEL_ALVO_PX
+	var alvo_embaixo := not proibir_descer and alvo != null \
+		and alvo.global_position.y - _corpo.global_position.y >= DESNIVEL_ALVO_PX
 	return SaltoDnd.planejar(perfil, PASSO_SONDA, inicio_px, altura_max, distancia_max, alvo_embaixo)
 
 

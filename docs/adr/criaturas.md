@@ -44,8 +44,12 @@ Fonte: `history-lilac.vercel.app`, arquivos `Monster Manual/09 - Monsters (H).md
   Não há dano de queda para monstros.
 - Resultado: Força 8 (Goblin) sobe 1 ladrilho; Força 7 (Kobold) não; Hobgoblin (13) e Bugbear (15) sobem 1 ladrilho e
   atravessam vãos de 13 e 15 pés (83 e 96 px).
-- Gray Ooze, Ankheg, Minotauro e Wight também saltam via `SaltadorDeMonstro`. Ainda **não**: Patrulha e Fuga Ágil
-  saltarem na beira; esperar em vantagem de terreno.
+- Gray Ooze, Ankheg, Minotauro e Wight também saltam via `SaltadorDeMonstro`.
+- **Patrulha e Fuga Ágil** também saltam na beira (degrau/vão); o salto guarda a direção do impulso e o estado de
+  retorno (`Patrulhando` / `Desengajando`). Sem alvo, sobe e atravessa vão, mas não desce queda grande.
+- **Vantagem de terreno:** atirador/arremessador ≥ 1 ladrilho acima do herói (`EstrategiaDeMonstro.vantagem_de_terreno`)
+  **fica e ataca à distância** (mesmo “perto” do arco); só deixa de manter a altura quando o herói chega no corpo a corpo.
+  Enquanto mantém, o plano de salto não desce queda grande.
 
 ## IA: cobertura / estratégia / flanqueio (`TaticaDeCriatura`)
 - Capacidade compartilhada em `core/regras/criaturas/tatica_de_criatura.gd` (timers + “quer agora?”). Regras puras:
