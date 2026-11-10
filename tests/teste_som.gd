@@ -55,6 +55,10 @@ func _testar_no_jogo() -> void:
 	_checar(musica.faixa_atual == Musica.TAVERNA, "a fase 3 troca para a música da trilha")
 	musica.tocar_da_fase(5)
 	_checar(musica.faixa_atual == Musica.BATALHA, "a fase 5 troca para a música de batalha")
+	musica.tocar_da_fase(8)
+	_checar(musica.faixa_atual == Musica.CAVERNA, "a fase 8 toca a música da caverna")
+	musica.tocar_da_fase(10)
+	_checar(musica.faixa_atual == Musica.CHEFE, "a fase do chefe final toca a música de chefe")
 	musica.tocar_da_fase(1)
 
 	# Efeitos
@@ -87,6 +91,25 @@ func _testar_no_jogo() -> void:
 	_checar(sons.tocados.get(&"folego", 0) == 1, "usar o Fôlego toca o brilho de cura")
 	jogador.comecou_a_morrer.emit()
 	_checar(sons.tocados.get(&"morte_heroi", 0) == 1, "morrer toca a queda do herói")
+	# Criaturas e chefes
+	var chefe := Node2D.new()
+	for sinal in [&"despertou", &"morreu"]:
+		chefe.add_user_signal(sinal)
+	chefe.add_user_signal(&"abalou_o_chao", [{"name": "forca", "type": TYPE_FLOAT}, {"name": "duracao", "type": TYPE_FLOAT}])
+	main.add_child(chefe)
+	var hitbox := HitboxComponent.new()
+	hitbox.collision_mask = 8
+	main.add_child(hitbox)
+	await process_frame
+	chefe.emit_signal(&"despertou")
+	chefe.emit_signal(&"abalou_o_chao", 1.0, 0.2)
+	chefe.emit_signal(&"morreu")
+	hitbox.ligar(Golpe.new("Garra", 5, Dado.de_texto("1d6")))
+	_checar(sons.tocados.get(&"rugido", 0) == 1 and sons.tocados.get(&"tremor", 0) == 1, "o chefe ruge ao despertar e treme o chão")
+	_checar(sons.tocados.get(&"rugido_morte", 0) == 1, "o chefe ruge ao morrer")
+	_checar(sons.tocados.get(&"golpe_monstro", 0) == 1, "o golpe de uma criatura contra o herói soa")
+	chefe.queue_free()
+	hitbox.queue_free()
 	var botao := Button.new()
 	main.get_node("Interface").add_child(botao)
 	await process_frame

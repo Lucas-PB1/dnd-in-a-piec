@@ -12,6 +12,8 @@ const DISTANCIA_TRESPASSAR := 10.0 * EscalaDnd.PIXELS_POR_LADRILHO / EscalaDnd.P
 
 ## Emitido quando o golpe é entregue a um alvo (ex.: a arma arremessada cai ali).
 signal alvo_atingido(alvo: HurtboxComponent)
+## Emitido quando a área liga com um golpe novo (o som do golpe das criaturas escuta isto).
+signal ligada(golpe: Golpe)
 
 ## Golpe de área (sopro, linha de ácido): entrega a TODOS que tocam a área, não só ao mais perto.
 @export var atinge_todos: bool = false
@@ -32,6 +34,7 @@ func ligar(golpe: Golpe) -> void:
 	_golpe = golpe
 	_ligada = true
 	_atingidos.clear()
+	ligada.emit(golpe)
 
 
 func desligar() -> void:

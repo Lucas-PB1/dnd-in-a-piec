@@ -30,6 +30,10 @@ func _initialize() -> void:
 	_salvar("tiro_arco", _corda(0.22, 220.0, rng))
 	_salvar("pouso", _impacto(0.1, 90.0, 0.4, rng))
 	_salvar("aviso_monstro", _subida(0.3, 200.0, 420.0, 0.3))
+	_salvar("golpe_monstro", _whoosh(0.24, 250.0, 1200.0, rng))
+	_salvar("rugido", _rugido(1.0, 150.0, rng))
+	_salvar("rugido_morte", _rugido(1.6, 95.0, rng))
+	_salvar("tremor", _tremor(1.1, rng))
 	print("Sons gerados em ", PASTA)
 	quit()
 
@@ -158,6 +162,39 @@ func _corda(duracao: float, frequencia: float, rng: RandomNumberGenerator) -> Pa
 		var t := float(i) / n
 		fase += TAU * (frequencia * (1.0 - 0.3 * t)) / TAXA
 		saida[i] = (sin(fase) + 0.5 * sin(fase * 2.0) + rng.randf_range(-0.12, 0.12) * (1.0 - t)) * pow(1.0 - t, 2.2) * 0.7
+	return saida
+
+
+## Rugido de chefe: tom grave de dente de serra com vibrato que desce, mais ruído rouco; sobe rápido e some devagar.
+func _rugido(duracao: float, grave: float, rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var n := int(duracao * TAXA)
+	var saida := PackedFloat32Array()
+	saida.resize(n)
+	var fase := 0.0
+	var filtro := 0.0
+	for i in n:
+		var t := float(i) / n
+		var vibrato := 1.0 + 0.06 * sin(TAU * 28.0 * t * duracao)
+		fase += TAU * lerpf(grave * 1.5, grave * 0.7, t) * vibrato / TAXA
+		filtro += 0.25 * (rng.randf_range(-1.0, 1.0) - filtro)
+		var dente := fmod(fase / TAU, 1.0) * 2.0 - 1.0
+		var envelope := minf(t * 12.0, 1.0) * pow(1.0 - t, 1.4)
+		saida[i] = (dente * 0.6 + sin(fase) * 0.4 + filtro * 0.5) * envelope
+	return saida
+
+
+## Tremor do chão: seno muito grave que desce e ruído abafado, com cauda longa.
+func _tremor(duracao: float, rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var n := int(duracao * TAXA)
+	var saida := PackedFloat32Array()
+	saida.resize(n)
+	var fase := 0.0
+	var filtro := 0.0
+	for i in n:
+		var t := float(i) / n
+		fase += TAU * lerpf(70.0, 32.0, t) / TAXA
+		filtro += 0.06 * (rng.randf_range(-1.0, 1.0) - filtro)
+		saida[i] = (sin(fase) * 0.85 + filtro * 1.4) * pow(1.0 - t, 2.2)
 	return saida
 
 

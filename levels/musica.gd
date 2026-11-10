@@ -7,8 +7,15 @@ extends Node
 const TITULO := "res://assets/audio/musica/shakkar.ogg"
 const TAVERNA := "res://assets/audio/musica/old_tower_inn.mp3"
 const BATALHA := "res://assets/audio/musica/batalha_medieval.mp3"
-## Faixa de cada fase (1 = Clareira ... 5 = Fortaleza). Fase sem faixa mantém a que está tocando.
-const FAIXAS_DAS_FASES := {1: TITULO, 2: TITULO, 3: TAVERNA, 4: BATALHA, 5: BATALHA}
+const MASMORRA := "res://assets/audio/musica/masmorra_dungeon002.ogg"
+const CAVERNA := "res://assets/audio/musica/caverna_escura.ogg"
+const CHEFE := "res://assets/audio/musica/chefe_batalha_rpg.ogg"
+## Faixa de cada fase (1 = Clareira ... 10 = Covil). As fases dos chefes (6 e 10) tocam a música de chefe.
+## Fase sem faixa mantém a que está tocando.
+const FAIXAS_DAS_FASES := {
+	1: TITULO, 2: TITULO, 3: TAVERNA, 4: BATALHA, 5: BATALHA,
+	6: CHEFE, 7: MASMORRA, 8: CAVERNA, 9: MASMORRA, 10: CHEFE,
+}
 const TEMPO_DA_TROCA := 1.4
 ## Ao sair, quanto esperar (ms) para o motor de áudio soltar as faixas, ou ele reclama de recursos abertos.
 const ESPERA_DO_MOTOR_DE_AUDIO_MS := 80
@@ -51,7 +58,7 @@ func tocar(caminho: String) -> void:
 	_desvanecer(_jogador_outro)
 
 
-## A faixa da fase `indice` (1 a 5), se houver.
+## A faixa da fase `indice` (1 a 10), se houver.
 func tocar_da_fase(indice: int) -> void:
 	if FAIXAS_DAS_FASES.has(indice):
 		tocar(FAIXAS_DAS_FASES[indice])

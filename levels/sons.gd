@@ -31,11 +31,15 @@ const SONS := {
 	&"abrir_tela": [INTERFACE_KENNEY + "open_001.ogg"],
 	&"fechar_tela": [INTERFACE_KENNEY + "close_001.ogg"],
 	&"confirmar": [INTERFACE_KENNEY + "confirmation_001.ogg"],
+	&"golpe_monstro": [SINTETIZADO + "golpe_monstro.wav"],
+	&"rugido": [SINTETIZADO + "rugido.wav"],
+	&"rugido_morte": [SINTETIZADO + "rugido_morte.wav"],
+	&"tremor": [SINTETIZADO + "tremor.wav"],
 }
 ## Sons que saem no barramento da interface; o resto vai para os efeitos.
 const DA_INTERFACE: Array[StringName] = [&"clique", &"abrir_tela", &"fechar_tela", &"confirmar"]
 ## Volume (dB) de cada som que não toca no volume padrão.
-const VOLUMES := {&"passo": -9.0, &"pulo": -8.0, &"pouso": -5.0, &"golpe": -4.0, &"golpe_pesado": -2.0, &"clique": -4.0}
+const VOLUMES := {&"golpe_monstro": -3.0, &"tremor": -2.0, &"passo": -9.0, &"pulo": -8.0, &"pouso": -5.0, &"golpe": -4.0, &"golpe_pesado": -2.0, &"clique": -4.0}
 ## Sorteio do tom (1 = o original): cada vez soa um pouco diferente.
 const VARIACAO_DE_TOM := 0.07
 const VOZES_POR_BARRAMENTO := 8
@@ -44,6 +48,9 @@ const INTERVALO_PASSO_ANDANDO := 0.34
 const INTERVALO_PASSO_CORRENDO := 0.22
 const VELOCIDADE_MINIMA_PASSO := 40.0
 const CAMADA_HURTBOX_JOGADOR := 8
+## Sinais que só os chefes têm: o rugido ao despertar e o tremor do chão.
+const SINAL_DESPERTAR := &"despertou"
+const SINAL_TREMOR := &"abalou_o_chao"
 
 ## Sons já tocados nesta sessão (para os testes): nome -> quantas vezes.
 var tocados: Dictionary[StringName, int] = {}
@@ -74,6 +81,10 @@ func _ready() -> void:
 		_escutar_dissolver(dissolver as DissolverComponent)
 	for botao in get_tree().root.find_children("*", "BaseButton", true, false):
 		_escutar_botao(botao as BaseButton)
+	for hitbox in get_tree().root.find_children("*", "HitboxComponent", true, false):
+		_escutar_hitbox(hitbox as HitboxComponent)
+	for no in get_tree().root.find_children("*", "", true, false):
+		_escutar_chefe(no)
 	get_tree().node_added.connect(_ao_nascer_no)
 
 
@@ -160,6 +171,9 @@ func _ao_nascer_no(no: Node) -> void:
 		_escutar_dissolver(no as DissolverComponent)
 	elif no is BaseButton:
 		_escutar_botao(no as BaseButton)
+	elif no is HitboxComponent:
+		_escutar_hitbox(no as HitboxComponent)
+	_escutar_chefe(no)
 
 
 func _escutar_defesa(defesa: DefesaComponent) -> void:
@@ -175,6 +189,34 @@ func _escutar_dissolver(dissolver: DissolverComponent) -> void:
 func _escutar_botao(botao: BaseButton) -> void:
 	if not botao.pressed.is_connected(tocar.bind(&"clique")):
 		botao.pressed.connect(tocar.bind(&"clique"))
+
+
+## Golpe de criatura: a área que atinge a hurtbox do herói soa quando liga (o aviso do ataque).
+func _escutar_hitbox(hitbox: HitboxComponent) -> void:
+	if (hitbox.collision_mask & CAMADA_HURTBOX_JOGADOR) == 0:
+		return
+	if not hitbox.ligada.is_connected(_ao_ligar_golpe_de_criatura):
+		hitbox.ligada.connect(_ao_ligar_golpe_de_criatura)
+
+
+## Chefes (têm o sinal do tremor): rugem ao despertar, tremem o chão e rugem ao morrer.
+func _escutar_chefe(no: Node) -> void:
+	if not no.has_signal(SINAL_TREMOR):
+		return
+	if no.has_signal(SINAL_DESPERTAR) and not no.is_connected(SINAL_DESPERTAR, tocar.bind(&"rugido")):
+		no.connect(SINAL_DESPERTAR, tocar.bind(&"rugido"))
+	if not no.is_connected(SINAL_TREMOR, _ao_tremer):
+		no.connect(SINAL_TREMOR, _ao_tremer)
+	if no.has_signal(&"morreu") and not no.is_connected(&"morreu", tocar.bind(&"rugido_morte")):
+		no.connect(&"morreu", tocar.bind(&"rugido_morte"))
+
+
+func _ao_ligar_golpe_de_criatura(_golpe: Golpe) -> void:
+	tocar(&"golpe_monstro")
+
+
+func _ao_tremer(_forca: float, _duracao: float) -> void:
+	tocar(&"tremor")
 
 
 func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2, defesa: DefesaComponent) -> void:
