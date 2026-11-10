@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://core/componentes/condicoes_component.gd" id="15_condicoes"]
 [ext_resource type="Texture2D" path="res://assets/efeitos/condicoes.png" id="16_icones"]
 [ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_caido.gd" id="17_caido"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_pulando.gd" id="18_pulando"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
 size = Vector2(40, 26)
@@ -108,6 +109,9 @@ script = ExtResource("14_morrendo")
 
 [node name="Caido" type="Node" parent="MaquinaEstados"]
 script = ExtResource("17_caido")
+
+[node name="Pulando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("18_pulando")
 
 [node name="Tremor" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("22_tremor")

@@ -57,6 +57,8 @@ const ESPACO_ICONE := 1
 
 ## Gerador dos dados das salvaguardas (os testes podem fixar a semente).
 var rng := RandomNumberGenerator.new()
+## Condições a que o dono é imune (ex.: o Gray Ooze: Caído, Agarrado, Preso). Impor uma delas só avisa "Imune!".
+var imunidades: Array[StringName] = []
 
 var _restante: Dictionary[StringName, float] = {}
 ## Quem atormentou (instance_id): só ele tem vantagem no próximo ataque.
@@ -176,6 +178,9 @@ func atormentar(autor_id: int) -> void:
 
 ## Envenenador: salvaguarda de Constituição contra a CD. Falhou: fica Envenenado e devolve o dano de veneno. Passou: 0.
 func rolar_veneno(dano: Dado, cd: int) -> int:
+	if ENVENENADO in imunidades:
+		aviso.emit("Imune!")
+		return 0
 	if salvou(Atributos.CONSTITUICAO, cd):
 		aviso.emit("Resistiu ao veneno!")
 		return 0
@@ -185,6 +190,9 @@ func rolar_veneno(dano: Dado, cd: int) -> int:
 
 ## Agarrador: o dono fica agarrado por `autor_id`; não anda e tenta escapar a cada rodada contra a `cd`.
 func agarrar(autor_id: int, cd: int) -> void:
+	if AGARRADO in imunidades:
+		aviso.emit("Imune!")
+		return
 	_agarrado_por = autor_id
 	_cd_escape = cd
 	_tempo_escape = INTERVALO_ESCAPE
@@ -229,6 +237,9 @@ func _testar_derrubar(cd: int) -> void:
 
 
 func _impor(condicao: StringName, duracao: float) -> void:
+	if condicao in imunidades:
+		aviso.emit("Imune!")
+		return
 	var nova := not tem(condicao)
 	_restante[condicao] = maxf(_restante.get(condicao, 0.0), duracao)  # não acumula: renova
 	if nova:

@@ -7,11 +7,22 @@ func processar_fisica(_delta: float) -> void:
 		trocar_para.emit(&"Parado")
 		return
 	if not ooze.alvo_ao_alcance():
-		ooze.andar_para_alvo()
-		ooze.tocar(&"andar")
+		_andar_ou_saltar()
 		return
 	ooze.parar()
 	ooze.virar_para_alvo()
 	ooze.tocar(&"parado")
 	if ooze.pode_atacar():
 		trocar_para.emit(&"Atacando")
+
+
+## Anda até o alvo; diante de parede, degrau, vão ou queda que vale transpor, salta.
+func _andar_ou_saltar() -> void:
+	var plano := ooze.planejar_salto()
+	if plano.tipo != SaltoDnd.Tipo.NENHUM:
+		ooze.iniciar_salto(plano)
+		trocar_para.emit(&"Pulando")
+		return
+	ooze.andar_para_alvo()
+	ooze.tocar(&"andar" if not is_zero_approx(ooze.velocity.x) else &"parado")  # na beira de um vão grande ele só espera
+

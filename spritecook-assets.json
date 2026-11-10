@@ -293,6 +293,42 @@
       "sha12": "",
       "label": "minotauro_glaive (8 quadros 190x190, custom, 14 créditos)",
       "file": "features/minotauro/sprites/minotauro_glaive.png"
+    },
+    {
+      "asset_id": "434120c9-5320-4ee2-bbc6-b8bbabf5c03e",
+      "sha12": "",
+      "label": "wight_base (80x80, platformer, 12 créditos; aprovada)",
+      "file": "features/wight/sprites/wight_base.png"
+    },
+    {
+      "asset_id": "448cd2df-19f0-4c79-adc1-2e0d814bd265",
+      "sha12": "",
+      "label": "wight_parado (8 quadros 86x86; rodada de 76 créditos)",
+      "file": "features/wight/sprites/wight_parado.png"
+    },
+    {
+      "asset_id": "dfcd8f2d-fc2d-44a8-b5dc-885ce1a79a21",
+      "sha12": "",
+      "label": "wight_andar",
+      "file": "features/wight/sprites/wight_andar.png"
+    },
+    {
+      "asset_id": "84281af7-d739-4243-be18-2f955311ed54",
+      "sha12": "",
+      "label": "wight_espada",
+      "file": "features/wight/sprites/wight_espada.png"
+    },
+    {
+      "asset_id": "ccb85e76-1f44-47d1-b843-98118c03094d",
+      "sha12": "",
+      "label": "wight_arco",
+      "file": "features/wight/sprites/wight_arco.png"
+    },
+    {
+      "asset_id": "e64a07f8-ac53-4d7e-8da2-aeb4611c2522",
+      "sha12": "",
+      "label": "wight_drenar",
+      "file": "features/wight/sprites/wight_drenar.png"
     }
   ]
 }

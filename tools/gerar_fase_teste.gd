@@ -45,6 +45,7 @@ const HOBGOBLIN := &"hobgoblin"
 const BUGBEAR := &"bugbear"
 const TIPOS_TODOS: Array[StringName] = [OOZE, MINION, WARRIOR]
 const TIPOS_PEDRA: Array[StringName] = [WARRIOR, HOBGOBLIN, BUGBEAR]
+const TIPOS_SUBTERRANEO: Array[StringName] = [OOZE, WARRIOR, HOBGOBLIN, BUGBEAR]
 
 ## Enfeites das Ruínas: recortes da folha CC0 do castelo (rubberduck, ver assets/CREDITOS.md). Sem colisão, atrás do terreno.
 const FOLHA_CASTELO := "res://assets/tiles/castelo/castle_tileset_part3.png"
@@ -140,7 +141,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Labirinto", "arquivo": "res://levels/fase_6.tscn", "no": "Fase",
-			"tema": 3, "indice": 6, "ultima": true, "quantidade": 4, "tipos": TIPOS_PEDRA, "missao": "Atravesse o labirinto",
+			"tema": 3, "indice": 6, "ultima": false, "quantidade": 4, "tipos": TIPOS_PEDRA, "missao": "Atravesse o labirinto",
 			"largura": 62, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(10, 2), Vector2i(24, 3)], "plataformas": [],
 			"chao": [14, 31, 39, 43], "plataforma": [], "porta": 58,
@@ -156,6 +157,37 @@ func _fases() -> Array[Dictionary]:
 				["tocha", 59, 64],
 			],
 		},
+		{
+			"nome": "Mina", "arquivo": "res://levels/fase_7.tscn", "no": "Fase",
+			"tema": 4, "indice": 7, "ultima": false, "quantidade": 4, "tipos": TIPOS_PEDRA, "missao": "Atravesse a mina",
+			"largura": 60, "inicio": 2, "loja": Vector2(150, 0),
+			"buracos": [Vector2i(9, 2), Vector2i(26, 3), Vector2i(41, 2)], "plataformas": [],
+			"chao": [13, 30, 39, 44], "plataforma": [], "porta": 56,
+			"degraus": [[16, 3, 1], [19, 2, 2], [33, 3, 1], [36, 2, 2], [47, 3, 1]], "altas": [[22, 4, 2]], "pontos": [[20, 6], [23, 6], [37, 6]],
+			"enfeites": [["tocha", 6, 64], ["tocha", 14, 64], ["tocha", 31, 64], ["tocha", 45, 64], ["tocha", 52, 64]],
+		},
+		{
+			"nome": "Caverna Úmida", "arquivo": "res://levels/fase_8.tscn", "no": "Fase",
+			"tema": 3, "indice": 8, "ultima": false, "quantidade": 5, "tipos": TIPOS_SUBTERRANEO, "missao": "Atravesse a caverna",
+			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),
+			"buracos": [Vector2i(8, 3), Vector2i(22, 2), Vector2i(37, 3), Vector2i(50, 2)], "plataformas": [],
+			"chao": [11, 19, 30, 44, 53], "plataforma": [], "porta": 60,
+			"degraus": [[13, 3, 1], [15, 2, 2], [26, 3, 1], [28, 2, 2], [40, 3, 1], [42, 2, 2]], "altas": [[33, 4, 2]], "pontos": [[16, 6], [29, 6], [43, 6], [34, 6]],
+			"enfeites": [["tocha", 5, 64], ["tocha", 17, 64], ["tocha", 33, 64], ["tocha", 47, 64], ["tocha", 57, 64]],
+		},
+		{
+			# A cripta do Wight, a fase 9 do plano.
+			"nome": "Cripta", "arquivo": "res://levels/fase_9.tscn", "no": "Fase",
+			"tema": 3, "indice": 9, "ultima": true, "quantidade": 2, "tipos": TIPOS_PEDRA, "missao": "Desça à cripta",
+			"largura": 54, "inicio": 2,
+			"buracos": [Vector2i(12, 2)], "plataformas": [],
+			"chao": [15, 30], "plataforma": [], "porta": 50,
+			# Arena do Wight (colunas 32 a 53, chão reto): ele espera na coluna 44; os acompanhantes (Skeleton/Zombie ainda não
+			# existem: Goblin Minion no lugar) surgem perto dele quando ele percebe o herói.
+			"chefe": [&"wight", 44], "acompanhantes": [&"minion", &"minion"],
+			"degraus": [[18, 3, 1], [21, 2, 2]], "altas": [[24, 4, 2]], "pontos": [[22, 6], [36, 6]],
+			"enfeites": [["tocha", 6, 64], ["tocha", 15, 64], ["janela", 20, 100], ["tocha", 29, 64], ["estandarte_azul", 36, 150], ["tocha", 40, 64], ["tocha", 48, 64]],
+		}
 	]
 	return fases
 
@@ -228,6 +260,7 @@ func _gravar(definicao: Dictionary, mapa: Array[String], tema: int) -> void:
 	fase.quantidade = definicao.quantidade
 	fase.tipos_permitidos = definicao.tipos
 	fase.missao = definicao.get("missao", "")
+	fase.acompanhantes_do_chefe = _tipos(definicao.get("acompanhantes", []))
 	fase.deslocamento_loja = definicao.get("loja", fase.deslocamento_loja)
 	var terreno := _criar_terreno(fase)
 	_pintar_mapa(fase, terreno, mapa, tema)
@@ -241,6 +274,12 @@ func _gravar(definicao: Dictionary, mapa: Array[String], tema: int) -> void:
 	ResourceSaver.save(cena, definicao.arquivo)
 	print("Fase gerada: %s (%s)" % [definicao.nome, definicao.arquivo])
 	fase.free()
+
+
+func _tipos(lista: Array) -> Array[StringName]:
+	var tipos: Array[StringName] = []
+	tipos.assign(lista)
+	return tipos
 
 
 ## Chefe da fase: [tipo, coluna]. Grava o tipo e o marcador "Chefe" onde ele nasce.

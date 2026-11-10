@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Corpo Seco (Wight)"
+experiencia = 700
+ouro = 120
+tipo = "Medium Undead, Neutral Evil"
+classe_armadura = 14
+dados_vida = "11d8+33"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 15,
+&"constituicao": 16,
+&"destreza": 14,
+&"forca": 15,
+&"inteligencia": 10,
+&"sabedoria": 13
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = 4
+deslocamento_pes = 30.0
+percepcao_pes = 120.0
+resistencias = Array[StringName]([&"necrotico"])
+imunidades_dano = Array[StringName]([&"veneno"])
+imunidades_condicoes = Array[StringName]([&"envenenado"])
+ataque_nome = "Espada Necrótica"
+ataque_bonus = 4
+ataque_dano = "1d8+2"
+ataque_tipo_dano = &"cortante"
+ataque_alcance_pes = 5.0
+ataque_dano_adicional = "1d8"
+aviso_ataque = 0.35
+disparos = -1
+disparo_nome = "Arco Necrótico"
+disparo_normal_pes = 150.0
+disparo_longo_pes = 600.0
+disparo_dano = "1d8+2"
+disparo_tipo_dano = &"perfurante"
+disparo_dano_adicional = "1d8"
+sensivel_ao_sol = true
+drenar_dano = "1d8+2"
+drenar_nome = "Drenar Vida"
+drenar_cd = 13

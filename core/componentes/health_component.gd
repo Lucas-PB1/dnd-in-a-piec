@@ -11,18 +11,41 @@ var vida_maxima: int = 1
 var vida_atual: int = 1
 
 
+## Quanto do máximo foi drenado (Drenar Vida do Wight); volta com `restaurar_maximo` (descanso longo).
+var maximo_drenado: int = 0
+
+
 ## Define a vida máxima e enche a vida.
 func configurar(maxima: int) -> void:
 	vida_maxima = maxima
+	maximo_drenado = 0
 	curar_tudo()
 
 
 ## Aumenta o máximo e os PV atuais pelo mesmo valor, como ao ganhar um nível.
 func aumentar_maximo(novo_maximo: int) -> void:
-	var aumento := maxi(novo_maximo - vida_maxima, 0)
-	vida_maxima = maxi(novo_maximo, 1)
+	var aumento := maxi(novo_maximo - (vida_maxima + maximo_drenado), 0)
+	vida_maxima = maxi(novo_maximo - maximo_drenado, 1)
 	if not esta_morto():
 		vida_atual = mini(vida_atual + aumento, vida_maxima)
+	vida_mudou.emit(vida_atual, vida_maxima)
+
+
+## Reduz o máximo de PV em `quantidade` (mínimo 1) e corta a vida atual se passar do novo máximo.
+func reduzir_maximo(quantidade: int) -> void:
+	if esta_morto() or quantidade <= 0:
+		return
+	var reducao := mini(quantidade, vida_maxima - 1)
+	vida_maxima -= reducao
+	maximo_drenado += reducao
+	vida_atual = mini(vida_atual, vida_maxima)
+	vida_mudou.emit(vida_atual, vida_maxima)
+
+
+## Devolve o máximo drenado (sem curar: quem chama cura).
+func restaurar_maximo() -> void:
+	vida_maxima += maximo_drenado
+	maximo_drenado = 0
 	vida_mudou.emit(vida_atual, vida_maxima)
 
 

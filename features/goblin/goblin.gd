@@ -10,7 +10,7 @@ extends CharacterBody2D
 signal morreu
 
 const CENA_ADAGA := preload("res://features/goblin/adaga_goblin.tscn")
-const CENA_FLECHA := preload("res://features/goblin/flecha_goblin.tscn")
+const CENA_FLECHA := preload("res://core/projeteis/flecha.tscn")
 const FLECHA := preload("res://data/municoes/flecha.tres")
 ## Quanto à frente (px) o raio procura chão antes de descer do penhasco.
 const DISTANCIA_BEIRA := 14.0
@@ -23,12 +23,6 @@ const FRACAO_PATRULHA := 0.5
 const CHEGOU_PATRULHA := 6.0
 ## Grupo onde a main põe todos os monstros: de lá saem os aliados das Táticas de Matilha.
 const GRUPO_ALIADOS := &"monstros"
-## Salto: passo e começo da sondagem do chão (px), folga acima do degrau (px), espera entre saltos (s) e quanto o
-## alvo precisa estar abaixo dos pés (px) para valer descer.
-const PASSO_SONDA := 8.0
-const FOLGA_TOPO_SALTO := 10.0
-const INTERVALO_SALTO := 0.4
-const DESNIVEL_ALVO_PX := 24.0
 ## Cobertura: quanto tempo um tiro do herói ainda conta (s), de onde a busca começa e até onde vai (px), espera entre
 ## buscas (s) e a distância mínima do herói para valer se esconder (px).
 const JANELA_DISPARO := 3.0
@@ -90,8 +84,7 @@ var direcao_olhar: int = -1
 
 var _rng := RandomNumberGenerator.new()
 var _tempo_desde_ataque: float = INF
-var _tempo_desde_salto: float = INF
-var _velocidade_no_ar: float = 0.0
+var _saltador: SaltadorDeMonstro
 var _origem_disparo: Vector2 = Vector2.ZERO
 var _tempo_desde_disparo: float = INF
 var _tempo_desde_abrigo: float = INF
@@ -139,6 +132,7 @@ var _camada_hurtbox: int = 0
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
+	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
 	_vida.configurar(criatura.vida_maxima(_rng))
 	_defesa.classe_armadura = criatura.classe_armadura
 	_defesa.resistencias = criatura.resistencias
@@ -156,7 +150,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
-	_tempo_desde_salto += delta
+	_saltador.passar_tempo(delta)
 	_tempo_desde_disparo += delta
 	_tempo_desde_abrigo += delta
 	_tempo_desde_afastar += delta
@@ -391,33 +385,17 @@ func planejar_salto() -> SaltoDnd.Plano:
 	virar_para_alvo()
 	var direcao := float(direcao_olhar)
 	var bloqueado := is_on_wall() or not _tem_chao_na(direcao)
-	if alvo == null or not is_on_floor() or not bloqueado or _tempo_desde_salto < INTERVALO_SALTO:
-		return SaltoDnd.Plano.new()
-	var forca := criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int
-	var altura_max := SaltoDnd.altura_px(forca)
-	var distancia_max := SaltoDnd.distancia_px(forca)
-	var quantidade := ceili(distancia_max / PASSO_SONDA) + 1
-	var perfil := SensorDeTerreno.perfil(get_world_2d().direct_space_state, global_position, direcao, DISTANCIA_BEIRA,
-		PASSO_SONDA, quantidade, altura_max, SaltoDnd.queda_segura_px(), MASCARA_MUNDO)
-	var alvo_embaixo := alvo.global_position.y - global_position.y >= DESNIVEL_ALVO_PX
-	return SaltoDnd.planejar(perfil, PASSO_SONDA, DISTANCIA_BEIRA, altura_max, distancia_max, alvo_embaixo)
+	return _saltador.planejar(alvo, direcao, bloqueado, DISTANCIA_BEIRA)
 
 
 ## Dá o impulso do plano: corre na velocidade da ficha e sobe o bastante para o degrau ou para cobrir o vão.
 func iniciar_salto(plano: SaltoDnd.Plano) -> void:
-	_tempo_desde_salto = 0.0
-	var velocidade := EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes())
-	var subida := sqrt(2.0 * _gravidade * (maxf(plano.desnivel_px, 0.0) + FOLGA_TOPO_SALTO)) if plano.tipo != SaltoDnd.Tipo.DESCER else 0.0
-	if plano.tipo == SaltoDnd.Tipo.VAO and velocidade > 0.0:
-		var tempo_no_ar := (plano.distancia_px + meia_largura_corpo) / velocidade
-		subida = maxf(subida, _gravidade * tempo_no_ar / 2.0)
-	_velocidade_no_ar = velocidade
-	velocity = Vector2(direcao_olhar * velocidade, -subida)
+	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes()), meia_largura_corpo)
 
 
 ## No ar do salto: mantém a corrida (uma batida na parede zera o x).
 func correr_no_ar() -> void:
-	velocity.x = direcao_olhar * _velocidade_no_ar
+	_saltador.correr_no_ar(float(direcao_olhar))
 
 
 ## False na beira: o próximo passo não tem chão. Empurrão ainda pode derrubar.
@@ -487,7 +465,7 @@ func atirar() -> void:
 		return
 	if _flechas > 0:
 		_flechas -= 1
-	var flecha: FlechaGoblin = CENA_FLECHA.instantiate()
+	var flecha: Flecha = CENA_FLECHA.instantiate()
 	add_child(flecha)
 	var mao := global_position + Vector2(direcao_olhar * meia_largura_corpo, -altura_mao)
 	var destino := alvo.global_position + Vector2(0.0, -altura_alvo)

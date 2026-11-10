@@ -32,6 +32,8 @@ const CAMADA_MUNDO := 1
 @export var tipos_permitidos: Array[StringName] = []
 ## Chefe da fase (id do tipo, ex.: "ankheg"; vazio = sem chefe). Nasce no marcador "Chefe" e entra na cota da porta.
 @export var chefe: StringName = &""
+## Tipos que surgem perto do chefe quando ele percebe o herói (só pra parecer que ele os invocou; não contam na cota da porta).
+@export var acompanhantes_do_chefe: Array[StringName] = []
 ## A fase é ao ar livre de dia: quem tem Sensibilidade à Luz Solar (Kobold) ataca com desvantagem.
 @export var luz_do_sol: bool = false
 ## Onde fica a banca do lojista em relação ao ponto de partida (px): à vista, em chão firme e longe do baú (a 70 px do

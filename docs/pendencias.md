@@ -113,6 +113,8 @@ Fatias sugeridas: (1) ouro e drops + regra do Carisma; (2) armas mágicas +1/+2/
 | 6 Labirinto | Ruínas | Hobgoblin E, Bugbear E, Gnoll N, Scout N | Minotauro (feito) |
 | 7 Mina | Subterrâneo | Bugbear E, Gnoll N, Tough N, Cultist N | |
 | 8 Caverna úmida | Subterrâneo | Gnoll N, Tough N, Priest Acolyte N, Skeleton N, Bandit Captain N | |
-| 9 Cripta | Subterrâneo | Cultist N, Priest Acolyte N, Skeleton N, Zombie N | Wight |
+| 9 Cripta | Subterrâneo | Cultist N, Priest Acolyte N, Skeleton N, Zombie N | Wight (feito) |
 | 10 Covil | Covil | Bugbear E, Gnoll N, Tough N, Bandit Captain N, Skeleton N | Ettin |
 Novos (11): Bullywug, Bandit, Guard, Scout, Gnoll, Tough, Cultist, Priest Acolyte, Skeleton, Zombie, Bandit Captain. Criar aos poucos, por receita 1, com a ficha conferida no Códice.
+- **(Feito: Wight, chefe da cripta, 2026-11-09; saldo do SpriteCook: 52.)** Faltam: **Skeleton e Zumbi** (hoje os acompanhantes são 2 Goblin Minion), imunidades na ficha (veneno), validar a sensação (dano do arco, Drenar Vida, tamanho da arte) e o Minotauro `andar` (~20 créditos). Próximo chefe: Ettin (fase 10).
+- **(Feito: fases 7 Mina e 8 Caverna Úmida, 2026-11-09.)** Geradas por `tools/gerar_fase_teste.gd`; a Cripta do Wight virou a fase 9. Ainda usam os minions que já existem (Bugbear, Hobgoblin, Warrior, Gray Ooze): faltam Gnoll, Tough, Cultist, Priest Acolyte, Skeleton, Zombie e Bandit Captain (recolor, sem crédito), e a arte de chão própria do Subterrâneo (hoje reaproveita os temas de pedra e terra). Falta validar a sensação de cada fase no jogo.

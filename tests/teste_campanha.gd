@@ -1,11 +1,11 @@
 extends TesteBase
-## Campanha: as cinco fases têm porta, pontos de armadilha de sobra e a cota certa; a porta
+## Campanha: as nove fases têm porta, pontos de armadilha de sobra e a cota certa; a porta
 ## barra enquanto a cota está viva e abre quando morre; a última fase mostra a vitória e
 ## "Jogar de novo" volta à primeira. godot --headless --debug --path . --script res://tests/teste_campanha.gd
 
 const CENAS_FASE: Array[String] = [
 	"res://levels/fase_1.tscn", "res://levels/fase_2.tscn", "res://levels/fase_3.tscn",
-	"res://levels/fase_4.tscn", "res://levels/fase_5.tscn", "res://levels/fase_6.tscn",
+	"res://levels/fase_4.tscn", "res://levels/fase_5.tscn", "res://levels/fase_6.tscn", "res://levels/fase_7.tscn", "res://levels/fase_8.tscn", "res://levels/fase_9.tscn",
 ]
 const SEMENTE := 7
 const VIDA_DE_TESTE := 999
@@ -13,7 +13,7 @@ const DANO_QUE_MATA := 999
 ## Quadros para uma morte (a animação do goblin dura ~1,9 s) e para a porta reagir.
 const QUADROS_MORTE := 300
 const QUADROS_CURTOS := 20
-const ULTIMA := 5
+const ULTIMA := 8
 const ALTURA_LADRILHO := 32.0
 const ATLAS_PLATAFORMA := 2
 ## Maior buraco (ladrilhos) que dá para atravessar pulando, e colunas ao lado de uma plataforma onde se pode subir.

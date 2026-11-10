@@ -36,6 +36,7 @@ var _tempo_desde_ataque: float = INF
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 ## Quanto ainda falta do empurrão (px, com sinal).
 var _empurrao_restante: float = 0.0
+var _saltador: SaltadorDeMonstro
 var _posicao_sprite: Vector2
 ## Escala do sprite na cena (a arte do Ooze é ampliada 2x): Caído achata a partir dela.
 var _escala_sprite: Vector2
@@ -55,9 +56,12 @@ var _escala_sprite: Vector2
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
+	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
 	_vida.configurar(criatura.vida_maxima(_rng))
 	_defesa.classe_armadura = criatura.classe_armadura
 	_defesa.resistencias = criatura.resistencias
+	_defesa.imunidades = criatura.imunidades_dano
+	_condicoes.imunidades = criatura.imunidades_condicoes
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
 	_dissolver.terminou.connect(terminar_de_morrer)
@@ -70,6 +74,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
+	_saltador.passar_tempo(delta)
 	if not is_on_floor():
 		velocity.y += _gravidade * delta
 	_maquina.processar_fisica(delta)
@@ -127,6 +132,22 @@ func andar_para_alvo() -> void:
 
 func parar() -> void:
 	velocity.x = 0.0
+
+
+## Diante de parede, degrau, vão ou queda que vale transpor, planeja o salto (regra em `SaltoDnd`; plano vazio se não há).
+func planejar_salto() -> SaltoDnd.Plano:
+	virar_para_alvo()
+	var direcao := float(direcao_olhar)
+	var bloqueado := is_on_wall() or not _tem_chao_na(direcao)
+	return _saltador.planejar(alvo, direcao, bloqueado, meia_largura_corpo + DISTANCIA_BEIRA)
+
+
+func iniciar_salto(plano: SaltoDnd.Plano) -> void:
+	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes), meia_largura_corpo)
+
+
+func correr_no_ar() -> void:
+	_saltador.correr_no_ar(float(direcao_olhar))
 
 
 ## False na beira: o próximo passo não tem chão. Empurrão ainda pode derrubar.

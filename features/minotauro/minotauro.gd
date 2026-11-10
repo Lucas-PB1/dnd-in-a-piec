@@ -60,6 +60,7 @@ var _tempo_recarga: float = 0.0
 var _chifrada_pronta: bool = true
 var _chifrada_acertou: bool = false
 var _empurrao_restante: float = 0.0
+var _saltador: SaltadorDeMonstro
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _dissolver: DissolverComponent = $Dissolver
@@ -79,6 +80,7 @@ var _empurrao_restante: float = 0.0
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
+	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
 	_vida.configurar(criatura.vida_maxima(_rng))
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	_defesa.classe_armadura = criatura.classe_armadura
@@ -94,6 +96,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
+	_saltador.passar_tempo(delta)
 	_recarregar_chifrada(delta)
 	if not is_on_floor():
 		velocity.y += _gravidade * delta
@@ -174,7 +177,25 @@ func parar() -> void:
 	velocity.x = 0.0
 
 
+## Diante de parede, degrau, vão ou queda que vale transpor, planeja o salto (regra em `SaltoDnd`; plano vazio se não há).
+func planejar_salto() -> SaltoDnd.Plano:
+	virar_para_alvo()
+	var direcao := float(direcao_olhar)
+	var bloqueado := is_on_wall() or not _tem_chao_na(direcao)
+	return _saltador.planejar(alvo, direcao, bloqueado, meia_largura_corpo + DISTANCIA_BEIRA)
+
+
+func iniciar_salto(plano: SaltoDnd.Plano) -> void:
+	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes), meia_largura_corpo)
+
+
+func correr_no_ar() -> void:
+	_saltador.correr_no_ar(float(direcao_olhar))
+
+
 func tocar(animacao: StringName) -> void:
+	if not _sprite.sprite_frames.has_animation(animacao):
+		animacao = &"parado"  # sem a animação (o Minotauro ainda não tem `andar`), fica na pose parada
 	if _sprite.animation == animacao and _sprite.is_playing():
 		return
 	_sprite.animation = animacao

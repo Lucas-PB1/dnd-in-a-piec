@@ -59,3 +59,7 @@ e `tests/teste_combate_dnd.gd`.
 
 ## Herói derrubado (Chifrada do Minotauro)
 - O efeito `Derrubada` (`EfeitosDeTalento.Derrubada`) deixa um alvo com `Condicoes` **Caído** (meia rodada). O herói não tem `Condicoes`: `Defesa.derrubado` avisa o dono e o `Jogador` troca para o estado **`Caido`**: é lançado para longe (1,4x o recuo de um golpe comum), fica deitado (sprite girado) sem controle por meia rodada, levanta em 0,3 s e volta a andar ou cair. Dano e invencibilidade são os de um golpe comum.
+
+## Máximo de PV drenado (Drenar Vida do Wight)
+- `HealthComponent.reduzir_maximo(q)` corta o máximo (mínimo 1) e a vida atual; `maximo_drenado` guarda o total. Subir de nível respeita o drenado; `restaurar_maximo()` devolve tudo e é chamado no `descansar_longo` do herói. O `DefesaComponent` aplica quando o golpe tem o efeito `DrenarVida` e o alvo falhou na salvaguarda.
+- Novo tipo de dano: **necrótico** (`TiposDano.NECROTICO`).

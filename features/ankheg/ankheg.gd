@@ -31,12 +31,6 @@ const FORCA_ABALO_POUSO := 8.0
 const DURACAO_ABALO := 0.35
 ## Escavação só onde há terra: passo da checagem do chão no caminho (px).
 const PASSO_DO_CAMINHO := 32.0
-## Salto por obstáculo (como os goblins): passo da sondagem do chão (px), folga acima do degrau (px), espera entre saltos (s)
-## e quanto o alvo precisa estar abaixo dos pés (px) para valer descer.
-const PASSO_SONDA := 8.0
-const FOLGA_TOPO_SALTO := 10.0
-const INTERVALO_SALTO := 0.4
-const DESNIVEL_ALVO_PX := 24.0
 ## Quanto o monte de terra cresce (fração a mais) enquanto o aviso enche.
 const CRESCIMENTO_DO_MONTE := 0.8
 ## Jato do Borrifo: altura do respingo no fim da linha (px).
@@ -78,8 +72,7 @@ var _escondido: bool = false
 var _camada_corpo: int = 0
 var _camada_hurtbox: int = 0
 var _empurrao_restante: float = 0.0
-var _tempo_desde_salto: float = INF
-var _velocidade_no_ar: float = 0.0
+var _saltador: SaltadorDeMonstro
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _sombra: Polygon2D = $Sombra
@@ -104,6 +97,7 @@ var _velocidade_no_ar: float = 0.0
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
+	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
 	_vida.configurar(criatura.vida_maxima(_rng))
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	_defesa.classe_armadura = criatura.classe_armadura
@@ -120,7 +114,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
 	_tempo_desde_cavar += delta
-	_tempo_desde_salto += delta
+	_saltador.passar_tempo(delta)
 	_recarregar_borrifo(delta)
 	if not _escondido and not is_on_floor():
 		velocity.y += _gravidade * delta
@@ -196,33 +190,17 @@ func planejar_salto() -> SaltoDnd.Plano:
 	virar_para_alvo()
 	var direcao := float(direcao_olhar)
 	var bloqueado := is_on_wall() or not _tem_chao_na(direcao)
-	if alvo == null or not is_on_floor() or not bloqueado or _tempo_desde_salto < INTERVALO_SALTO:
-		return SaltoDnd.Plano.new()
-	var forca := criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int
-	var altura_max := SaltoDnd.altura_px(forca)
-	var distancia_max := SaltoDnd.distancia_px(forca)
-	var quantidade := ceili(distancia_max / PASSO_SONDA) + 1
-	var perfil := SensorDeTerreno.perfil(get_world_2d().direct_space_state, global_position, direcao, DISTANCIA_BEIRA,
-		PASSO_SONDA, quantidade, altura_max, SaltoDnd.queda_segura_px(), MASCARA_MUNDO)
-	var alvo_embaixo := alvo.global_position.y - global_position.y >= DESNIVEL_ALVO_PX
-	return SaltoDnd.planejar(perfil, PASSO_SONDA, DISTANCIA_BEIRA, altura_max, distancia_max, alvo_embaixo)
+	return _saltador.planejar(alvo, direcao, bloqueado, DISTANCIA_BEIRA)
 
 
 ## Dá o impulso do plano: corre na velocidade da ficha e sobe o bastante para o degrau ou para cobrir o vão.
 func iniciar_salto(plano: SaltoDnd.Plano) -> void:
-	_tempo_desde_salto = 0.0
-	var velocidade := EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes)
-	var subida := sqrt(2.0 * _gravidade * (maxf(plano.desnivel_px, 0.0) + FOLGA_TOPO_SALTO)) if plano.tipo != SaltoDnd.Tipo.DESCER else 0.0
-	if plano.tipo == SaltoDnd.Tipo.VAO and velocidade > 0.0:
-		var tempo_no_ar := (plano.distancia_px + meia_largura_corpo) / velocidade
-		subida = maxf(subida, _gravidade * tempo_no_ar / 2.0)
-	_velocidade_no_ar = velocidade
-	velocity = Vector2(direcao_olhar * velocidade, -subida)
+	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes), meia_largura_corpo)
 
 
 ## No ar do salto: mantém a corrida (uma batida na parede zera o x).
 func correr_no_ar() -> void:
-	velocity.x = direcao_olhar * _velocidade_no_ar
+	_saltador.correr_no_ar(float(direcao_olhar))
 
 
 ## True se há terra para atravessar por baixo até `x`: chão em todos os pontos do caminho (degrau e paredão são terra, vão não).

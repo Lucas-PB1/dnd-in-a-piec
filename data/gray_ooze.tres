@@ -27,6 +27,7 @@ percepcao_pes = 60.0
 resistencias = Array[StringName]([&"acido", &"frio", &"fogo"])
 corrosao_por_toque = 1
 corrosao_limite = 5
+imunidades_condicoes = Array[StringName]([&"caido", &"agarrado", &"imobilizado"])
 ataque_nome = "Pseudópode"
 ataque_bonus = 3
 ataque_dano = "2d8+1"

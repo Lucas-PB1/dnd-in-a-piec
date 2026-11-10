@@ -18,6 +18,7 @@
 [ext_resource type="Script" path="res://features/minotauro/estados/estado_minotauro_investindo.gd" id="16_investindo"]
 [ext_resource type="Script" path="res://features/minotauro/estados/estado_minotauro_caido.gd" id="17_caido"]
 [ext_resource type="Script" path="res://features/minotauro/estados/estado_minotauro_morrendo.gd" id="18_morrendo"]
+[ext_resource type="Script" path="res://features/minotauro/estados/estado_minotauro_pulando.gd" id="19_pulando"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
 size = Vector2(56, 108)
@@ -132,6 +133,9 @@ script = ExtResource("17_caido")
 
 [node name="Morrendo" type="Node" parent="MaquinaEstados"]
 script = ExtResource("18_morrendo")
+
+[node name="Pulando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("19_pulando")
 
 [node name="Dissolver" type="Node2D" parent="." node_paths=PackedStringArray("sprite", "sombra")]
 script = ExtResource("4_dissolver")

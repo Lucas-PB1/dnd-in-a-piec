@@ -26,6 +26,7 @@ const EFEITO_INVESTIDA := &"investida"
 const EFEITO_VENENO := &"veneno"
 const EFEITO_AGARRAR := &"agarrar"
 const EFEITO_DERRUBADA := &"derrubada"
+const EFEITO_DRENAR_VIDA := &"drenar_vida"
 const TRESPASSAR := &"trespassar"   # Cleave
 const RASPAO := &"raspao"           # Graze
 const CORTE_DUPLO := &"corte_duplo" # Nick

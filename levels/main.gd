@@ -17,6 +17,7 @@ const CENA_BUGBEAR := preload("res://features/goblin/bugbear_guerreiro.tscn")
 const CENA_KOBOLD := preload("res://features/goblin/kobold_guerreiro.tscn")
 const CENA_ANKHEG := preload("res://features/ankheg/ankheg.tscn")
 const CENA_MINOTAURO := preload("res://features/minotauro/minotauro.tscn")
+const CENA_WIGHT := preload("res://features/wight/wight.tscn")
 const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_1.tscn"),
 	preload("res://levels/fase_2.tscn"),
@@ -24,6 +25,9 @@ const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_4.tscn"),
 	preload("res://levels/fase_5.tscn"),
 	preload("res://levels/fase_6.tscn"),
+	preload("res://levels/fase_7.tscn"),
+	preload("res://levels/fase_8.tscn"),
+	preload("res://levels/fase_9.tscn"),
 ]
 ## Páginas do bestiário, na ordem da lista.
 const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
@@ -35,6 +39,7 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 	preload("res://data/bestiario/kobold_warrior.tres"),
 	preload("res://data/bestiario/ankheg.tres"),
 	preload("res://data/bestiario/minotauro.tres"),
+	preload("res://data/bestiario/wight.tres"),
 ]
 ## Talentos do livro (a tela de escolha do nível 4 lê daqui).
 const PASTA_TALENTOS := "res://data/talentos"
@@ -50,6 +55,7 @@ const TIPO_BUGBEAR := &"bugbear"
 const TIPO_KOBOLD := &"kobold"
 const TIPO_ANKHEG := &"ankheg"
 const TIPO_MINOTAURO := &"minotauro"
+const TIPO_WIGHT := &"wight"
 ## Cena de cada tipo que a fase pode sortear. Tipo novo = uma linha aqui (e o nome em `Fase.tipos_permitidos`).
 const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_OOZE: CENA_OOZE,
@@ -60,8 +66,11 @@ const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_KOBOLD: CENA_KOBOLD,
 	TIPO_ANKHEG: CENA_ANKHEG,
 	TIPO_MINOTAURO: CENA_MINOTAURO,
+	TIPO_WIGHT: CENA_WIGHT,
 }
 const INIMIGOS_EXTRA_POR_NIVEL := 1
+## Distância (px) dos primeiros acompanhantes do chefe até ele.
+const DISTANCIA_ACOMPANHANTE_PX := 70.0
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
 const DISTANCIA_CRIATURA_PES := 15.0
 const AVISO_PORTA := "A porta não abre"
@@ -173,7 +182,7 @@ func _ready() -> void:
 	_comandos.opcoes_toque_mudaram.connect(_atualizar_controles_toque)
 	_comandos.editar_toque_pedido.connect(_editar_toque)
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
-	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior", "Ankheg", "Minotauro"]), _cenas_criaturas())
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior", "Ankheg", "Minotauro", "Wight"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_atualizar_botoes_toque()
 	_ligar_porta()
@@ -400,22 +409,53 @@ func _ligar_abalo(monstro: Node) -> void:
 
 
 func _nascer_da_cota(tipo: StringName, lugar: Vector2) -> Node2D:
-	var monstro: Node2D = _cena_do_tipo(tipo).instantiate()
-	monstro.add_to_group(GRUPO_MONSTROS)
-	add_child(monstro)
-	monstro.global_position = lugar
+	var monstro := _instanciar_monstro(tipo, lugar)
 	var id := monstro.get_instance_id()
 	_ids_da_cota.append(id)
 	var criatura := monstro.get("criatura") as CriaturaRPG
 	var experiencia := criatura.experiencia if criatura else 0
 	var ouro := criatura.ouro if criatura else 0
 	_ligar_morte_da_cota(monstro, id, experiencia, ouro)
+	return monstro
+
+
+## Cria o monstro do `tipo` no `lugar`, no grupo dos monstros, já de olho no herói.
+func _instanciar_monstro(tipo: StringName, lugar: Vector2) -> Node2D:
+	var monstro: Node2D = _cena_do_tipo(tipo).instantiate()
+	monstro.add_to_group(GRUPO_MONSTROS)
+	add_child(monstro)
+	monstro.global_position = lugar
 	if monstro.has_method(&"definir_alvo"):
 		monstro.call(&"definir_alvo", _jogador)
 	_ligar_abalo(monstro)
 	_passar_percepcao(monstro)
 	_passar_luz_do_sol(monstro)
 	return monstro
+
+
+## Os acompanhantes do chefe surgem perto dele quando ele desperta (só cena: não contam na cota nem na missão, mas dão XP e
+## ouro). Alternam lados, cada par um pouco mais longe.
+func _chamar_acompanhantes(chefe: Node2D) -> void:
+	if not is_instance_valid(chefe):
+		return
+	for i in _fase.acompanhantes_do_chefe.size():
+		var lado := -1.0 if i % 2 == 0 else 1.0
+		var lugar := chefe.global_position + Vector2(lado * DISTANCIA_ACOMPANHANTE_PX * (1 + floori(i / 2.0)), 0.0)
+		_nascer_acompanhante(_fase.acompanhantes_do_chefe[i], lugar)
+
+
+func _nascer_acompanhante(tipo: StringName, lugar: Vector2) -> void:
+	var monstro := _instanciar_monstro(tipo, lugar)
+	_registrar_no_bestiario(monstro)
+	var criatura := monstro.get("criatura") as CriaturaRPG
+	var experiencia := criatura.experiencia if criatura else 0
+	var ouro := criatura.ouro if criatura else 0
+	monstro.connect(&"morreu", _ao_morrer_acompanhante.bind(experiencia, ouro))
+
+
+func _ao_morrer_acompanhante(experiencia: int, ouro: int) -> void:
+	_jogador.ganhar_experiencia(experiencia)
+	_soltar_saque(ouro)
 
 
 ## A fase de chefe: o chefe nasce no marcador, conta na cota (a porta só abre quando ele cai) e mostra a barra de vida.
@@ -430,6 +470,8 @@ func _nascer_chefe() -> String:
 	if chefe.has_signal(&"vida_mudou"):
 		chefe.connect(&"vida_mudou", _hud.mostrar_chefe.bind(nome))
 		chefe.connect(&"morreu", _hud.esconder_chefe)
+		if chefe.has_signal(&"despertou"):
+			chefe.connect(&"despertou", _chamar_acompanhantes.bind(chefe))
 		_hud.mostrar_chefe(chefe.call(&"vida_atual"), chefe.call(&"vida_maxima"), nome)
 	return nome
 
@@ -610,7 +652,7 @@ func _passar_luz_do_sol(monstro: Node) -> void:
 
 ## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
 func _cenas_criaturas() -> Array[PackedScene]:
-	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD, CENA_ANKHEG, CENA_MINOTAURO]
+	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD, CENA_ANKHEG, CENA_MINOTAURO, CENA_WIGHT]
 	return cenas
 
 

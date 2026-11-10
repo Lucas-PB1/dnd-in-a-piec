@@ -1,0 +1,117 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://features/wight/wight.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/wight.tres" id="2_criatura"]
+[ext_resource type="SpriteFrames" path="res://features/wight/sprites/wight_frames.tres" id="3_frames"]
+[ext_resource type="Script" path="res://core/componentes/dissolver_component.gd" id="4_dissolver"]
+[ext_resource type="Script" path="res://core/componentes/health_component.gd" id="5_vida"]
+[ext_resource type="Script" path="res://core/componentes/hurtbox_component.gd" id="6_hurtbox"]
+[ext_resource type="Script" path="res://core/componentes/defesa_component.gd" id="7_defesa"]
+[ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="8_texto"]
+[ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="9_hitbox"]
+[ext_resource type="Script" path="res://core/componentes/condicoes_component.gd" id="10_condicoes"]
+[ext_resource type="Texture2D" path="res://assets/efeitos/condicoes.png" id="11_icones"]
+[ext_resource type="Script" path="res://core/estados/maquina_estados.gd" id="12_maquina"]
+[ext_resource type="Script" path="res://features/wight/estados/estado_wight_parado.gd" id="13_parado"]
+[ext_resource type="Script" path="res://features/wight/estados/estado_wight_perseguindo.gd" id="14_perseguindo"]
+[ext_resource type="Script" path="res://features/wight/estados/estado_wight_atacando.gd" id="15_atacando"]
+[ext_resource type="Script" path="res://features/wight/estados/estado_wight_atirando.gd" id="16_atirando"]
+[ext_resource type="Script" path="res://features/wight/estados/estado_wight_caido.gd" id="17_caido"]
+[ext_resource type="Script" path="res://features/wight/estados/estado_wight_morrendo.gd" id="18_morrendo"]
+[ext_resource type="Script" path="res://features/wight/estados/estado_wight_pulando.gd" id="19_pulando"]
+
+[sub_resource type="RectangleShape2D" id="FormaCorpo"]
+size = Vector2(28, 70)
+
+[sub_resource type="RectangleShape2D" id="FormaAlvo"]
+size = Vector2(40, 76)
+
+[sub_resource type="RectangleShape2D" id="FormaGolpe"]
+resource_local_to_scene = true
+size = Vector2(54, 56)
+
+[node name="Wight" type="CharacterBody2D"]
+collision_layer = 16
+script = ExtResource("1_script")
+criatura = ExtResource("2_criatura")
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+position = Vector2(0, -35)
+shape = SubResource("FormaCorpo")
+
+[node name="Sombra" type="Polygon2D" parent="."]
+color = Color(0, 0, 0, 0.3)
+polygon = PackedVector2Array(26, 0, 22, 2, 13, 3.5, 0, 4, -13, 3.5, -22, 2, -26, 0, -22, -2, -13, -3.5, 0, -4, 13, -3.5, 22, -2)
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("3_frames")
+animation = &"parado"
+autoplay = "parado"
+offset = Vector2(0, -43)
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("5_vida")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("6_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -38)
+shape = SubResource("FormaAlvo")
+
+[node name="Defesa" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "vida", "condicoes")]
+script = ExtResource("7_defesa")
+hurtbox = NodePath("../Hurtbox")
+vida = NodePath("../Vida")
+condicoes = NodePath("../Condicoes")
+
+[node name="Texto" type="Node2D" parent="."]
+position = Vector2(0, -90)
+script = ExtResource("8_texto")
+
+[node name="Condicoes" type="Node2D" parent="."]
+position = Vector2(0, -80)
+script = ExtResource("10_condicoes")
+icones = ExtResource("11_icones")
+
+[node name="Golpe" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("9_hitbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Golpe"]
+position = Vector2(27, -28)
+shape = SubResource("FormaGolpe")
+
+[node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]
+script = ExtResource("12_maquina")
+estado_inicial = NodePath("Parado")
+
+[node name="Parado" type="Node" parent="MaquinaEstados"]
+script = ExtResource("13_parado")
+
+[node name="Perseguindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("14_perseguindo")
+
+[node name="Atacando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("15_atacando")
+
+[node name="Atirando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("16_atirando")
+
+[node name="Caido" type="Node" parent="MaquinaEstados"]
+script = ExtResource("17_caido")
+
+[node name="Morrendo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("18_morrendo")
+
+[node name="Pulando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("19_pulando")
+
+[node name="Dissolver" type="Node2D" parent="." node_paths=PackedStringArray("sprite", "sombra")]
+script = ExtResource("4_dissolver")
+sprite = NodePath("../Sprite")
+sombra = NodePath("../Sombra")

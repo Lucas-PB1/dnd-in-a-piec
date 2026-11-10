@@ -564,6 +564,7 @@ func ganhar_item_do_artesao() -> void:
 func descansar_longo() -> void:
 	_apagar_surto()
 	_tempo_desde_acao_bonus = INF
+	_vida.restaurar_maximo()
 	_vida.curar_tudo()
 	_repor_folego()
 	_repor_sorte()

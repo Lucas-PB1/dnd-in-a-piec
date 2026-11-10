@@ -202,3 +202,11 @@ class VenenoPotente extends EfeitoDeGolpe:
 
 	func dano_no_alvo(_golpe: Golpe, _resultado: Combate.Resultado, alvo: CondicoesComponent) -> int:
 		return alvo.rolar_veneno(Dado.new(Ficha.DADOS_VENENO_POTENTE, Ficha.FACES_VENENO_POTENTE), cd)
+
+
+## Drenar Vida (Wight): marca o golpe de salvaguarda cujo dano, se o alvo falhar, também reduz o máximo de PV dele
+## (a `DefesaComponent` aplica; volta no descanso longo).
+class DrenarVida extends EfeitoDeGolpe:
+	func _init() -> void:
+		id = Proficiencias.EFEITO_DRENAR_VIDA
+		por_rodada = false

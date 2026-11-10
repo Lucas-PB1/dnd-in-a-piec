@@ -31,7 +31,7 @@ func _correr_ou_saltar() -> void:
 		trocar_para.emit(&"Pulando")
 		return
 	goblin.andar_para_alvo()
-	goblin.tocar(&"correr")
+	goblin.tocar(&"correr" if not is_zero_approx(goblin.velocity.x) else &"parado")  # na beira de um vão grande ele só espera
 
 
 func _esperar_vez(proximo: StringName) -> void:

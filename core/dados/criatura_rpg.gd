@@ -27,6 +27,10 @@ extends Resource
 @export var percepcao_pes: float = 60.0
 ## Tipos de dano a que resiste (metade do dano). Gray Ooze: ácido, frio e fogo.
 @export var resistencias: Array[StringName] = []
+## Tipos de dano a que é imune (Wight: veneno).
+@export var imunidades_dano: Array[StringName] = []
+## Condições a que é imune (Gray Ooze: caido, agarrado, imobilizado; Wight: envenenado). Ids de `CondicoesComponent`.
+@export var imunidades_condicoes: Array[StringName] = []
 
 @export_group("Forma Corrosiva")
 ## Penalidade no ataque que uma arma não mágica leva cada vez que causa dano nesta criatura.
@@ -122,6 +126,15 @@ extends Resource
 ## Recarga X-6 do livro (Chifrada: 5). 0 = sem recarga.
 @export var chifrada_recarga: int = 5
 
+@export_group("Drenar Vida")
+## Drenar Vida do Wight: salvaguarda contra a CD; falhou, o dano (necrótico) também reduz o máximo de PV do alvo. Dano vazio = não tem.
+@export var drenar_dano: String = ""
+@export var drenar_nome: String = "Drenar Vida"
+@export var drenar_cd: int = 0
+@export var drenar_atributo: StringName = Atributos.CONSTITUICAO
+@export var drenar_tipo_dano: StringName = TiposDano.NECROTICO
+@export var drenar_alcance_pes: float = 5.0
+
 @export_group("Escavação")
 ## Deslocamento de escavação (pés por rodada). 0 = não escava.
 @export var escavacao_pes: float = 0.0
@@ -175,6 +188,15 @@ func golpe_chifrada(com_carreira: bool) -> Golpe:
 		_anexar_dano_adicional(chifrada, chifrada_dano_com_carreira)
 		chifrada.efeitos.append(EfeitosDeTalento.Derrubada.new())
 	return chifrada
+
+
+## O Drenar Vida: salvaguarda em vez de ataque, e o dano também reduz o máximo de PV de quem falha.
+func golpe_drenar() -> Golpe:
+	var drenar := Golpe.new(drenar_nome, 0, _dado_ou_padrao(drenar_dano), drenar_tipo_dano)
+	drenar.cd_salvaguarda = drenar_cd
+	drenar.atributo_salvaguarda = drenar_atributo
+	drenar.efeitos.append(EfeitosDeTalento.DrenarVida.new())
+	return drenar
 
 
 ## O Borrifo Ácido: golpe de salvaguarda (sem rolagem de acerto).

@@ -109,7 +109,7 @@ func _testar_tiro() -> void:
 ## Empurra uma flecha no ar para conferir a desvantagem e a queda, sem esperar o voo inteiro.
 func _testar_alcance_da_flecha() -> void:
 	_colocar_heroi_a(LONGE)
-	var flecha: FlechaGoblin = null
+	var flecha: Flecha = null
 	for i in 90:
 		await physics_frame
 		if not _flechas_voando().is_empty():
@@ -194,10 +194,10 @@ func _testar_emboscada(cena: Main) -> void:
 		_goblin.queue_free()
 
 
-func _flechas_voando() -> Array[FlechaGoblin]:
-	var lista: Array[FlechaGoblin] = []
+func _flechas_voando() -> Array[Flecha]:
+	var lista: Array[Flecha] = []
 	for filho in _goblin.get_children():
-		if filho is FlechaGoblin and not filho.is_queued_for_deletion():
+		if filho is Flecha and not filho.is_queued_for_deletion():
 			lista.append(filho)
 	return lista
 

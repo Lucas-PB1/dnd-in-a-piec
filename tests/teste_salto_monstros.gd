@@ -20,6 +20,7 @@ func _rodar() -> void:
 	await _testar_vao()
 	await _testar_descida()
 	await _testar_muro_alto()
+	await _testar_degrau_dos_outros()
 	print("PASSOU: todos os testes do salto dos monstros" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
 	quit(1 if _falhas > 0 else 0)
 
@@ -126,3 +127,37 @@ func _testar_muro_alto() -> void:
 	_checar(not passou, "muro de 4 ladrilhos: o Hobgoblin não consegue e fica no pé dele")
 	m[0].queue_free()
 	await physics_frame
+
+
+## Os demais monstros também sobem um degrau de 1 ladrilho atrás do alvo (Gray Ooze, Minotauro e Wight; o Ankheg tem o seu em teste_ankheg).
+func _testar_degrau_dos_outros() -> void:
+	var cenas := {
+		"Gray Ooze": "res://features/gray_ooze/gray_ooze.tscn",
+		"Minotauro": "res://features/minotauro/minotauro.tscn", "Wight": "res://features/wight/wight.tscn",
+	}
+	for nome: String in cenas:
+		var mundo := Node2D.new()
+		root.add_child(mundo)
+		for bloco in [Vector3(0, 300, CHAO_Y), Vector3(300, 800, CHAO_Y - LADRILHO)]:
+			var corpo := StaticBody2D.new()
+			var forma := CollisionShape2D.new()
+			var retangulo := RectangleShape2D.new()
+			retangulo.size = Vector2(bloco.y - bloco.x, 400.0)
+			forma.shape = retangulo
+			corpo.add_child(forma)
+			corpo.position = Vector2((bloco.x + bloco.y) / 2.0, bloco.z + 200.0)
+			corpo.collision_layer = 1
+			mundo.add_child(corpo)
+		var alvo := Node2D.new()
+		mundo.add_child(alvo)
+		alvo.global_position = Vector2(560, CHAO_Y - LADRILHO)
+		var monstro: Node2D = load(cenas[nome]).instantiate()
+		mundo.add_child(monstro)
+		monstro.global_position = Vector2(200, CHAO_Y)
+		monstro.call(&"definir_alvo", alvo)
+		if "chance_atirar" in monstro:
+			monstro.chance_atirar = 0.0  # o Wight atiraria de longe em vez de subir
+		var passou := await _esperar_ate(func() -> bool: return monstro.global_position.x > 340.0)
+		_checar(passou and absf(monstro.global_position.y - (CHAO_Y - LADRILHO)) < 4.0, "%s sobe o degrau de 1 ladrilho atrás do alvo" % nome)
+		mundo.queue_free()
+		await physics_frame
