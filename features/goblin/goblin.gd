@@ -79,6 +79,8 @@ var _tatica: TaticaDeCriatura
 var _furtividade: FurtividadeDeCriatura
 ## Fuga Ágil (Desengajar depois do melee).
 var _fuga_agil: FugaAgilDeCriatura
+## Táticas de Matilha da ficha.
+var _matilha: MatilhaDeCriatura
 ## Invisible no mundo (sprite/colisão); a regra da rolagem fica em `_furtividade`.
 var _escondido: bool = false
 var _camada_corpo: int = 0
@@ -111,6 +113,7 @@ func _ready() -> void:
 	_tatica = TaticaDeCriatura.new(criatura)
 	_furtividade = FurtividadeDeCriatura.new(criatura)
 	_fuga_agil = FugaAgilDeCriatura.new(criatura, recuo_fuga_pes)
+	_matilha = MatilhaDeCriatura.new(criatura)
 	_sprite.modulate = cor_corpo
 	_preparar_condicoes()
 	_preparar_golpe()
@@ -523,33 +526,9 @@ func _golpe_do_arremesso() -> Golpe:
 func _com_autor(golpe: Golpe) -> Golpe:
 	golpe.autor_id = get_instance_id()
 	golpe.desvantagem = _condicoes.consumir_desvantagem() or _disparo.desvantagem_solar()
-	if _furtividade.consumir_emboscada() or _tem_matilha_com_o_alvo():
+	if _furtividade.consumir_emboscada() or _matilha.vale(alvo, get_tree(), self, GRUPO_ALIADOS):
 		golpe.vantagem = true
 	return golpe
-
-
-## Táticas de Matilha: um aliado em pé (nem Caído nem morto) a 5 pés do alvo.
-func _tem_matilha_com_o_alvo() -> bool:
-	if not criatura.taticas_de_matilha or alvo == null:
-		return false
-	return TaticasDeMatilha.vale(alvo.global_position, _posicoes_dos_aliados())
-
-
-## Onde estão os aliados em pé (nem Caídos nem mortos) do grupo de monstros (Matilha ainda usa só Goblin).
-func _posicoes_dos_aliados() -> Array[Vector2]:
-	var posicoes: Array[Vector2] = []
-	for aliado in _aliados_goblin_em_pe():
-		posicoes.append(aliado.global_position)
-	return posicoes
-
-
-func _aliados_goblin_em_pe() -> Array[Goblin]:
-	var aliados: Array[Goblin] = []
-	for no in TaticaDeCriatura.aliados_em_pe(get_tree(), self, GRUPO_ALIADOS):
-		var aliado := no as Goblin
-		if aliado != null:
-			aliados.append(aliado)
-	return aliados
 
 
 ## Um aliado já segura o herói de perto do MEU lado e eu ainda não o alcancei: vale flanquear.

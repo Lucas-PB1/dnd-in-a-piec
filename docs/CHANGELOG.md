@@ -170,3 +170,7 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 ## Fatia: capacidade Fuga Ágil (`FugaAgilDeCriatura`)
 - `FugaAgilDeCriatura` em `core/regras/criaturas/`: traço da ficha, velocidade de Disparada e duração do recuo. Goblin usa; estado `Desengajando` e `recuar` ficam na feature.
 - Backlog `capacidades-fuga-agil` fechado. Teste `tests/criaturas/teste_fuga_agil_de_criatura.gd`.
+
+## Fatia: capacidade Táticas de Matilha (`MatilhaDeCriatura`)
+- `MatilhaDeCriatura` em `core/regras/criaturas/`: flag da ficha + aliados do grupo `monstros` (não só Goblin). Goblin/Hobgoblin/Kobold usam.
+- Backlog `capacidades-matilha` fechado. Teste `tests/criaturas/teste_matilha_de_criatura.gd`.
