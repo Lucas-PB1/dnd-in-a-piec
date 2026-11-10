@@ -16,32 +16,25 @@ Este arquivo guia qualquer IA (Claude, Codex, Cursor etc.) que trabalhe neste pr
 - Toda resposta termina com: (1) o que foi feito, (2) como testar (passos exatos), (3) o que se sugere em seguida.
 - Decisões: pergunte com **3 opções**, a recomendada primeiro.
 
-## Onde está cada coisa (leia o que servir para a tarefa)
+## Onde está cada coisa (Diátaxis — ver `docs/README.md`)
 | Documento | Conteúdo |
 |---|---|
-| `docs/decisoes/base.md` | Motor, resolução, pixel art, fase, câmera, camadas de física, nome do jogo. |
-| `docs/decisoes/heroi.md` | Herói: estados, pulo, corrida, ataque, apanhar, Second Wind, arma na mão, escudo, armadura visível. |
-| `docs/decisoes/regras_dnd.md` | Regras de D&D no código: vida, dano, combate, vantagem, salvaguarda, escala, tipos de dano, proficiências, maestrias, condições, talentos. |
-| `docs/decisoes/armas_e_itens.md` | Itens, inventário, pacotes, baú, corrosão, armaduras, armas, golpes, arremesso, disparo. |
-| `docs/decisoes/criaturas.md` | Ficha de criatura, Gray Ooze, Goblin Minion, Goblin Warrior, monstros no jogo, arena. |
-| `docs/decisoes/interface.md` | Título, criação, HUD, inventário, comandos, ações de input, celular e controles de toque. |
-| `docs/decisoes/audio.md` | Música, efeitos sonoros, barramentos de volume e créditos do áudio. |
-| `docs/arquitetura.md` | Como as peças se ligam (camadas, cena principal, caminho de um golpe, entrada). |
-| `docs/receitas.md` | Passo a passo: criatura, arma, regra, estado, ação, tela, teste, print; armadilhas conhecidas. |
-| `docs/pendencias.md` | **O que falta**, com tamanho e prioridade. Escolha a próxima fatia daqui. |
-| `docs/historico.md` | O que já foi feito, fatia por fatia. |
-| `docs/artes_prontas.md` | Arte de terceiros: onde buscar, licença, como usar. |
-| `docs/plano_animacoes.md` | Todas as animações e efeitos que o jogo quer, por prioridade, com o custo em créditos do SpriteCook. |
-| `docs/spritecook/prompts.md` | Os 42 pedidos prontos do SpriteCook (gerado de `prompts.json`; conferidor em `tools/conferir_prompts_spritecook.ps1`). |
-| `docs/exportar_android.md` | Requisitos do SDK/JDK e comando para exportar o APK. |
-| `docs/talentos.md` | Talentos do livro anotados. |
+| `docs/adr/*.md` | **Explanation:** decisões por tema (base, herói, regras D&D, armas, criaturas, interface, áudio). |
+| `docs/how-to/receitas.md` | **How-to:** criatura, arma, regra, estado, ação, tela, teste, print; armadilhas. |
+| `docs/reference/arquitetura.md` | **Reference:** mapa do sistema (camadas, main, golpe, persistência). |
+| `docs/reference/artes_prontas.md` | Arte de terceiros (licença, como usar). |
+| `docs/reference/exportar_android.md` | SDK/JDK e comando do APK. |
+| `docs/reference/talentos.md` | Talentos/antecedentes: ligados vs em espera. |
+| `docs/backlog/` | **O que falta** (1 arquivo = 1 pendência + YAML). Fonte do `/proxima-fatia`. |
+| `docs/CHANGELOG.md` | O que já foi feito (append-only). |
+| `docs/spritecook/` | Prompts vivos do SpriteCook. |
 
 ## Decisões que valem para tudo
 | Decisão | Escolha |
 |---|---|
 | Motor | Godot 4.7.2, GDScript, GL Compatibility. |
 | Tela | 640x360, `viewport` + escala inteira + `aspect = expand`; filtro Nearest; ladrilho 32x32; herói ~73 px. |
-| Regras | D&D 5e **PHB 2024**, números do livro. Regras da casa só com ok do usuário (lista em `docs/decisoes/regras_dnd.md`). |
+| Regras | D&D 5e **PHB 2024**, números do livro. Regras da casa só com ok do usuário (lista em `docs/adr/regras_dnd.md`). |
 | Escala | 5 pés = 32 px; 1 rodada = 1,5 s; velocidade e ritmo de ataque vêm da ficha (`EscalaDnd`). |
 | Dados | Números em Resources (`data/`). Armas, armaduras e munição são **gerados**: edite a TABELA do gerador, não os `.tres`. |
 | Entrada | O código de jogo só lê ações do InputMap; teclado e toque apertam as mesmas ações. |
@@ -66,7 +59,7 @@ Regras de uso:
 
 ## Comandos e agentes
 - **Comandos** (`.claude/commands/`; no Cursor, `.cursor/commands/`, gerados pelo mesmo script):
-  `/testar` (roda tudo e resume), `/proxima-fatia` (3 opções a partir de `docs/pendencias.md`),
+  `/testar` (roda tudo e resume), `/proxima-fatia` (3 opções a partir de `docs/backlog/`),
   `/fechar-fatia` (checklist de fim de fatia), `/nova-criatura` (receita 1 com a ficha do livro).
 - **Agentes** (`.claude/agents/`): `testador` (roda os testes e devolve só o que falhou),
   `revisor-godot` (revisão só de leitura contra as skills).
@@ -113,7 +106,7 @@ assets/                  tiles/, armas/, armaduras/, efeitos/, shaders/; CREDITO
 tools/                   geradores (armas, armaduras, criaturas, fase, pose, mão), capturar_tela,
                          ferramentas_pixel, gerar_regras_cursor.ps1
 tests/                   teste_*.gd, rodar_testes.ps1
-docs/                    decisoes/, arquitetura, receitas, pendencias, historico, artes_prontas, talentos
+docs/                    README (Diátaxis), adr/, how-to/, reference/, backlog/, CHANGELOG.md, spritecook/
 .claude/                 skills/, commands/, agents/
 .cursor/                 rules/, commands/ (gerados do .claude e docs), mcp.json
 ```
@@ -127,9 +120,9 @@ docs/                    decisoes/, arquitetura, receitas, pendencias, historico
 - Nada de addons ou arquitetura complexa sem aprovação do usuário. Decisões grandes (combate, inimigos, save/load): proponha opções com prós e contras.
 
 ## Como trabalhar
-- Uma fatia pequena por vez, escolhida em `docs/pendencias.md`. Ao terminar: o que mudou, como testar, próxima fatia sugerida. Não começar a próxima sem "ok".
+- Uma fatia pequena por vez, escolhida em `docs/backlog/`. Ao terminar: o que mudou, como testar, próxima fatia sugerida. Não começar a próxima sem "ok".
 - Teste você mesmo (rodar headless, ler log, testes, prints). Pergunte ao usuário só o que é de sensação (pulo, corrida, câmera, visual), com perguntas específicas.
-- Ao fechar uma fatia (`/fechar-fatia`): testes passando, doc do tema atualizado, `docs/historico.md` e `docs/pendencias.md` atualizados, checagem das skills.
+- Ao fechar uma fatia (`/fechar-fatia`): testes passando, doc do tema atualizado, `docs/CHANGELOG.md` e `docs/backlog/` atualizados, checagem das skills.
 - Um commit por fatia concluída, mensagem clara em português, só com o ok do usuário.
 - **Nunca** apagar arquivos do usuário nem fazer force-push. Se der muito errado, voltar ao último commit.
 
@@ -155,13 +148,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tests\rodar_tes
 & $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/teste_jogador.gd
 ```
 Ferramentas de `tools/` rodam **sem `--debug`** (com erro, o `--debug` trava no depurador). Mais
-comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
+comandos (fase, ponto da mão, prints) e armadilhas em `docs/how-to/receitas.md`.
 
 ## Estado atual
-Últimas fatias (lista completa em `docs/historico.md`; o que falta em `docs/pendencias.md`):
-- Campanha de **10 fases** em 4 temas (Floresta, Ruínas, Subterrâneo, Covil): encontros sorteados, portas com cota, missões, ouro/drops, loja no início da fase e vitória na fase 10.
-- Chefes: Ankheg (3), Minotauro de Baphomet (6, com `andar` própria e blocos quebráveis), Wight (9, Skeleton/Zombie como acompanhantes), Quimera (10).
-- Minions: Goblin Minion/Warrior, Gray Ooze, Kobold, Hobgoblin, Bugbear, Skeleton, Zombie (variantes em `features/goblin/` por herança).
-- Guerreiro níveis **1–6**: XP, PV, Surto/Mente Tática (2), talento geral (4 e 6), Ataque Extra e Mudança Tática (5); criação com antecedente; 30 talentos escolhíveis ligados.
-- Celular: tela larga, controles de toque; APK em `builds/android/dnd_in_a_piece.apk` (falta validar no aparelho).
-- Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.
+Últimas fatias (lista completa em `docs/CHANGELOG.md`; o que falta em `docs/backlog/`):
+- Campanha de **10 fases** em 4 temas (Floresta, Ruínas, Subterrâneo, Covil): encontros, portas com cota, missões, ouro/drops, loja e vitória na fase 10 (Covil).
+- Chefes: Ankheg (3), Minotauro (6, blocos quebráveis), Wight (9, Skeleton/Zombie), Quimera (10). Lava do Covil ainda pendente.
+- Minions: Goblin Minion/Warrior, Gray Ooze, Kobold, Hobgoblin, Bugbear, Skeleton, Zombie (`features/goblin/` por herança).
+- Guerreiro **1–6**: Surto/Mente Tática (2), talentos gerais (4 e 6), Ataque Extra e Mudança Tática (5); criação com antecedente; 30 talentos ligados. **Subclasse (nível 3) ainda não.**
+- Save/load (`Salvamento` → `user://save.json`), Compêndio com antecedentes/talentos, toque com **8 slots**.
+- Celular: APK em `builds/android/dnd_in_a_piece.apk` (falta validar no aparelho).
+- Docs em **Diátaxis**: `docs/adr/`, `how-to/`, `reference/`, `backlog/` (1 pendência = 1 arquivo), `CHANGELOG.md`.

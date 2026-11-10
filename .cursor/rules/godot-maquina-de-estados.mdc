@@ -3,7 +3,7 @@ description: Máquina de estados para jogador e inimigos em Godot 4 (um estado p
 globs: **/estados/**
 alwaysApply: false
 ---
-<!-- Gerado de .claude/skills/godot-maquina-de-estados/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+<!-- Gerado de .claude/skills/godot-maquina-de-estados/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, nÃ£o este arquivo. -->
 
 # Máquina de estados
 

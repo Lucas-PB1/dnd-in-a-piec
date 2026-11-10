@@ -1,7 +1,7 @@
 extends SceneTree
 ## Gera os dados do Compêndio: os 16 antecedentes do livro (PHB 2024) em data/antecedentes/ e os
 ## 52 talentos (10 de origem, 42 gerais) em data/talentos/. Só documentação: nada disto mexe na
-## ficha ainda. As frases dos talentos vêm de docs/talentos.md; mudou lá, mude aqui.
+## ficha ainda. As frases dos talentos vêm de docs/reference/talentos.md; mudou lá, mude aqui.
 ##   godot --headless --path . --script res://tools/gerar_compendio.gd
 ##   godot --headless --path . --import
 
@@ -58,7 +58,7 @@ const TALENTOS := [
 	["sentinela", "Sentinela", G, "+1 em Força ou Destreza. Acertar um alvo que está se movendo o deixa preso por 1 s.", PLANEJADO, "O ataque ao sair do alcance espera essa regra."],
 	["mestre_arma_haste", "Mestre em Armas de Haste", G, "+1 em Força ou Destreza. Com Bordão, Lança ou arma Pesada com Alcance, o segundo ataque do combo é um golpe extra de 1d4 contundente com a outra ponta (ação bônus).", PLANEJADO, "O ataque ao entrar no alcance espera essa regra."],
 	["atleta", "Atleta", G, "+1 em Força ou Destreza. Deslocamento +5 pés, o herói não perde o controle ao levar um golpe e escala paredes: empurrando contra uma, sobe na velocidade de andar até o topo.", PLANEJADO, "Escalar espera o cenário."],
-	["agarrador", "Agarrador", G, "+1 em Força ou Destreza. O soco acertado agarra o alvo (uma vez por rodada): ele fica sem deslocamento, tenta escapar a cada rodada (CD 8 + Força + proficiência) e o herói o ataca com vantagem.", PLANEJADO, "Decidido com o usuário (ver docs/talentos.md)."],
+	["agarrador", "Agarrador", G, "+1 em Força ou Destreza. O soco acertado agarra o alvo (uma vez por rodada): ele fica sem deslocamento, tenta escapar a cada rodada (CD 8 + Força + proficiência) e o herói o ataca com vantagem.", PLANEJADO, "Decidido com o usuário (ver docs/reference/talentos.md)."],
 	["atirador_de_elite", "Atirador de Elite", G, "+1 em Destreza. O alcance longo e o inimigo a 5 pés deixam de dar desvantagem no tiro, e a flecha atravessa paredes, degraus e criaturas do cenário (cada criatura uma vez), parando só no chão.", PLANEJADO, "A arma à distância já dispara; cobertura fica de fora."],
 	["especialista_em_besta", "Especialista em Bestas", G, "+1 em Destreza. A besta não perde com inimigo colado e a Besta de Mão ganha o ataque extra.", PLANEJADO, "A arma à distância já dispara."],
 	["adepto_elemental", "Adepto Elemental", G, "Escolhe um tipo de dano mágico e ignora resistência a ele; o dado 1 vira 2.", ESPERA, "Espera a magia."],
@@ -70,14 +70,14 @@ const TALENTOS := [
 	["franco_atirador_de_magia", "Atirador Arcano", G, "Ataque mágico à distância ignora meia cobertura e soma o alcance.", ESPERA, "Espera a magia."],
 	["conjurador_de_guerra", "Conjurador de Guerra", G, "Conjurar no lugar de um ataque de oportunidade e segurar o foco com as mãos ocupadas.", ESPERA, "Espera a magia."],
 	["matador_de_magos", "Matador de Magos", G, "Quem conjura ao lado sofre desvantagem, e um acerto perto pode interromper a magia.", ESPERA, "Espera a magia."],
-	["especialista_em_pericia", "Especialista em Perícia", G, "+1 num atributo, proficiência numa perícia nova e Especialização numa perícia treinada (a proficiência conta em dobro).", PLANEJADO, "Decidido com o usuário (ver docs/talentos.md)."],
-	["ator", "Ator", G, "+1 de Carisma, vantagem para fingir ser outra pessoa e imitar voz.", ESPERA, "Decidido com o usuário: em espera (ver docs/talentos.md)."],
-	["mente_agucada", "Mente Aguçada", G, "+1 de Inteligência e um estudo que revela detalhes do lugar.", ESPERA, "Decidido com o usuário: em espera (ver docs/talentos.md)."],
-	["observador", "Observador", G, "+1 em Inteligência ou Sabedoria e uma perícia entre Intuição, Investigação e Percepção: proficiência ou, se já treina, Especialização.", PLANEJADO, "Decidido com o usuário (ver docs/talentos.md)."],
-	["furtivo", "Furtivo", G, "Vantagem em Furtividade com pouca luz; um tiro de cobertura não revela tanto.", ESPERA, "Decidido com o usuário: em espera (ver docs/talentos.md)."],
-	["cozinheiro", "Chef", G, "+1 de Constituição ou Sabedoria, comida que cura um pouco e petisco que dá vida temporária.", ESPERA, "Decidido com o usuário: em espera (ver docs/talentos.md)."],
+	["especialista_em_pericia", "Especialista em Perícia", G, "+1 num atributo, proficiência numa perícia nova e Especialização numa perícia treinada (a proficiência conta em dobro).", PLANEJADO, "Decidido com o usuário (ver docs/reference/talentos.md)."],
+	["ator", "Ator", G, "+1 de Carisma, vantagem para fingir ser outra pessoa e imitar voz.", ESPERA, "Decidido com o usuário: em espera (ver docs/reference/talentos.md)."],
+	["mente_agucada", "Mente Aguçada", G, "+1 de Inteligência e um estudo que revela detalhes do lugar.", ESPERA, "Decidido com o usuário: em espera (ver docs/reference/talentos.md)."],
+	["observador", "Observador", G, "+1 em Inteligência ou Sabedoria e uma perícia entre Intuição, Investigação e Percepção: proficiência ou, se já treina, Especialização.", PLANEJADO, "Decidido com o usuário (ver docs/reference/talentos.md)."],
+	["furtivo", "Furtivo", G, "Vantagem em Furtividade com pouca luz; um tiro de cobertura não revela tanto.", ESPERA, "Decidido com o usuário: em espera (ver docs/reference/talentos.md)."],
+	["cozinheiro", "Chef", G, "+1 de Constituição ou Sabedoria, comida que cura um pouco e petisco que dá vida temporária.", ESPERA, "Decidido com o usuário: em espera (ver docs/reference/talentos.md)."],
 	["duravel", "Durável", G, "+1 em Constituição. Um dado de vida por nível, que voltam a cada fase. Uma ação bônus (tecla H) gasta um e cura o valor rolado.", PLANEJADO, "Decidido: entra como talento individual; exige o sistema de dados de vida (um por nível)."],
-	["lider_inspirador", "Líder Inspirador", G, "Um discurso curto dá vida temporária aos aliados.", ESPERA, "Decidido com o usuário: em espera (ver docs/talentos.md)."],
+	["lider_inspirador", "Líder Inspirador", G, "Um discurso curto dá vida temporária aos aliados.", ESPERA, "Decidido com o usuário: em espera (ver docs/reference/talentos.md)."],
 	["envenenador", "Envenenador", G, "+1 em Destreza ou Inteligência. Duas doses de veneno por fase: uma ação bônus (tecla N) passa a dose na arma e o acerto força salvaguarda de Constituição; falhou, leva 2d8 de veneno e fica Envenenado (desvantagem nos ataques). Também usa o item Veneno Básico.", PLANEJADO, "Decidido: entra com o item Veneno Básico; exige o tipo veneno e a condição Envenenado."],
 	["combatente_montado", "Combatente Montado", G, "Protege a montaria e ganha vantagem contra quem é menor.", ESPERA, "Decidido: em espera até existirem montarias."],
 ]

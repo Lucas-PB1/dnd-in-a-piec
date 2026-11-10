@@ -3,11 +3,11 @@ description: Mapa do sistema - camadas (data, core, features, ui, levels), cena 
 globs:
 alwaysApply: false
 ---
-<!-- Escrita à mão: o mapa completo está em docs/arquitetura.md. -->
+<!-- Escrita à mão: o mapa completo está em docs/reference/arquitetura.md (Diátaxis reference). -->
 
 Leia o mapa antes de mudar algo que cruza sistemas:
 
-@docs/arquitetura.md
+@docs/reference/arquitetura.md
 
 Resumo que não pode esquecer:
 - `levels/main.gd` é a única peça que conhece todas as outras. Feature não importa feature; UI não conhece o herói (sinal "pedido" + `abrir(dados)`).

@@ -1,4 +1,4 @@
-﻿# Confere os pedidos do SpriteCook de docs/spritecook/prompts.json e gera docs/spritecook/prompts.md.
+# Confere os pedidos do SpriteCook de docs/spritecook/prompts.json e gera docs/spritecook/prompts.md.
 #   powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tools\conferir_prompts_spritecook.ps1
 # Confere, sem gastar crédito: estrutura, quadros (cada fase do texto cobre de 1 a N sem buracos),
 # frases obrigatórias, negativo, tamanho e o CUSTO de cada rodada pelas regras reais de preço.
@@ -98,7 +98,7 @@ foreach ($e in $efeitos) {
 	$porPrioridade[$prio] += $custoEfeito
 }
 
-# O que o plano (docs/plano_animacoes.md) espera.
+# O que o plano arquivado (docs/spritecook/) esperava.
 $esperado = @{ heroi_essencial = 48; goblin_minion = 114; goblin_warrior = 114; gray_ooze = 88; heroi_extras = 48 }
 foreach ($linha in $resumo) {
 	if ($esperado.ContainsKey($linha.Rodada) -and $esperado[$linha.Rodada] -ne $linha.Custo) {

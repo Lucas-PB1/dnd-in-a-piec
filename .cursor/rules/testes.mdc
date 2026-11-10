@@ -3,7 +3,7 @@ description: Como escrever e rodar os testes do projeto (scripts SceneTree em te
 globs: tests/**
 alwaysApply: false
 ---
-<!-- Escrita à mão. Detalhes em docs/receitas.md (seções 7 e 9). -->
+<!-- Escrita à mão. Detalhes em docs/how-to/receitas.md (seções 7 e 9). -->
 
 # Testes
 

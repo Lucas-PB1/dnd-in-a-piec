@@ -1,10 +1,10 @@
 ---
-description: Decisões de armas, armaduras, itens e inventário: tabelas geradas, golpe por arma, área de acerto, arremesso, disparo e força do tiro, corrosão, pacotes, baú.
+description: DecisÃµes de armas, armaduras, itens e inventÃ¡rio: tabelas geradas, golpe por arma, Ã¡rea de acerto, arremesso, disparo e forÃ§a do tiro, corrosÃ£o, pacotes, baÃº.
 globs: tools/gerar_armas.gd,tools/gerar_armaduras.gd,data/armas/**,data/armaduras/**,data/municoes/**,data/pacotes/**,core/dados/arma.gd,core/dados/armadura.gd,core/dados/item.gd,core/dados/municao.gd,core/regras/inventario.gd,core/regras/equipamento.gd,features/jogador/ataque_jogador.gd,features/arremesso/**,features/bau/**,ui/inventario/**,ui/bau/**
 alwaysApply: false
 ---
-<!-- Gerado de docs/decisoes/armas_e_itens.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+<!-- Gerado de docs/adr/armas_e_itens.md por tools/gerar_regras_cursor.ps1. Edite a fonte, nÃ£o este arquivo. -->
 
-Antes de mudar algo deste tema, siga as decisões já tomadas (e atualize o documento se uma decisão mudar):
+Antes de mudar algo deste tema, siga as decisÃµes jÃ¡ tomadas (e atualize o documento se uma decisÃ£o mudar):
 
-@docs/decisoes/armas_e_itens.md
+@docs/adr/armas_e_itens.md

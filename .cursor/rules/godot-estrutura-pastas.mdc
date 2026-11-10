@@ -3,7 +3,7 @@ description: Estrutura de pastas do jogo em Godot 4 (core/, features/, levels/, 
 globs: 
 alwaysApply: true
 ---
-<!-- Gerado de .claude/skills/godot-estrutura-pastas/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+<!-- Gerado de .claude/skills/godot-estrutura-pastas/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, nÃ£o este arquivo. -->
 
 # Estrutura de pastas
 

@@ -2,11 +2,11 @@
 
 Instruções para agentes de IA neste repositório (jogo original de ação e plataforma 2D lateral em Godot 4.7, GDScript).
 
-**A fonte da verdade é o [CLAUDE.md](CLAUDE.md).** Leia-o inteiro antes de qualquer mudança: visão, índice dos documentos, convenções, como rodar e testar. As decisões por tema ficam em `docs/decisoes/`; o que falta, em `docs/pendencias.md`.
+**A fonte da verdade é o [CLAUDE.md](CLAUDE.md).** Leia-o inteiro antes de qualquer mudança: visão, índice dos documentos, convenções, como rodar e testar. As decisões por tema ficam em `docs/adr/`; o que falta, em `docs/backlog/`.
 
 Comandos prontos (Claude: `.claude/commands/`; Cursor: `.cursor/commands/`): `/testar`, `/proxima-fatia`, `/fechar-fatia`, `/nova-criatura`.
 
-Guias: [docs/arquitetura.md](docs/arquitetura.md) (como as peças se ligam) e [docs/receitas.md](docs/receitas.md) (passo a passo das tarefas comuns e armadilhas).
+Guias: [docs/reference/arquitetura.md](docs/reference/arquitetura.md) (como as peças se ligam) e [docs/how-to/receitas.md](docs/how-to/receitas.md) (passo a passo das tarefas comuns e armadilhas).
 
 Resumo das regras que não podem ser quebradas:
 - Responda em português; termine com (1) o que foi feito, (2) como testar, (3) próxima sugestão.
@@ -16,5 +16,5 @@ Resumo das regras que não podem ser quebradas:
 - Rode o jogo headless e os testes de `tests/` antes de entregar; corrija erros e avisos.
 - Um commit por fatia, em português. Nunca apague arquivos do usuário nem faça force-push.
 - Sem addons ou arquitetura nova sem aprovação. SpriteCook gasta créditos: avise antes.
-- Arte de terceiros: siga `docs/artes_prontas.md`.
-- Se uma decisão mudar, atualize o doc do tema em `docs/decisoes/`; ao fechar a fatia, `docs/historico.md` e `docs/pendencias.md` (`/fechar-fatia`).
+- Arte de terceiros: siga `docs/reference/artes_prontas.md`.
+- Se uma decisão mudar, atualize o doc do tema em `docs/adr/`; ao fechar a fatia, `docs/CHANGELOG.md` e `docs/backlog/` (`/fechar-fatia`).

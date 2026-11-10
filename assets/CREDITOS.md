@@ -28,15 +28,15 @@
 Estatísticas do Gray Ooze: ficha de criatura do D&D 5e (Wizards of the Coast), usada como referência de regras.
 
 ## Hobgoblin Warrior (features/goblin/sprites/hobgoblin_*.png)
-Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
 ## Bugbear Warrior (features/goblin/sprites/bugbear_*.png)
-Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
 ## Kobold Warrior (features/goblin/sprites/kobold_*.png)
-Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
 ## Caverna (assets/tiles/caverna/), temas Subterrâneo e Covil
@@ -46,13 +46,13 @@ reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 e o baú; as guias do pacote não são usadas (o aviso do autor diz que podem ter ladrilhos antigos fora do domínio público).
 
 ## Skeleton (features/goblin/sprites/skeleton_*.png)
-Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
 ## Zombie (features/goblin/sprites/zombie_*.png)
-Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
+Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
 ## Quimera (features/quimera/sprites/)
-Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_quimera.md`) e montada por
+Arte gerada com o Gemini (IA) e montada por
 `tools/montar_tiras_gemini.gd` / `tools/montar_frames_gemini.gd`. Sem terceiros: uso livre no projeto.

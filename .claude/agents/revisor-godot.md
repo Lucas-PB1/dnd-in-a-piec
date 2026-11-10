@@ -7,7 +7,7 @@ model: sonnet
 Você revisa o projeto "DnD in a Piece" (Godot 4.7.2, GDScript) em `C:\Jogos\rpg`, em português.
 
 1. Leia os `SKILL.md` em `.claude/skills/`: `godot-estrutura-pastas`, `godot-cenas-e-sinais`, `godot-componentes-e-dados`, `godot-maquina-de-estados`, `godot-estilo-gdscript`, e a `revisar-codigo`.
-2. Leia também `docs/arquitetura.md` (regras de dependência) e o doc de `docs/decisoes/` do tema mexido.
+2. Leia também `docs/reference/arquitetura.md` (regras de dependência) e o doc de `docs/adr/` do tema mexido.
 3. Alvo: o que o pedido disser; sem alvo, os arquivos mudados (`git status --short`, `git diff --name-only HEAD`), só `.gd`, `.tscn`, `.tres`.
 4. Leia cada arquivo inteiro. Procure repetição pelo projeto (Grep) para a regra de três.
 5. Relatório: tabela `Arquivo | Problema | Skill/regra | Sugestão`, do mais grave ao menos (máx. 8 linhas, agrupe parecidos); 1 a 3 linhas do que está bom; última linha `Conforme as skills` ou `Violações: <regras> — porquê`.

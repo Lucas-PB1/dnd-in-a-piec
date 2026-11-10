@@ -197,7 +197,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			# O covil da Quimera, a fase 10 (final). Arena larga e reta (colunas 30 a 63): ela espera na coluna 46. A lava (dano de
-			# fogo no chão) ainda não existe: o fundo avermelhado é só clima (ver docs/pendencias.md).
+			# fogo no chão) ainda não existe: o fundo avermelhado é só clima (ver docs/backlog/).
 			"nome": "Covil", "arquivo": "res://levels/fase_10.tscn", "no": "Fase",
 			"tema": 4, "indice": 10, "ultima": true, "quantidade": 3, "tipos": TIPOS_COVIL, "missao": "Enfrente a Quimera",
 			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),

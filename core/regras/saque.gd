@@ -1,7 +1,7 @@
 class_name Saque
 extends RefCounted
 ## O que um inimigo derrotado solta: ouro e, às vezes, uma arma. O Carisma do herói melhora os dois
-## (regra da casa pedida pelo usuário; ver docs/decisoes/regras_dnd.md). Regra pura.
+## (regra da casa pedida pelo usuário; ver docs/adr/regras_dnd.md). Regra pura.
 
 ## Cada ponto de modificador de Carisma muda o ouro nesta fração (+10% por ponto, -10% se negativo).
 const OURO_POR_PONTO_DE_CARISMA := 0.1

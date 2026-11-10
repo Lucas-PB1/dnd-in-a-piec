@@ -1,10 +1,10 @@
 ---
-description: Decisões da base técnica: motor, resolução e tela larga, pixel art, fase, câmera, camadas de física, componentes de combate, nome do jogo.
+description: DecisÃµes da base tÃ©cnica: motor, resoluÃ§Ã£o e tela larga, pixel art, fase, cÃ¢mera, camadas de fÃ­sica, componentes de combate, nome do jogo.
 globs: project.godot,levels/**,assets/tiles/**,core/componentes/**
 alwaysApply: false
 ---
-<!-- Gerado de docs/decisoes/base.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+<!-- Gerado de docs/adr/base.md por tools/gerar_regras_cursor.ps1. Edite a fonte, nÃ£o este arquivo. -->
 
-Antes de mudar algo deste tema, siga as decisões já tomadas (e atualize o documento se uma decisão mudar):
+Antes de mudar algo deste tema, siga as decisÃµes jÃ¡ tomadas (e atualize o documento se uma decisÃ£o mudar):
 
-@docs/decisoes/base.md
+@docs/adr/base.md

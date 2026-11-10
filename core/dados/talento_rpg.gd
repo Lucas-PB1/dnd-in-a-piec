@@ -5,7 +5,7 @@ extends Resource
 ## `tools/gerar_compendio.gd`: edite a tabela de lá, não os `.tres`.
 
 enum Categoria { ORIGEM, GERAL }
-## PLANEJADO = já tem conta combinada em docs/talentos.md; EM_ESPERA = depende de algo que o jogo
+## PLANEJADO = já tem conta combinada em docs/reference/talentos.md; EM_ESPERA = depende de algo que o jogo
 ## ainda não tem (magia, descanso, perícia...); FORA = não cabe no jogo hoje.
 enum Situacao { PLANEJADO, EM_ESPERA, FORA }
 

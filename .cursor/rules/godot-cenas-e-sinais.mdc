@@ -3,7 +3,7 @@ description: Como montar cenas e fazer nós conversarem em Godot 4 - cena como u
 globs: **/*.tscn,**/*.gd
 alwaysApply: false
 ---
-<!-- Gerado de .claude/skills/godot-cenas-e-sinais/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+<!-- Gerado de .claude/skills/godot-cenas-e-sinais/SKILL.md por tools/gerar_regras_cursor.ps1. Edite a fonte, nÃ£o este arquivo. -->
 
 # Cenas e sinais
 

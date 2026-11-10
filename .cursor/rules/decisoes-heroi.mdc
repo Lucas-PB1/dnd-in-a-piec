@@ -1,10 +1,10 @@
 ---
-description: Decisões do herói: estados, pulo, corrida, ataque, apanhar, Second Wind, arma na mão, pose de mira, escudo, armadura visível.
+description: DecisÃµes do herÃ³i: estados, pulo, corrida, ataque, apanhar, Second Wind, arma na mÃ£o, pose de mira, escudo, armadura visÃ­vel.
 globs: features/jogador/**,data/jogador_padrao.tres,data/classe_guerreiro.tres
 alwaysApply: false
 ---
-<!-- Gerado de docs/decisoes/heroi.md por tools/gerar_regras_cursor.ps1. Edite a fonte, não este arquivo. -->
+<!-- Gerado de docs/adr/heroi.md por tools/gerar_regras_cursor.ps1. Edite a fonte, nÃ£o este arquivo. -->
 
-Antes de mudar algo deste tema, siga as decisões já tomadas (e atualize o documento se uma decisão mudar):
+Antes de mudar algo deste tema, siga as decisÃµes jÃ¡ tomadas (e atualize o documento se uma decisÃ£o mudar):
 
-@docs/decisoes/heroi.md
+@docs/adr/heroi.md

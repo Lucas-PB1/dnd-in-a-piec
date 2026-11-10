@@ -1,9 +1,9 @@
-﻿# Gera o que o Cursor usa (.cursor/) a partir das fontes da verdade do projeto. Nunca edite os
+# Gera o que o Cursor usa (.cursor/) a partir das fontes da verdade do projeto. Nunca edite os
 # arquivos gerados à mão: edite a fonte e rode este script de novo.
 #   powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tools\gerar_regras_cursor.ps1
 #
 #   .claude/skills/*/SKILL.md  -> .cursor/rules/<skill>.mdc        (regras de código)
-#   docs/decisoes/*.md         -> .cursor/rules/decisoes-<tema>.mdc (decisões, por pasta mexida)
+#   docs/adr/*.md         -> .cursor/rules/decisoes-<tema>.mdc (decisões, por pasta mexida)
 #   .claude/commands/*.md      -> .cursor/commands/*.md            (comandos /nome)
 #
 # Modos de ativação das regras no Cursor:
@@ -70,7 +70,7 @@ foreach ($nome in $skills.Keys) {
 
 Write-Host "Decisões -> regras:"
 foreach ($tema in $decisoes.Keys) {
-	$fonte = "docs/decisoes/$tema.md"
+	$fonte = "docs/adr/$tema.md"
 	if (-not (Test-Path (Join-Path $raiz $fonte))) { Write-Host "  falta $fonte" -ForegroundColor Yellow; continue }
 	$globs, $descricao = $decisoes[$tema]
 	$corpo = "Antes de mudar algo deste tema, siga as decisões já tomadas (e atualize o documento se uma decisão mudar):`n`n@$fonte`n"

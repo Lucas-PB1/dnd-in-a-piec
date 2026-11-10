@@ -3,8 +3,8 @@ description: Passo a passo das tarefas comuns - criatura nova do livro, arma/arm
 globs:
 alwaysApply: false
 ---
-<!-- Escrita à mão: as receitas completas estão em docs/receitas.md. -->
+<!-- Escrita à mão: as receitas completas estão em docs/how-to/receitas.md (Diátaxis how-to). -->
 
 Siga a receita da tarefa (arquivos, ordem e como conferir):
 
-@docs/receitas.md
+@docs/how-to/receitas.md

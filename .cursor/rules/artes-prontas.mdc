@@ -3,11 +3,11 @@ description: Como buscar, baixar e usar arte pronta de terceiros (sprites, ícon
 globs: assets/**,**/sprites/**
 alwaysApply: false
 ---
-<!-- Escrita à mão: o guia completo está em docs/artes_prontas.md. -->
+<!-- Escrita à mão: o guia completo está em docs/reference/artes_prontas.md (Diátaxis reference). -->
 
-Siga o guia `docs/artes_prontas.md` antes de buscar ou usar qualquer arte.
+Siga o guia `docs/reference/artes_prontas.md` antes de buscar ou usar qualquer arte.
 
-@docs/artes_prontas.md
+@docs/reference/artes_prontas.md
 
 Resumo:
 - Licença **CC0** (preferida) ou **CC-BY** (com crédito). Nada de NC, SA ou "free" sem licença escrita.
