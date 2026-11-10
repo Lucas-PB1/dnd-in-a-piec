@@ -157,10 +157,10 @@ func _testar_emboscada(cena: Main) -> void:
 		_goblin.queue_free()
 
 
-func _adagas_voando() -> Array[AdagaGoblin]:
-	var lista: Array[AdagaGoblin] = []
+func _adagas_voando() -> Array[ProjetilArremesso]:
+	var lista: Array[ProjetilArremesso] = []
 	for filho in _goblin.get_children():
-		if filho is AdagaGoblin and not filho.is_queued_for_deletion():
+		if filho is ProjetilArremesso and not filho.is_queued_for_deletion():
 			lista.append(filho)
 	return lista
 

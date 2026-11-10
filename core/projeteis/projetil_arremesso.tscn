@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://features/goblin/adaga_goblin.gd" id="1_adaga"]
+[ext_resource type="Script" path="res://core/projeteis/projetil_arremesso.gd" id="1_projetil"]
 [ext_resource type="Script" path="res://core/componentes/hitbox_component.gd" id="2_hitbox"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
@@ -9,10 +9,10 @@ size = Vector2(6, 6)
 [sub_resource type="RectangleShape2D" id="FormaGolpe"]
 size = Vector2(14, 14)
 
-[node name="AdagaGoblin" type="CharacterBody2D"]
+[node name="ProjetilArremesso" type="CharacterBody2D"]
 collision_layer = 0
 collision_mask = 1
-script = ExtResource("1_adaga")
+script = ExtResource("1_projetil")
 
 [node name="Corpo" type="CollisionShape2D" parent="."]
 shape = SubResource("FormaCorpo")

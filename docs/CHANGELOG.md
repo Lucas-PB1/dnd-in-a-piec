@@ -150,3 +150,7 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 - `tests/`: subpastas `combate/`, `criaturas/`, `heroi/`, `ui/`, `campanha/`, `regras/`; `rodar_testes.ps1` recursive.
 - `core/regras/`: `base/`, `combate/`, `criaturas/`, `mundo/` (+ `efeitos/` que já existia).
 - `docs/backlog/`: subpastas por `area`. Comandos `/proxima-fatia` e `/testar` atualizados.
+
+## Fatia: capacidade arremesso (`ArremessoDeCriatura`)
+- `ArremessoDeCriatura` em `core/regras/criaturas/`: munição e alcances da ficha, soltar `ProjetilArremesso` (`core/projeteis/`). Goblin usa a capacidade; IA de quando arremessar fica na feature.
+- Removidos `AdagaGoblin` / `adaga_goblin.*` da feature. Backlog `capacidades-arremesso` fechado. Teste `tests/criaturas/teste_arremesso_de_criatura.gd`.

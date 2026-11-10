@@ -49,7 +49,7 @@ Na raiz só `README.md` e `_modelo.md`.
 ### Dívidas técnicas
 | Pri | Arquivo |
 |---|---|
-| 82–89 | `divida/capacidades-*` (arremesso, tática, investida, furtividade, fuga-ágil, matilha, voo, linha-área) |
+| 83–89 | `divida/capacidades-*` (tática, investida, furtividade, fuga-ágil, matilha, voo, linha-área) |
 | 90+ | `divida/dry-*` … `validar-chefes` |
 
 ### Depois

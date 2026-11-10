@@ -9,7 +9,6 @@ extends CharacterBody2D
 ## Emitido quando termina de morrer (antes de sumir).
 signal morreu
 
-const CENA_ADAGA := preload("res://features/goblin/adaga_goblin.tscn")
 ## Quanto à frente (px) o raio procura chão antes de descer do penhasco.
 const DISTANCIA_BEIRA := 14.0
 const FOLGA_PE := 6.0
@@ -98,7 +97,8 @@ var _empurrao_restante: float = 0.0
 ## Patrulha: onde começou (X, sorteado ao 1º passo) e o lado do próximo extremo.
 var _base_x: float = INF
 var _lado_patrulha: int = 1
-var _adagas: int = 0
+## Arremesso da ficha (adagas etc.).
+var _arremesso: ArremessoDeCriatura
 ## Disparo e Sensibilidade à Luz Solar (ficha).
 var _disparo: DisparoDeCriatura
 ## Percepção passiva de quem olha. 0 (ninguém passou) = o goblin sempre se esconde.
@@ -133,7 +133,7 @@ func _ready() -> void:
 	MontagemDeCriatura.ligar_sinais_padrao(
 		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
 	)
-	_adagas = criatura.arremessos
+	_arremesso = ArremessoDeCriatura.new(criatura)
 	_disparo = DisparoDeCriatura.new(criatura)
 	_prefere_distancia = EstrategiaDeMonstro.prefere_distancia(criatura.dano_medio(criatura.golpe()), criatura.dano_medio_a_distancia())
 	_sprite.modulate = cor_corpo
@@ -183,7 +183,7 @@ func nome_estado() -> StringName:
 
 
 func adagas_restantes() -> int:
-	return _adagas
+	return _arremesso.restantes()
 
 
 ## Menor que 0: as flechas não acabam.
@@ -258,8 +258,8 @@ func alvo_ao_alcance() -> bool:
 
 ## Ainda tem adaga, o alvo está fora do corpo a corpo e dentro do alcance longo.
 func pode_arremessar() -> bool:
-	return _adagas > 0 and alvo != null and not alvo_ao_alcance() and _linha_de_tiro_livre() \
-		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.arremesso_longo_pes)
+	return _arremesso.tem_arma() and alvo != null and not alvo_ao_alcance() and _linha_de_tiro_livre() \
+		and _arremesso.no_alcance_longo(_distancia_horizontal())
 
 
 ## Tem flecha, o alvo está longe o bastante para valer o arco e dentro do alcance longo.
@@ -439,23 +439,18 @@ func desligar_golpe() -> void:
 	_golpe.desligar()
 
 
-## Solta uma adaga na direção do alvo (mira no peito dele). Gasta uma das adagas.
+## Solta uma arma arremessada na direção do alvo (mira no peito dele). Gasta uma da ficha.
 func arremessar_adaga() -> void:
-	if _adagas <= 0 or alvo == null:
+	if alvo == null:
 		return
-	_adagas -= 1
-	var adaga: AdagaGoblin = CENA_ADAGA.instantiate()
-	add_child(adaga)
 	var mao := global_position + Vector2(direcao_olhar * meia_largura_corpo, -altura_mao)
 	var destino := alvo.global_position + Vector2(0.0, -altura_alvo)
-	adaga.lancar(_golpe_do_arremesso(), criatura.arma_arremesso, mao, destino,
-		EscalaDnd.pes_para_pixels(criatura.arremesso_normal_pes),
-		EscalaDnd.pes_para_pixels(criatura.arremesso_longo_pes), _gravidade)
+	_arremesso.arremessar(self, _golpe_do_arremesso(), mao, destino, _gravidade)
 
 
-## Solta o que a ficha tiver à distância: adaga, ou flecha se as adagas acabaram.
+## Solta o que a ficha tiver à distância: arremesso, ou flecha se as armas acabaram.
 func soltar_distancia() -> void:
-	if _adagas > 0:
+	if _arremesso.tem_arma():
 		arremessar_adaga()
 	elif _disparo.tem_flecha():
 		atirar()
@@ -666,7 +661,7 @@ func _quer_recuar_ferido() -> bool:
 
 
 func _quer_manter_distancia() -> bool:
-	return _prefere_distancia and (_disparo.tem_flecha() or _adagas > 0) and _tempo_desde_afastar >= INTERVALO_AFASTAR \
+	return _prefere_distancia and (_disparo.tem_flecha() or _arremesso.tem_arma()) and _tempo_desde_afastar >= INTERVALO_AFASTAR \
 		and _perto_para_oarco() and not alvo_ao_alcance() and _tem_espaco_atras()
 
 

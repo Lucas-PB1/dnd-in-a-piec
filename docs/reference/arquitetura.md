@@ -106,7 +106,7 @@ HitboxComponent.ligar(golpe)
 ```
 
 - **Um golpe acerta um alvo** (o mais perto). Trespassar entrega `golpe.trespassar` a um 2º alvo perto.
-- Projéteis (`ArmaArremessada` do herói, `AdagaGoblin`) carregam uma Hitbox com o mesmo `Golpe`;
+- Projéteis (`ArmaArremessada` do herói, `ProjetilArremesso` das criaturas) carregam uma Hitbox com o mesmo `Golpe`;
   além do alcance normal marcam `golpe.desvantagem = true`; no longo desligam a Hitbox e caem.
 - Camadas de física: 1 `mundo`, 2 `jogador`, 3 `hurtbox_inimigo` (valor 4), 4 `hurtbox_jogador`
   (valor 8), 5 `inimigo` (valor 16). Hitbox de inimigo: máscara 8. Hitbox do herói: máscara 4.

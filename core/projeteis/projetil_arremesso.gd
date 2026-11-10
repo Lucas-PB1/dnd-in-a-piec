@@ -1,11 +1,10 @@
-class_name AdagaGoblin
+class_name ProjetilArremesso
 extends CharacterBody2D
-## Adaga arremessada pelo goblin. Sai na "força" do alcance longo da ficha (a mesma regra do
-## tiro do herói, EscalaDnd.velocidade_para_alcance) num arco que passa pelo destino. Além
-## do alcance normal o ataque tem desvantagem; no longo perde o acerto e cai. Some ao acertar
-## ou ao bater no chão ou na parede. Fica solta no mundo (top_level) mesmo sendo filha do goblin.
+## Arma arremessada por monstro (`ArremessoDeCriatura`). Sai na força do alcance longo da ficha
+## num arco que passa pelo destino. Além do normal: desvantagem; no longo: perde o acerto e cai.
+## Some ao acertar ou ao bater no chão/parede. Fica solta no mundo (top_level).
 
-## Giro da adaga no ar (rad/s).
+## Giro da arma no ar (rad/s).
 const GIRO := 14.0
 ## O voo não fica mais curto que isto (s), para a conta da subida não estourar.
 const TEMPO_MINIMO := 0.08
@@ -26,7 +25,15 @@ func _ready() -> void:
 
 
 ## Começa o voo da `origem` até passar pelo `destino`. Chamar depois de entrar na árvore.
-func lancar(golpe: Golpe, arma: Arma, origem: Vector2, destino: Vector2, normal_px: float, longo_px: float, gravidade: float) -> void:
+func lancar(
+	golpe: Golpe,
+	arma: Arma,
+	origem: Vector2,
+	destino: Vector2,
+	normal_px: float,
+	longo_px: float,
+	gravidade: float,
+) -> void:
 	_golpe = golpe
 	_normal_px = normal_px
 	_longo_px = longo_px
@@ -47,12 +54,11 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 
 
-## True quando o ataque desta adaga sai com desvantagem (passou do alcance normal).
+## True quando o ataque deste projétil sai com desvantagem (passou do alcance normal).
 func em_desvantagem() -> bool:
 	return _golpe != null and _golpe.desvantagem
 
 
-## Arco que passa pelo destino com a velocidade horizontal da "força" do arremesso.
 func _velocidade_ate(destino: Vector2) -> Vector2:
 	var rapidez := EscalaDnd.velocidade_para_alcance(_longo_px, _gravidade)
 	var distancia := destino - global_position
@@ -61,7 +67,6 @@ func _velocidade_ate(destino: Vector2) -> Vector2:
 	return Vector2(signf(distancia.x) * rapidez, subida)
 
 
-## Além do normal: desvantagem. No longo: perde o acerto e cai, sem atravessar.
 func _aplicar_alcance() -> void:
 	var distancia := absf(global_position.x - _origem_x)
 	if distancia > _normal_px:
@@ -71,7 +76,6 @@ func _aplicar_alcance() -> void:
 		velocity.x = 0.0
 
 
-## A arte da arma girando em volta do meio dela.
 func _preparar_sprite(arma: Arma) -> void:
 	DesenhoArma.preparar(_sprite, arma)
 	if arma and arma.textura:

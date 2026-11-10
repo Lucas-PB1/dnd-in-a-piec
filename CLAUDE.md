@@ -95,7 +95,7 @@ features/loja/           lojista no início da fase (NPC)
 features/boneco_treino/  boneco de treino
 features/bau/            baú do arsenal (E)
 features/arremesso/      arma arremessada / projétil do herói
-core/projeteis/          Flecha compartilhada (Goblin Warrior, Wight…)
+core/projeteis/          Flecha e ProjetilArremesso compartilhados (Goblin, Wight…)
 levels/                  main.tscn/.gd (cena principal), fase.gd, fase_1..10.tscn, sons/musica
 ui/                      titulo, criacao_personagem, hud, inventario, bau, loja, comandos, derrota,
                          controles_toque, bestiario, habilidades, pausa, compendio (+ a regra `Compendio`), talento;
