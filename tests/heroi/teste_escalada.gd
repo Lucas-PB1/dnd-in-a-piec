@@ -1,7 +1,7 @@
 extends TesteBase
 ## Atleta escala paredes; a fase tem teto, laterais invisíveis e uma porta de verdade; o tiro do Atirador
 ## de Elite atravessa paredes do cenário.
-## godot --headless --debug --path . --script res://tests/teste_escalada.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_escalada.gd
 
 
 func _initialize() -> void:

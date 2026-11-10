@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste do golpe de espada e do boneco de treino (roda sem janela).
-## godot --headless --debug --path . --script res://tests/teste_ataque.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_ataque.gd
 
 const DISTANCIA_DO_BONECO := 30.0
 const CA_BONECO := 10

@@ -144,3 +144,9 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 ## Fatia: capacidade disparo + sensível ao sol (`DisparoDeCriatura`)
 - `DisparoDeCriatura` em `core/regras/`: munição da ficha, soltar flecha, alcance longo, linha de tiro, desvantagem por sol. Goblin e Wight usam a mesma implementação; IA de quando atirar fica na feature.
 - Backlog `capacidades-disparo-sol` fechado. Teste `tests/teste_disparo_de_criatura.gd`.
+
+## Fatia: pastas com limite ~20 (tests, regras, backlog)
+- Skill `godot-estrutura-pastas`: meta ~20 arquivos úteis por pasta (sem `.uid`/`.import`).
+- `tests/`: subpastas `combate/`, `criaturas/`, `heroi/`, `ui/`, `campanha/`, `regras/`; `rodar_testes.ps1` recursive.
+- `core/regras/`: `base/`, `combate/`, `criaturas/`, `mundo/` (+ `efeitos/` que já existia).
+- `docs/backlog/`: subpastas por `area`. Comandos `/proxima-fatia` e `/testar` atualizados.

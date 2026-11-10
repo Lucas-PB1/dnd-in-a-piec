@@ -1,7 +1,7 @@
 extends TesteBase
 ## Surto de Ação: acende a aura e o próximo ataque vira dois golpes seguidos, cada um com a sua
 ## rolagem. Também confere o Fôlego (pulso verde), a Mente Tática (liga e desliga) e o botão aceso.
-## godot --headless --debug --path . --script res://tests/teste_surto.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_surto.gd
 
 ## Tempo (s) que o ataque leva para terminar com folga, golpe duplo incluído.
 const ESPERA_ATAQUE := 1.6

@@ -1,7 +1,7 @@
 extends TesteBase
 ## Garante que a tela só mostra o que o herói tem: os botões de toque e as linhas do HUD
 ## aparecem quando servem (Surto e Mente Tática no nível 2, Lançar com arma na mão, E perto de algo).
-## godot --headless --debug --path . --script res://tests/teste_botoes_contextuais.gd
+## godot --headless --debug --path . --script res://tests/ui/teste_botoes_contextuais.gd
 
 
 func _initialize() -> void:

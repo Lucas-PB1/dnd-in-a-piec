@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste das regras puras de D&D: Dado, Atributos, CompraDePontos e Ficha.
-## godot --headless --debug --path . --script res://tests/teste_regras_dnd.gd
+## godot --headless --debug --path . --script res://tests/regras/teste_regras_dnd.gd
 
 const ROLAGENS := 300
 

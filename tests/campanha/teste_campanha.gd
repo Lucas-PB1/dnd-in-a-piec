@@ -1,7 +1,7 @@
 extends TesteBase
 ## Campanha: as nove fases têm porta, pontos de armadilha de sobra e a cota certa; a porta
 ## barra enquanto a cota está viva e abre quando morre; a última fase mostra a vitória e
-## "Jogar de novo" volta à primeira. godot --headless --debug --path . --script res://tests/teste_campanha.gd
+## "Jogar de novo" volta à primeira. godot --headless --debug --path . --script res://tests/campanha/teste_campanha.gd
 
 const CENAS_FASE: Array[String] = [
 	"res://levels/fase_1.tscn", "res://levels/fase_2.tscn", "res://levels/fase_3.tscn",

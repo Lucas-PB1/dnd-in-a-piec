@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste das armaduras: as 21 do Empório, CA por categoria, limite de DES, Força mínima,
 ## treinamento (desvantagem / escudo sem CA), escudo, desvantagem no d20 e no herói.
-## godot --headless --debug --path . --script res://tests/teste_armaduras.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_armaduras.gd
 
 const PASTA := "res://data/armaduras/"
 const ROLAGENS := 400

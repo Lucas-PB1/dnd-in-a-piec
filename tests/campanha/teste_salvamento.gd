@@ -1,6 +1,6 @@
 extends TesteBase
 ## Testa salvar e carregar: a ficha, a mochila (desgaste, pilhas, equipados) e a fase.
-## godot --headless --debug --path . --script res://tests/teste_salvamento.gd
+## godot --headless --debug --path . --script res://tests/campanha/teste_salvamento.gd
 
 
 func _initialize() -> void:

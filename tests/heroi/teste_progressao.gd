@@ -1,6 +1,6 @@
 extends TesteBase
 ## Progressão, Mente Tática, descanso longo e Surto de Ação.
-## godot --headless --debug --path . --script res://tests/teste_progressao.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_progressao.gd
 
 const QUADROS_INICIAIS := 3
 const ESPERA_SURTO_SEGUNDOS := 1.2

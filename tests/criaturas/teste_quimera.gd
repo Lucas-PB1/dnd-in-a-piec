@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste da Quimera (chefe final, fase 10): ficha do livro, Ataques Múltiplos (Cabeçada que derruba, Mordida e Garra), Sopro de
 ## Fogo (cone por salvaguarda, recarga 5-6, no lugar da Garra) e a luta de verdade: ruge ao perceber o herói, golpeia, sopra e morre.
-## godot --headless --debug --path . --script res://tests/teste_quimera.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_quimera.gd
 
 const VIDA_DE_TESTE := 9999
 const QUADROS_POR_SEGUNDO := 60

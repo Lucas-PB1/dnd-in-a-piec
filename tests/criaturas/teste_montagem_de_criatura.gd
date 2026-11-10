@@ -1,6 +1,6 @@
 extends TesteBase
 ## Kit básico (`MontagemDeCriatura`): ficha completa nos componentes, Lentidão no deslocamento e empurrão.
-## godot --headless --debug --path . --script res://tests/teste_montagem_de_criatura.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_montagem_de_criatura.gd
 
 var _rng := RandomNumberGenerator.new()
 

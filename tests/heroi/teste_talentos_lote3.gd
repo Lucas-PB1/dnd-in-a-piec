@@ -1,6 +1,6 @@
 extends TesteBase
 ## Talentos do lote 3 (parte 2): Sentinela, Duelista Defensivo, Investida, Mestre em Armas de Haste, Atleta.
-## godot --headless --debug --path . --script res://tests/teste_talentos_lote3.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_talentos_lote3.gd
 
 var _classe: ClasseRPG
 

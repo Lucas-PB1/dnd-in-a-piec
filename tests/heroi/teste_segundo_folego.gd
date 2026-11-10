@@ -1,6 +1,6 @@
 extends TesteBase
 ## Second Wind, troca de tecla e criatura trazida para a arena.
-## godot --headless --path . --script res://tests/teste_segundo_folego.gd
+## godot --headless --path . --script res://tests/heroi/teste_segundo_folego.gd
 
 const ARQUIVO_TESTE := "user://teste_comandos.cfg"
 const QUADROS_ACAO_BONUS := 100

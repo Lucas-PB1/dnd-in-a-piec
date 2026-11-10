@@ -1,6 +1,6 @@
 extends TesteBase
 ## Efeitos dos talentos gerais do nível 4, em lotes: Resiliente, Veloz e Mestre em Armadura Média.
-## godot --headless --debug --path . --script res://tests/teste_talentos_gerais.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_talentos_gerais.gd
 
 var _classe: ClasseRPG
 var _talentos: Array[TalentoRPG] = []

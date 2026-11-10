@@ -1,7 +1,7 @@
 extends TesteBase
 ## Hobgoblin Warrior, Bugbear Warrior e Kobold Warrior (fichas do Monster Manual conferidas no Códice): números,
 ## Táticas de Matilha, Sensibilidade à Luz Solar, o agarrão do Bugbear e as cenas rodando sozinhas.
-## godot --headless --debug --path . --script res://tests/teste_minions_novos.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_minions_novos.gd
 
 const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
 const CENA_BUGBEAR := "res://features/goblin/bugbear_guerreiro.tscn"

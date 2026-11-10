@@ -3,7 +3,7 @@ extends TesteBase
 ## setas fazem o toque duplo, "correr" segurado corre, nada aperta com o jogo pausado.
 ## Edição do layout: arrastar, tamanho, transparência, salvar, carregar e Padrão. O
 ## user://toque.cfg de verdade é guardado antes e devolvido no fim.
-## godot --headless --debug --path . --script res://tests/teste_toque.gd
+## godot --headless --debug --path . --script res://tests/ui/teste_toque.gd
 
 const DEDO_BOTAO := 1
 const DEDO_ANALOGICO := 0

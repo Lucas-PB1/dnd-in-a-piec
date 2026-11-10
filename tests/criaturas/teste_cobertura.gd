@@ -2,7 +2,7 @@ extends TesteBase
 ## Cobertura contra ataques à distância: a regra pura (`Abrigo`) e o Hobgoblin num mundo com um penhasco: quando o
 ## herói atira de cima, ele corre para o pé do penhasco (fora da linha de tiro), espera e volta; e não atira
 ## contra a parede.
-## godot --headless --debug --path . --script res://tests/teste_cobertura.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_cobertura.gd
 
 const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
 const CHAO_Y := 300.0

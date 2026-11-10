@@ -1,7 +1,7 @@
 extends TesteBase
 ## Zombie (Monster Manual 2024, conferido no Códice): ficha, Fortitude dos Mortos-Vivos (sobra 1 PV na salvaguarda de
 ## Constituição CD 5 + dano; não vale contra acerto crítico nem dano radiante), cena sozinha, morte e presença na Main.
-## godot --headless --debug --path . --script res://tests/teste_zombie.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_zombie.gd
 
 const CENA := "res://features/goblin/zombie_guerreiro.tscn"
 const GOLPE_CERTEIRO := 100

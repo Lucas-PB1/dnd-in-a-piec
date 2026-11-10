@@ -40,7 +40,8 @@ $trabalho = {
 	param($godot, $raiz, $arquivo, $limite)
 	$info = New-Object System.Diagnostics.ProcessStartInfo
 	$info.FileName = $godot
-	$info.Arguments = "--headless --debug --path `"$raiz`" --script res://tests/$arquivo"
+	$rel = ($arquivo -replace '\\', '/')
+	$info.Arguments = "--headless --debug --path `"$raiz`" --script res://tests/$rel"
 	$info.RedirectStandardOutput = $true
 	$info.RedirectStandardError = $true
 	$info.UseShellExecute = $false
@@ -80,12 +81,14 @@ $trabalho = {
 	}
 }
 
-$testes = Get-ChildItem (Join-Path $PSScriptRoot "teste_*.gd")
+# Subpastas por tema (combate/, criaturas/…); caminho relativo com / para o Godot.
+$testes = Get-ChildItem -Path $PSScriptRoot -Filter "teste_*.gd" -Recurse | Sort-Object FullName
 $jobs = @()
 foreach ($teste in $testes) {
 	while (@(Get-Job -State Running).Count -ge $Paralelo) { Start-Sleep -Milliseconds 200 }
-	Write-Host "   iniciando $($teste.Name)"
-	$jobs += Start-Job -ScriptBlock $trabalho -ArgumentList $godot, $raiz, $teste.Name, $LimiteSegundos
+	$relativo = $teste.FullName.Substring($PSScriptRoot.Length + 1)
+	Write-Host "   iniciando $relativo"
+	$jobs += Start-Job -ScriptBlock $trabalho -ArgumentList $godot, $raiz, $relativo, $LimiteSegundos
 }
 
 function Test-ResultadoFalhou($resultado) {

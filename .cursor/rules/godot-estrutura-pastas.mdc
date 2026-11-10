@@ -10,6 +10,8 @@ alwaysApply: true
 ```
 core/                 autoloads, event bus, utilitários genéricos (RefCounted)
                       NÃO depende de nenhuma feature
+  regras/             regras puras em subpastas por tema (base/, combate/, criaturas/,
+                      mundo/, efeitos/)
 features/<nome>/      tudo de uma funcionalidade junto: cena(s) .tscn, scripts,
                       sprites/SpriteFrames próprios e estados/
                       ex.: features/jogador/, features/inimigo_andarilho/, features/tiro/
@@ -17,7 +19,9 @@ levels/               fases (.tscn) e o que é só delas
 ui/                   menus, HUD, telas
 data/                 Resources (.tres) de balanceamento e configuração
 assets/               só o genérico e compartilhado (tiles, sons, fontes, shaders)
-tests/                testes headless (teste_*.gd) e rodar_testes.ps1
+tests/                apoio_teste.gd + rodar_testes.ps1 na raiz; teste_*.gd em
+                      subpastas (combate/, criaturas/, heroi/, ui/, campanha/, regras/)
+docs/backlog/         README + _modelo na raiz; 1 pendência = 1 .md em subpasta = area
 tools/                scripts de linha de comando (geradores, prints); não fazem parte do jogo
 main.tscn             cena principal (na raiz ou em levels/)
 ```
@@ -29,3 +33,4 @@ main.tscn             cena principal (na raiz ou em levels/)
 4. **Arquivo novo vai para a feature que o usa.** Só sobe para `assets/` ou `core/` quando **duas ou mais** features precisarem dele.
 5. Nomes de pastas e arquivos em `snake_case`; uma cena por "coisa".
 6. Mover arquivos: mova pelo editor do Godot ou atualize todos os caminhos `res://` e os `.uid`/`.import`, e rode os testes em seguida.
+7. **Limite de pasta (~20 arquivos úteis):** conte `.gd`, `.tscn`, `.tres`, `.md`, PNG de trabalho — **não** conte `.uid` nem `.import`. Pacotes de terceiros em `assets/` (Kenney etc.) ficam como vieram. Se a pasta passar de ~20, abra subpasta por tema **antes** de acrescentar mais um arquivo.

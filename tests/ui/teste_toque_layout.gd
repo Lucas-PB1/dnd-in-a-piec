@@ -1,7 +1,7 @@
 extends TesteBase
 ## Garante que o layout padrão dos controles de toque (botões, slots de habilidade e analógico) é confortável: nenhum botão em cima de outro,
 ## todos com pelo menos 1 cm de diâmetro no celular e dentro da tela, em telas de várias larguras.
-## godot --headless --debug --path . --script res://tests/teste_toque_layout.gd
+## godot --headless --debug --path . --script res://tests/ui/teste_toque_layout.gd
 
 ## Altura do jogo é 360 px. Num celular de 1080 px de altura a escala é 3, e 1 cm são uns 157 px.
 const ALTURA := 360.0

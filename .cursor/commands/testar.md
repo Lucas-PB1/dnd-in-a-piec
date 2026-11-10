@@ -3,10 +3,10 @@
 
 Rode os testes do projeto e resuma.
 
-1. Sem argumento: rode tudo (importa, roda o jogo 3 s procurando erros e avisos, roda todo `tests/teste_*.gd`):
+1. Sem argumento: rode tudo (importa, roda o jogo 3 s procurando erros e avisos, roda todo `tests/**/teste_*.gd`):
    `powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tests\rodar_testes.ps1`
-   Com argumento `<o que o usuÃ¡rio escreveu depois do comando>`: rode só `tests/teste_<o que o usuÃ¡rio escreveu depois do comando>.gd` com
-   `& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/teste_<o que o usuÃ¡rio escreveu depois do comando>.gd`
+   Com argumento `<o que o usuÃ¡rio escreveu depois do comando>`: ache o arquivo sob `tests/` (ex.: `goblin` → `tests/criaturas/teste_goblin.gd`) e rode
+   `& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/<pasta>/teste_<o que o usuÃ¡rio escreveu depois do comando>.gd`
 2. Responda em português, curto:
    - Resultado geral (TUDO OK ou FALHOU).
    - Cada `ERRO`, `ERROR` ou `WARNING`, com o arquivo e a linha quando houver. **Aviso também reprova.**

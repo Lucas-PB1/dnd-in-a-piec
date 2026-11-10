@@ -1,7 +1,7 @@
 extends TesteBase
 ## Efeitos dos talentos de origem: Alerta, Resistente, Atacante Selvagem e Brigão de Taverna
 ## (Sortudo, Artesão e Perito têm testes próprios).
-## godot --headless --debug --path . --script res://tests/teste_talentos_origem.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_talentos_origem.gd
 
 var _classe: ClasseRPG
 

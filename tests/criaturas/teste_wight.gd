@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste do Wight (chefe da cripta): ficha do livro, Drenar Vida (máximo de PV reduzido até o descanso longo), acompanhantes que
 ## surgem ao despertar e a luta de verdade: golpeia de perto (espada e Drenar Vida), atira de longe e morre.
-## godot --headless --debug --path . --script res://tests/teste_wight.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_wight.gd
 
 const VIDA_DE_TESTE := 9999
 const QUADROS_POR_SEGUNDO := 60

@@ -1,7 +1,7 @@
 extends TesteBase
 ## Estratégia dos monstros: a regra pura (manter distância, recuar ferido), as fichas e o Hobgoblin no mundo
 ## (afasta-se do herói que chega perto para atirar; ferido, com aliado por perto, recua uma vez).
-## godot --headless --debug --path . --script res://tests/teste_estrategia.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_estrategia.gd
 
 const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
 const CHAO_Y := 300.0

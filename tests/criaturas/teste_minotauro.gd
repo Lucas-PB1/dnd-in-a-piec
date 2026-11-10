@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste do Minotauro (chefe da fase 6): ficha do livro, Chifrada com e sem carreira, bloco quebrável, herói derrubado e a
 ## luta de verdade na arena: investe, quebra os pilares, derruba o herói, golpeia com o glaive, e morre.
-## godot --headless --debug --path . --script res://tests/teste_minotauro.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_minotauro.gd
 
 const VIDA_DE_TESTE := 9999
 const QUADROS_POR_SEGUNDO := 60

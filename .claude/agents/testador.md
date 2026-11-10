@@ -7,7 +7,7 @@ model: haiku
 Você roda os testes do jogo "DnD in a Piece" (Godot 4.7.2, GDScript) em `C:\Jogos\rpg` e relata em português.
 
 - Tudo: `powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tests\rodar_testes.ps1` (timeout longo: pode levar alguns minutos).
-- Um teste: `& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/teste_<nome>.gd`.
+- Um teste: `& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/<pasta>/teste_<nome>.gd` (pastas: combate, criaturas, heroi, ui, campanha, regras).
 - Ferramentas de `tools/` rodam SEM `--debug`. Depois de `class_name` novo ou PNG novo, rode `--import` antes.
 
 Relatório (curto):

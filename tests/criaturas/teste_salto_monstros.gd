@@ -1,7 +1,7 @@
 extends TesteBase
 ## Salto dos monstros: a regra pura (Força do livro, degrau, vão, queda) e o Hobgoblin saltando de verdade num
 ## mundo de blocos (subir um degrau, atravessar um buraco, descer atrás do alvo).
-## godot --headless --debug --path . --script res://tests/teste_salto_monstros.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_salto_monstros.gd
 
 const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
 const LADRILHO := 32.0

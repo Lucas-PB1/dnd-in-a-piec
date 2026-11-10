@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste do Gray Ooze no jogo: percebe, persegue, ataca uma vez por rodada, machuca o herói,
-## leva dano e morre. godot --headless --debug --path . --script res://tests/teste_gray_ooze.gd
+## leva dano e morre. godot --headless --debug --path . --script res://tests/criaturas/teste_gray_ooze.gd
 
 ## Mais que isso de distância e o Ooze não percebe (Visão às Cegas 60 pés = 384 px).
 const LONGE := 500.0

@@ -1,7 +1,7 @@
 extends TesteBase
 ## Flanqueio (só manobra, sem vantagem): o lado do alvo e dois Hobgoblins no mundo: um já segura o herói e o outro,
 ## do mesmo lado, dá a volta e termina do lado oposto.
-## godot --headless --debug --path . --script res://tests/teste_flanqueio.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_flanqueio.gd
 
 const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
 const CHAO_Y := 300.0

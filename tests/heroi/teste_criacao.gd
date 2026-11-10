@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste do início do jogo: tela de título, criação (nome, classe, atributos) e entrada no jogo.
-## godot --headless --debug --path . --script res://tests/teste_criacao.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_criacao.gd
 
 const NOME_TESTE := "Aldric"
 

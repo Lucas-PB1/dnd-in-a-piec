@@ -2,7 +2,7 @@ extends TesteBase
 ## Fatia 11c: maestrias de arma. Vantagem/desvantagem, Raspão, CD, condições (Derrubar com
 ## salvaguarda, Empurrar, Enfraquecer, Lentidão, Atormentar), um alvo por golpe + Trespassar,
 ## Gray Ooze Caído e Corte Duplo no golpe extra.
-## godot --headless --debug --path . --script res://tests/teste_maestrias.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_maestrias.gd
 
 const ROLAGENS := 2000
 

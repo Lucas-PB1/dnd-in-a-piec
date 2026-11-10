@@ -75,11 +75,12 @@ Regras na skill `godot-estrutura-pastas`. Hoje:
 core/estados/            Estado, MaquinaEstados (genéricos)
 core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante, Condicoes
 core/regras/efeitos/     EfeitoDeGolpe e EfeitosDeTalento (um efeito de talento por classe, que o Golpe carrega)
+core/regras/base/        Dado, Atributos, EscalaDnd, TiposDano, CompraDePontos, Pericia, Proficiencias
+core/regras/combate/     Combate, Golpe, Equipamento, Inventario, ItemAleatorio
+core/regras/criaturas/   MontagemDeCriatura, DisparoDeCriatura, SaltoDnd, Abrigo, Estrategia, Flanqueio…
+core/regras/mundo/       Ficha, Salvamento, Missao, Loja, Saque
 core/dados/              Item, Arma, Municao, PoseGolpe, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial,
                          AntecedenteRPG, TalentoRPG, EntradaCompendio
-core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd,
-                         TiposDano, Proficiencias, Equipamento, Pericia, Salvamento,
-                         ItemAleatorio, MontagemDeCriatura, DisparoDeCriatura
 core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
 features/jogador/        herói: jogador, stats, animação, câmera, ataque, escudo, arma de trás, estados/, sprites/
 features/jogador/talentos/ regras puras dos talentos do herói (recargas, Sorte, dados de vida, veneno, defesa, Investida)
@@ -105,7 +106,7 @@ data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gra
 assets/                  tiles/, armas/, armaduras/, efeitos/, shaders/; CREDITOS.md
 tools/                   geradores (armas, armaduras, criaturas, fase, pose, mão), capturar_tela,
                          ferramentas_pixel, gerar_regras_cursor.ps1
-tests/                   teste_*.gd, rodar_testes.ps1
+tests/                   apoio + rodar_testes.ps1; teste_*.gd em combate/, criaturas/, heroi/, ui/, campanha/, regras/
 docs/                    README (Diátaxis), adr/, how-to/, reference/, backlog/, CHANGELOG.md, spritecook/
 .claude/                 skills/, commands/, agents/
 .cursor/                 rules/, commands/ (gerados do .claude e docs), mcp.json
@@ -145,7 +146,7 @@ O Godot está em `GODOT_EDITOR_PATH`
 # Todos os testes + o jogo 3 s procurando erros E avisos (aviso reprova):
 powershell -NoProfile -ExecutionPolicy Bypass -File C:\Jogos\rpg\tests\rodar_testes.ps1
 # Um teste (com --debug para ver avisos):
-& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/teste_jogador.gd
+& $env:GODOT_EDITOR_PATH --headless --debug --path C:\Jogos\rpg --script res://tests/heroi/teste_jogador.gd
 ```
 Ferramentas de `tools/` rodam **sem `--debug`** (com erro, o `--debug` trava no depurador). Mais
 comandos (fase, ponto da mão, prints) e armadilhas em `docs/how-to/receitas.md`.

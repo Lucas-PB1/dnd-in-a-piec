@@ -1,7 +1,7 @@
 extends TesteBase
 ## Capacidade compartilhada de disparo e Sensibilidade à Luz Solar (`DisparoDeCriatura`).
 ## O spawn da flecha no mundo fica nos testes do Goblin Warrior / Wight.
-## godot --headless --debug --path . --script res://tests/teste_disparo_de_criatura.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_disparo_de_criatura.gd
 
 
 func _initialize() -> void:

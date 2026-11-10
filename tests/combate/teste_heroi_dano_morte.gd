@@ -1,7 +1,7 @@
 extends TesteBase
 ## Dano e morte do herói: ao apanhar toca a animação "dano"; ao morrer toca a "morte" (sem arma na
 ## mão) e só depois a tela "Você caiu!" abre; reviver volta tudo ao normal.
-## godot --headless --debug --path . --script res://tests/teste_heroi_dano_morte.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_heroi_dano_morte.gd
 
 
 func _initialize() -> void:

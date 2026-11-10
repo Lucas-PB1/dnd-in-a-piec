@@ -1,6 +1,6 @@
 extends TesteBase
 ## Fatia 11b: duas armas leves (J J) e arremesso (K, pegar com E).
-## godot --headless --debug --path . --script res://tests/teste_duas_armas.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_duas_armas.gd
 
 const CENA_VOO := "res://features/arremesso/arma_arremessada.tscn"
 

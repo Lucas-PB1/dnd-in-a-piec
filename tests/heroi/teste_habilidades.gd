@@ -1,6 +1,6 @@
 extends TesteBase
 ## Testa a árvore de habilidades: os dados do Guerreiro, a árvore, a tela e o caminho pela pausa.
-## godot --headless --debug --path . --script res://tests/teste_habilidades.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_habilidades.gd
 
 
 func _initialize() -> void:

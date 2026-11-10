@@ -1,7 +1,7 @@
 extends TesteBase
 ## Talentos que criam sistemas novos: Durável (dados de vida), Envenenador (veneno e o item Veneno Básico)
 ## e Agarrador (condição Agarrado).
-## godot --headless --debug --path . --script res://tests/teste_talentos_lote4.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_talentos_lote4.gd
 
 var _classe: ClasseRPG
 

@@ -1,7 +1,7 @@
 extends TesteBase
 ## Tiro à distância: K gasta munição e a arma fica; a mira sobe o arco; longe e perto
 ## dão desvantagem; os dois talentos de tiro tiram a parte que é deles.
-## godot --headless --debug --path . --script res://tests/teste_tiro.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_tiro.gd
 
 const CENA_VOO := "res://features/arremesso/arma_arremessada.tscn"
 ## Mira para cima (graus) que leva a pedra da funda além do alcance normal antes de cair.

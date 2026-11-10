@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste da tela de inventário dentro do jogo (abrir com I, equipar, desequipar, jogar fora).
-## godot --headless --debug --path . --script res://tests/teste_tela_inventario.gd
+## godot --headless --debug --path . --script res://tests/ui/teste_tela_inventario.gd
 
 
 func _initialize() -> void:

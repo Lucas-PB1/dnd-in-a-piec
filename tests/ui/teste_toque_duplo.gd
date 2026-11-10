@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste unitário do ToqueDuplo (não precisa de cena).
-## godot --headless --path . --script res://tests/teste_toque_duplo.gd
+## godot --headless --path . --script res://tests/ui/teste_toque_duplo.gd
 
 const QUADRO := 1.0 / 60.0
 

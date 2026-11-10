@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste automático do herói 2D (roda sem janela).
-## godot --headless --path . --script res://tests/teste_jogador.gd
+## godot --headless --path . --script res://tests/heroi/teste_jogador.gd
 
 var _jogador: Jogador
 var _sprite: AnimatedSprite2D

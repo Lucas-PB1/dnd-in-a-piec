@@ -1,7 +1,7 @@
 extends TesteBase
 ## A banca do lojista tem chão firme embaixo, à altura do começo, em todas as fases, e fica longe do baú (50 px de
 ## folga entre as áreas de interação, para o E não abrir a loja em vez do arsenal).
-## godot --headless --debug --path . --script res://tests/teste_posicao_da_loja.gd
+## godot --headless --debug --path . --script res://tests/campanha/teste_posicao_da_loja.gd
 
 const BAU_X := 150.0
 const DISTANCIA_MINIMA_DO_BAU := 96.0

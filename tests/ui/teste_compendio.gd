@@ -1,6 +1,6 @@
 extends TesteBase
 ## O Compêndio mostra o que já está disponível e não cria abas para conteúdo ainda documental.
-## godot --headless --debug --path . --script res://tests/teste_compendio.gd
+## godot --headless --debug --path . --script res://tests/ui/teste_compendio.gd
 
 
 func _initialize() -> void:

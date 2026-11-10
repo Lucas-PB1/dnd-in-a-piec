@@ -1,7 +1,7 @@
 extends TesteBase
 ## Nível 4 e escolha de talento: a ficha libera uma escolha no nível 4, valida os aumentos de
 ## atributo, guarda o talento e o save lembra; a tela lista os talentos escolhíveis e escolhe.
-## godot --headless --debug --path . --script res://tests/teste_talento.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_talento.gd
 
 const TALENTOS_GERAIS_PLANEJADOS := 23
 

@@ -1,7 +1,7 @@
 extends TesteBase
 ## Testa o bestiário: o registro de derrotas, a tela (silhueta ou ficha), o caminho pela pausa
 ## com o Esc voltando, e o save guardando o que foi descoberto.
-## godot --headless --debug --path . --script res://tests/teste_bestiario.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_bestiario.gd
 
 
 func _initialize() -> void:

@@ -1,7 +1,7 @@
 extends TesteBase
 ## Garante que as telas de menu cabem na tela do jogo (640x360), cada passo da criação inclusive.
 ## O tema novo deixou a criação maior que a tela uma vez; este teste evita que volte a acontecer.
-## godot --headless --debug --path . --script res://tests/teste_telas_cabem.gd
+## godot --headless --debug --path . --script res://tests/ui/teste_telas_cabem.gd
 
 const LARGURA := 640
 const ALTURA := 360

@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste do Goblin Minion: ficha do livro, arremessa as adagas de longe (com desvantagem
 ## além de 20 pés), golpeia de perto, Desengaja (Fuga Ágil) e morre.
-## godot --headless --debug --path . --script res://tests/teste_goblin.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_goblin.gd
 
 const CENA_GOBLIN := "res://features/goblin/goblin.tscn"
 ## Dentro dos 60 pés (384 px) e além dos 20 (128 px): arremessa com desvantagem.

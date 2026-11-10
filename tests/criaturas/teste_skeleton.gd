@@ -1,7 +1,7 @@
 extends TesteBase
 ## Skeleton (Monster Manual 2024, conferido no Códice): ficha, vulnerabilidade a contundente (dano dobra), imunidade a veneno,
 ## cena rodando sozinha, morte com a animação `morrer` e presença na Main (sorteio, bestiário, acompanhantes do Wight).
-## godot --headless --debug --path . --script res://tests/teste_skeleton.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_skeleton.gd
 
 const CENA := "res://features/goblin/skeleton_guerreiro.tscn"
 const GOLPE_CERTEIRO := 100

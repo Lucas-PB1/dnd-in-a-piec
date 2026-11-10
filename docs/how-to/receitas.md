@@ -12,7 +12,7 @@ Comandos (PowerShell, na raiz `C:\Jogos\rpg`; o Godot está em `$env:GODOT_EDITO
 # Rodar uma ferramenta (SEM --debug: com erro, o --debug trava no depurador)
 & $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/gerar_armas.gd
 # Um teste (COM --debug: mostra avisos do GDScript)
-& $env:GODOT_EDITOR_PATH --headless --debug --path . --script res://tests/teste_goblin.gd
+& $env:GODOT_EDITOR_PATH --headless --debug --path . --script res://tests/criaturas/teste_goblin.gd
 # Todos os testes + o jogo 3 s procurando erros e avisos
 powershell -NoProfile -ExecutionPolicy Bypass -File tests\rodar_testes.ps1
 ```
@@ -57,7 +57,7 @@ Camadas em `docs/adr/criaturas.md`: kit sempre → capacidades do `.tres` → es
    `goblin.tscn` (com capacidades). `collision_layer = 16`; Hurtbox 4; Hitbox máscara 8.
    **Roda sozinha (F6)**: sem alvo, fica Parada. Variante do mesmo bicho = cena herdada.
 6. **Ligar no jogo**: `levels/main.gd` (`CENAS_DOS_TIPOS` / Trazer) + teste da lista.
-7. **Teste** `tests/teste_<criatura>.gd`: ficha, cena sozinha, percebe/persegue, ataca, morre.
+7. **Teste** `tests/criaturas/teste_<criatura>.gd`: ficha, cena sozinha, percebe/persegue, ataca, morre.
 8. `docs/adr/criaturas.md`, `CLAUDE.md` se pasta nova, `CHANGELOG` / backlog, `CREDITOS.md`.
 
 > Capacidades (arremesso, disparo, sol, flanqueio…) pertencem à ficha/`core/`, não à feature.
@@ -73,13 +73,13 @@ Camadas em `docs/adr/criaturas.md`: kit sempre → capacidades do `.tres` → es
 2. Arte: ícone do pacote em `assets/armas/fonte_idylwild/` (ou `fonte_aereo/`), ou desenho por
    script. Se o PNG é novo: rode o gerador, `--import`, rode o gerador de novo (o 2º passo lê a
    arte importada).
-3. Confira os testes `tests/teste_armas.gd` / `teste_armaduras.gd` (contagens, propriedades).
+3. Confira os testes `tests/combate/teste_armas.gd` / `teste_armaduras.gd` (contagens, propriedades).
 4. O baú do arsenal pega tudo das pastas `data/armas`, `data/armaduras`, `data/municoes` sozinho.
 
 ## 3. Regra de D&D nova (cálculo)
 
 1. Conta pura em `core/regras/` (função estática ou método da `Ficha`/`Combate`), sem nó.
-2. Teste em `tests/teste_regras_dnd.gd` (ou `teste_combate_dnd.gd`) com o exemplo do livro.
+2. Teste em `tests/regras/teste_regras_dnd.gd` (ou `tests/combate/teste_combate_dnd.gd`) com o exemplo do livro.
    Dados: fixe a semente do `RandomNumberGenerator` ou use bônus enormes (+100) para não ter
    teste que falha às vezes.
 3. Só depois ligue no jogo (componente, estado ou tela).
@@ -115,7 +115,7 @@ Camadas em `docs/adr/criaturas.md`: kit sempre → capacidades do `.tres` → es
 
 ## 7. Teste novo
 
-- `tests/teste_<assunto>.gd`, `extends TesteBase`, `_initialize` -> `_rodar.call_deferred()`.
+- `tests/<tema>/teste_<assunto>.gd` (combate, criaturas, heroi, ui, campanha, regras), `extends TesteBase`, `_initialize` -> `_rodar.call_deferred()`.
 - `_checar(condicao, "descrição em português")` imprime `ok`/`ERRO`; no fim **`_terminar("resumo")`**
   (imprime `PASSOU`/`FALHOU` e `quit` 0/1). Só `quit(_falhas)` sem `PASSOU` é falha no runner.
   O `rodar_testes.ps1` pega todo `teste_*.gd`, imprime `>> OK`/`>> FALHOU` por arquivo e lista as falhas no fim.
@@ -123,7 +123,7 @@ Camadas em `docs/adr/criaturas.md`: kit sempre → capacidades do `.tres` → es
 - Espere quadros de física (`await physics_frame`) para a física andar. Botão Pular, ataque
   etc. agem no quadro SEGUINTE (buffer).
 - Toque: `root.push_input(evento, true)` com `InputEventScreenTouch`/`ScreenDrag`.
-- Não suje os arquivos do jogador em `user://`: guarde e devolva (ver `tests/teste_toque.gd`).
+- Não suje os arquivos do jogador em `user://`: guarde e devolva (ver `tests/ui/teste_toque.gd`).
 - O herói pode cair durante o teste: dê vida alta (`HealthComponent.configurar(999)`).
 
 ## 8. Print para conferir o visual
@@ -166,5 +166,5 @@ func _rodar() -> void:
 1. Dados: uma linha em `tools/gerar_compendio.gd` (id, nome do livro, texto) e os atributos em `ATRIBUTOS_DO_TALENTO`; rode o gerador.
 2. Id: uma constante `TALENTO_*` em `Ficha` (o id do `TalentoRPG`, em `StringName`).
 3. Efeito: uma classe em `core/regras/efeitos/efeitos_de_talento.gd` que estende `EfeitoDeGolpe` e sobrescreve só o que usa; `Ficha._juntar_efeitos_de_talento` a coloca no golpe. O `id` do efeito serve à recarga de uma vez por rodada (`por_rodada`).
-4. Estado no herói (botão, doses, tempo): uma classe pura em `features/jogador/talentos/`, com teste em `tests/teste_regras_do_heroi.gd`.
+4. Estado no herói (botão, doses, tempo): uma classe pura em `features/jogador/talentos/`, com teste em `tests/heroi/teste_regras_do_heroi.gd`.
 5. Teste do efeito em `tests/` (`extends TesteBase`) e uma linha em `TALENTOS_FUNCIONANDO` do gerador quando o jogador já puder escolher.

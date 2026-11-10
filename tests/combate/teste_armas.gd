@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste das armas do PHB (fatia 11a): dados das 29 armas, Versátil, Pesada, Alcance, Duas Mãos,
 ## pilhas no inventário, pacotes iniciais e o baú do arsenal.
-## godot --headless --debug --path . --script res://tests/teste_armas.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_armas.gd
 
 const PASTA := "res://data/armas/"
 const TOTAL_CORPO := 29

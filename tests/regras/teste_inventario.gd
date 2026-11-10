@@ -1,6 +1,6 @@
 extends TesteBase
 ## Teste da regra pura do Inventario.
-## godot --headless --debug --path . --script res://tests/teste_inventario.gd
+## godot --headless --debug --path . --script res://tests/regras/teste_inventario.gd
 
 
 func _initialize() -> void:

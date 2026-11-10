@@ -1,7 +1,7 @@
 extends TesteBase
 ## Som: volumes (e o arquivo de opções), barramentos, efeitos tocando nos eventos certos, música
 ## por tela e por fase, e a aba Som das Opções.
-## godot --headless --debug --path . --script res://tests/teste_som.gd
+## godot --headless --debug --path . --script res://tests/campanha/teste_som.gd
 
 
 func _initialize() -> void:

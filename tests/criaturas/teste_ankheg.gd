@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste do Ankheg (chefe da fase 3): ficha do livro, golpe de salvaguarda (Borrifo Ácido), herói agarrado (escapa a cada
 ## rodada), e a luta de verdade: anda, morde, borrifa, cava e emerge, e morre.
-## godot --headless --debug --path . --script res://tests/teste_ankheg.gd
+## godot --headless --debug --path . --script res://tests/criaturas/teste_ankheg.gd
 
 const CENA := "res://features/ankheg/ankheg.tscn"
 const VIDA_DE_TESTE := 9999

@@ -1,6 +1,6 @@
 extends TesteBase
 ## Testa o menu de pausa (Esc), o Salvar e o Continuar do título.
-## godot --headless --debug --path . --script res://tests/teste_pausa.gd
+## godot --headless --debug --path . --script res://tests/ui/teste_pausa.gd
 
 
 func _initialize() -> void:

@@ -1,7 +1,7 @@
 extends TesteBase
 ## As regras puras dos talentos do herói (features/jogador/talentos/): recargas, Sorte, dados de vida, veneno,
 ## janela de defesa e Investida. Sem nós: rodam direto.
-## godot --headless --debug --path . --script res://tests/teste_regras_do_heroi.gd
+## godot --headless --debug --path . --script res://tests/heroi/teste_regras_do_heroi.gd
 
 
 func _initialize() -> void:

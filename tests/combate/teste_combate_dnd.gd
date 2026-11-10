@@ -1,7 +1,7 @@
 extends TesteBase
 ## Teste das regras puras de combate: dados com bônus, ataque contra CA, crítico,
 ## salvaguarda, ficha (proficiência, CA, ataque) e bloco de criatura (Gray Ooze).
-## godot --headless --debug --path . --script res://tests/teste_combate_dnd.gd
+## godot --headless --debug --path . --script res://tests/combate/teste_combate_dnd.gd
 
 const ROLAGENS := 400
 
