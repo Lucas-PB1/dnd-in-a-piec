@@ -35,8 +35,6 @@ const PASSO_DO_CAMINHO := 32.0
 const CRESCIMENTO_DO_MONTE := 0.8
 ## Jato do Borrifo: altura do respingo no fim da linha (px).
 const ALTURA_DO_RESPINGO := 6.0
-## Faces do dado da recarga (1d6 do "Recarga 6").
-const FACES_RECARGA := 6
 
 ## Bloco de estatísticas. Padrão: data/ankheg.tres.
 @export var criatura: CriaturaRPG
@@ -65,14 +63,14 @@ var _rng := RandomNumberGenerator.new()
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _tempo_desde_ataque: float = INF
 var _tempo_desde_cavar: float = INTERVALO_CAVAR / 2.0
-var _tempo_recarga: float = 0.0
-var _borrifo_pronto: bool = true
 var _emboscada: bool = false
 var _escondido: bool = false
 var _camada_corpo: int = 0
 var _camada_hurtbox: int = 0
 var _empurrao_restante: float = 0.0
 var _saltador: SaltadorDeMonstro
+## Borrifo Ácido da ficha (`linha_*`).
+var _ataque_linha: LinhaDeCriatura
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _sombra: Polygon2D = $Sombra
@@ -98,6 +96,7 @@ func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
 	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
+	_ataque_linha = LinhaDeCriatura.new(criatura)
 	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	MontagemDeCriatura.ligar_sinais_padrao(
@@ -113,7 +112,7 @@ func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
 	_tempo_desde_cavar += delta
 	_saltador.passar_tempo(delta)
-	_recarregar_borrifo(delta)
+	_ataque_linha.passar_tempo(delta, _rng)
 	if not _escondido and not is_on_floor():
 		velocity.y += _gravidade * delta
 	_maquina.processar_fisica(delta)
@@ -148,7 +147,12 @@ func nome_estado() -> StringName:
 
 
 func borrifo_pronto() -> bool:
-	return _borrifo_pronto
+	return _ataque_linha.pronta()
+
+
+## Só para testes / forçar a recarga do Borrifo.
+func definir_borrifo_pronto(valor: bool) -> void:
+	_ataque_linha.definir_pronta(valor)
 
 
 # --- Ferramentas dos estados ----------------------------------------------------
@@ -167,8 +171,12 @@ func pode_atacar() -> bool:
 
 ## O Borrifo está recarregado e o herói está dentro da linha (à frente, no comprimento dela).
 func quer_borrifar() -> bool:
-	return _borrifo_pronto and alvo != null and _distancia_horizontal() <= meia_largura_corpo + _comprimento_linha_px() \
-		and absf(alvo.global_position.y - global_position.y) <= altura_golpe * 2.0
+	return alvo != null and _ataque_linha.pronta() and _ataque_linha.alvo_na_area(
+		_distancia_horizontal(),
+		meia_largura_corpo,
+		absf(alvo.global_position.y - global_position.y),
+		altura_golpe * 2.0,
+	)
 
 
 ## Longe o bastante do herói, no chão, fora da espera e com terra firme até ele (vão ou paredão no caminho: nada de cavar,
@@ -258,13 +266,14 @@ func desligar_golpe() -> void:
 
 ## Solta o Borrifo Ácido: liga a área da linha e mostra o jato; gasta a recarga.
 func ligar_borrifo() -> void:
-	_linha.ligar(_golpe_do_borrifo())
+	var golpe := _ataque_linha.golpe()
+	golpe.autor_id = get_instance_id()
+	_linha.ligar(golpe)
 	_gotas.restart()
 	_respingo.restart()
 	_gotas.emitting = true
 	_respingo.emitting = true
-	_borrifo_pronto = false
-	_tempo_recarga = 0.0
+	_ataque_linha.consumir()
 
 
 func desligar_borrifo() -> void:
@@ -393,17 +402,6 @@ func terminar_de_morrer() -> void:
 
 # --- Interno --------------------------------------------------------------------
 
-## Recarga 6: no começo de cada rodada rola 1d6; com o número da ficha ou mais, o Borrifo volta.
-func _recarregar_borrifo(delta: float) -> void:
-	if _borrifo_pronto or criatura.linha_recarga <= 0:
-		return
-	_tempo_recarga += delta
-	if _tempo_recarga < EscalaDnd.RODADA_SEGUNDOS:
-		return
-	_tempo_recarga -= EscalaDnd.RODADA_SEGUNDOS
-	_borrifo_pronto = _rng.randi_range(1, FACES_RECARGA) >= criatura.linha_recarga
-
-
 func _golpe_da_mordida() -> Golpe:
 	var golpe := criatura.golpe()
 	golpe.autor_id = get_instance_id()
@@ -413,22 +411,12 @@ func _golpe_da_mordida() -> Golpe:
 	return golpe
 
 
-func _golpe_do_borrifo() -> Golpe:
-	var golpe := criatura.golpe_linha()
-	golpe.autor_id = get_instance_id()
-	return golpe
-
-
 func _alvo_agarrado() -> bool:
 	return alvo != null and alvo.has_method(&"esta_agarrado") and alvo.call(&"esta_agarrado")
 
 
 func _alcance_px() -> float:
 	return EscalaDnd.pes_para_pixels(criatura.ataque_alcance_pes)
-
-
-func _comprimento_linha_px() -> float:
-	return EscalaDnd.pes_para_pixels(criatura.linha_comprimento_pes)
 
 
 func _distancia_horizontal() -> float:
@@ -448,13 +436,11 @@ func _preparar_areas() -> void:
 	var comprimento_mordida := meia_largura_corpo + _alcance_px()
 	mordida.size = Vector2(comprimento_mordida, altura_golpe)
 	_forma_golpe.position = Vector2(comprimento_mordida / 2.0, -altura_golpe / 2.0)
-	var largura := EscalaDnd.pes_para_pixels(criatura.linha_largura_pes)
 	var linha := _forma_linha.shape as RectangleShape2D
-	linha.size = Vector2(_comprimento_linha_px(), largura)
-	_forma_linha.position = Vector2(meia_largura_corpo + _comprimento_linha_px() / 2.0, -altura_boca)
-	var comprimento := _comprimento_linha_px()
+	linha.size = _ataque_linha.tamanho_hitbox_px()
+	_forma_linha.position = Vector2(_ataque_linha.offset_x_centro(meia_largura_corpo), -altura_boca)
 	_gotas.position = Vector2(meia_largura_corpo, -altura_boca)  # o jato sai da boca
-	_respingo.position = Vector2(meia_largura_corpo + comprimento, -ALTURA_DO_RESPINGO)
+	_respingo.position = Vector2(meia_largura_corpo + _ataque_linha.comprimento_px(), -ALTURA_DO_RESPINGO)
 
 
 func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:

@@ -58,8 +58,6 @@ const PROFUNDIDADE_BEIRA := 20.0
 const DISTANCIA_BEIRA := 40.0
 ## Quanto tempo o sprite fica vermelho ao levar dano (s).
 const TEMPO_PISCAR_DANO := 0.12
-## Faces do dado da recarga (1d6 do "Recarga 5-6").
-const FACES_RECARGA := 6
 ## Tremor da câmera: no rugido e na cabeçada (px) e duração (s).
 const FORCA_ABALO_RUGIDO := 5.0
 const FORCA_ABALO_CABECADA := 4.0
@@ -126,8 +124,6 @@ var _ritmo_forcado: float = 1.0
 var _rng := RandomNumberGenerator.new()
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _tempo_desde_ataque: float = INF
-var _tempo_recarga: float = 0.0
-var _sopro_pronto: bool = true
 var _empurrao_restante: float = 0.0
 var _despertou: bool = false
 var _saltador: SaltadorDeMonstro
@@ -135,6 +131,8 @@ var _saltador: SaltadorDeMonstro
 var _investida: InvestidaDeCriatura
 ## Voo da ficha (`voo_pes`).
 var _voo: VooDeCriatura
+## Sopro de Fogo da ficha (`linha_*`).
+var _ataque_linha: LinhaDeCriatura
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _dissolver: DissolverComponent = $Dissolver
@@ -156,6 +154,7 @@ func _ready() -> void:
 	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
 	_investida = InvestidaDeCriatura.new(criatura)
 	_voo = VooDeCriatura.new(criatura, altura_de_voo)
+	_ataque_linha = LinhaDeCriatura.new(criatura)
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	_vida.vida_mudou.connect(_ao_mudar_vida)
 	_golpe.alvo_atingido.connect(func(_alvo: HurtboxComponent) -> void: _golpe_acertou = true)
@@ -170,7 +169,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
 	_saltador.passar_tempo(delta)
-	_recarregar_sopro(delta)
+	_ataque_linha.passar_tempo(delta, _rng, FATOR_FURIA if _enfurecida else 1.0)
 	_recarregar_padroes(delta)
 	if not is_on_floor() and not voando:
 		velocity.y += _gravidade * delta
@@ -207,7 +206,12 @@ func nome_estado() -> StringName:
 
 
 func sopro_pronto() -> bool:
-	return _sopro_pronto
+	return _ataque_linha.pronta()
+
+
+## Só para testes / forçar a recarga do Sopro.
+func definir_sopro_pronto(valor: bool) -> void:
+	_ataque_linha.definir_pronta(valor)
 
 
 # --- Ferramentas dos estados ----------------------------------------------------
@@ -227,9 +231,12 @@ func pode_atacar() -> bool:
 
 ## O Sopro recarregou e o herói está dentro do cone (à frente, na mesma altura, sem passar do comprimento dele).
 func quer_soprar() -> bool:
-	return _sopro_pronto and alvo != null and is_on_floor() \
-		and _distancia_horizontal() <= meia_largura_corpo + _comprimento_sopro_px() \
-		and absf(alvo.global_position.y - global_position.y) <= altura_golpe
+	return alvo != null and is_on_floor() and _ataque_linha.pronta() and _ataque_linha.alvo_na_area(
+		_distancia_horizontal(),
+		meia_largura_corpo,
+		absf(alvo.global_position.y - global_position.y),
+		altura_golpe,
+	)
 
 
 ## Primeira vez que percebe o herói: avisa a main (uma vez só).
@@ -442,8 +449,7 @@ func ligar_bote() -> void:
 
 ## O Sopro: gasta a recarga e toca a animação.
 func iniciar_sopro() -> void:
-	_sopro_pronto = false
-	_tempo_recarga = 0.0
+	_ataque_linha.consumir()
 	iniciar_ataque(&"sopro")
 
 
@@ -476,7 +482,7 @@ func desligar_golpe() -> void:
 
 
 func ligar_sopro() -> void:
-	_sopro.ligar(_com_autor(criatura.golpe_linha()))
+	_sopro.ligar(_com_autor(_ataque_linha.golpe()))
 
 
 func desligar_sopro() -> void:
@@ -522,18 +528,6 @@ func terminar_de_morrer() -> void:
 
 
 # --- Interno --------------------------------------------------------------------
-
-## Recarga 5-6: no começo de cada rodada rola 1d6; com o número da ficha ou mais, o Sopro volta. Em fúria a rodada é mais curta.
-func _recarregar_sopro(delta: float) -> void:
-	if _sopro_pronto or criatura.linha_recarga <= 0:
-		return
-	_tempo_recarga += delta
-	var rodada := EscalaDnd.RODADA_SEGUNDOS * (FATOR_FURIA if _enfurecida else 1.0)
-	if _tempo_recarga < rodada:
-		return
-	_tempo_recarga -= rodada
-	_sopro_pronto = _rng.randi_range(1, FACES_RECARGA) >= criatura.linha_recarga
-
 
 func _recarregar_padroes(delta: float) -> void:
 	for padrao: StringName in _recargas_dos_padroes:
@@ -617,10 +611,6 @@ func _alcance_px() -> float:
 	return EscalaDnd.pes_para_pixels(criatura.ataque_alcance_pes)
 
 
-func _comprimento_sopro_px() -> float:
-	return EscalaDnd.pes_para_pixels(criatura.linha_comprimento_pes)
-
-
 func _distancia_horizontal() -> float:
 	return absf(alvo.global_position.x - global_position.x)
 
@@ -637,9 +627,9 @@ func _preparar_areas() -> void:
 	var comprimento := meia_largura_corpo + _alcance_px()
 	(_forma_golpe.shape as RectangleShape2D).size = Vector2(comprimento, altura_golpe)
 	_forma_golpe.position = Vector2(comprimento / 2.0, -altura_golpe / 2.0)
-	var largura := EscalaDnd.pes_para_pixels(criatura.linha_largura_pes)
-	(_forma_sopro.shape as RectangleShape2D).size = Vector2(_comprimento_sopro_px(), largura)
-	_forma_sopro.position = Vector2(meia_largura_corpo + _comprimento_sopro_px() / 2.0, -largura / 2.0)
+	var tamanho := _ataque_linha.tamanho_hitbox_px()
+	(_forma_sopro.shape as RectangleShape2D).size = tamanho
+	_forma_sopro.position = Vector2(_ataque_linha.offset_x_centro(meia_largura_corpo), -tamanho.y / 2.0)
 
 
 func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:

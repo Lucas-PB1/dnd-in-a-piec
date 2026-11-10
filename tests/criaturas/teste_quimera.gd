@@ -100,7 +100,7 @@ func _testar_fase_do_chefe(cena: Main) -> void:
 
 ## Ao perceber o herói, ruge (estado Rugindo) e parte para cima.
 func _testar_rugido() -> void:
-	_quimera.set("_sopro_pronto", false)
+	_quimera.definir_sopro_pronto(false)
 	var estados: Dictionary = {}
 	for i in QUADROS_POR_SEGUNDO * 6:
 		await physics_frame
@@ -114,7 +114,7 @@ func _testar_rugido() -> void:
 
 ## Com o herói longe ela corre na Disparada (o dobro da velocidade), a passada acompanha o chão e, perto, ela freia sem travar.
 func _testar_disparada() -> void:
-	_quimera.set("_sopro_pronto", false)
+	_quimera.definir_sopro_pronto(false)
 	var andar := EscalaDnd.deslocamento_para_velocidade(_quimera.criatura.deslocamento_pes)
 	var mais_rapida := 0.0
 	var ritmo := 0.0
@@ -136,7 +136,7 @@ func _testar_combo() -> void:
 	(_jogador.get_node("Defesa") as DefesaComponent).classe_armadura = 1
 	# Sem a invencibilidade de 1 s depois de cada acerto, os três golpes do combo (0,4 s no total) caem todos no herói.
 	_jogador.stats.tempo_invencibilidade = TEMPO_INVENCIVEL_CURTO
-	_quimera.set("_sopro_pronto", false)
+	_quimera.definir_sopro_pronto(false)
 	var nomes: Dictionary = {}
 	var defesa: DefesaComponent = _jogador.get_node("Defesa")
 	defesa.golpe_resolvido.connect(func(r: Combate.Resultado, _o: Vector2) -> void: nomes[r.golpe.nome] = true)
@@ -157,7 +157,7 @@ func _testar_combo() -> void:
 
 ## Com o herói no cone, fora do alcance das garras, e o Sopro pronto: sopra; o fogo queima (salvaguarda de Destreza).
 func _testar_sopro_sozinho() -> void:
-	_quimera.set("_sopro_pronto", true)
+	_quimera.definir_sopro_pronto(true)
 	var vida: HealthComponent = _jogador.get_node("Vida")
 	var antes := vida.vida_atual
 	var defesa: DefesaComponent = _jogador.get_node("Defesa")
@@ -195,7 +195,7 @@ func _testar_garra_trocada_pelo_sopro() -> void:
 	(_jogador.get_node("Defesa") as DefesaComponent).classe_armadura = 1
 	_jogador.stats.tempo_invencibilidade = TEMPO_INVENCIVEL_CURTO
 	await _esperar(QUADROS_POR_SEGUNDO)  # a invencibilidade do Sopro anterior acaba
-	_quimera.set("_sopro_pronto", true)
+	_quimera.definir_sopro_pronto(true)
 	(_quimera.get_node("MaquinaEstados") as MaquinaEstados).trocar(&"Perseguindo")
 	var nomes: Dictionary = {}
 	var vistos: Dictionary = {}
@@ -220,13 +220,13 @@ func _rodar_padrao(estado: StringName, distancia: float, ate: Callable) -> Dicti
 	var ouvinte := func(r: Combate.Resultado, _o: Vector2) -> void: golpes[r.golpe.nome] = true
 	defesa.golpe_resolvido.connect(ouvinte)
 	await _esperar(QUADROS_POR_SEGUNDO * 2)  # a invencibilidade do herói do padrão anterior acaba
-	_quimera.set("_sopro_pronto", false)
+	_quimera.definir_sopro_pronto(false)
 	_colocar_heroi_a(distancia)
 	await _esperar(2)
 	(_quimera.get_node("MaquinaEstados") as MaquinaEstados).trocar(estado)
 	for i in QUADROS_POR_SEGUNDO * 6:
 		await physics_frame
-		_quimera.set("_sopro_pronto", false)
+		_quimera.definir_sopro_pronto(false)
 		estados[_quimera.nome_estado()] = true
 		if ate.call(golpes, estados):
 			break
