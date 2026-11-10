@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Áudio: **mais faixas** — Trilha com Medieval Exploration; Cripta com Whispers in the Fog; batalha continua só na Ruína e Fortaleza. Item `som-faltante` fechado.
 - Áudio: **mixagem por distância** — vozes/golpe/rugido/tremor/estouro de monstro caem de 6 a 20 ladrilhos do herói (`Sons.tocar_em`).
 - Áudio: **vozes dos minions** no aviso e no golpe (Goblin/Kobold/Hobgoblin, Bugbear/Ooze, Skeleton/Zombie) com packs CC0; chefes seguem no rugido.
 - Áudio: **ambiente por tema** (Floresta / Ruínas / Subterrâneo / Covil) em loop baixo sob a música; some no título, derrota e vitória. WAV sintetizados.

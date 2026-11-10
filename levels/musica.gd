@@ -5,21 +5,23 @@ extends Node
 ## vitória) tocam só a música e calamos o ambiente. Fica no barramento "Musica".
 
 const TITULO := "res://assets/audio/musica/shakkar.ogg"
+const EXPLORACAO := "res://assets/audio/musica/exploracao.mp3"
 const TAVERNA := "res://assets/audio/musica/old_tower_inn.mp3"
 const BATALHA := "res://assets/audio/musica/batalha_medieval.mp3"
 const MASMORRA := "res://assets/audio/musica/masmorra_dungeon002.ogg"
 const CAVERNA := "res://assets/audio/musica/caverna_escura.ogg"
+const CRIPTA := "res://assets/audio/musica/sussurros_nevoa.ogg"
 const CHEFE := "res://assets/audio/musica/chefe_batalha_rpg.ogg"
 const DERROTA := "res://assets/audio/musica/derrota.ogg"
 const AMBIENTE_FLORESTA := "res://assets/audio/sintetizados/ambiente_floresta.wav"
 const AMBIENTE_RUINAS := "res://assets/audio/sintetizados/ambiente_ruinas.wav"
 const AMBIENTE_SUBTERRANEO := "res://assets/audio/sintetizados/ambiente_subterraneo.wav"
 const AMBIENTE_COVIL := "res://assets/audio/sintetizados/ambiente_covil.wav"
-## Faixa de cada fase (1 = Clareira ... 10 = Covil). As fases dos chefes (6 e 10) tocam a música de chefe.
-## Fase sem faixa mantém a que está tocando.
+## Faixa de cada fase (1 = Clareira ... 10 = Covil). Batalha só na Ruína e Fortaleza (4–5).
+## Fases dos chefes (6 e 10) tocam a música de chefe. Fase sem faixa mantém a que está tocando.
 const FAIXAS_DAS_FASES := {
-	1: TITULO, 2: TITULO, 3: TAVERNA, 4: BATALHA, 5: BATALHA,
-	6: CHEFE, 7: MASMORRA, 8: CAVERNA, 9: MASMORRA, 10: CHEFE,
+	1: TITULO, 2: EXPLORACAO, 3: TAVERNA, 4: BATALHA, 5: BATALHA,
+	6: CHEFE, 7: MASMORRA, 8: CAVERNA, 9: CRIPTA, 10: CHEFE,
 }
 ## Ambiente por tema da campanha (4 temas): Floresta 1–3, Ruínas 4–6, Subterrâneo 7–9, Covil 10.
 const AMBIENTES_DAS_FASES := {
