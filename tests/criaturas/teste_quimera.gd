@@ -194,19 +194,24 @@ func _testar_recarga() -> void:
 func _testar_garra_trocada_pelo_sopro() -> void:
 	(_jogador.get_node("Defesa") as DefesaComponent).classe_armadura = 1
 	_jogador.stats.tempo_invencibilidade = TEMPO_INVENCIVEL_CURTO
-	await _esperar(QUADROS_POR_SEGUNDO)  # a invencibilidade do Sopro anterior acaba
+	await _esperar(QUADROS_POR_SEGUNDO * 2)  # a invencibilidade do Sopro anterior acaba
 	_quimera.definir_sopro_pronto(true)
-	(_quimera.get_node("MaquinaEstados") as MaquinaEstados).trocar(&"Perseguindo")
+	_colocar_heroi_a(AO_ALCANCE)
+	await _esperar(2)
+	# Força o combo de perto (não Perseguindo: senão ela pode pular antes de atacar).
+	(_quimera.get_node("MaquinaEstados") as MaquinaEstados).trocar(&"Atacando")
 	var nomes: Dictionary = {}
 	var vistos: Dictionary = {}
 	var defesa: DefesaComponent = _jogador.get_node("Defesa")
-	defesa.golpe_resolvido.connect(func(r: Combate.Resultado, _o: Vector2) -> void: nomes[r.golpe.nome] = true)
+	var ouvinte := func(r: Combate.Resultado, _o: Vector2) -> void: nomes[r.golpe.nome] = true
+	defesa.golpe_resolvido.connect(ouvinte)
 	for i in QUADROS_POR_SEGUNDO * 20:
 		await physics_frame
 		vistos[_quimera.nome_estado()] = true
 		_colocar_heroi_a(AO_ALCANCE)
 		if "Sopro de Fogo" in nomes and "Mordida" in nomes:
 			break
+	defesa.golpe_resolvido.disconnect(ouvinte)
 	_checar("Sopro de Fogo" in nomes and not ("Garra" in nomes) and "Mordida" in nomes,
 		"o Sopro toma o lugar da Garra no combo (%s; estados %s)" % [", ".join(nomes.keys()), ", ".join(vistos.keys())])
 
