@@ -17,7 +17,7 @@ func _initialize() -> void:
 	_checar(Arma.separar_nome_magico("Espada Curta +3") == ["Espada Curta", 3] and Arma.separar_nome_magico("Adaga") == ["Adaga", 0], "o nome mágico se separa em base e bônus")
 	_testar_save(magica)
 	_testar_saque()
-	quit(_falhas)
+	_terminar("armas mágicas +1/+2/+3")
 
 
 func _testar_save(magica: Arma) -> void:

@@ -44,6 +44,6 @@ decisão deste tema mudar.** Dados gerados por `tools/gerar_armas.gd` e
 - Nasce por `Arma.com_bonus_magico(n)`; o save guarda o nome base e o bônus. Só vem do saque por enquanto: das armas que caem, 20% são +1, 5% +2 e 1% +3 (`Saque`).
 
 ## Loja (início da fase)
-- Banca do lojista (`features/loja/lojista`, arte do SpriteCook com animação parado (`lojista_idle_sc.png`, montada por `tools/montar_lojista.gd`)) a 64 px do começo de cada fase; E abre a `TelaLoja` (Comprar e Vender; pausa o jogo).
+- Banca do lojista (`features/loja/lojista`, arte do SpriteCook em `features/loja/sprites/` — `lojista_idle_sc.png`, montada por `tools/montar_lojista.gd`) a 64 px do começo de cada fase; E abre a `TelaLoja` (Comprar e Vender; pausa o jogo). Regra pura em `core/regras/loja.gd`, NPC na feature, tela em `ui/loja/`.
 - `Loja` (regra pura): preço do livro em peças (GP=1, SP=0,1, CP=0,01; sem preço = 5); arma mágica soma 60/240/960; venda paga metade (pilha inteira); Artesão: -20% na compra.
 - Estoque sorteado por fase (7 itens): só até 25 po na fase 1, o teto dobra a cada fase; 25% das armas vêm mágicas, bônus máximo +1 (fases 1–3), +2 (4–6), +3 (7+). Comprar põe uma cópia na mochila; a munição não acaba.

@@ -70,9 +70,9 @@ func _carregar(delta: float) -> void:
 ## W (ou "mirar_cima": o analógico para cima) sobe a mira, S desce. Sem eles, o tiro
 ## sai reto e o arremesso cai no chão.
 func _apontar_mira(delta: float) -> void:
-	if Input.is_action_pressed("pular") or Input.is_action_pressed("mirar_cima"):
+	if Input.is_action_pressed(&"pular") or Input.is_action_pressed(&"mirar_cima"):
 		_mira = minf(_mira + VELOCIDADE_MIRA * delta, MIRA_CIMA)
-	if Input.is_action_pressed("mover_baixo"):
+	if Input.is_action_pressed(&"mover_baixo"):
 		_mira = maxf(_mira - VELOCIDADE_MIRA * delta, -MIRA_BAIXO)
 
 

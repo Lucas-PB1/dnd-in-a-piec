@@ -28,7 +28,7 @@ func _initialize() -> void:
 	_checar(Loja.comprar(espada_curta, ficha, cheia) == Loja.Resultado.MOCHILA_CHEIA and ficha.ouro == 100, "mochila cheia não gasta ouro")
 	_checar(not Loja.fica_no_estoque(espada_curta), "arma comprada sai do estoque")
 	_testar_estoque()
-	quit(_falhas)
+	_terminar("regra da loja e estoque")
 
 
 func _testar_estoque() -> void:

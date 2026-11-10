@@ -1,42 +1,42 @@
 # Pendências
 
-Tudo o que falta, num lugar só, para escolher a próxima fatia **sem inventar**. Ao propor a
-próxima fatia, escolha daqui (e ofereça 3 opções ao usuário, a recomendada primeiro). Ao fechar
-uma fatia: **tire daqui o que ficou pronto** e acrescente o que apareceu de novo.
+Tudo o que **ainda falta**, num lugar só, para escolher a próxima fatia **sem inventar**.
+Ao propor a próxima fatia, escolha daqui (3 opções ao usuário, a recomendada primeiro).
+Ao fechar uma fatia: **tire daqui o que ficou pronto** e acrescente o que apareceu de novo.
 
 Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias).
+
+O que já foi (10 fases, chefes, loja, ouro, talentos 1–6, save/load, esconder de novo do Warrior,
+Skeleton/Zombie, etc.) está em `docs/historico.md` — **não** repita aqui.
 
 ## 1. Próximas fatias sugeridas
 
 | # | Fatia | Tam. | Onde mexe | Observação |
 |---|---|---|---|---|
-| 1 | **Validar o APK num celular Android** | P | `builds/android/dnd_in_a_piece.apk`, controles de toque | APK exportável; falta conferir no aparelho o tamanho dos alvos, movimento durante o ataque e resposta do pulo. |
-| 2 | **Subclasse do Guerreiro** | M | `core/dados/`, criação, combate | O nível 3 ainda não oferece a escolha de subclasse nem seus recursos. |
-| 3a | **IA dos monstros: cobertura e estratégia** | M | `features/goblin/`, `core/regras/` | Saltar, cobertura, manter distância e recuar ferido (feitos). Flanqueio (só manobra) também feito. Faltam: esperar em vantagem de terreno e levar o salto ao Gray Ooze, à patrulha e à Fuga Ágil. |
-| 3 | **Testes de habilidade nas fases** | M | `levels/`, interações e perícias | A regra e o toggle de Mente Tática estão prontos; falta uma interação que peça um teste de habilidade do herói. |
-| 4 | **Esconder de novo** | M | `features/goblin/` | A outra metade da Fuga Ágil: o Goblin Warrior se esconde outra vez no meio da luta. O começo escondido e o +1d4 com vantagem já existem. |
-| 5 | ~~Sprites novos dos monstros~~ (feito com o SpriteCook; falta só o refino do golpe do Minion e do arremesso) | M | `features/goblin/`, `tools/gerar_goblin*.gd` | Não há pacote CC0 melhor. Opção paga: [Rpg miniatures: The Goblins](https://ivoryred.itch.io/rpg-miniatures-the-goblins) (US$ 2,99, 4 goblins com dano e morte), só se o usuário comprar. |
-| 8 | **Corte de cima do herói (SpriteCook)** | M | `features/jogador/sprites/`, `docs/spritecook/prompts.json` | Pendente. 2 tentativas (52 créditos) saíram parciais: a IA desenha uma espada e o golpe não desce claro. Ideia: 3ª tentativa só com "balança o braço de cima para baixo", avisando o custo antes. Hoje vale o golpe antigo. |
-| 13 | **Som: o que falta** | M | `levels/sons.gd`, `data/` | Sons próprios de cada monstro (aviso do golpe e voz), música de derrota, ambiente por fase (vento, água), equipar e pegar item, mixagem por distância e mais faixas de música (a batalha toca só na Ruína e na Fortaleza). Ouvir com o jogo e ajustar volumes. |
-| 9 | **Ligar as animações do SpriteCook nos goblins** | M | `features/goblin/sprites/`, `tools/gerar_goblin*.gd` | Minion pronto: parado, andar e dano aprovados. Golpe (quadros 3 e 7) e arremesso (quadros 4-5 e 6) têm a adaga deformada ou solta: usar só os quadros bons e a adaga por código, ou refazer (20 cada, na mesma rodada 14). Warrior aprovado (golpe com cimitarra levemente distorcida nos quadros 5-6; um pixel solto no dano). Ooze: parado e dano ok, deslizar parcial (quadros 6-7), pseudópode refeito e aprovado (v2). |
-| 6 | **Arte própria do Pântano e da Ruína** | M | `levels/fundo_paralaxe.gd`, `assets/fundos/` | Hoje reusam floresta e fortaleza em outro tom. Faltam camadas de pântano e de ruína (não achei CC0). |
-| 7 | **Ataques novos dos monstros** | M | `core/dados/criatura_rpg.gd`, estados | Só com fonte no livro (ex.: criatura nova com ataques próprios). O Ooze, o Minion e o Warrior já usam todos os ataques das fichas. |
+| 1 | **Validar o APK num celular Android** | P | `builds/android/dnd_in_a_piece.apk`, controles de toque | APK exportável; falta conferir no aparelho o tamanho dos alvos, movimento durante o ataque, pulo, escalada no toque e botões Defesa/Investida/Dado/Veneno/Sorte. |
+| 2 | **Subclasse do Guerreiro** | M | `core/dados/`, criação, combate, árvore de habilidades | O nível 3 ainda não oferece a escolha de subclasse nem seus recursos (placeholder "Em breve"). |
+| 3 | **Testes de habilidade nas fases** | M | `levels/`, interações e perícias | A regra e o toggle de Mente Tática estão prontos; falta uma interação de fase que peça um teste de perícia do herói. |
+| 3a | **IA dos monstros: salto na patrulha/Fuga Ágil e vantagem de terreno** | M | `features/goblin/`, `core/regras/` | Saltar (incl. Ooze/chefes), cobertura, manter distância, recuar ferido e flanqueio **feitos**. Faltam: esperar em vantagem de terreno; salto na patrulha e na Fuga Ágil. |
+| 4 | **Lava com dano no Covil (fase 10)** | M | `levels/`, `fase.gd` / gerador | Decisão do épico; a fase 10 existe sem lava. |
+| 5 | **Refino visual do Minion (golpe e arremesso)** | P | `features/goblin/sprites/` | Sprites SpriteCook ligados; adaga ainda deforma em alguns quadros. Opcional. |
+| 6 | **Arte própria do Pântano e da Ruína** | M | `levels/fundo_paralaxe.gd`, `assets/fundos/` | Hoje reusam floresta e fortaleza em outro tom. Faltam camadas próprias (não achei CC0). |
+| 7 | **Som: o que falta** | M | `levels/sons.gd`, `data/` | Sons próprios de cada monstro (aviso do golpe e voz), música de derrota, ambiente por fase, equipar/pegar item, mixagem por distância e mais faixas (batalha só na Ruína e na Fortaleza). |
+| 8 | **Minions novos por recolor** | M | `features/goblin/`, `data/`, fases | Ainda não: Bullywug, Bandit, Guard, Scout, Gnoll, Tough, Cultist, Priest Acolyte, Bandit Captain. Criar aos poucos (`/nova-criatura`). |
+| 9 | **Ataques novos dos monstros** | M | `core/dados/criatura_rpg.gd`, estados | Só com fonte no livro (ex.: criatura nova). Ooze, Minion e Warrior já usam os ataques das fichas. |
 
 ## 2. Regras do livro que ainda não existem
 
 | O quê | Tam. | Situação hoje |
 |---|---|---|
 | Raças/espécies | G | Deslocamento padrão 30 pés para todos (`Ficha.DESLOCAMENTO_PADRAO_PES`). |
-| Antecedentes | M | Escolha de talento só quando existir antecedente; `Ficha.talentos` começa vazia. |
-| INT e CAR | — | Entram no bônus da perícia escolhida (História, Intimidação, Persuasão). Essas perícias ainda não têm teste no jogo. SAB entra na Percepção passiva. |
-| Outras perícias | — | Escolhidas e mostradas na ficha. Só a Percepção passiva muda o jogo. |
-| Esconder de novo | M | O goblin começa escondido. A Fuga Ágil ainda não o esconde outra vez depois do golpe. |
-| Desvantagem de armadura em Furtividade | P | A marca existe na armadura. O herói não rola Furtividade, então ela ainda não entra num teste. |
 | Magia | G | Abrir o bloco de talentos de magia em `docs/talentos.md` na fatia dela. |
 | Descanso curto | P | Second Wind recarrega ao entrar na fase seguinte (descanso longo) e no "Tentar de novo" (regra da casa); descanso curto ainda não existe. |
 | Limite de tamanho do Empurrar e do Derrubar | P | Hoje vale para qualquer tamanho (o livro: Grande ou menor). |
 | Amorfo (Gray Ooze) | P | Sem efeito no jogo. |
-| Salvar e carregar o jogo | M | Só as configurações são salvas (`user://comandos.cfg`, `user://toque.cfg`). Decisão grande: propor 2 opções. |
+| Desvantagem de armadura em Furtividade | P | A marca existe na armadura. O herói não rola Furtividade, então ela ainda não entra num teste. |
+| INT e CAR em testes | — | Entram no bônus da perícia escolhida (História, Intimidação, Persuasão). Essas perícias ainda não têm teste no jogo. SAB entra na Percepção passiva. |
+| Outras perícias | — | Escolhidas e mostradas na ficha. Só a Percepção passiva muda o jogo (até existir #3). |
+| Antecedentes / talentos em espera | — | Criação com 11 antecedentes e 30 talentos ligados. Em espera (magia/aliados): ver `docs/talentos.md`. |
 
 ## 3. Arte provisória (trocar quando der)
 
@@ -46,6 +46,7 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 | Ladrilhos e cenário | `tools/gerar_arte_provisoria.gd`. Pacote de tileset CC0 (`docs/artes_prontas.md`). |
 | Armaduras no herói | O usuário achou "pouco épico"; ficou como pintura da túnica. Revisitar com arte nova. |
 | Goblin com lança na arte, mas a ficha usa adaga | Achar ou gerar um goblin com adagas, se incomodar. |
+| Corte de cima do herói | Animação `corte` já ligada (SpriteCook). Refino opcional se a espada/gesto incomodar. |
 
 ## 4. Dívidas técnicas (pequenas)
 
@@ -56,68 +57,18 @@ Legenda de tamanho: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias)
 | "Arma na mão ou desarmado" em 2 lugares (Jogador e TelaInventario) | Se aparecer um 3º lugar. |
 | Sinais `pulou`/`reapareceu` do herói sem ouvinte | Quando houver som/efeito para eles, ou remover. |
 | Projétil do herói pode nascer na altura da cabeça no 1º quadro do voo | Conferir em jogo; se for, nascer na ponta da arma. |
+| `jogador.gd` ainda grande (~1400 linhas): cortar ataque/disparo em componentes | Quando for mexer de novo no combate do herói. |
+| Balancear Quimera vs invencibilidade ~1 s do herói (combo quase 1 hit) | Depois de validar a sensação no jogo. |
+| Usar animação `dano` da Quimera (arte existe, nenhum estado toca) ou remover | Ao refinar a Quimera. |
+| Renomear/dividir `features/goblin/` (skeleton/zombie moram ali por herança) | Só se as variantes crescerem demais. |
+| Validar equilíbrio dos níveis 5–6 (Ataque Extra) nas fases 8–10 | Se ficar fácil: subir XP em `Ficha.XP_POR_NIVEL` ou inimigos em `Main.INIMIGOS_EXTRA_POR_NIVEL`. |
+| Validar sensação dos chefes (Ankheg, Minotauro, Wight, Quimera) | Depois de jogar; morte própria do Ankheg/Minotauro ainda usa dissolver/terra. |
 
 ## 5. Mais para frente
 
 - Controle (gamepad).
 - iOS (precisa de Mac com Xcode).
 - Trocar o nome do jogo antes de publicar ("D&D" é marca da Wizards of the Coast).
-
-## Antecedentes e talentos (só documentados)
-- Os dados existem, mas nenhum antecedente ou talento está acessível ainda. O Compêndio (menu inicial e pausa) só cria essas abas quando houver conteúdo disponível; para liberar um talento funcional, marque o id em `TALENTOS_FUNCIONANDO` de `tools/gerar_compendio.gd` e rode o gerador.
-- Passo de criação com o antecedente (+2/+1 ou +1/+1/+1 depois da compra de pontos, teto 20, perícias, talento de origem). Itens só os que o jogo já tem. Antes disso, decidir com o usuário: Iniciado em Magia, Músico, Artesão e Curandeiro.
-- Efeitos dos talentos de origem: Alerta, Resistente, Atacante Selvagem, Perito, Sortudo, Brigão de Taverna (contas em `docs/talentos.md`).
-- Talentos de origem decididos: entram Alerta, Resistente, Atacante Selvagem, Brigão de Taverna, Sortudo, Perito e Artesão (desconto de 20% exige a loja; item aleatório por fase). Em espera: Iniciado em Magia, Músico e Curandeiro (ver `docs/talentos.md`). Falta decidir os talentos gerais.
-- Atleta: escalar paredes e murinhos em diagonal precisa de suporte no cenário (fases e colisão); decidir o desenho das paredes com o usuário.
-- Agarrador: criar a condição Agarrado e a IA dos monstros tentando escapar (e atacando preso). Regra de escape ainda por definir com o usuário.
-- Nível 4 do Guerreiro: é onde se escolhe o talento geral (ou o aumento de atributo). O jogo hoje para no nível 3.
-- Atirador de Elite: o tiro precisa atravessar obstáculos e criaturas (hoje não há obstáculos que bloqueiem).
-- **Munição (decisão do usuário):** o jogo não conta flechas nem virotes; o disparo não gasta munição. Só existe munição quando ela for especial (flecha com efeito). Falta: tirar a contagem da munição comum (disparo, inventário, pacotes iniciais, aba Itens do Compêndio) e manter só as especiais. Atualizar `docs/decisoes/armas_e_itens.md` ao fazer.
-- Dados de vida: o herói tem tantos dados quanto o nível e pode gastá-los para curar (rola o dado + mod. de CON). Base do talento Durável (ação bônus que gasta um dado de vida e cura; versão PHB 2024). Decidir com o usuário como gasta (botão, quando, limite por fase).
-- Envenenador e Veneno Básico: criar o tipo de dano veneno em `TiposDano`, a condição Envenenado e o item Veneno Básico (gerador de itens). Fontes e texto em `docs/talentos.md`.
-- Talentos escolhíveis no nível 4 (23 gerais planejados) ainda sem efeito: ligar um por um. Resiliente também precisa guardar qual salvaguarda recebeu proficiência. Depois, os talentos ligados entram no Compêndio.
-- **Antecedente na criação (decidido):** passo novo depois de "Quem é você". O jogador escolhe um dos 11 antecedentes que entram, o aumento de atributo (+2/+1 ou +1/+1/+1 entre os 3 listados, depois da compra de pontos, teto 20) e recebe o talento de origem. As 2 perícias do antecedente já vêm marcadas e travadas; o Guerreiro escolhe as suas 2 entre as que sobram da lista dele. Os cinco em espera não aparecem.
-- O talento de origem do antecedente entra na ficha só pelo nome; falta ligar os efeitos (Alerta, Resistente, Atacante Selvagem, Brigão de Taverna, Sortudo, Artesão). Perito (Charlatão, Nobre, Escriba) ainda precisa do passo de escolher as 3 perícias ou ferramentas. Validar no aparelho o "voltar" com o teclado aberto.
-- Talentos de origem prontos (Alerta, Resistente, Atacante Selvagem, Brigão, Sortudo, Artesão, Perito). Faltam: loja com 20% de desconto do Artesão; salvaguardas do herói com a sorte; verificar no aparelho o botão "Sorte" nos atalhos (layouts salvos antigos precisam pôr a Sorte num slot em Opções > Atalhos). Próximos: efeitos dos 23 talentos gerais do nível 4.
-- Talentos gerais: todos os 30 escolhíveis estão ligados e completos. Falta validar no aparelho os botões novos (Defesa, Investida, Dado de vida, Veneno), o tamanho dos botões e a escalada no toque (empurrar o analógico contra a parede); a loja do Artesão; a porta ainda não muda de aparência quando a cota abre (aberta ou fechada).
-- Dívidas que sobraram da auditoria: `jogador.gd` ainda tem ~1250 linhas (arremesso e disparo, Surto, Fôlego e golpes ainda moram nele: o próximo corte é um componente de ataque e um de disparo); as perícias do herói não têm teste rolado no jogo (só a Percepção passiva); `Compendio` está em `ui/` porque usa `ResumoItem`.
-
-## Épico: 10 fases, chefes, ouro, loja e armas mágicas (pedido do usuário, 2026-11-09)
-Decisões dele: chefe a cada 3 fases (3, 6, 9) e um **super chefe na 10**, cada um com jogabilidade diferente;
-missão visível por fase ("derrote todos os inimigos" e variações); inimigos comuns variam com o ambiente;
-inimigos soltam **ouro e armas**; **loja no início da fase** (comprar e vender); armas mágicas **+1, +2, +3**
-(só bônus de ataque/dano e um efeito de cor); a chance de drop de arma e a quantidade de ouro sofrem **influência
-direta do Carisma** (regra da casa, pedida por ele). Inimigos candidatos (Monster Manual 2024, do Códice dele,
-history-lilac.vercel.app): Kobold Warrior, Skeleton, Zombie, Hobgoblin Warrior, Rust Monster, Bugbear Warrior,
-Animated Armor; chefes Ankheg (ND 2) e outros até ND 3. Ainda por decidir: plano de criaturas e ordem das fatias.
-Fatias sugeridas: (1) ouro e drops + regra do Carisma; (2) armas mágicas +1/+2/+3; (3) loja no início da fase
-(desconto 20% do Artesão); (4) missões por fase; (5) criaturas novas por ambiente; (6) chefes das fases 3, 6, 9; (7) fases 6 a 10 e super chefe.
-
-### Estratégia de criaturas e chefes (decidida com o usuário em 2026-11-09)
-- **Chefes pagos (SpriteCook)**, um por 3 fases; antes de animar, gerar só a base (12 créditos) para aprovação. Escolhidos: **Fase 3 Ankheg** (ND 2: cava e sai debaixo do herói, morde e agarra, cospe ácido em linha), **Fase 6 Minotaur of Baphomet** (ND 3: investida em linha, empurra e derruba, fica atordoado se bater na parede), **Fase 9 Wight** (ND 3: drena vida e invoca Skeletons e Zombies). **Fase 10 (super chefe): Ettin (ND 4, duas cabeças; a 2ª acorda com metade da vida e ataca dos dois lados).** Arte enxuta ~74 créditos por chefe (base 12, parado 20, andar 14, golpe 14, ataque especial 14); saldo em 2026-11-09: 336.
-- **(Feito: Kobold, Hobgoblin e Bugbear.)** **Minions grátis e familiares, sem limite de quantidade:** recolor e escala das artes que já temos. Do Goblin: Kobold Warrior (1/8), Hobgoblin Warrior (1/2), Bugbear Warrior (1, golpe com alcance), Bullywug Warrior (1/4), Gnoll Warrior (1/2). Do herói (humanos): Bandit (1/8), Guard (1/8), Cultist (1/8), Tough (1/2), Scout (1/2, arco), Priest Acolyte (1/4), Bandit Captain (2). Mortos-vivos com sombreado em cima do herói: Skeleton (1/4), Zombie (1/4). Variar por ambiente.
-- Fases 6 a 10: ambientes novos (sugestão: Caverna, Mina, Cripta, Montanha, Covil); a fase 5 deixa de ser a última.
-- A contagem de inimigos não aparece na missão (as emboscadas são secretas).
-- **Plano das 10 fases (decidido com o usuário em 2026-11-09): 4 temas, não 10 arenas.** Tema 1 Floresta (fases 1 a 3, chefe Ankheg), tema 2 Ruínas de pedra (fases 4 a 6, usa o castelo e o fundo da fortaleza que já temos; chefe Minotaur, com blocos quebráveis), tema 3 Subterrâneo (fases 7 a 9: mina, caverna úmida e cripta, um só pacote CC0 de caverna com enfeites diferentes; chefe Wight na 9) e fase 10 com tema único: Covil do Ettin = caverna com lava (mesmos ladrilhos do Subterrâneo, tom vermelho e fundo próprio; decidido com o usuário). Dentro de um tema, as fases variam por relevo, tom de cor, densidade e tipo de enfeite, e pelos inimigos, não por arte nova. Inimigos: Kobold/Ooze/Minion na Floresta; Hobgoblin/Bugbear/Guard/Scout nas Ruínas; Gnoll/Tough/Cultist/Skeleton/Zombie no Subterrâneo; 3 a 6 por fase. Cenário só CC0, fundos com paralaxe e enfeites sem colisão (árvores, tochas, colunas, teias, cristais, ossos); parede ou bloco físico só onde a fase pede. Candidatos CC0 para o Subterrâneo e o Covil (conferir a licença na página): fundos "Seamless Parallax Cave Background" e "Background from Glitch-Assets" (rubberduck), ladrilhos "OPP2017 cave and mine cart" (32x32, tem lava e cristais).
-- **(Feito: Ankheg, chefe da fase 3, 2026-11-09; saldo do SpriteCook: 262.)** Falta validar a sensação no jogo (tamanho da arte, tempo do aviso da terra, dificuldade do Borrifo). Próximos chefes: Minotaur (fase 6), Wight (fase 9), Ettin (fase 10). Ainda sem animação de **morte** própria do Ankheg (usa o dissolver) nem de **escavar/emergir** (usa a terra e a mordida); o cuspe da arte sobe a cabeça e o jato é desenhado à frente.
-- **(Feito: Minotauro de Baphomet, chefe da fase 6, 2026-11-09; saldo do SpriteCook: 140.)** Ficha do livro sem o atordoamento, investida com carreira que derruba o herói (estado `Caido` do herói), blocos quebráveis na arena e fase 6 alongada (62 colunas). **Falta:** validar a sensação (tamanho 0,9, tempo do aviso, dificuldade, posição dos pilares), morte própria. Próximos chefes: Wight (fase 9), Ettin (fase 10).
-
-### Distribuição dos minions pelas 10 fases (proposta, 2026-11-09; **E** = já existe, **N** = novo, criado por recolor/escala, sem crédito)
-| Fase | Ambiente | Minions sorteados | Chefe |
-|---|---|---|---|
-| 1 Clareira | Floresta | Kobold E, Gray Ooze E | |
-| 2 Trilha | Floresta | Kobold E, Goblin Minion E, Gray Ooze E | |
-| 3 Pântano | Floresta | Goblin Minion E, Goblin Warrior E, Gray Ooze E, Bullywug N | Ankheg (feito) |
-| 4 Ruína | Ruínas | Goblin Warrior E, Hobgoblin E, Bandit N | |
-| 5 Fortaleza | Ruínas | Hobgoblin E, Bugbear E, Guard N, Scout N (arco) | |
-| 6 Labirinto | Ruínas | Hobgoblin E, Bugbear E, Gnoll N, Scout N | Minotauro (feito) |
-| 7 Mina | Subterrâneo | Ooze E, Warrior E, Bugbear E, Skeleton E (+ Gnoll, Tough, Cultist N quando existirem) | |
-| 8 Caverna úmida | Subterrâneo | Ooze E, Warrior E, Bugbear E, Skeleton E, Zombie E (+ Gnoll, Tough, Priest Acolyte, Bandit Captain N) | |
-| 9 Cripta | Subterrâneo | Cultist N, Priest Acolyte N, Skeleton E, Zombie E | Wight (feito) |
-| 10 Covil | Covil | Warrior E, Hobgoblin E, Bugbear E, Skeleton E, Zombie E (+ Gnoll, Tough, Bandit Captain N) | Quimera (feito; o Ettin foi descartado) |
-Novos (9; Skeleton e Zombie já existem): Bullywug, Bandit, Guard, Scout, Gnoll, Tough, Cultist, Priest Acolyte, Bandit Captain. Criar aos poucos, por receita 1, com a ficha conferida no Códice.
-- **(Feito: Wight, chefe da cripta, 2026-11-09; saldo do SpriteCook: 52.)** Faltam (Skeleton e Zumbi já feitos): imunidades na ficha (veneno), validar a sensação (dano do arco, Drenar Vida, tamanho da arte). Próximo chefe: Ettin (fase 10).
-- **(Feito: Quimera, chefe final, e fase 10 Covil, 2026-11-09.)** Arte do Gemini, ficha do livro. **Faltam:** (1) **validar a sensação** no jogo (escala 115 px, aviso de 0,45 s, o combo de 0,4 s quase só acerta uma vez por causa da invencibilidade de 1 s do herói, tamanho do cone); (2) ~~voo~~ feito com bote, investida, voo+mergulho e fúria (validar a sensação; decolagem e pouso ainda usam os quadros de `pular`); (3) **lava** no Covil com dano de fogo e arte própria (hoje só o fundo vermelho); (4) tiras que faltaram: cabeçada com investida, decolagem, pouso, sopro contínuo, levantar (prompts em `docs/prompts_gemini_quimera.md`); `dano` e `voar` já têm arte mas nenhum estado as usa; (5) som (rugido, sopro, asas) e música do chefe final; (6) o `andar` tem 6 quadros, mas nas fileiras do Gemini o chão tinha 8 px de diferença (corrigido por `tools/juntar_fileiras_gemini.gd`, que junta as duas fileiras numa tira); (7) 3 inimigos de apoio da fase 10 são do sorteio do Subterrâneo.
-- **(Feito: fases 7 Mina e 8 Caverna Úmida, 2026-11-09.)** Geradas por `tools/gerar_fase_teste.gd`; a Cripta do Wight virou a fase 9. Ainda usam os minions que já existem (Bugbear, Hobgoblin, Warrior, Gray Ooze): faltam Gnoll, Tough, Cultist, Priest Acolyte, Skeleton, Zombie e Bandit Captain (recolor, sem crédito), e a arte de chão própria do Subterrâneo (hoje reaproveita os temas de pedra e terra). Falta validar a sensação de cada fase no jogo.
-
-- Validar no jogo o equilíbrio dos níveis 5–6 (Ataque Extra dobra o dano do herói): olhar as fases 8–10 e, se ficar fácil, subir o XP do nível 5/6 em `Ficha.XP_POR_NIVEL` ou os inimigos por nível em `Main.INIMIGOS_EXTRA_POR_NIVEL`. Subclasse do Guerreiro (nível 3) segue fora.
+- Porta muda de aparência quando a cota abre.
+- Munição comum some do inventário/Compêndio (só especiais).
+- Atirador de Elite atravessando obstáculos de verdade (hoje quase não há obstáculo que bloqueie tiro).

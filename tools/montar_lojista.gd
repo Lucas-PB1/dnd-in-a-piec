@@ -5,7 +5,7 @@ extends SceneTree
 ##   godot --headless --path . --import
 ##   godot --headless --path . --script res://tools/montar_lojista.gd   (de novo, para ligar os quadros)
 
-const PASTA := "res://features/loja/"
+const PASTA := "res://features/loja/sprites/"
 const ORIGEM := PASTA + "lojista_idle_sc.png"
 const DESTINO := PASTA + "lojista_idle.png"
 const FRAMES := PASTA + "lojista_frames.tres"

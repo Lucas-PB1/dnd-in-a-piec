@@ -8,8 +8,8 @@ alwaysApply: false
 # Testes
 
 - Um arquivo `tests/teste_<assunto>.gd` por assunto: `extends SceneTree`, `_initialize()` chama `_rodar.call_deferred()`.
-- `_checar(condicao, "descrição em português")` imprime `  ok   - ...` ou `  ERRO - ...`; no fim `PASSOU: ...` ou `FALHOU: N teste(s)` e `quit(1 if _falhas > 0 else 0)`.
-- O `tests/rodar_testes.ps1` acha todo `teste_*.gd` sozinho e também roda o jogo 3 s: **qualquer `WARNING` reprova**.
+- `_checar(condicao, "descrição em português")` imprime `  ok   - ...` ou `  ERRO - ...`; no fim use `_terminar("resumo")` (imprime `PASSOU:` / `FALHOU:` e `quit` 0/1). Nunca só `quit(_falhas)` sem a linha PASSOU.
+- O `tests/rodar_testes.ps1` acha todo `teste_*.gd` sozinho e também roda o jogo 3 s: **qualquer `WARNING` reprova** (exceto vazamento ObjectDB ao sair). Cada teste imprime `>> OK` ou `>> FALHOU` com motivo; no fim lista as falhas. Sem `PASSOU` = falha.
 - Rodar um teste: `& $env:GODOT_EDITOR_PATH --headless --debug --path . --script res://tests/teste_x.gd`. Todos: `powershell -NoProfile -ExecutionPolicy Bypass -File tests\rodar_testes.ps1`.
 - Cena principal sem título: `main.mostrar_inicio = false` antes do `add_child`. Física: `await physics_frame`. Ações agem no quadro seguinte (buffer).
 - Dados: semente fixa (`rng.seed`) ou bônus enorme (+100); nada de teste que falha às vezes.

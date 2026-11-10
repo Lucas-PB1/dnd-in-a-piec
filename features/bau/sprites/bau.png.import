@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bru5y4r83ess0"
-path="res://.godot/imported/quimera_morte_gemini.png-42d10c5eddaa5302f6f6a4c15a2bd7cc.ctex"
+uid="uid://csjlisddvmwfb"
+path="res://.godot/imported/bau.png-a0f9bbc098e433cfffe9c32dd4e37a71.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://features/quimera/sprites/fonte_gemini/quimera_morte_gemini.png"
-dest_files=["res://.godot/imported/quimera_morte_gemini.png-42d10c5eddaa5302f6f6a4c15a2bd7cc.ctex"]
+source_file="res://features/bau/sprites/bau.png"
+dest_files=["res://.godot/imported/bau.png-a0f9bbc098e433cfffe9c32dd4e37a71.ctex"]
 
 [params]
 

@@ -24,8 +24,14 @@ func _rodar() -> void:
 	jogador.get_node("Defesa").invulneravel = false
 	var hurtbox: HurtboxComponent = jogador.get_node("Hurtbox")
 	hurtbox.receber_golpe(golpe, jogador.global_position + Vector2.RIGHT * 20.0)
-	await create_timer(0.1).timeout
-	_checar(sprite.animation == &"dano", "ao apanhar, toca a animação de dano (%s)" % sprite.animation)
+	# Sob carga paralela o quadro pode atrasar: espera até a animação "dano" ou esgota o tempo curto.
+	var viu_dano := false
+	for i in 12:
+		await physics_frame
+		if sprite.animation == &"dano":
+			viu_dano = true
+			break
+	_checar(viu_dano, "ao apanhar, toca a animação de dano (%s)" % sprite.animation)
 	await create_timer(0.6).timeout
 	_checar(sprite.animation != &"dano" or not sprite.is_playing(), "o dano termina e o herói volta ao normal")
 	# Morte
@@ -43,5 +49,4 @@ func _rodar() -> void:
 	_checar((jogador.get_node("Ataque") as Node2D).visible and not sprite.morrendo, "reviver traz a arma e a animação normal de volta")
 	main.free()
 	await process_frame
-	print("PASSOU: dano e morte do herói" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
-	quit(_falhas)
+	_terminar("dano e morte do herói")

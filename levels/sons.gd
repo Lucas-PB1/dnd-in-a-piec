@@ -177,8 +177,10 @@ func _ao_nascer_no(no: Node) -> void:
 
 
 func _escutar_defesa(defesa: DefesaComponent) -> void:
-	if not defesa.golpe_resolvido.is_connected(_ao_resolver_golpe):
-		defesa.golpe_resolvido.connect(_ao_resolver_golpe.bind(defesa))
+	# `bind` cria Callable novo a cada chamada: `is_connected` com outro bind nunca acha o antigo.
+	if _sinal_ja_tem(defesa.golpe_resolvido, _ao_resolver_golpe):
+		return
+	defesa.golpe_resolvido.connect(_ao_resolver_golpe.bind(defesa))
 
 
 func _escutar_dissolver(dissolver: DissolverComponent) -> void:
@@ -187,8 +189,8 @@ func _escutar_dissolver(dissolver: DissolverComponent) -> void:
 
 
 func _escutar_botao(botao: BaseButton) -> void:
-	if not botao.pressed.is_connected(tocar.bind(&"clique")):
-		botao.pressed.connect(tocar.bind(&"clique"))
+	if not botao.pressed.is_connected(_ao_clicar_botao):
+		botao.pressed.connect(_ao_clicar_botao)
 
 
 ## Golpe de criatura: a área que atinge a hurtbox do herói soa quando liga (o aviso do ataque).
@@ -203,12 +205,34 @@ func _escutar_hitbox(hitbox: HitboxComponent) -> void:
 func _escutar_chefe(no: Node) -> void:
 	if not no.has_signal(SINAL_TREMOR):
 		return
-	if no.has_signal(SINAL_DESPERTAR) and not no.is_connected(SINAL_DESPERTAR, tocar.bind(&"rugido")):
-		no.connect(SINAL_DESPERTAR, tocar.bind(&"rugido"))
+	if no.has_signal(SINAL_DESPERTAR) and not no.is_connected(SINAL_DESPERTAR, _ao_despertar_chefe):
+		no.connect(SINAL_DESPERTAR, _ao_despertar_chefe)
 	if not no.is_connected(SINAL_TREMOR, _ao_tremer):
 		no.connect(SINAL_TREMOR, _ao_tremer)
-	if no.has_signal(&"morreu") and not no.is_connected(&"morreu", tocar.bind(&"rugido_morte")):
-		no.connect(&"morreu", tocar.bind(&"rugido_morte"))
+	if no.has_signal(&"morreu") and not no.is_connected(&"morreu", _ao_morrer_chefe):
+		no.connect(&"morreu", _ao_morrer_chefe)
+
+
+## True se este nó já escuta o sinal com este método (ignora argumentos de `bind`).
+func _sinal_ja_tem(sinal: Signal, metodo: Callable) -> bool:
+	var nome := metodo.get_method()
+	for info in sinal.get_connections():
+		var ligado: Callable = info["callable"]
+		if ligado.get_object() == self and ligado.get_method() == nome:
+			return true
+	return false
+
+
+func _ao_clicar_botao() -> void:
+	tocar(&"clique")
+
+
+func _ao_despertar_chefe() -> void:
+	tocar(&"rugido")
+
+
+func _ao_morrer_chefe() -> void:
+	tocar(&"rugido_morte")
 
 
 func _ao_ligar_golpe_de_criatura(_golpe: Golpe) -> void:

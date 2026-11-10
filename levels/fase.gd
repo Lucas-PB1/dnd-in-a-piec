@@ -18,7 +18,7 @@ const TEXTURA_PORTA := preload("res://assets/tiles/castelo/porta.png")
 const ALTURA_DO_TETO_ACIMA_PX := 96.0
 const CAMADA_MUNDO := 1
 
-## Número da fase na campanha (1 a 5). A fase reta de teste fica em 0.
+## Número da fase na campanha (1 a 10). A fase reta de teste fica em 0.
 @export var indice: int = 0
 ## True na última fase: a porta conclui o jogo em vez de abrir a próxima.
 @export var ultima: bool = false

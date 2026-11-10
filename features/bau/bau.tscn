@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://features/bau/bau.gd" id="1_bau"]
-[ext_resource type="Texture2D" path="res://features/bau/bau.png" id="2_arte"]
+[ext_resource type="Texture2D" path="res://features/bau/sprites/bau.png" id="2_arte"]
 
 [sub_resource type="RectangleShape2D" id="Forma_perto"]
 size = Vector2(64, 40)

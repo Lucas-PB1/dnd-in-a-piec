@@ -32,6 +32,7 @@ func _ready() -> void:
 ## Liga a área com o `golpe` atual e esquece quem foi atingido no golpe anterior.
 func ligar(golpe: Golpe) -> void:
 	_golpe = golpe
+	_golpe.acertou_algum = false
 	_ligada = true
 	_atingidos.clear()
 	ligada.emit(golpe)

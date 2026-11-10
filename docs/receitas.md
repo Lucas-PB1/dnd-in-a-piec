@@ -45,8 +45,11 @@ Molde: **Goblin** (`features/goblin/`), o mais completo (corpo a corpo, arremess
    percepção, resistências, ataque). Campo novo que a ficha precise -> acrescente em
    `core/dados/criatura_rpg.gd` com `@export` e comentário (valor padrão que não muda as outras).
 2. **Arte**: siga `docs/artes_prontas.md` (licença, permissão para baixar, crédito).
-   Tiras PNG em `features/<criatura>/sprites/` + `tools/gerar_<criatura>.gd` que monta o
-   `SpriteFrames` (copie `tools/gerar_goblin.gd`). `--import` e rode o gerador.
+   Tiras PNG **finais** em `features/<criatura>/sprites/` + gerador de SpriteFrames.
+   Chefes SpriteCook: `tools/gerar_monstros_spritecook.gd`. Minions/chefe Gemini:
+   `tools/montar_tiras_gemini.gd` + `tools/montar_frames_gemini.gd` (prompts em
+   `docs/prompts_gemini_*.md`). **Não versionar** pastas intermediárias (`fonte_gemini/`,
+   previews chibi): só as tiras/frames aprovados entram no Git.
 3. **Script raiz** `features/<criatura>/<criatura>.gd` (`class_name`): copie `goblin.gd`,
    tire o que a criatura não faz. Mantenha: `signal morreu`, `definir_alvo`, `vida_atual`,
    `nome_estado`, `_ao_resolver_golpe`, `_preparar_condicoes`, `_aplicar_empurrao`, `_ao_morrer`.
@@ -118,9 +121,10 @@ Molde: **Goblin** (`features/goblin/`), o mais completo (corpo a corpo, arremess
 
 ## 7. Teste novo
 
-- `tests/teste_<assunto>.gd`, `extends SceneTree`, `_initialize` -> `_rodar.call_deferred()`.
-- `_checar(condicao, "descrição em português")` imprime `ok`/`ERRO`; no fim `PASSOU`/`FALHOU`
-  e `quit(1 if falhas else 0)`. O `rodar_testes.ps1` pega todo `teste_*.gd` sozinho.
+- `tests/teste_<assunto>.gd`, `extends TesteBase`, `_initialize` -> `_rodar.call_deferred()`.
+- `_checar(condicao, "descrição em português")` imprime `ok`/`ERRO`; no fim **`_terminar("resumo")`**
+  (imprime `PASSOU`/`FALHOU` e `quit` 0/1). Só `quit(_falhas)` sem `PASSOU` é falha no runner.
+  O `rodar_testes.ps1` pega todo `teste_*.gd`, imprime `>> OK`/`>> FALHOU` por arquivo e lista as falhas no fim.
 - Cena principal sem título: `main.mostrar_inicio = false` antes de `add_child`.
 - Espere quadros de física (`await physics_frame`) para a física andar. Botão Pular, ataque
   etc. agem no quadro SEGUINTE (buffer).
@@ -149,6 +153,8 @@ func _rodar() -> void:
 
 ## 9. Armadilhas conhecidas
 
+- **Pipeline Gemini/SpriteCook intermediário**: PNGs brutos e pastas `fonte_gemini/` ficam
+  fora do repositório; no jogo só entram as tiras finais e o `.tres` de SpriteFrames.
 - **`class_name` novo**: rode `--import` antes de qualquer ferramenta ou teste que use a classe.
 - **Ferramenta com `--debug`** trava no depurador se houver erro: rode ferramentas sem `--debug`.
 - **Aviso também é falha**: o `rodar_testes.ps1` reprova `WARNING` (ex.: `await` desnecessário,

@@ -19,10 +19,13 @@ core/componentes/    nós reutilizáveis: Hitbox, Hurtbox, Defesa, Health, Condi
 core/estados/        Estado, MaquinaEstados (genéricos)
 core/utilitarios/    ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
    ▲ usados por
-features/<nome>/     entidades: jogador, gray_ooze, goblin, boneco_treino, bau, arremesso
+features/<nome>/     entidades: jogador, gray_ooze, goblin (+ variantes), ankheg, minotauro,
+                     wight, quimera, bloco_quebravel, loja (NPC), boneco_treino, bau, arremesso
+core/projeteis/      Flecha compartilhada (2+ features)
+core/regras/loja.gd  e saque.gd: ouro, comprar/vender (regra pura; a tela é `ui/loja/`)
 ui/<tela>/           telas e apresentação: titulo, criacao_personagem, hud, inventario, bau,
-                     comandos, derrota, vitoria, controles_toque, bestiario, habilidades,
-                     pausa, compendio (páginas e montagem do conteúdo)
+                     loja, comandos, derrota, vitoria, controles_toque, bestiario, habilidades,
+                     pausa, compendio (páginas e montagem do conteúdo), talento
    ▲ montados por
 levels/main.gd       a ÚNICA peça que conhece todas as outras: liga sinais e chama APIs públicas
 ```
@@ -37,7 +40,8 @@ Regras de dependência (skill `godot-estrutura-pastas`):
 
 ```
 Main (main.gd)
-├── Fase               (Fase atual; início, limites, pontos de armadilha e porta)
+├── Fase               (Fase atual; início, limites, pontos de armadilha, loja e porta)
+├── Lojista            (NPC no início da fase; abre TelaLoja)
 ├── Bau                (abrir_pedido(itens) -> main abre TelaBau)
 ├── BonecoTreino       (CA 10, só mostra o resultado)
 ├── Jogador            (sinais: vida_mudou, folego_mudou, progressao_mudou, surto_acao_pedido...)
@@ -46,27 +50,33 @@ Main (main.gd)
 └── Interface          (CanvasLayer 10)
     ├── TelaInventario (I)
     ├── TelaBau
+    ├── TelaLoja
     ├── TelaComandos   (C: teclas, trazer criatura, opções e ajuste do toque)
     ├── TelaPausa      (Esc / Menu no celular)
     ├── TelaBestiario
     ├── TelaHabilidades
     ├── TelaCompendio   (abre pela pausa ou pelo título)
+    ├── TelaTalento     (escolha de talento geral ao subir de nível)
     └── Telas de título, derrota e vitória (abertas conforme o fluxo)
 ```
 
-Fluxo do jogo: `Main._ready` -> título -> criação -> cinco fases -> vitória. Título, criação,
-derrota e vitória usam `_pausar(true)`, que pausa a árvore, esconde o HUD e os controles de toque.
-Inventário, baú e comandos pausam por conta própria (`get_tree().paused`).
+Fluxo do jogo: `Main._ready` -> título -> criação -> **dez fases** -> vitória (`fase.ultima`).
+Título, criação, derrota e vitória usam `_pausar(true)`, que pausa a árvore, esconde o HUD e os
+controles de toque. Inventário, baú, loja e comandos pausam por conta própria (`get_tree().paused`).
+
+**Loja em três camadas (intencional):** regra pura em `core/regras/loja.gd` (+ `saque.gd` para
+ouro/drops), NPC em `features/loja/`, tela em `ui/loja/`. A `main` liga os três.
 
 ## 3. Campanha e encontros
 
-`levels/fase_1..5.tscn` compartilham `Fase`: cada uma expõe o início, a área jogável, o limite de
-queda, os pontos do grupo `armadilha`, o índice, a cota e os tipos permitidos. A porta emite
-`porta_tocada` e `porta_liberada`; a `main` avança quando todos os inimigos da cota morreram.
+`levels/fase_1..10.tscn` compartilham `Fase`: cada uma expõe o início, a área jogável, o limite de
+queda, os pontos do grupo `armadilha`, o índice, a cota, os tipos permitidos e, nas fases de chefe,
+`chefe` / `acompanhantes_do_chefe`. A porta emite `porta_tocada` e `porta_liberada`; a `main`
+avança quando todos os inimigos da cota (e o chefe, se houver) morreram.
 `core/regras/armadilha.gd` escolhe pontos sem repetição e tipos com uma semente controlável. O
-nível soma inimigos à cota e libera tipos mais fortes; derrotas concedem XP. Uma fase nova repõe
-PV e recursos como descanso longo. "Tentar de novo" repõe a vida e sorteia a fase atual outra vez;
-a quinta porta abre a vitória.
+nível soma inimigos à cota e libera tipos mais fortes; derrotas concedem XP e ouro. Uma fase nova
+repõe PV e recursos como descanso longo. "Tentar de novo" repõe a vida e sorteia a fase atual
+outra vez; a porta da fase 10 abre a vitória.
 O botão de vitória recomeça na Clareira. Baú e boneco de treino só funcionam na primeira fase.
 
 Todo inimigo pertence ao grupo `monstros` e precisa expor `definir_alvo(alvo: Node2D)`. A `main`
@@ -105,19 +115,24 @@ HitboxComponent.ligar(golpe)
 
 - `jogador.gd` (`Jogador`): **ferramentas de física e API pública**. Não decide comportamento.
 - `estados/` (máquina de estados): `Parado`, `Andando`, `Correndo`, `NoAr`, `Atacando`,
-  `Arremessando`, `LevandoDano`. Cada estado chama ferramentas do `Jogador` e emite `trocar_para`.
+  `Arremessando`, `LevandoDano`, `Escalando` (Atleta), `Caido` (derrubado). Cada estado chama
+  ferramentas do `Jogador` e emite `trocar_para`.
 - Componentes visuais **sem conhecer o Jogador** (call down): `AnimacaoJogador`, `CameraJogador`,
   `AtaqueJogador` (arma na mão, golpe por poses, quadros do disparo), `ArmaTras`, `EscudoJogador`.
 - Números de movimento em `data/jogador_padrao.tres` (`StatsJogador`). **Velocidade e ritmo de
   ataque vêm da ficha** (deslocamento e iniciativa, via `EscalaDnd`).
 - Ficha (`Ficha`) + inventário (`Inventario`) -> `Equipamento` calcula arma na mão, CA,
   deslocamento e o `Golpe` (o inventário da tela usa a mesma conta).
-- `Ficha` acompanha XP e nível 1–3; `Jogador` resolve testes de perícia e aplica Mente Tática
-  quando ativada. A `main` entrega XP de inimigos, escala as cotas e aplica o Surto de Ação.
+- `Ficha` acompanha XP e nível **1–6** (`NIVEL_MAXIMO`); talentos gerais nos níveis 4 e 6;
+  Ataque Extra no 5. `Jogador` resolve testes de perícia e aplica Mente Tática quando ativada.
+  A `main` entrega XP de inimigos, escala as cotas e aplica o Surto de Ação.
 
-## 6. Criaturas (`features/gray_ooze/`, `features/goblin/`)
+## 6. Criaturas
 
-Mesmo molde (copie o Goblin, que é o mais completo):
+Features: `gray_ooze/`, `goblin/` (Minion, Warrior e variantes Kobold/Hobgoblin/Bugbear/Skeleton/Zombie
+por herança), `ankheg/`, `minotauro/`, `wight/`, `quimera/`, `bloco_quebravel/`.
+
+Molde dos minions (copie o Goblin, que é o mais completo):
 - Script raiz (`Goblin`): lê a `CriaturaRPG` (`data/*.tres`), configura Vida/Defesa/Condições,
   expõe **ferramentas** (`alvo_percebido`, `alvo_ao_alcance`, `pode_atacar`, `andar_para_alvo`,
   `ligar_golpe`...) e reage a `golpe_resolvido` trocando de estado.
@@ -126,6 +141,7 @@ Mesmo molde (copie o Goblin, que é o mais completo):
   `Golpe` (Hitbox), `MaquinaEstados` com os estados como filhos.
 - Ritmo: `EscalaDnd.intervalo_ataque(criatura.iniciativa)`. Movimento:
   `EscalaDnd.deslocamento_para_velocidade(pés)`. Percepção: `percepcao_pes`.
+- Chefes têm máquina própria (Ankheg, Minotauro, Wight, Quimera) e entram na cota da porta.
 
 ## 7. Itens e equipamento
 
@@ -157,5 +173,9 @@ Mesmo molde (copie o Goblin, que é o mais completo):
 
 ## 10. Persistência
 
-Só configurações (sem save de jogo ainda): `user://comandos.cfg` (teclas) e `user://toque.cfg`
-(toque). Testes que mexem nelas guardam e devolvem o arquivo do jogador (`tests/teste_toque.gd`).
+- **Save do jogo:** `core/regras/salvamento.gd` grava `user://save.json` (ficha, mochila com
+  desgaste/pilhas/equipados, fase e bestiário). Continuar no título volta ao começo da fase
+  salva. Salva pelo menu de pausa e sozinho ao entrar numa fase nova (só no jogo de verdade).
+  Testes usam outro caminho para não apagar o save do jogador (`tests/teste_salvamento.gd`).
+- **Configurações:** `user://comandos.cfg` (teclas) e `user://toque.cfg` (toque). Testes que
+  mexem nelas guardam e devolvem o arquivo do jogador (`tests/teste_toque.gd`).

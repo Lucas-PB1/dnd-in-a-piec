@@ -715,9 +715,10 @@ func anular_buffer_pulo() -> void:
 ## `forca` de 0 (alcance normal) a 1 (alcance longo). `mira` soma graus para cima no arco.
 ## `extra` = o segundo tiro da Besta de Mão (ação bônus).
 ## Sem ninguém escutando o sinal, nada é gasto.
+## Contrato: a `main` conecta `arma_arremessada` em `_ready`. Testes headless sem main não arremessam.
 func lancar_arma(forca: float = 0.0, mira: float = 0.0, extra: bool = false) -> void:
 	var arma := _arma_do_k()
-	if arma == null or arma_arremessada.get_connections().is_empty():
+	if arma == null or not arma_arremessada.has_connections():
 		return
 	if arma.disparavel():
 		_disparar(arma, forca, mira, extra)
@@ -911,10 +912,11 @@ func _morrer() -> void:
 	await get_tree().create_timer(DURACAO_MORTE, false).timeout
 	if not _morrendo:
 		return  # reviveu antes do fim da animação
-	if caiu.get_connections().is_empty():
-		reviver()
-	else:
+	# Contrato: a `main` conecta `caiu` (tela de derrota). Sem ouvinte (teste), revive no lugar.
+	if caiu.has_connections():
 		caiu.emit()
+	else:
+		reviver()
 
 
 ## Cai e fica deitado: só a gravidade age; a animação de morte toca até o fim.

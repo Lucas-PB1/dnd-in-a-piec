@@ -26,4 +26,4 @@ func _rodar() -> void:
 	_checar(rotulo.visible and "Limpe a clareira" in rotulo.text and "/" not in rotulo.text, "a HUD mostra a missão da fase 1 sem a quantidade")
 	cena.tirar_criaturas()
 	_checar(not rotulo.visible, "sem inimigos a linha some")
-	quit(_falhas)
+	_terminar("missão da fase e HUD")

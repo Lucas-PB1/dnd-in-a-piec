@@ -12,6 +12,10 @@
 | Herói | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/jogador/sprites/` |
 | Chão da floresta | Gerado no SpriteCook (tileset) | https://spritecook.ai | Conta do usuário | `assets/tiles/spritecook/` |
 | Ankheg (chefe da fase 3) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/ankheg/sprites/` |
+| Minotauro de Baphomet (chefe da fase 6) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/minotauro/sprites/` |
+| Corpo Seco / Wight (chefe da fase 9) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/wight/sprites/` |
+| Goblin Minion, Goblin Warrior e Gray Ooze (folhas atuais `*_sc.png`) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/goblin/sprites/`, `features/gray_ooze/sprites/` |
+| Lojista | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/loja/sprites/` |
 | Efeitos sonoros de RPG (espadas, passos, tecidos, portas) | Kenney Vleugels (CC0) | https://opengameart.org/content/50-rpg-sound-effects | CC0 | `assets/audio/kenney_rpg/` |
 | Sons de interface (cliques, abrir, fechar, confirmar) | Kenney Vleugels (CC0) | https://opengameart.org/content/interface-sounds | CC0 | `assets/audio/kenney_interface/` |
 | Música: Shakkar, The Old Tower Inn e Medieval Battle (`battle_8`) | OpenGameArt, a taverna e a batalha são de RandomMind | https://opengameart.org/content/shakkar, https://opengameart.org/content/medieval-the-old-tower-inn, https://opengameart.org/content/medieval-battle | CC0 (conferida na página de cada faixa) | `assets/audio/musica/` |
@@ -48,3 +52,7 @@ reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 ## Zombie (features/goblin/sprites/zombie_*.png)
 Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
+
+## Quimera (features/quimera/sprites/)
+Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_quimera.md`) e montada por
+`tools/montar_tiras_gemini.gd` / `tools/montar_frames_gemini.gd`. Sem terceiros: uso livre no projeto.

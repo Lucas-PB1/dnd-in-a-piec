@@ -35,7 +35,7 @@ slightly open; and a long scaly serpent-like tail that ends in a small dragon he
 in the throat. Torn, leathery bat-like dragon wings on its back, half folded. Lion paws with long dark claws, goat hooves
 on the back legs. Dull tawny fur, charred black patches, dark green scales on the tail, muted colors, a hint of embers.
 Powerful, hunched, predatory stance, head lowered. Large and heavy, about 4 times as wide as a human."
-(Fonte aprovada: anexe o PNG dessa base nas tiras. Salve-o em `features/quimera/sprites/fonte_gemini/quimera_base_gemini.png`.)
+(Fonte aprovada: anexe o PNG dessa base nas tiras. Salve o bruto **fora do Git** — pasta local intermediária; só a tira final vai para `features/quimera/sprites/`.)
 
 ## Tiras (uma por pedido, anexando a base aprovada)
 Frase comum das tiras: "Sprite sheet strip, N frames side by side in ONE horizontal row, same creature as the attached

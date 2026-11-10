@@ -99,8 +99,8 @@ Furtividade ainda não é teste. Não há descanso curto nem pontos de vida temp
 - **Iniciado em Magia**: em espera até a magia existir. Acólito, Guia e Sábio esperam junto.
 - **Músico**: em espera. A canção dá Inspiração a aliados e o jogo não tem aliados. O antecedente Artista espera junto.
 - **Curandeiro**: em espera. O kit de curandeiro cura um aliado. O antecedente Eremita espera junto.
-- **Artesão**: entra. 20% de desconto na loja (quando ela existir) e, a cada fase nova, um item aleatório cai na mochila, só entre os itens que o jogo já tem.
-- **Alerta, Resistente, Atacante Selvagem, Brigão de Taverna, Sortudo e Perito**: entram (contas acima); só documentados por enquanto.
+- **Artesão**: entra. 20% de desconto na loja (já existe) e, a cada fase nova, um item aleatório cai na mochila, só entre os itens que o jogo já tem.
+- **Alerta, Resistente, Atacante Selvagem, Brigão de Taverna, Sortudo e Perito**: entram e estão **ligados** no código (efeitos em `features/jogador/talentos/` e Compêndio).
 
 ## Decisões do usuário sobre os talentos gerais (um por um)
 - **Levemente Armado**: em espera (o Guerreiro já tem o treinamento; só sobraria o +1 de atributo).
@@ -117,7 +117,7 @@ Furtividade ainda não é teste. Não há descanso curto nem pontos de vida temp
 - **Atleta**: entra completo. Levanta de Caído muito mais rápido e sem tempo de recuperação ao cair ou ao tomar dano; escalada em paredes (andar em diagonal por murinhos baixos, pede suporte no cenário); pequeno aumento de velocidade.
 - **Agarrador**: entra com a condição nova Agarrado. O soco acertado agarra o alvo; o herói ataca com vantagem nele; enquanto o herói continua acertando, o alvo não sai. Os monstros precisam tentar escapar do agarrão e podem atacar mesmo agarrados.
 - **Atirador de Elite**: entra. O alcance longo deixa de dar desvantagem. A cobertura vira "o tiro atravessa obstáculos e outras criaturas, acertando também quem está atrás".
-- **Quando se escolhe um talento geral**: ao subir de nível, na subida para o nível 4. Hoje o jogo vai até o nível 3.
+- **Quando se escolhe um talento geral**: ao subir de nível (níveis 4 e 6). O herói vai até o nível **6** (`Ficha.NIVEL_MAXIMO`).
 - **Especialista em Besta**: entra completo (sem recarga, sem desvantagem de perto, ataque extra com a segunda besta).
 - **Especialista em Perícia**: entra (planejado). O efeito aparece conforme as perícias ganharem teste; hoje só a Percepção conta.
 - **Ator**: em espera (não há diálogo, disfarce nem NPCs).

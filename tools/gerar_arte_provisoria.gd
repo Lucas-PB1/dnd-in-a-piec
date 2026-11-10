@@ -16,7 +16,7 @@ const ARQ_RASTRO := "res://assets/efeitos/rastro.png"
 const ARQ_IMPACTO := "res://assets/efeitos/impacto.png"
 const ARQ_CONDICOES := "res://assets/efeitos/condicoes.png"
 const ARQ_BONECO := "res://features/boneco_treino/boneco_treino.png"
-const ARQ_BAU := "res://features/bau/bau.png"
+const ARQ_BAU := "res://features/bau/sprites/bau.png"
 
 ## Arco de corte: quadros quadrados lado a lado.
 const TAM_CORTE := 48

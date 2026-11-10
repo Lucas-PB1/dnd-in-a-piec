@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://defov5eflitbh"
-path="res://.godot/imported/previa.png-64da03aedec34ef1b0cd7ed12ab85f2b.ctex"
+uid="uid://ct264c8iryxmy"
+path="res://.godot/imported/lojista_idle_sc.png-1de1a89febf3239b58876cbbf7038eae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://features/goblin/sprites/fonte_gemini/previa/previa.png"
-dest_files=["res://.godot/imported/previa.png-64da03aedec34ef1b0cd7ed12ab85f2b.ctex"]
+source_file="res://features/loja/sprites/lojista_idle_sc.png"
+dest_files=["res://.godot/imported/lojista_idle_sc.png-1de1a89febf3239b58876cbbf7038eae.ctex"]
 
 [params]
 

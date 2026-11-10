@@ -40,7 +40,7 @@ the reference goblin."
    no SpriteCook a partir dessa base (20 a 1ª animação, 14 cada extra).
 
 ## Lição do 1º teste (Hobgoblin)
-O 1º Hobgoblin do Gemini (`features/goblin/sprites/fonte_gemini/hobgoblin_gemini.png`) saiu com proporção
+O 1º Hobgoblin do Gemini (PNG bruto local, pasta intermediária `fonte_gemini/` — **não versionada**) saiu com proporção
 realista (cabeça pequena, corpo alto) e não combinou com o herói e o Goblin, que são chibi. Por isso os prompts
 agora pedem chibi e formas simples. Ferramenta de limpeza e comparação: `tools/limpar_arte_gemini.gd`.
 

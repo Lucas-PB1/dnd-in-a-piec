@@ -17,7 +17,7 @@ func _initialize() -> void:
 	_checar(_armas_em(400, 5) > _armas_em(400, -2), "na prática, mais Carisma solta mais armas")
 	var arma := _primeira_arma()
 	_checar(arma is Arma, "o saque é sempre uma arma (nunca armadura)")
-	quit(_falhas)
+	_terminar("saque de ouro e armas")
 
 
 func _media_do_ouro(valor: int, carisma: int) -> float:

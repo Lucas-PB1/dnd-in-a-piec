@@ -94,16 +94,21 @@ features/gray_ooze/      Gray Ooze: cena, estados/, sprites/
 features/goblin/         Goblin Minion e Goblin Warrior: cenas, adaga, flecha, estados/, sprites/
 features/ankheg/        Ankheg (chefe da fase 3): cena, estados/, sprites/
 features/minotauro/      Minotauro de Baphomet (chefe da fase 6): cena, estados/, sprites/
+features/wight/          Corpo Seco / Wight (chefe da fase 9): cena, estados/, sprites/
+features/quimera/        Quimera (chefe final da fase 10): cena, estados/, sprites/
 features/bloco_quebravel/ bloco de pedra que o Minotauro quebra (grupo "quebravel")
+features/loja/           lojista no início da fase (NPC)
 features/boneco_treino/  boneco de treino
 features/bau/            baú do arsenal (E)
 features/arremesso/      arma arremessada / projétil do herói
-levels/                  main.tscn/.gd (cena principal), fase.gd, fase_teste.tscn
-ui/                      titulo, criacao_personagem, hud, inventario, bau, comandos, derrota,
+core/projeteis/          Flecha compartilhada (Goblin Warrior, Wight…)
+levels/                  main.tscn/.gd (cena principal), fase.gd, fase_1..10.tscn, sons/musica
+ui/                      titulo, criacao_personagem, hud, inventario, bau, loja, comandos, derrota,
                          controles_toque, bestiario, habilidades, pausa, compendio (+ a regra `Compendio`), talento;
                          tema_menu.tres; resumo_item.gd
-data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze, goblin_minion, goblin_warrior,
-                         armas/, armaduras/, municoes/, itens/, pacotes/, antecedentes/, talentos/
+data/                    jogador_padrao, ataque_desarmado, classe_guerreiro, gray_ooze, goblin_*, ankheg,
+                         minotauro, wight, quimera, armas/, armaduras/, municoes/, itens/, pacotes/,
+                         antecedentes/, talentos/, bestiario/
 assets/                  tiles/, armas/, armaduras/, efeitos/, shaders/; CREDITOS.md
 tools/                   geradores (armas, armaduras, criaturas, fase, pose, mão), capturar_tela,
                          ferramentas_pixel, gerar_regras_cursor.ps1
@@ -154,12 +159,9 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
 
 ## Estado atual
 Últimas fatias (lista completa em `docs/historico.md`; o que falta em `docs/pendencias.md`):
-- Campanha de cinco fases com terrenos variados, encontros sorteados, portas com cota de inimigos e tela de vitória.
-- Armas à distância com a arte do Aerial Arsenal e força do tiro por arma.
-- Goblin Minion (arremessa adagas, golpeia, Fuga Ágil) e Goblin Warrior (cimitarra, arco curto), na tela de comandos (Trazer) e nos encontros da campanha.
-- Celular: tela larga, controles de toque (analógico ou setas + botões) e ajuste do layout; Bolsa, Menu e E respondem ao toque, com fechamento visível; ataque em movimento e pulo durante o golpe.
-- Progressão do Guerreiro níveis 1–3: XP, PV por nível, dificuldade aleatória escalada; Surto de Ação e Mente Tática no nível 2; descanso longo entre fases.
-- APK Android de depuração em `builds/android/dnd_in_a_piece.apk`; falta validar o toque num aparelho físico.
-- Nível 4 e talentos: o herói vai até o nível 4 e escolhe um talento geral (`TelaTalento`); os 30 talentos escolhíveis (origem, vindos do antecedente, e gerais) estão ligados (`docs/talentos.md`, `tools/gerar_compendio.gd`). Criação com antecedente (passo novo, aumento de atributo, perícias travadas). Compêndio na pausa e no título. Atleta escala paredes; fases com teto e laterais invisíveis e porta de verdade (arte CC0 do rubberduck); item Veneno Básico.
-- Segundo chefe: Minotauro de Baphomet na fase 6 (alongada, arena com pilares quebráveis); a Chifrada com carreira derruba o herói (estado `Caido`). Falta a animação `andar` (ver `docs/pendencias.md`).
+- Campanha de **10 fases** em 4 temas (Floresta, Ruínas, Subterrâneo, Covil): encontros sorteados, portas com cota, missões, ouro/drops, loja no início da fase e vitória na fase 10.
+- Chefes: Ankheg (3), Minotauro de Baphomet (6, com `andar` própria e blocos quebráveis), Wight (9, Skeleton/Zombie como acompanhantes), Quimera (10).
+- Minions: Goblin Minion/Warrior, Gray Ooze, Kobold, Hobgoblin, Bugbear, Skeleton, Zombie (variantes em `features/goblin/` por herança).
+- Guerreiro níveis **1–6**: XP, PV, Surto/Mente Tática (2), talento geral (4 e 6), Ataque Extra e Mudança Tática (5); criação com antecedente; 30 talentos escolhíveis ligados.
+- Celular: tela larga, controles de toque; APK em `builds/android/dnd_in_a_piece.apk` (falta validar no aparelho).
 - Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.

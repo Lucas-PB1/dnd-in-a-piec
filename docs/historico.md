@@ -121,3 +121,11 @@ O que já foi feito, em ordem. **Acrescente uma linha ao fechar cada fatia.** O 
 - Rampa de mobs por fase (2026-11-10): fase 1 ganha Kobold; Mina (7) = Ooze, Warrior, Bugbear, Skeleton; Caverna (8) = Ooze, Warrior, Bugbear, Skeleton, Zombie; Covil (10) = Warrior, Hobgoblin, Bugbear, Skeleton, Zombie (sem Ooze, a mais difícil); Cripta e fases 2 a 6 como estavam. As constantes do `tools/gerar_fase_teste.gd` agora refletem o que está nas cenas. `teste_campanha` fecha a tela de talento (o nível 4 chega antes da vitória).
 - Níveis 5 e 6 do Guerreiro: Ataque Extra (2 golpes por ataque, 4 com Surto; a arma da outra mão não dobra), Mudança Tática (Fôlego dá +15 pés por 3 s), proficiência +3, segundo talento no nível 6, XP 3600/4800 (regra da casa). Contador `_golpes_encadeados` no herói; testes em `teste_surto`, `teste_progressao`, `teste_talento`.
 - Sons dos monstros e chefes: golpe das criaturas, rugido ao despertar e ao morrer, tremor do chão (sintetizados em `tools/gerar_sons.gd`); música das fases 6–10 (OpenGameArt CC0).
+
+## Fatia: faxina pós-auditoria (docs, limpeza, sons, hardening, sprites)
+- Docs sincronizados com o código: 10 fases, nível 1–6, chefes (Ankheg/Minotauro/Wight/Quimera), loja, talentos ligados (`CLAUDE.md`, `arquitetura.md`, `base.md`, `criaturas.md`, `talentos.md`, `pendencias.md`, `CREDITOS.md`).
+- Limpeza: pastas vazias `export_templates/` e `feature_profiles/`; APKs antigos (só `dnd_in_a_piece.apk` + `.idsig`); pipelines `fonte_gemini/` removidos do Git.
+- Bug em `levels/sons.gd`: `is_connected` com `Callable.bind` novo a cada vez (rugido/clique duplicáveis); corrigido com métodos estáveis + `_sinal_ja_tem`.
+- Hardening: `HitboxComponent.ligar` zera `acertou_algum`; contrato documentado nos sinais do herói; `fase.gd` 1–10; StringNames no arremesso.
+- Sprites de loja e baú em `sprites/`; split da loja documentado.
+- Runner `rodar_testes.ps1`: cada teste imprime `>> OK` / `>> FALHOU` com motivo; resumo final com a lista; ignora vazamento ObjectDB do Godot; exige linha `PASSOU`; se falhar sob paralelo, **repete uma vez sozinho** (anti-flake). `TesteBase._terminar` e testes que saíam sem `PASSOU` corrigidos.

@@ -36,4 +36,4 @@ func _rodar() -> void:
 	_checar(tela.confirmar() and jogador.ficha.ouro == 25, "vender paga metade")
 	tela.fechar()
 	_checar(not tela.visible and not paused, "fechar devolve o jogo")
-	quit(_falhas)
+	_terminar("tela da loja e lojista")
