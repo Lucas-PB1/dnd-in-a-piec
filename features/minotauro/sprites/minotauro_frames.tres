@@ -1,0 +1,275 @@
+[gd_resource type="SpriteFrames" load_steps=33 format=3]
+
+[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_parado.png" id="1"]
+[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_investida.png" id="2"]
+[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_chifrada.png" id="3"]
+[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_glaive.png" id="4"]
+
+[sub_resource type="AtlasTexture" id="parado_0"]
+atlas = ExtResource("1")
+region = Rect2(0, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_1"]
+atlas = ExtResource("1")
+region = Rect2(190, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_2"]
+atlas = ExtResource("1")
+region = Rect2(380, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_3"]
+atlas = ExtResource("1")
+region = Rect2(570, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_4"]
+atlas = ExtResource("1")
+region = Rect2(760, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_5"]
+atlas = ExtResource("1")
+region = Rect2(950, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_6"]
+atlas = ExtResource("1")
+region = Rect2(1140, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_7"]
+atlas = ExtResource("1")
+region = Rect2(1330, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_0"]
+atlas = ExtResource("2")
+region = Rect2(0, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_1"]
+atlas = ExtResource("2")
+region = Rect2(190, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_2"]
+atlas = ExtResource("2")
+region = Rect2(380, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_3"]
+atlas = ExtResource("2")
+region = Rect2(570, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_4"]
+atlas = ExtResource("2")
+region = Rect2(760, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_5"]
+atlas = ExtResource("2")
+region = Rect2(950, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_6"]
+atlas = ExtResource("2")
+region = Rect2(1140, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_7"]
+atlas = ExtResource("2")
+region = Rect2(1330, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_0"]
+atlas = ExtResource("3")
+region = Rect2(0, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_1"]
+atlas = ExtResource("3")
+region = Rect2(190, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_2"]
+atlas = ExtResource("3")
+region = Rect2(380, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_3"]
+atlas = ExtResource("3")
+region = Rect2(570, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_4"]
+atlas = ExtResource("3")
+region = Rect2(760, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_5"]
+atlas = ExtResource("3")
+region = Rect2(950, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_6"]
+atlas = ExtResource("3")
+region = Rect2(1140, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="chifrada_7"]
+atlas = ExtResource("3")
+region = Rect2(1330, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_0"]
+atlas = ExtResource("4")
+region = Rect2(0, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_1"]
+atlas = ExtResource("4")
+region = Rect2(190, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_2"]
+atlas = ExtResource("4")
+region = Rect2(380, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_3"]
+atlas = ExtResource("4")
+region = Rect2(570, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_4"]
+atlas = ExtResource("4")
+region = Rect2(760, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_5"]
+atlas = ExtResource("4")
+region = Rect2(950, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_6"]
+atlas = ExtResource("4")
+region = Rect2(1140, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="glaive_7"]
+atlas = ExtResource("4")
+region = Rect2(1330, 0, 190, 190)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("parado_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_7")
+}],
+"loop": true,
+"name": &"parado",
+"speed": 8
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("investida_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_7")
+}],
+"loop": true,
+"name": &"andar",
+"speed": 8
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("investida_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_3")
+}],
+"loop": false,
+"name": &"preparar",
+"speed": 8
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("investida_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_7")
+}],
+"loop": true,
+"name": &"investida",
+"speed": 14
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("chifrada_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("chifrada_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("chifrada_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("chifrada_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("chifrada_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("chifrada_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("chifrada_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("chifrada_7")
+}],
+"loop": false,
+"name": &"chifrada",
+"speed": 12
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("glaive_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("glaive_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("glaive_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("glaive_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("glaive_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("glaive_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("glaive_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("glaive_7")
+}],
+"loop": false,
+"name": &"glaive",
+"speed": 12
+}]

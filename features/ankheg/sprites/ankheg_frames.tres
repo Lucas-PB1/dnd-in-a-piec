@@ -1,9 +1,12 @@
-[gd_resource type="SpriteFrames" load_steps=37 format=3]
+[gd_resource type="SpriteFrames" load_steps=60 format=3]
 
 [ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_parado.png" id="1"]
 [ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_andar.png" id="2"]
 [ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_mordida.png" id="3"]
 [ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_cuspe.png" id="4"]
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_saltar.png" id="5"]
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_pousar.png" id="6"]
+[ext_resource type="Texture2D" path="res://features/ankheg/sprites/ankheg_cavar.png" id="7"]
 
 [sub_resource type="AtlasTexture" id="parado_0"]
 atlas = ExtResource("1")
@@ -133,6 +136,86 @@ region = Rect2(1200, 0, 200, 200)
 atlas = ExtResource("4")
 region = Rect2(1400, 0, 200, 200)
 
+[sub_resource type="AtlasTexture" id="saltar_0"]
+atlas = ExtResource("5")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="saltar_1"]
+atlas = ExtResource("5")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="saltar_2"]
+atlas = ExtResource("5")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="saltar_3"]
+atlas = ExtResource("5")
+region = Rect2(600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_0"]
+atlas = ExtResource("6")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_1"]
+atlas = ExtResource("6")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_2"]
+atlas = ExtResource("6")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_3"]
+atlas = ExtResource("6")
+region = Rect2(600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_4"]
+atlas = ExtResource("6")
+region = Rect2(800, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_5"]
+atlas = ExtResource("6")
+region = Rect2(1000, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_6"]
+atlas = ExtResource("6")
+region = Rect2(1200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="pousar_7"]
+atlas = ExtResource("6")
+region = Rect2(1400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_0"]
+atlas = ExtResource("7")
+region = Rect2(0, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_1"]
+atlas = ExtResource("7")
+region = Rect2(200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_2"]
+atlas = ExtResource("7")
+region = Rect2(400, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_3"]
+atlas = ExtResource("7")
+region = Rect2(600, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_4"]
+atlas = ExtResource("7")
+region = Rect2(800, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_5"]
+atlas = ExtResource("7")
+region = Rect2(1000, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_6"]
+atlas = ExtResource("7")
+region = Rect2(1200, 0, 200, 200)
+
+[sub_resource type="AtlasTexture" id="cavar_7"]
+atlas = ExtResource("7")
+region = Rect2(1400, 0, 200, 200)
+
 [resource]
 animations = [
 {
@@ -253,6 +336,84 @@ animations = [
 }],
 "loop": false,
 "name": &"cuspe",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("saltar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("saltar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("saltar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("saltar_3")
+}],
+"loop": false,
+"name": &"saltar",
+"speed": 12.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("pousar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("pousar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("pousar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("pousar_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("pousar_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("pousar_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("pousar_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("pousar_7")
+}],
+"loop": false,
+"name": &"pousar",
+"speed": 14.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("cavar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("cavar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("cavar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("cavar_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("cavar_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("cavar_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("cavar_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("cavar_7")
+}],
+"loop": false,
+"name": &"cavar",
 "speed": 10.0
 }
 ]

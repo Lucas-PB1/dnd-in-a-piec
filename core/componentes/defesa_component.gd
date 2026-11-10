@@ -10,6 +10,8 @@ signal golpe_resolvido(resultado: Combate.Resultado, origem: Vector2)
 signal aparou(origem: Vector2)
 ## Um golpe com Agarrar acertou quem não tem Condições (o herói): quem agarrou e a CD do escape.
 signal agarrado(autor_id: int, cd: int)
+## Um golpe com Derrubada acertou quem não tem Condições (o herói): de quem veio.
+signal derrubado(autor_id: int)
 
 ## Classe de Armadura.
 @export var classe_armadura: int = 10
@@ -55,6 +57,7 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 	golpe.acertou_algum = golpe.acertou_algum or resultado.acertou
 	if condicoes == null and resultado.acertou:
 		_avisar_agarrao(golpe)
+		_avisar_derrubada(golpe)
 	if resultado.dano > 0 and vida:
 		vida.receber_dano(resultado.dano)
 	if condicoes and not (vida and vida.esta_morto()):
@@ -75,6 +78,12 @@ func _bonus_de_salvaguarda(atributo: StringName) -> int:
 		return condicoes.bonus_salvaguardas.get(atributo, 0)
 	return bonus_salvaguardas.get(atributo, 0)
 
+
+## Quem não tem Condições não guarda o Caído: avisa o dono, que cuida disso.
+func _avisar_derrubada(golpe: Golpe) -> void:
+	if golpe.efeito(Proficiencias.EFEITO_DERRUBADA) != null:
+		derrubado.emit(golpe.autor_id)
+		golpe.efeito_usado.emit(Proficiencias.EFEITO_DERRUBADA)
 
 ## Quem não tem Condições não guarda o agarrão: avisa o dono, que cuida disso.
 func _avisar_agarrao(golpe: Golpe) -> void:

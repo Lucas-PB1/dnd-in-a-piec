@@ -12,8 +12,21 @@ func processar_fisica(_delta: float) -> void:
 	elif ankheg.quer_borrifar():
 		_esperar_vez(&"Borrifando")
 	else:
-		ankheg.andar_para_alvo()
-		ankheg.tocar(&"andar")
+		_andar_ou_saltar()
+
+
+## Anda até o herói; diante de parede, degrau, vão ou queda que vale transpor, salta (como os goblins).
+func _andar_ou_saltar() -> void:
+	var plano := ankheg.planejar_salto()
+	if plano.tipo != SaltoDnd.Tipo.NENHUM:
+		ankheg.iniciar_salto(plano)
+		trocar_para.emit(&"Pulando")
+		return
+	if ankheg.quer_cavar_para_transpor():
+		trocar_para.emit(&"Cavando")
+		return
+	ankheg.andar_para_alvo()
+	ankheg.tocar(&"andar")
 
 
 func _esperar_vez(proximo: StringName) -> void:

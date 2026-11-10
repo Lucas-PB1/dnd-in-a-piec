@@ -108,6 +108,20 @@ extends Resource
 ## Recarga X-6 do livro: no começo de cada rodada rola 1d6 e volta com este número ou mais. 0 = não recarrega.
 @export var linha_recarga: int = 6
 
+@export_group("Chifrada")
+## Chifrada do Minotauro: ataque de recarga com investida. Bônus e dano próprios; alcance em pés. Dano vazio = não tem.
+@export var chifrada_dano: String = ""
+@export var chifrada_nome: String = "Chifrada"
+@export var chifrada_bonus: int = 0
+@export var chifrada_tipo_dano: StringName = TiposDano.PERFURANTE
+@export var chifrada_alcance_pes: float = 5.0
+## Quanto precisa correr em linha reta antes do acerto para somar o dano e derrubar (pés).
+@export var chifrada_carreira_pes: float = 10.0
+## Dano a mais (e Caído) quando há carreira (ex.: "3d6").
+@export var chifrada_dano_com_carreira: String = ""
+## Recarga X-6 do livro (Chifrada: 5). 0 = sem recarga.
+@export var chifrada_recarga: int = 5
+
 @export_group("Escavação")
 ## Deslocamento de escavação (pés por rodada). 0 = não escava.
 @export var escavacao_pes: float = 0.0
@@ -152,6 +166,15 @@ func golpe() -> Golpe:
 	if ataque_agarra_cd > 0:
 		ataque.efeitos.append(EfeitosDeTalento.Agarrar.new(ataque_agarra_cd))
 	return ataque
+
+
+## A Chifrada; com carreira soma o dano extra e derruba o alvo.
+func golpe_chifrada(com_carreira: bool) -> Golpe:
+	var chifrada := Golpe.new(chifrada_nome, chifrada_bonus, _dado_ou_padrao(chifrada_dano), chifrada_tipo_dano)
+	if com_carreira:
+		_anexar_dano_adicional(chifrada, chifrada_dano_com_carreira)
+		chifrada.efeitos.append(EfeitosDeTalento.Derrubada.new())
+	return chifrada
 
 
 ## O Borrifo Ácido: golpe de salvaguarda (sem rolagem de acerto).

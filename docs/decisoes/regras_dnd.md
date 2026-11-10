@@ -56,3 +56,6 @@ e `tests/teste_combate_dnd.gd`.
 ## Salvaguarda no lugar de ataque e herói agarrado (fatia do Ankheg)
 - `Golpe.cd_salvaguarda` > 0 faz o alvo **rolar a salvaguarda** do `atributo_salvaguarda` (d20 + bônus da ficha) em vez de o ataque rolar contra a CA: falhou, dano inteiro; passou, metade (`Combate.resolver_salvaguarda`); resistência ao tipo reduz de novo. O herói usa `Defesa.bonus_salvaguardas`, preenchido da `Ficha` ao mudar a ficha.
 - **Herói agarrado** (`AgarraoDoHeroi`, regra pura): um golpe com o efeito Agarrar que acerta quem não tem `Condicoes` (o herói) avisa o dono (`Defesa.agarrado`). Agarrado não anda nem pula, mas **pode golpear**. A cada rodada rola Força ou Destreza (o melhor bônus) contra a CD; **pular antecipa a tentativa** depois de meia rodada. Solta se quem agarrou some.
+
+## Herói derrubado (Chifrada do Minotauro)
+- O efeito `Derrubada` (`EfeitosDeTalento.Derrubada`) deixa um alvo com `Condicoes` **Caído** (meia rodada). O herói não tem `Condicoes`: `Defesa.derrubado` avisa o dono e o `Jogador` troca para o estado **`Caido`**: é lançado para longe (1,4x o recuo de um golpe comum), fica deitado (sprite girado) sem controle por meia rodada, levanta em 0,3 s e volta a andar ou cair. Dano e invencibilidade são os de um golpe comum.

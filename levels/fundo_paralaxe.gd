@@ -33,6 +33,7 @@ const AMBIENTES := {
 	"Pântano": [&"floresta", Color(0.55, 0.78, 0.62)],
 	"Ruína": [&"fortaleza", Color(0.82, 0.8, 0.9)],
 	"Fortaleza": [&"fortaleza", Color(1.0, 1.0, 1.0)],
+	"Labirinto": [&"fortaleza", Color(0.7, 0.72, 0.85)],
 }
 
 

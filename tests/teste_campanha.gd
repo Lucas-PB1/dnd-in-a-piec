@@ -5,7 +5,7 @@ extends TesteBase
 
 const CENAS_FASE: Array[String] = [
 	"res://levels/fase_1.tscn", "res://levels/fase_2.tscn", "res://levels/fase_3.tscn",
-	"res://levels/fase_4.tscn", "res://levels/fase_5.tscn",
+	"res://levels/fase_4.tscn", "res://levels/fase_5.tscn", "res://levels/fase_6.tscn",
 ]
 const SEMENTE := 7
 const VIDA_DE_TESTE := 999
@@ -13,7 +13,7 @@ const DANO_QUE_MATA := 999
 ## Quadros para uma morte (a animação do goblin dura ~1,9 s) e para a porta reagir.
 const QUADROS_MORTE := 300
 const QUADROS_CURTOS := 20
-const ULTIMA := 4
+const ULTIMA := 5
 const ALTURA_LADRILHO := 32.0
 const ATLAS_PLATAFORMA := 2
 ## Maior buraco (ladrilhos) que dá para atravessar pulando, e colunas ao lado de uma plataforma onde se pode subir.
@@ -137,7 +137,7 @@ func _testar_porta_barra_e_abre() -> void:
 	_checar(_fase().indice == 2, "tirar a cota na porta libera a fase 2")
 	_checar(_jogador.global_position.distance_to(_fase().posicao_inicio()) < 64.0, "o herói nasce no início da fase 2")
 	_checar(not _monstros().is_empty(), "a fase 2 sorteia a própria cota")
-	for indice_esperado: int in range(3, 6):
+	for indice_esperado: int in range(3, ULTIMA + 2):
 		_main.tirar_criaturas()
 		_jogador.posicionar_no_inicio(_fase().posicao_porta())
 		await _esperar(QUADROS_CURTOS)

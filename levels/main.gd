@@ -16,12 +16,14 @@ const CENA_HOBGOBLIN := preload("res://features/goblin/hobgoblin_guerreiro.tscn"
 const CENA_BUGBEAR := preload("res://features/goblin/bugbear_guerreiro.tscn")
 const CENA_KOBOLD := preload("res://features/goblin/kobold_guerreiro.tscn")
 const CENA_ANKHEG := preload("res://features/ankheg/ankheg.tscn")
+const CENA_MINOTAURO := preload("res://features/minotauro/minotauro.tscn")
 const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_1.tscn"),
 	preload("res://levels/fase_2.tscn"),
 	preload("res://levels/fase_3.tscn"),
 	preload("res://levels/fase_4.tscn"),
 	preload("res://levels/fase_5.tscn"),
+	preload("res://levels/fase_6.tscn"),
 ]
 ## Páginas do bestiário, na ordem da lista.
 const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
@@ -32,6 +34,7 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 	preload("res://data/bestiario/bugbear_warrior.tres"),
 	preload("res://data/bestiario/kobold_warrior.tres"),
 	preload("res://data/bestiario/ankheg.tres"),
+	preload("res://data/bestiario/minotauro.tres"),
 ]
 ## Talentos do livro (a tela de escolha do nível 4 lê daqui).
 const PASTA_TALENTOS := "res://data/talentos"
@@ -46,6 +49,7 @@ const TIPO_HOBGOBLIN := &"hobgoblin"
 const TIPO_BUGBEAR := &"bugbear"
 const TIPO_KOBOLD := &"kobold"
 const TIPO_ANKHEG := &"ankheg"
+const TIPO_MINOTAURO := &"minotauro"
 ## Cena de cada tipo que a fase pode sortear. Tipo novo = uma linha aqui (e o nome em `Fase.tipos_permitidos`).
 const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_OOZE: CENA_OOZE,
@@ -55,6 +59,7 @@ const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_BUGBEAR: CENA_BUGBEAR,
 	TIPO_KOBOLD: CENA_KOBOLD,
 	TIPO_ANKHEG: CENA_ANKHEG,
+	TIPO_MINOTAURO: CENA_MINOTAURO,
 }
 const INIMIGOS_EXTRA_POR_NIVEL := 1
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
@@ -168,7 +173,7 @@ func _ready() -> void:
 	_comandos.opcoes_toque_mudaram.connect(_atualizar_controles_toque)
 	_comandos.editar_toque_pedido.connect(_editar_toque)
 	_controles_toque.edicao_terminada.connect(func() -> void: get_tree().paused = false)
-	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior", "Ankheg"]), _cenas_criaturas())
+	_comandos.definir_criaturas(PackedStringArray(["Gray Ooze", "Goblin Minion", "Goblin Warrior", "Hobgoblin Warrior", "Bugbear Warrior", "Kobold Warrior", "Ankheg", "Minotauro"]), _cenas_criaturas())
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_atualizar_botoes_toque()
 	_ligar_porta()
@@ -348,6 +353,7 @@ func _entrar_fase(cena: PackedScene) -> void:
 	_fase.name = "Fase"
 	add_child(_fase)
 	move_child(_fase, 0)
+	remove_child(antiga)  # sai da física já: o colisor da fase velha não empurra quem nasce na nova (o chefe nasce longe)
 	antiga.queue_free()
 	_ligar_porta()
 	_jogador.posicionar_no_inicio(_fase.posicao_inicio())
@@ -387,6 +393,12 @@ func _nascer_armadilhas() -> void:
 
 
 ## Põe um monstro da cota da fase no `lugar` e o liga à porta, ao XP, ao ouro e ao herói.
+## Se o monstro abala o chão (chefe saindo da terra), a câmera do herói treme.
+func _ligar_abalo(monstro: Node) -> void:
+	if monstro.has_signal(&"abalou_o_chao"):
+		monstro.connect(&"abalou_o_chao", _jogador.tremer_camera)
+
+
 func _nascer_da_cota(tipo: StringName, lugar: Vector2) -> Node2D:
 	var monstro: Node2D = _cena_do_tipo(tipo).instantiate()
 	monstro.add_to_group(GRUPO_MONSTROS)
@@ -400,6 +412,7 @@ func _nascer_da_cota(tipo: StringName, lugar: Vector2) -> Node2D:
 	_ligar_morte_da_cota(monstro, id, experiencia, ouro)
 	if monstro.has_method(&"definir_alvo"):
 		monstro.call(&"definir_alvo", _jogador)
+	_ligar_abalo(monstro)
 	_passar_percepcao(monstro)
 	_passar_luz_do_sol(monstro)
 	return monstro
@@ -597,7 +610,7 @@ func _passar_luz_do_sol(monstro: Node) -> void:
 
 ## Cenas da lista "Trazer" da tela de comandos, na ordem dos nomes.
 func _cenas_criaturas() -> Array[PackedScene]:
-	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD, CENA_ANKHEG]
+	var cenas: Array[PackedScene] = [CENA_OOZE, CENA_GOBLIN, CENA_GOBLIN_GUERREIRO, CENA_HOBGOBLIN, CENA_BUGBEAR, CENA_KOBOLD, CENA_ANKHEG, CENA_MINOTAURO]
 	return cenas
 
 
@@ -850,6 +863,7 @@ func trazer_criatura(cena: PackedScene) -> void:
 	add_child(monstro)
 	var frente := Vector2(EscalaDnd.pes_para_pixels(DISTANCIA_CRIATURA_PES) * _jogador.direcao_olhar, 0.0)
 	monstro.global_position = _jogador.global_position + frente
+	_ligar_abalo(monstro)
 	_registrar_no_bestiario(monstro)
 	if monstro.has_method(&"definir_alvo"):
 		monstro.call(&"definir_alvo", _jogador)

@@ -9,6 +9,8 @@ extends CharacterBody2D
 signal morreu
 ## A vida mudou (a main mostra a barra do chefe).
 signal vida_mudou(atual: int, maxima: int)
+## O chão tremeu (o Ankheg saiu da terra): a main treme a câmera do herói com esta força (px) e duração (s).
+signal abalou_o_chao(forca: float, duracao: float)
 
 ## Camada "mundo" do chão.
 const MASCARA_MUNDO := 1
@@ -22,6 +24,23 @@ const INTERVALO_CAVAR := 9.0
 const ALCANCE_DO_CHAO := 160.0
 ## Quanto tempo o sprite fica vermelho ao levar dano (s).
 const TEMPO_PISCAR_DANO := 0.12
+## Ao emergir: o Ankheg salta do chão com este impulso (px/s) e cai no mesmo ponto; a tela treme na saída e mais forte no pouso (px, s).
+const IMPULSO_DO_SALTO := 460.0
+const FORCA_ABALO_SAIDA := 3.0
+const FORCA_ABALO_POUSO := 8.0
+const DURACAO_ABALO := 0.35
+## Escavação só onde há terra: passo da checagem do chão no caminho (px).
+const PASSO_DO_CAMINHO := 32.0
+## Salto por obstáculo (como os goblins): passo da sondagem do chão (px), folga acima do degrau (px), espera entre saltos (s)
+## e quanto o alvo precisa estar abaixo dos pés (px) para valer descer.
+const PASSO_SONDA := 8.0
+const FOLGA_TOPO_SALTO := 10.0
+const INTERVALO_SALTO := 0.4
+const DESNIVEL_ALVO_PX := 24.0
+## Quanto o monte de terra cresce (fração a mais) enquanto o aviso enche.
+const CRESCIMENTO_DO_MONTE := 0.8
+## Jato do Borrifo: altura do respingo no fim da linha (px).
+const ALTURA_DO_RESPINGO := 6.0
 ## Faces do dado da recarga (1d6 do "Recarga 6").
 const FACES_RECARGA := 6
 
@@ -59,10 +78,14 @@ var _escondido: bool = false
 var _camada_corpo: int = 0
 var _camada_hurtbox: int = 0
 var _empurrao_restante: float = 0.0
+var _tempo_desde_salto: float = INF
+var _velocidade_no_ar: float = 0.0
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _sombra: Polygon2D = $Sombra
 @onready var _terra: Node2D = $Terra
+@onready var _alerta: Polygon2D = $Terra/Alerta
+@onready var _explosao: CPUParticles2D = $Explosao
 @onready var _dissolver: DissolverComponent = $Dissolver
 @onready var _hurtbox: Area2D = $Hurtbox
 @onready var _vida: HealthComponent = $Vida
@@ -72,7 +95,8 @@ var _empurrao_restante: float = 0.0
 @onready var _forma_golpe: CollisionShape2D = $Golpe/Forma
 @onready var _linha: HitboxComponent = $Linha
 @onready var _forma_linha: CollisionShape2D = $Linha/Forma
-@onready var _jato: Polygon2D = $Linha/Jato
+@onready var _gotas: CPUParticles2D = $Linha/Gotas
+@onready var _respingo: CPUParticles2D = $Linha/Respingo
 @onready var _maquina: MaquinaEstados = $MaquinaEstados
 @onready var _condicoes: CondicoesComponent = $Condicoes
 
@@ -96,6 +120,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
 	_tempo_desde_cavar += delta
+	_tempo_desde_salto += delta
 	_recarregar_borrifo(delta)
 	if not _escondido and not is_on_floor():
 		velocity.y += _gravidade * delta
@@ -154,10 +179,61 @@ func quer_borrifar() -> bool:
 		and absf(alvo.global_position.y - global_position.y) <= altura_golpe * 2.0
 
 
-## Longe o bastante do herói, no chão e fora da espera: vale cavar para surpreender.
+## Longe o bastante do herói, no chão, fora da espera e com terra firme até ele (vão ou paredão no caminho: nada de cavar,
+## ele salta como os goblins): vale cavar para surpreender.
 func quer_cavar() -> bool:
 	return criatura.escavacao_pes > 0.0 and alvo != null and is_on_floor() and _tempo_desde_cavar >= INTERVALO_CAVAR \
-		and _distancia_horizontal() >= DISTANCIA_MINIMA_CAVAR
+		and _distancia_horizontal() >= DISTANCIA_MINIMA_CAVAR and _terra_ate(alvo.global_position.x)
+
+
+## Barrado por parede ou degrau alto demais para o salto, com terra até o herói: cava por baixo e sai lá em cima.
+func quer_cavar_para_transpor() -> bool:
+	return criatura.escavacao_pes > 0.0 and alvo != null and is_on_floor() and is_on_wall() and _terra_ate(alvo.global_position.x)
+
+
+## Diante de parede, degrau, vão ou queda, decide se vale saltar (regra em `SaltoDnd`, a mesma dos goblins).
+func planejar_salto() -> SaltoDnd.Plano:
+	virar_para_alvo()
+	var direcao := float(direcao_olhar)
+	var bloqueado := is_on_wall() or not _tem_chao_na(direcao)
+	if alvo == null or not is_on_floor() or not bloqueado or _tempo_desde_salto < INTERVALO_SALTO:
+		return SaltoDnd.Plano.new()
+	var forca := criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int
+	var altura_max := SaltoDnd.altura_px(forca)
+	var distancia_max := SaltoDnd.distancia_px(forca)
+	var quantidade := ceili(distancia_max / PASSO_SONDA) + 1
+	var perfil := SensorDeTerreno.perfil(get_world_2d().direct_space_state, global_position, direcao, DISTANCIA_BEIRA,
+		PASSO_SONDA, quantidade, altura_max, SaltoDnd.queda_segura_px(), MASCARA_MUNDO)
+	var alvo_embaixo := alvo.global_position.y - global_position.y >= DESNIVEL_ALVO_PX
+	return SaltoDnd.planejar(perfil, PASSO_SONDA, DISTANCIA_BEIRA, altura_max, distancia_max, alvo_embaixo)
+
+
+## Dá o impulso do plano: corre na velocidade da ficha e sobe o bastante para o degrau ou para cobrir o vão.
+func iniciar_salto(plano: SaltoDnd.Plano) -> void:
+	_tempo_desde_salto = 0.0
+	var velocidade := EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes)
+	var subida := sqrt(2.0 * _gravidade * (maxf(plano.desnivel_px, 0.0) + FOLGA_TOPO_SALTO)) if plano.tipo != SaltoDnd.Tipo.DESCER else 0.0
+	if plano.tipo == SaltoDnd.Tipo.VAO and velocidade > 0.0:
+		var tempo_no_ar := (plano.distancia_px + meia_largura_corpo) / velocidade
+		subida = maxf(subida, _gravidade * tempo_no_ar / 2.0)
+	_velocidade_no_ar = velocidade
+	velocity = Vector2(direcao_olhar * velocidade, -subida)
+
+
+## No ar do salto: mantém a corrida (uma batida na parede zera o x).
+func correr_no_ar() -> void:
+	velocity.x = direcao_olhar * _velocidade_no_ar
+
+
+## True se há terra para atravessar por baixo até `x`: chão em todos os pontos do caminho (degrau e paredão são terra, vão não).
+func _terra_ate(x: float) -> bool:
+	var sentido := signf(x - global_position.x)
+	var ponto := global_position.x
+	while absf(x - ponto) > PASSO_DO_CAMINHO:
+		ponto += sentido * PASSO_DO_CAMINHO
+		if is_nan(chao_em(ponto)):
+			return false
+	return true
 
 
 func virar_para_alvo() -> void:
@@ -188,11 +264,12 @@ func animacao_terminou() -> bool:
 	return not _sprite.is_playing()
 
 
-func iniciar_ataque(animacao: StringName) -> void:
+func iniciar_ataque(animacao: StringName, quadro_inicial: int = 0) -> void:
 	_tempo_desde_ataque = 0.0
 	virar_para_alvo()
 	parar()
 	tocar(animacao)
+	_sprite.frame = quadro_inicial
 
 
 func ligar_golpe() -> void:
@@ -206,14 +283,18 @@ func desligar_golpe() -> void:
 ## Solta o Borrifo Ácido: liga a área da linha e mostra o jato; gasta a recarga.
 func ligar_borrifo() -> void:
 	_linha.ligar(_golpe_do_borrifo())
-	_jato.visible = true
+	_gotas.restart()
+	_respingo.restart()
+	_gotas.emitting = true
+	_respingo.emitting = true
 	_borrifo_pronto = false
 	_tempo_recarga = 0.0
 
 
 func desligar_borrifo() -> void:
 	_linha.desligar()
-	_jato.visible = false
+	_gotas.emitting = false
+	_respingo.emitting = false
 
 
 ## Aviso antes do ataque (0 na emboscada: o herói não viu o Ankheg sair do chão).
@@ -268,10 +349,12 @@ func esta_escondido() -> bool:
 func cavar_ate(x: float) -> bool:
 	var falta := x - global_position.x
 	var velocidade := EscalaDnd.deslocamento_para_velocidade(criatura.escavacao_pes * EscalaDnd.MULTIPLICADOR_DISPARADA)
-	if absf(falta) <= velocidade * get_physics_process_delta_time():
+	var sentido := 1 if falta > 0.0 else -1
+	var proximo := global_position.x + sentido * PASSO_DO_CAMINHO
+	if absf(falta) <= velocidade * get_physics_process_delta_time() or is_nan(chao_em(proximo)):  # acabou a terra: emerge
 		velocity = Vector2.ZERO
 		return true
-	direcao_olhar = 1 if falta > 0.0 else -1
+	direcao_olhar = sentido
 	velocity = Vector2(direcao_olhar * velocidade, 0.0)
 	return false
 
@@ -286,14 +369,32 @@ func chao_em(x: float) -> float:
 	return NAN if acerto.is_empty() else (acerto["position"] as Vector2).y
 
 
-## Sai do chão em `x`: a mordida seguinte é a emboscada (sem aviso e com vantagem).
+## O aviso da terra enche de 0 a 1: o monte cresce e a marca vermelha mostra onde o Ankheg vai sair.
+func avisar_terra(fracao: float) -> void:
+	_terra.scale = Vector2(1.0 + CRESCIMENTO_DO_MONTE * fracao, 1.0 + CRESCIMENTO_DO_MONTE * 1.5 * fracao)
+	_alerta.visible = true
+	_alerta.modulate.a = 0.4 + 0.6 * fracao
+
+
+## Sai do chão em `x` num salto: sobe e cai no mesmo ponto (`aterrissar`). A mordida seguinte é a emboscada (sem aviso e com vantagem).
 func emergir_em(x: float) -> void:
 	var y := chao_em(x)
 	global_position = Vector2(x, global_position.y if is_nan(y) else y)
-	velocity = Vector2.ZERO
+	velocity = Vector2(0.0, -IMPULSO_DO_SALTO)
 	revelar()
 	virar_para_alvo()
+	tocar(&"saltar")
 	_emboscada = true
+	_terra.scale = Vector2.ONE
+	_alerta.visible = false
+	_explosao.restart()
+	abalou_o_chao.emit(FORCA_ABALO_SAIDA, DURACAO_ABALO)
+
+
+## O pouso do salto: terra para os lados e a tela treme forte.
+func aterrissar() -> void:
+	_explosao.restart()
+	abalou_o_chao.emit(FORCA_ABALO_POUSO, DURACAO_ABALO)
 
 
 func esta_caido() -> bool:
@@ -365,20 +466,19 @@ func _tem_chao_na(direcao: float) -> bool:
 	return not get_world_2d().direct_space_state.intersect_ray(consulta).is_empty()
 
 
-## As áreas da mordida e do Borrifo começam na borda do corpo e vão até o alcance e o comprimento da ficha.
+## A mordida cobre do centro do corpo até o alcance (quem está embaixo dele, na saída do chão, também é mordido); o Borrifo começa na borda do corpo e vai até o alcance e o comprimento da ficha.
 func _preparar_areas() -> void:
 	var mordida := _forma_golpe.shape as RectangleShape2D
-	mordida.size = Vector2(_alcance_px(), altura_golpe)
-	_forma_golpe.position = Vector2(meia_largura_corpo + _alcance_px() / 2.0, -altura_golpe / 2.0)
+	var comprimento_mordida := meia_largura_corpo + _alcance_px()
+	mordida.size = Vector2(comprimento_mordida, altura_golpe)
+	_forma_golpe.position = Vector2(comprimento_mordida / 2.0, -altura_golpe / 2.0)
 	var largura := EscalaDnd.pes_para_pixels(criatura.linha_largura_pes)
 	var linha := _forma_linha.shape as RectangleShape2D
 	linha.size = Vector2(_comprimento_linha_px(), largura)
 	_forma_linha.position = Vector2(meia_largura_corpo + _comprimento_linha_px() / 2.0, -altura_boca)
-	var x0 := meia_largura_corpo
-	var x1 := meia_largura_corpo + _comprimento_linha_px()
-	_jato.polygon = PackedVector2Array([Vector2(x0, -altura_boca - 2.0), Vector2(x1, -altura_boca - largura / 2.0),
-		Vector2(x1, -altura_boca + largura / 2.0), Vector2(x0, -altura_boca + 2.0)])
-	_jato.visible = false
+	var comprimento := _comprimento_linha_px()
+	_gotas.position = Vector2(meia_largura_corpo, -altura_boca)  # o jato sai da boca
+	_respingo.position = Vector2(meia_largura_corpo + comprimento, -ALTURA_DO_RESPINGO)
 
 
 func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:

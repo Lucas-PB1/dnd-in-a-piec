@@ -22,10 +22,14 @@ Outros comandos de ferramenta (sem `--debug`):
 & $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/gerar_arte_provisoria.gd
 & $env:GODOT_EDITOR_PATH --headless --path . --import
 & $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/gerar_fase_teste.gd
+# Só uma fase (sem apagar as outras, que têm marcadores postos à mão): `-- 6` grava a fase 6 (com o chefe e os pilares quebráveis)
+& $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/gerar_fase_teste.gd -- 6
 # Remarcar o ponto e a camada da mão (depois de mudar a arte do herói); o argumento salva uma folha de revisão
 & $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/marcar_pontos_mao.gd -- C:/caminho/revisao.png
 # Print segurando teclas (precisa de janela). Opções: inicio, equipar
 & $env:GODOT_EDITOR_PATH --path . --script res://tools/capturar_tela.gd -- mover_direita 40 C:/caminho/print.png equipar
+# Jogar já numa fase (aqui a 6, a do Minotauro; a 3 é a do Ankheg), sem passar pelo título
+& $env:GODOT_EDITOR_PATH --path . --script res://tools/abrir_fase.gd -- 6
 # Regerar as regras e os comandos do Cursor (depois de mudar skill, comando ou doc de decisões)
 powershell -NoProfile -ExecutionPolicy Bypass -File tools\gerar_regras_cursor.ps1
 ```

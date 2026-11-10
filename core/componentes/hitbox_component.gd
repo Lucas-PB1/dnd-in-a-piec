@@ -13,6 +13,11 @@ const DISTANCIA_TRESPASSAR := 10.0 * EscalaDnd.PIXELS_POR_LADRILHO / EscalaDnd.P
 ## Emitido quando o golpe é entregue a um alvo (ex.: a arma arremessada cai ali).
 signal alvo_atingido(alvo: HurtboxComponent)
 
+## Golpe de área (sopro, linha de ácido): entrega a TODOS que tocam a área, não só ao mais perto.
+@export var atinge_todos: bool = false
+## Hurtbox do próprio dono, que a área nunca atinge (para áreas que pegam também as criaturas aliadas).
+@export var ignorar: HurtboxComponent
+
 var _golpe: Golpe
 var _ligada: bool = false
 var _atingidos: Array[HurtboxComponent] = []
@@ -43,7 +48,10 @@ func _physics_process(_delta: float) -> void:
 	var candidatos := _alvos_novos()
 	if candidatos.is_empty():
 		return
-	if _atingidos.is_empty():
+	if atinge_todos:
+		for alvo in candidatos:
+			_entregar(alvo, _golpe)
+	elif _atingidos.is_empty():
 		_entregar(candidatos[0], _golpe)
 	elif _atingidos.size() == 1 and _golpe.trespassar and _golpe.acertou_algum:
 		_tentar_trespassar(candidatos)
@@ -54,7 +62,7 @@ func _alvos_novos() -> Array[HurtboxComponent]:
 	var alvos: Array[HurtboxComponent] = []
 	for area in get_overlapping_areas():
 		var alvo := area as HurtboxComponent
-		if alvo and alvo not in _atingidos:
+		if alvo and alvo != ignorar and alvo not in _atingidos:
 			alvos.append(alvo)
 	alvos.sort_custom(func(a: HurtboxComponent, b: HurtboxComponent) -> bool:
 		return a.global_position.distance_to(global_position) < b.global_position.distance_to(global_position))

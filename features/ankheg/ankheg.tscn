@@ -20,6 +20,7 @@
 [ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_emergindo.gd" id="18_emergindo"]
 [ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_caido.gd" id="19_caido"]
 [ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_morrendo.gd" id="20_morrendo"]
+[ext_resource type="Script" path="res://features/ankheg/estados/estado_ankheg_pulando.gd" id="21_pulando"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
 size = Vector2(64, 40)
@@ -62,6 +63,11 @@ visible = false
 color = Color(0.36, 0.25, 0.14, 1)
 polygon = PackedVector2Array(-26, 0, -14, -9, -4, -14, 6, -12, 16, -8, 26, 0)
 
+[node name="Alerta" type="Polygon2D" parent="Terra"]
+color = Color(0.9, 0.15, 0.1, 0.4)
+polygon = PackedVector2Array(-46, 0, -30, -5, 0, -7, 30, -5, 46, 0, 30, 5, 0, 7, -30, 5)
+visible = false
+
 [node name="Poeira" type="CPUParticles2D" parent="Terra"]
 position = Vector2(0, -8)
 amount = 18
@@ -74,6 +80,22 @@ initial_velocity_max = 70.0
 scale_amount_min = 2.0
 scale_amount_max = 3.5
 color = Color(0.5, 0.36, 0.2, 1)
+
+[node name="Explosao" type="CPUParticles2D" parent="."]
+position = Vector2(0, -6)
+emitting = false
+amount = 44
+lifetime = 0.7
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, -1)
+spread = 75.0
+gravity = Vector2(0, 420)
+initial_velocity_min = 90.0
+initial_velocity_max = 190.0
+scale_amount_min = 3.0
+scale_amount_max = 6.0
+color = Color(0.48, 0.34, 0.19, 1)
 
 [node name="Vida" type="Node" parent="."]
 script = ExtResource("5_vida")
@@ -112,18 +134,42 @@ script = ExtResource("9_hitbox")
 position = Vector2(52, -20)
 shape = SubResource("FormaGolpe")
 
-[node name="Linha" type="Area2D" parent="."]
+[node name="Linha" type="Area2D" parent="." node_paths=PackedStringArray("ignorar")]
 collision_layer = 0
-collision_mask = 8
+collision_mask = 12
 script = ExtResource("9_hitbox")
+atinge_todos = true
+ignorar = NodePath("../Hurtbox")
 
 [node name="Forma" type="CollisionShape2D" parent="Linha"]
 position = Vector2(132, -30)
 shape = SubResource("FormaLinha")
 
-[node name="Jato" type="Polygon2D" parent="Linha"]
-visible = false
-color = Color(0.45, 0.85, 0.2, 0.55)
+[node name="Gotas" type="CPUParticles2D" parent="Linha"]
+emitting = false
+amount = 160
+lifetime = 0.42
+direction = Vector2(1, 0)
+spread = 7.0
+gravity = Vector2(0, 260)
+initial_velocity_min = 380.0
+initial_velocity_max = 520.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(0.55, 0.95, 0.2, 0.9)
+
+[node name="Respingo" type="CPUParticles2D" parent="Linha"]
+emitting = false
+amount = 14
+lifetime = 0.35
+direction = Vector2(0, -1)
+spread = 60.0
+gravity = Vector2(0, 400)
+initial_velocity_min = 40.0
+initial_velocity_max = 110.0
+scale_amount_min = 2.0
+scale_amount_max = 3.0
+color = Color(0.4, 0.8, 0.15, 0.9)
 
 [node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]
 script = ExtResource("12_maquina")
@@ -149,6 +195,9 @@ script = ExtResource("18_emergindo")
 
 [node name="Caido" type="Node" parent="MaquinaEstados"]
 script = ExtResource("19_caido")
+
+[node name="Pulando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("21_pulando")
 
 [node name="Morrendo" type="Node" parent="MaquinaEstados"]
 script = ExtResource("20_morrendo")

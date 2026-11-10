@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="CriaturaRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/criatura_rpg.gd" id="1_criatura"]
+
+[resource]
+script = ExtResource("1_criatura")
+nome = "Minotauro de Baphomet"
+experiencia = 700
+ouro = 120
+tipo = "Large Monstrosity, Chaotic Evil"
+classe_armadura = 14
+dados_vida = "10d10+30"
+rolar_vida = false
+atributos = Dictionary[StringName, int]({
+&"carisma": 9,
+&"constituicao": 16,
+&"destreza": 11,
+&"forca": 18,
+&"inteligencia": 6,
+&"sabedoria": 16
+})
+salvaguardas_proficientes = Array[StringName]([])
+bonus_proficiencia = 2
+iniciativa = 0
+deslocamento_pes = 40.0
+percepcao_pes = 120.0
+ataque_nome = "Glaive Abissal"
+ataque_bonus = 6
+ataque_dano = "1d12+4"
+ataque_tipo_dano = &"cortante"
+ataque_alcance_pes = 10.0
+ataque_dano_adicional = "3d6"
+aviso_ataque = 0.6
+chifrada_nome = "Chifrada"
+chifrada_bonus = 6
+chifrada_dano = "4d6+4"
+chifrada_tipo_dano = &"perfurante"
+chifrada_alcance_pes = 5.0
+chifrada_carreira_pes = 10.0
+chifrada_dano_com_carreira = "3d6"
+chifrada_recarga = 5

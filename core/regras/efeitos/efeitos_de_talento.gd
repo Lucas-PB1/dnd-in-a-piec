@@ -140,6 +140,17 @@ class Agarrar extends EfeitoDeGolpe:
 		golpe.efeito_usado.emit(id)
 
 
+## Derrubada (Chifrada do Minotauro): o acerto deixa o alvo Caído. Quem não tem Condições (o herói) é avisado pelo sinal `derrubado` da Defesa.
+class Derrubada extends EfeitoDeGolpe:
+	func _init() -> void:
+		id = Proficiencias.EFEITO_DERRUBADA
+		por_rodada = false
+
+	func ao_acertar(golpe: Golpe, _resultado: Combate.Resultado, alvo: CondicoesComponent, _lado: float) -> void:
+		alvo.impor(CondicoesComponent.CAIDO, CondicoesComponent.DURACAO_CAIDO)
+		golpe.efeito_usado.emit(id)
+
+
 ## Investida: depois de correr 10 pés, o golpe soma 1d8 de dano ou empurra 10 pés, conforme o modo.
 class Investida extends EfeitoDeGolpe:
 	const EMPURRAO_PES := 10.0

@@ -33,3 +33,9 @@ reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 ## Kobold Warrior (features/goblin/sprites/kobold_*.png)
 Arte gerada com o Gemini (IA) a partir de prompts do projeto (`docs/prompts_gemini_minions.md`) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
+
+## Caverna (assets/tiles/caverna/), temas Subterrâneo e Covil
+**OPP2017 - Cave and mine cart**, do Open Pixel Project (autor listado: Hapiel), 32x32, paleta DB32. Licença **CC0 / domínio público**
+(o pacote traz `license cc0 - public domain.txt`, copiado para `LICENCA_CC0.txt`). Fonte: https://opengameart.org/node/72366
+(arquivo `opp3_cave_tiles.zip`, baixado em 2026-11-09). Usados só os arquivos de `environment/tiles/cave`, o fundo `bg_cave.png`
+e o baú; as guias do pacote não são usadas (o aviso do autor diz que podem ter ladrilhos antigos fora do domínio público).

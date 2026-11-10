@@ -245,6 +245,54 @@
       "sha12": "",
       "label": "ankheg_cuspe (8 quadros 200x200, custom, 14 créditos)",
       "file": "features/ankheg/sprites/ankheg_cuspe.png"
+    },
+    {
+      "asset_id": "3b86f2db-deb4-494b-92e4-64e48b297521",
+      "sha12": "",
+      "label": "ankheg_saltar (8 quadros 200x200, custom, 20 créditos; só os quadros 0-3 são usados)",
+      "file": "features/ankheg/sprites/ankheg_saltar.png"
+    },
+    {
+      "asset_id": "46265e2a-8239-4fe7-a3ee-987fbd84ab35",
+      "sha12": "",
+      "label": "ankheg_pousar (8 quadros 200x200, custom, 14 créditos)",
+      "file": "features/ankheg/sprites/ankheg_pousar.png"
+    },
+    {
+      "asset_id": "ff542cdc-ec98-457e-a8e0-b1dae0e41fd9",
+      "sha12": "",
+      "label": "ankheg_cavar (8 quadros 200x200, custom, 14 créditos)",
+      "file": "features/ankheg/sprites/ankheg_cavar.png"
+    },
+    {
+      "asset_id": "147fe5c9-9757-4fd1-b609-1ae5962aabf1",
+      "sha12": "",
+      "label": "minotauro_base (176x176, platformer, 12 créditos; aprovada)",
+      "file": "features/minotauro/sprites/minotauro_base.png"
+    },
+    {
+      "asset_id": "d3d2b984-39da-4c84-9b0a-5e5b5a229c7e",
+      "sha12": "",
+      "label": "minotauro_parado (8 quadros 190x190, custom, 20 créditos)",
+      "file": "features/minotauro/sprites/minotauro_parado.png"
+    },
+    {
+      "asset_id": "54c75c8a-e50a-400b-8d41-2c97b76e3b04",
+      "sha12": "",
+      "label": "minotauro_investida (8 quadros 190x190, custom, 14 créditos; os quadros 5-8 também são a caminhada)",
+      "file": "features/minotauro/sprites/minotauro_investida.png"
+    },
+    {
+      "asset_id": "304607e1-71fb-4481-b056-715bbc18759c",
+      "sha12": "",
+      "label": "minotauro_chifrada (8 quadros 190x190, custom, 14 créditos)",
+      "file": "features/minotauro/sprites/minotauro_chifrada.png"
+    },
+    {
+      "asset_id": "136e2593-f84e-4932-8907-e3eeca56079c",
+      "sha12": "",
+      "label": "minotauro_glaive (8 quadros 190x190, custom, 14 créditos)",
+      "file": "features/minotauro/sprites/minotauro_glaive.png"
     }
   ]
 }

@@ -98,4 +98,21 @@ Fatias sugeridas: (1) ouro e drops + regra do Carisma; (2) armas mágicas +1/+2/
 - **(Feito: Kobold, Hobgoblin e Bugbear.)** **Minions grátis e familiares, sem limite de quantidade:** recolor e escala das artes que já temos. Do Goblin: Kobold Warrior (1/8), Hobgoblin Warrior (1/2), Bugbear Warrior (1, golpe com alcance), Bullywug Warrior (1/4), Gnoll Warrior (1/2). Do herói (humanos): Bandit (1/8), Guard (1/8), Cultist (1/8), Tough (1/2), Scout (1/2, arco), Priest Acolyte (1/4), Bandit Captain (2). Mortos-vivos com sombreado em cima do herói: Skeleton (1/4), Zombie (1/4). Variar por ambiente.
 - Fases 6 a 10: ambientes novos (sugestão: Caverna, Mina, Cripta, Montanha, Covil); a fase 5 deixa de ser a última.
 - A contagem de inimigos não aparece na missão (as emboscadas são secretas).
+- **Plano das 10 fases (decidido com o usuário em 2026-11-09): 4 temas, não 10 arenas.** Tema 1 Floresta (fases 1 a 3, chefe Ankheg), tema 2 Ruínas de pedra (fases 4 a 6, usa o castelo e o fundo da fortaleza que já temos; chefe Minotaur, com blocos quebráveis), tema 3 Subterrâneo (fases 7 a 9: mina, caverna úmida e cripta, um só pacote CC0 de caverna com enfeites diferentes; chefe Wight na 9) e fase 10 com tema único: Covil do Ettin = caverna com lava (mesmos ladrilhos do Subterrâneo, tom vermelho e fundo próprio; decidido com o usuário). Dentro de um tema, as fases variam por relevo, tom de cor, densidade e tipo de enfeite, e pelos inimigos, não por arte nova. Inimigos: Kobold/Ooze/Minion na Floresta; Hobgoblin/Bugbear/Guard/Scout nas Ruínas; Gnoll/Tough/Cultist/Skeleton/Zombie no Subterrâneo; 3 a 6 por fase. Cenário só CC0, fundos com paralaxe e enfeites sem colisão (árvores, tochas, colunas, teias, cristais, ossos); parede ou bloco físico só onde a fase pede. Candidatos CC0 para o Subterrâneo e o Covil (conferir a licença na página): fundos "Seamless Parallax Cave Background" e "Background from Glitch-Assets" (rubberduck), ladrilhos "OPP2017 cave and mine cart" (32x32, tem lava e cristais).
 - **(Feito: Ankheg, chefe da fase 3, 2026-11-09; saldo do SpriteCook: 262.)** Falta validar a sensação no jogo (tamanho da arte, tempo do aviso da terra, dificuldade do Borrifo). Próximos chefes: Minotaur (fase 6), Wight (fase 9), Ettin (fase 10). Ainda sem animação de **morte** própria do Ankheg (usa o dissolver) nem de **escavar/emergir** (usa a terra e a mordida); o cuspe da arte sobe a cabeça e o jato é desenhado à frente.
+- **(Feito: Minotauro de Baphomet, chefe da fase 6, 2026-11-09; saldo do SpriteCook: 140.)** Ficha do livro sem o atordoamento, investida com carreira que derruba o herói (estado `Caido` do herói), blocos quebráveis na arena e fase 6 alongada (62 colunas). **Falta:** gerar a animação `andar` (hoje usa a corrida da investida; ~20 créditos), validar a sensação (tamanho 0,9, tempo do aviso, dificuldade, posição dos pilares), morte própria. Próximos chefes: Wight (fase 9), Ettin (fase 10).
+
+### Distribuição dos minions pelas 10 fases (proposta, 2026-11-09; **E** = já existe, **N** = novo, criado por recolor/escala, sem crédito)
+| Fase | Ambiente | Minions sorteados | Chefe |
+|---|---|---|---|
+| 1 Clareira | Floresta | Kobold E, Gray Ooze E | |
+| 2 Trilha | Floresta | Kobold E, Goblin Minion E, Gray Ooze E | |
+| 3 Pântano | Floresta | Goblin Minion E, Goblin Warrior E, Gray Ooze E, Bullywug N | Ankheg (feito) |
+| 4 Ruína | Ruínas | Goblin Warrior E, Hobgoblin E, Bandit N | |
+| 5 Fortaleza | Ruínas | Hobgoblin E, Bugbear E, Guard N, Scout N (arco) | |
+| 6 Labirinto | Ruínas | Hobgoblin E, Bugbear E, Gnoll N, Scout N | Minotauro (feito) |
+| 7 Mina | Subterrâneo | Bugbear E, Gnoll N, Tough N, Cultist N | |
+| 8 Caverna úmida | Subterrâneo | Gnoll N, Tough N, Priest Acolyte N, Skeleton N, Bandit Captain N | |
+| 9 Cripta | Subterrâneo | Cultist N, Priest Acolyte N, Skeleton N, Zombie N | Wight |
+| 10 Covil | Covil | Bugbear E, Gnoll N, Tough N, Bandit Captain N, Skeleton N | Ettin |
+Novos (11): Bullywug, Bandit, Guard, Scout, Gnoll, Tough, Cultist, Priest Acolyte, Skeleton, Zombie, Bandit Captain. Criar aos poucos, por receita 1, com a ficha conferida no Códice.

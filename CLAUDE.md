@@ -92,6 +92,9 @@ features/jogador/        herói: jogador, stats, animação, câmera, ataque, es
 features/jogador/talentos/ regras puras dos talentos do herói (recargas, Sorte, dados de vida, veneno, defesa, Investida)
 features/gray_ooze/      Gray Ooze: cena, estados/, sprites/
 features/goblin/         Goblin Minion e Goblin Warrior: cenas, adaga, flecha, estados/, sprites/
+features/ankheg/        Ankheg (chefe da fase 3): cena, estados/, sprites/
+features/minotauro/      Minotauro de Baphomet (chefe da fase 6): cena, estados/, sprites/
+features/bloco_quebravel/ bloco de pedra que o Minotauro quebra (grupo "quebravel")
 features/boneco_treino/  boneco de treino
 features/bau/            baú do arsenal (E)
 features/arremesso/      arma arremessada / projétil do herói
@@ -158,4 +161,5 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/receitas.md`.
 - Progressão do Guerreiro níveis 1–3: XP, PV por nível, dificuldade aleatória escalada; Surto de Ação e Mente Tática no nível 2; descanso longo entre fases.
 - APK Android de depuração em `builds/android/dnd_in_a_piece.apk`; falta validar o toque num aparelho físico.
 - Nível 4 e talentos: o herói vai até o nível 4 e escolhe um talento geral (`TelaTalento`); os 30 talentos escolhíveis (origem, vindos do antecedente, e gerais) estão ligados (`docs/talentos.md`, `tools/gerar_compendio.gd`). Criação com antecedente (passo novo, aumento de atributo, perícias travadas). Compêndio na pausa e no título. Atleta escala paredes; fases com teto e laterais invisíveis e porta de verdade (arte CC0 do rubberduck); item Veneno Básico.
+- Segundo chefe: Minotauro de Baphomet na fase 6 (alongada, arena com pilares quebráveis); a Chifrada com carreira derruba o herói (estado `Caido`). Falta a animação `andar` (ver `docs/pendencias.md`).
 - Guias para IA, decisões por tema, pendências, comandos e agentes para Claude e Cursor.

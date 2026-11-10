@@ -29,6 +29,7 @@
 [ext_resource type="Script" path="res://core/componentes/texto_flutuante_component.gd" id="23_texto"]
 [ext_resource type="Script" path="res://features/jogador/estados/estado_levando_dano.gd" id="24_levando_dano"]
 [ext_resource type="Script" path="res://features/jogador/estados/estado_escalando.gd" id="42_escalando"]
+[ext_resource type="Script" path="res://features/jogador/estados/estado_caido.gd" id="43_caido"]
 [ext_resource type="SpriteFrames" path="res://features/jogador/sprites/maos_frente_frames.tres" id="40_maos"]
 [ext_resource type="Script" path="res://core/componentes/aura_component.gd" id="41_aura"]
 
@@ -164,6 +165,9 @@ script = ExtResource("28_arremesso")
 
 [node name="LevandoDano" type="Node" parent="MaquinaEstados"]
 script = ExtResource("24_levando_dano")
+
+[node name="Caido" type="Node" parent="MaquinaEstados"]
+script = ExtResource("43_caido")
 
 [node name="Escalando" type="Node" parent="MaquinaEstados"]
 script = ExtResource("42_escalando")

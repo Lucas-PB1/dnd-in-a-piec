@@ -120,6 +120,8 @@ var _morrendo: bool = false
 var _recargas := RecargasPorRodada.new()
 ## O próximo golpe de escudo derruba (senão empurra); alterna a cada uso.
 var _escudo_derruba_agora: bool = false
+## O golpe que está sendo resolvido derruba o herói (a Defesa avisa antes do resultado).
+var _derrubado_pendente: bool = false
 var _sorte := SorteDoHeroi.new()
 var _dados_de_vida := DadosDeVidaDoHeroi.new()
 var _veneno := VenenoDoHeroi.new()
@@ -165,6 +167,7 @@ func _ready() -> void:
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_defesa.aparou.connect(_ao_aparar)
 	_defesa.agarrado.connect(_ao_ser_agarrado)
+	_defesa.derrubado.connect(_ao_ser_derrubado)
 	inventario.mudou.connect(_atualizar_equipamento)
 	configurar_ficha(Ficha.new(classe, classe.atributos_sugeridos))
 	_maquina.iniciar(self)
@@ -279,6 +282,11 @@ func vida_maxima() -> int:
 ## Impede a câmera de mostrar fora da `area` da fase (pixels).
 func definir_limites_camera(area: Rect2) -> void:
 	_camera.definir_limites(area)
+
+
+## Treme a câmera (um golpe pesado, um chefe saindo da terra).
+func tremer_camera(forca: float, duracao: float) -> void:
+	_camera.tremer(forca, duracao)
 
 
 ## Volta para o início da fase.
@@ -857,7 +865,8 @@ func _ao_resolver_golpe(resultado: Combate.Resultado, origem: Vector2) -> void:
 	_ataque.cancelar()
 	_contador_invencivel = stats.tempo_invencibilidade
 	_defesa.invulneravel = true
-	_maquina.trocar(&"LevandoDano")
+	_maquina.trocar(&"Caido" if _derrubado_pendente else &"LevandoDano")
+	_derrubado_pendente = false
 
 
 func _atualizar_invencibilidade(delta: float) -> void:
@@ -1294,6 +1303,18 @@ func _ao_corroer_arma(penalidade: int, limite: int, arma: Arma) -> void:
 		_texto.mostrar("%s derreteu!" % arma.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
 	else:
 		_texto.mostrar("%s corroída -%d" % [arma.nome, inventario.penalidade(arma)], TextoFlutuanteComponent.COR_ERRO)
+
+
+# --- Derrubado ---------------------------------------------------------------------
+
+## A Defesa avisou, antes de resolver o golpe, que ele derruba: o estado Caído entra no lugar do recuo comum.
+func _ao_ser_derrubado(_autor_id: int) -> void:
+	_derrubado_pendente = true
+
+
+## Deitado (Caído): o corpo gira e fica no chão; de pé, volta ao normal.
+func deitar(deitado: bool) -> void:
+	_animacao.rotation = -direcao_olhar * PI / 2.0 if deitado else 0.0
 
 
 # --- Agarrado ---------------------------------------------------------------------

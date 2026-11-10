@@ -56,7 +56,7 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 		_sincronizar_mao()
 		return
 	match estado:
-		&"LevandoDano":
+		&"LevandoDano", &"Caido":
 			if _ultimo_estado != estado:
 				play(ANIMACAO_DANO)  # só no começo do recuo: não reinicia a cada quadro
 		&"NoAr":

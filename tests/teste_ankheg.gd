@@ -9,6 +9,8 @@ const POSICAO := Vector2(900, 288)
 ## Perto o bastante para morder (a borda do corpo + 5 pés) e dentro da linha do Borrifo (30 pés = 192 px).
 const AO_ALCANCE := 60.0
 const NA_LINHA := 120.0
+## Trecho plano do começo da fase, onde o teste do Borrifo em área põe o Ankheg e a vítima.
+const POSICAO_DO_BORRIFO_X := 150.0
 ## Longe o bastante para o Ankheg querer cavar.
 const LONGE := 260.0
 const QUADROS_POR_SEGUNDO := 60
@@ -40,6 +42,8 @@ func _rodar() -> void:
 	await _testar_agarrao_do_heroi()
 	await _testar_mordida_e_borrifo()
 	await _testar_escavacao()
+	await _testar_sem_terra_nao_cava()
+	await _testar_borrifo_atinge_aliados(cena)
 	await _testar_morte()
 	await _testar_fase_do_chefe(cena)
 	cena.queue_free()
@@ -96,6 +100,11 @@ func _testar_agarrao_puro() -> void:
 ## O golpe com Agarrar prende o herói: ele não anda nem pula, e a cada rodada tenta escapar.
 func _testar_agarrao_do_heroi() -> void:
 	_ankheg.global_position = Vector2(POSICAO.x + 2000.0, POSICAO.y)  # longe: só o golpe de teste conta
+	_ankheg.set_physics_process(false)  # parado: só o golpe de teste conta, sem mordida nem Borrifo de verdade
+	for i in 300:  # se o Ankheg já mordeu, espera passar a invencibilidade do herói
+		if not _jogador.esta_invencivel():
+			break
+		await physics_frame
 	var golpe := Golpe.new("Mordida", 100, Dado.new(1, 4), TiposDano.CORTANTE)
 	golpe.efeitos.append(EfeitosDeTalento.Agarrar.new(30))  # CD 30: não escapa sozinho
 	golpe.autor_id = _ankheg.get_instance_id()
@@ -109,6 +118,7 @@ func _testar_agarrao_do_heroi() -> void:
 	_jogador._agarrao.agarrar(_ankheg.get_instance_id(), 1)  # CD 1: escapa na primeira tentativa
 	await _esperar(int(EscalaDnd.RODADA_SEGUNDOS * QUADROS_POR_SEGUNDO) + 10)
 	_checar(not _jogador.esta_agarrado(), "a cada rodada tenta escapar e, passando, se solta")
+	_ankheg.set_physics_process(true)
 	_ankheg.global_position = POSICAO
 
 
@@ -146,6 +156,38 @@ func _testar_escavacao() -> void:
 	_checar(&"Emergindo" in estados and not _ankheg.esta_escondido(), "depois emerge de volta")
 	_checar(&"Mordendo" in estados and absf(_ankheg.global_position.x - _jogador.global_position.x) < 120.0,
 		"emerge perto do herói, mordendo de surpresa")
+
+
+## Sem terra no caminho (o herói do outro lado do fim do chão), ele não cava: anda e salta como os goblins.
+func _testar_sem_terra_nao_cava() -> void:
+	_ankheg.global_position = POSICAO
+	await _esperar(30)
+	_ankheg.set("_tempo_desde_cavar", 99.0)
+	_jogador.posicionar_no_inicio(Vector2(POSICAO.x + 20000.0, _jogador.global_position.y))
+	await _esperar(3)
+	_checar(not _ankheg.quer_cavar(), "sem chão no caminho, não cava")
+
+
+## O Borrifo é de área: pega todo mundo na linha, inclusive outras criaturas, mas nunca o próprio Ankheg.
+func _testar_borrifo_atinge_aliados(cena: Node) -> void:
+	_ankheg.global_position = Vector2(POSICAO_DO_BORRIFO_X, _ankheg.chao_em(POSICAO_DO_BORRIFO_X))
+	_ankheg.direcao_olhar = 1
+	_ankheg.alvo = null  # parado: só o jato de teste conta
+	var vitima: Node2D = load("res://features/gray_ooze/gray_ooze.tscn").instantiate()
+	cena.add_child(vitima)
+	vitima.global_position = Vector2(POSICAO_DO_BORRIFO_X + 110.0, _ankheg.chao_em(POSICAO_DO_BORRIFO_X + 110.0))
+	var vida_da_vitima := vitima.get_node("Vida") as HealthComponent
+	var vida_do_ankheg := _ankheg.get_node("Vida") as HealthComponent
+	var antes := vida_da_vitima.vida_atual
+	var antes_ankheg := vida_do_ankheg.vida_atual
+	await _esperar(5)
+	_ankheg.ligar_borrifo()
+	await _esperar(10)
+	_ankheg.desligar_borrifo()
+	_checar(vida_da_vitima.vida_atual < antes, "o Borrifo também fere outra criatura na linha (%d -> %d)" % [antes, vida_da_vitima.vida_atual])
+	_checar(vida_do_ankheg.vida_atual == antes_ankheg, "o Borrifo não fere o próprio Ankheg")
+	vitima.queue_free()
+	_ankheg.alvo = _jogador
 
 
 func _testar_morte() -> void:
