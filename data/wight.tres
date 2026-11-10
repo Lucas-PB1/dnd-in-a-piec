@@ -8,6 +8,7 @@ nome = "Corpo Seco (Wight)"
 experiencia = 700
 ouro = 120
 tipo = "Medium Undead, Neutral Evil"
+tamanho = 2
 classe_armadura = 14
 dados_vida = "11d8+33"
 rolar_vida = false

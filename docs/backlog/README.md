@@ -34,7 +34,6 @@ Legenda `size`: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias).
 | 50 | `racas-especies.md` | G |
 | 51 | `magia.md` | G |
 | 52 | `descanso-curto.md` | P |
-| 53 | `limite-tamanho-empurrar.md` | P |
 | 54 | `amorfo-ooze.md` | P |
 | 55 | `desvantagem-furtividade-armadura.md` | P |
 | 56 | `pericias-em-jogo.md` | M |

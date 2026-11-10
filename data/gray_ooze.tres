@@ -8,6 +8,7 @@ nome = "Gray Ooze"
 experiencia = 100
 ouro = 5
 tipo = "Medium Ooze, Unaligned"
+tamanho = 2
 classe_armadura = 9
 dados_vida = "3d8+9"
 rolar_vida = false

@@ -83,6 +83,7 @@ func _ready() -> void:
 	_defesa.resistencias = criatura.resistencias
 	_defesa.imunidades = criatura.imunidades_dano
 	_condicoes.imunidades = criatura.imunidades_condicoes
+	_condicoes.tamanho = criatura.tamanho
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
 	_dissolver.terminou.connect(terminar_de_morrer)

@@ -3,6 +3,9 @@ extends Resource
 ## Bloco de estatísticas de uma criatura de D&D 5e (ex.: data/gray_ooze.tres).
 ## Distâncias em pés, como no livro (EscalaDnd converte para o jogo).
 
+## Tamanho no livro (PHB 2024). Empurrar e Derrubar só valem até Grande.
+enum Tamanho { MINUSCULO, PEQUENO, MEDIO, GRANDE, ENORME, IMENSO }
+
 @export var nome: String = "Criatura"
 ## XP concedido ao derrotar esta criatura da cota da fase.
 @export var experiencia: int = 0
@@ -10,6 +13,8 @@ extends Resource
 @export var ouro: int = 0
 ## Tamanho e tipo, só para mostrar (ex.: "Medium Ooze, Unaligned").
 @export var tipo: String = ""
+## Tamanho da criatura (categoria D&D). Padrão: Médio.
+@export var tamanho: Tamanho = Tamanho.MEDIO
 @export var classe_armadura: int = 10
 ## Dados de vida (ex.: "3d8+9"). A vida usada é a média, como no livro, se não rolar.
 @export var dados_vida: String = "1d8"
@@ -162,6 +167,11 @@ extends Resource
 @export var taticas_de_matilha: bool = false
 ## Sensibilidade à Luz Solar: ao sol, desvantagem nos ataques (Kobold). Só vale em fase de dia.
 @export var sensivel_ao_sol: bool = false
+
+
+## Maestrias Empurrar e Derrubar: o livro limita a Grande ou menor.
+func aceita_empurrar_ou_derrubar() -> bool:
+	return tamanho <= Tamanho.GRANDE
 
 
 func dado_vida() -> Dado:

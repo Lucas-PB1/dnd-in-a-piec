@@ -8,6 +8,7 @@ nome = "Zombie"
 experiencia = 50
 ouro = 2
 tipo = "Medium Undead, Neutral Evil"
+tamanho = 2
 classe_armadura = 8
 dados_vida = "2d8+6"
 rolar_vida = false

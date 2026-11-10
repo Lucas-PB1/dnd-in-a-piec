@@ -9,6 +9,7 @@ nome = "Kobold Warrior"
 experiencia = 25
 ouro = 2
 tipo = "Small Dragon, Neutral"
+tamanho = 1
 classe_armadura = 14
 dados_vida = "3d6-3"
 rolar_vida = false

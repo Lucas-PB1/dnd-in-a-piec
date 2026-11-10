@@ -8,6 +8,7 @@ nome = "Goblin Warrior"
 experiencia = 50
 ouro = 8
 tipo = "Small Fey (Goblinoid), Chaotic Neutral"
+tamanho = 1
 classe_armadura = 15
 dados_vida = "3d6"
 rolar_vida = false

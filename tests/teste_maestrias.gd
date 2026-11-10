@@ -105,6 +105,24 @@ func _testar_condicoes() -> void:
 	condicoes.aplicar_maestria(_acerto(Proficiencias.EMPURRAR, 3), -1.0)
 	_checar(empurroes.size() == 1 and empurroes[0].x == -EscalaDnd.pes_para_pixels(10.0), "Empurrar: 10 pés para longe de quem bateu")
 
+	# Enorme ou maior: Empurrar e Derrubar não valem (PHB 2024).
+	condicoes.tamanho = CriaturaRPG.Tamanho.ENORME
+	var avisos_antes := avisos.size()
+	var empurroes_antes := empurroes.size()
+	condicoes.aplicar_maestria(_acerto(Proficiencias.EMPURRAR, 3), 1.0)
+	condicoes.aplicar_maestria(_acerto(Proficiencias.DERRUBAR, 5), 1.0)
+	_checar(empurroes.size() == empurroes_antes and not condicoes.esta_caido()
+		and avisos.size() == avisos_antes + 2 and avisos.back() == CondicoesComponent.AVISO_GRANDE_DEMAIS,
+		"Empurrar/Derrubar: Enorme ou maior só avisa Grande demais!")
+	condicoes.tamanho = CriaturaRPG.Tamanho.GRANDE
+	condicoes.aplicar_maestria(_acerto(Proficiencias.EMPURRAR, 3), 1.0)
+	_checar(empurroes.size() == empurroes_antes + 1, "Empurrar ainda vale em Grande")
+	var ficha_media := CriaturaRPG.new()
+	var ficha_enorme := CriaturaRPG.new()
+	ficha_enorme.tamanho = CriaturaRPG.Tamanho.ENORME
+	_checar(ficha_media.aceita_empurrar_ou_derrubar() and not ficha_enorme.aceita_empurrar_ou_derrubar(),
+		"CriaturaRPG.aceita_empurrar_ou_derrubar: Médio sim, Enorme não")
+
 	var marca := _acerto(Proficiencias.ATORMENTAR, 3)
 	marca.golpe.autor_id = 42
 	condicoes.aplicar_maestria(marca, 1.0)

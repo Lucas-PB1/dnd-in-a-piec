@@ -46,6 +46,8 @@ const ALCANCE_DO_AGARRAO_PES := 10.0
 const MOVIMENTO_MINIMO_PX := 0.2
 ## Empurrar: até 10 pés para longe de quem bateu.
 const EMPURRAO_PES := 10.0
+## Empurrar/Derrubar no alvo Enorme ou maior (PHB 2024).
+const AVISO_GRANDE_DEMAIS := "Grande demais!"
 ## Tamanho de cada ícone na arte e espaço entre eles (px).
 const TAMANHO_ICONE := 8
 const ESPACO_ICONE := 1
@@ -59,6 +61,8 @@ const ESPACO_ICONE := 1
 var rng := RandomNumberGenerator.new()
 ## Condições a que o dono é imune (ex.: o Gray Ooze: Caído, Agarrado, Preso). Impor uma delas só avisa "Imune!".
 var imunidades: Array[StringName] = []
+## Tamanho D&D do dono (`CriaturaRPG.Tamanho`). Empurrar/Derrubar só até Grande.
+var tamanho: int = CriaturaRPG.Tamanho.MEDIO
 
 var _restante: Dictionary[StringName, float] = {}
 ## Quem atormentou (instance_id): só ele tem vantagem no próximo ataque.
@@ -137,10 +141,16 @@ func aplicar_maestria(resultado: Combate.Resultado, lado: float) -> void:
 		return
 	match golpe.maestria:
 		Proficiencias.DERRUBAR:
-			_testar_derrubar(golpe.cd_maestria)
+			if _aceita_empurrar_ou_derrubar():
+				_testar_derrubar(golpe.cd_maestria)
+			else:
+				aviso.emit(AVISO_GRANDE_DEMAIS)
 		Proficiencias.EMPURRAR:
-			empurrado.emit(Vector2(lado * EscalaDnd.pes_para_pixels(EMPURRAO_PES), 0.0))
-			aviso.emit("Empurrado!")
+			if _aceita_empurrar_ou_derrubar():
+				empurrado.emit(Vector2(lado * EscalaDnd.pes_para_pixels(EMPURRAO_PES), 0.0))
+				aviso.emit("Empurrado!")
+			else:
+				aviso.emit(AVISO_GRANDE_DEMAIS)
 		Proficiencias.ENFRAQUECER:
 			_impor(ENFRAQUECIDO, DURACAO_RODADA)
 		Proficiencias.LENTIDAO:
@@ -226,6 +236,11 @@ func _agarrador_longe() -> bool:
 	return global_position.distance_to(quem.global_position) > EscalaDnd.pes_para_pixels(ALCANCE_DO_AGARRAO_PES)
 
 # --- Interno --------------------------------------------------------------------
+
+## Empurrar e Derrubar: o livro limita a Grande ou menor.
+func _aceita_empurrar_ou_derrubar() -> bool:
+	return tamanho <= CriaturaRPG.Tamanho.GRANDE
+
 
 ## Derrubar: a criatura SEMPRE rola salvaguarda de Constituição contra a CD; falhou = Caída.
 func _testar_derrubar(cd: int) -> void:

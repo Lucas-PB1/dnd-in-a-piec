@@ -8,6 +8,7 @@ nome = "Ankheg"
 experiencia = 450
 ouro = 60
 tipo = "Large Monstrosity, Unaligned"
+tamanho = 3
 classe_armadura = 14
 dados_vida = "6d10+12"
 rolar_vida = false

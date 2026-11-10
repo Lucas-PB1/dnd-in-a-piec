@@ -9,6 +9,7 @@ nome = "Bugbear Warrior"
 experiencia = 200
 ouro = 15
 tipo = "Medium Fey (Goblinoid), Chaotic Evil"
+tamanho = 2
 classe_armadura = 14
 dados_vida = "6d8+6"
 rolar_vida = false

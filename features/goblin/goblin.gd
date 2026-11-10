@@ -143,6 +143,7 @@ func _ready() -> void:
 	_defesa.fortitude_morto_vivo = criatura.fortitude_morto_vivo
 	_defesa.fortitude_usada.connect(func() -> void: _texto.mostrar(TEXTO_FORTITUDE, TextoFlutuanteComponent.COR_CONDICAO))
 	_condicoes.imunidades = criatura.imunidades_condicoes
+	_condicoes.tamanho = criatura.tamanho
 	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
 	_vida.morreu.connect(_ao_morrer)
 	_dissolver.terminou.connect(terminar_de_morrer)

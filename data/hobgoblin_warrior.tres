@@ -8,6 +8,7 @@ nome = "Hobgoblin Warrior"
 experiencia = 100
 ouro = 8
 tipo = "Medium Fey (Goblinoid), Lawful Evil"
+tamanho = 2
 classe_armadura = 18
 dados_vida = "2d8+2"
 rolar_vida = false

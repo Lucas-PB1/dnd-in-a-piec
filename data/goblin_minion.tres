@@ -9,6 +9,7 @@ nome = "Goblin Minion"
 experiencia = 25
 ouro = 3
 tipo = "Small Fey (Goblinoid), Chaotic Neutral"
+tamanho = 1
 classe_armadura = 12
 dados_vida = "2d6"
 rolar_vida = false

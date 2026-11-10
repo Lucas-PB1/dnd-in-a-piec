@@ -8,6 +8,7 @@ nome = "Skeleton"
 experiencia = 50
 ouro = 4
 tipo = "Medium Undead, Lawful Evil"
+tamanho = 2
 classe_armadura = 14
 dados_vida = "2d8+4"
 rolar_vida = false

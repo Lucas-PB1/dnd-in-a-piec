@@ -405,6 +405,7 @@ func _piscar_dano() -> void:
 
 
 func _preparar_condicoes() -> void:
+	_condicoes.tamanho = criatura.tamanho
 	for atributo in Atributos.TODOS:
 		_condicoes.bonus_salvaguardas[atributo] = criatura.bonus_salvaguarda(atributo)
 	_condicoes.aviso.connect(func(texto: String) -> void: _texto.mostrar(texto, TextoFlutuanteComponent.COR_CONDICAO))

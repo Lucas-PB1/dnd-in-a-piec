@@ -132,3 +132,6 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
 ## Docs: Diátaxis (2026-11-10)
 - Reorganização: `docs/adr/` (ex-decisões), `docs/how-to/receitas.md`, `docs/reference/` (arquitetura, artes, export Android, talentos), `docs/backlog/` (1 pendência = 1 arquivo com YAML), `docs/CHANGELOG.md` (ex-histórico). Removidos `pendencias.md` monolítico, `arquivo/` (plano SpriteCook, prompts Gemini, prévias, rascunho de talentos). Índice em `docs/README.md`; comandos `/proxima-fatia` e `/fechar-fatia` atualizados.
+
+## Fatia: limite de tamanho Empurrar/Derrubar (PHB 2024)
+- `CriaturaRPG.tamanho` (Minúsculo…Imenso) preenchido nas fichas; `CondicoesComponent` só aplica Empurrar/Derrubar até Grande (Enorme+ → "Grande demais!"). Teste em `teste_maestrias.gd`.
