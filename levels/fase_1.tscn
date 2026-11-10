@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://levels/fase.gd" id="1_nokqf"]
 [ext_resource type="TileSet" path="res://assets/tiles/ladrilhos.tres" id="2_uwl6w"]
+[ext_resource type="PackedScene" path="res://features/desafio_pericia/desafio_pericia.tscn" id="3_desafio"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2yr5n"]
 size = Vector2(28, 72)
@@ -24,6 +25,12 @@ position = Vector2(624, 224)
 
 [node name="InicioJogador" type="Marker2D" parent="." unique_id=1183932569]
 position = Vector2(80, 288)
+
+[node name="DesafioPericia" parent="." instance=ExtResource("3_desafio") groups=["desafio_pericia"]]
+position = Vector2(400, 288)
+rotulo = "Empurrar a pedra"
+aviso_sucesso = "A pedra rolou!"
+aviso_falha = "A pedra não se moveu"
 
 [node name="Armadilha4" type="Marker2D" parent="." unique_id=155569920 groups=["armadilha"]]
 position = Vector2(1072, 288)

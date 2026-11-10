@@ -56,6 +56,8 @@ const GRUPO_MONSTROS := &"monstros"
 ## O que o botão de ataque do celular passa a dizer perto de um baú ou de uma arma caída.
 const ROTULO_ABRIR := "Abrir"
 const ROTULO_PEGAR := "Pegar"
+const ROTULO_USAR := "Usar"
+const GRUPO_DESAFIO_PERICIA := &"desafio_pericia"
 const TIPO_OOZE := &"ooze"
 const TIPO_MINION := &"minion"
 const TIPO_WARRIOR := &"warrior"
@@ -205,6 +207,7 @@ func _ready() -> void:
 	_jogador.arma_arremessada.connect(_ao_arremessar)
 	_atualizar_botoes_toque()
 	_ligar_porta()
+	_ligar_desafios_de_pericia()
 	_atualizar_pecas_da_fase()
 	_nascer_armadilhas()
 	_sons.ligar_jogador(_jogador)
@@ -341,6 +344,27 @@ func _ligar_porta() -> void:
 		_fase.porta_liberada.connect(_ao_sair_da_porta)
 
 
+## Desafios de perícia da fase (ex.: pedra com Atletismo): a main rola e devolve o resultado.
+func _ligar_desafios_de_pericia() -> void:
+	for no in get_tree().get_nodes_in_group(GRUPO_DESAFIO_PERICIA):
+		var desafio := no as DesafioPericia
+		if desafio == null:
+			continue
+		if not desafio.teste_pedido.is_connected(_ao_pedir_teste_de_pericia):
+			desafio.teste_pedido.connect(_ao_pedir_teste_de_pericia)
+		if not desafio.perto_mudou.is_connected(_ao_mudar_interagivel.bind(ROTULO_USAR)):
+			desafio.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_USAR))
+
+
+func _ao_pedir_teste_de_pericia(desafio: DesafioPericia) -> void:
+	var resultado := _jogador.rolar_teste_pericia(desafio.pericia_do_teste(), desafio.cd_do_teste())
+	if resultado.is_empty():
+		return
+	var passou: bool = resultado.passou
+	desafio.concluir(passou)
+	_jogador.avisar(desafio.aviso_sucesso if passou else desafio.aviso_falha)
+
+
 func _ao_tocar_porta(corpo: Node2D) -> void:
 	if corpo != _jogador:
 		return
@@ -384,6 +408,7 @@ func _entrar_fase(cena: PackedScene) -> void:
 	remove_child(antiga)  # sai da física já: o colisor da fase velha não empurra quem nasce na nova (o chefe nasce longe)
 	antiga.queue_free()
 	_ligar_porta()
+	_ligar_desafios_de_pericia()
 	_jogador.posicionar_no_inicio(_fase.posicao_inicio())
 	_jogador.definir_limites_camera(_fase.area_jogavel())
 	_jogador.limite_queda = _fase.limite_queda()
@@ -920,9 +945,9 @@ func _ao_mudar_interagivel(perto: bool, rotulo: String) -> void:
 	_atualizar_botoes_toque()
 
 
-## "Abrir" ou "Pegar" se há algo perto (o baú vem primeiro); vazio se não há nada.
+## "Abrir", "Pegar" ou "Usar" se há algo perto (baú primeiro); vazio se não há nada.
 func _rotulo_de_interacao() -> String:
-	for rotulo in [ROTULO_ABRIR, ROTULO_PEGAR]:
+	for rotulo in [ROTULO_ABRIR, ROTULO_PEGAR, ROTULO_USAR]:
 		if _interagiveis_perto.get(rotulo, 0) > 0:
 			return rotulo
 	return ""
