@@ -77,6 +77,8 @@ var _disparo: DisparoDeCriatura
 var _tatica: TaticaDeCriatura
 ## Furtividade / emboscada da ficha.
 var _furtividade: FurtividadeDeCriatura
+## Fuga Ágil (Desengajar depois do melee).
+var _fuga_agil: FugaAgilDeCriatura
 ## Invisible no mundo (sprite/colisão); a regra da rolagem fica em `_furtividade`.
 var _escondido: bool = false
 var _camada_corpo: int = 0
@@ -108,6 +110,7 @@ func _ready() -> void:
 	_disparo = DisparoDeCriatura.new(criatura)
 	_tatica = TaticaDeCriatura.new(criatura)
 	_furtividade = FurtividadeDeCriatura.new(criatura)
+	_fuga_agil = FugaAgilDeCriatura.new(criatura, recuo_fuga_pes)
 	_sprite.modulate = cor_corpo
 	_preparar_condicoes()
 	_preparar_golpe()
@@ -287,7 +290,7 @@ func _perto_para_oarco() -> bool:
 
 
 func tem_fuga_agil() -> bool:
-	return criatura.fuga_agil
+	return _fuga_agil.tem()
 
 
 ## O Warrior, depois do recuo, rola Furtividade de novo. O Minion não.
@@ -319,13 +322,12 @@ func recuar() -> void:
 	if not _tem_chao_na(-float(direcao_olhar)):
 		parar()
 		return
-	velocity.x = -direcao_olhar * _velocidade_fuga()
+	velocity.x = -direcao_olhar * _fuga_agil.velocidade_px(_deslocamento_pes())
 
 
 ## Quanto dura o recuo da Fuga Ágil (s): a distância dela na velocidade de Disparada.
 func tempo_de_fuga() -> float:
-	var velocidade := _velocidade_fuga()
-	return EscalaDnd.pes_para_pixels(recuo_fuga_pes) / velocidade if velocidade > 0.0 else 0.0
+	return _fuga_agil.tempo_de_fuga(_deslocamento_pes())
 
 
 func parar() -> void:
@@ -599,10 +601,6 @@ func _tem_espaco_atras() -> bool:
 
 func _deslocamento_pes() -> float:
 	return MontagemDeCriatura.deslocamento_efetivo_pes(criatura, _condicoes)
-
-
-func _velocidade_fuga() -> float:
-	return EscalaDnd.deslocamento_para_velocidade(_deslocamento_pes()) * EscalaDnd.MULTIPLICADOR_DISPARADA
 
 
 func _alcance_px() -> float:

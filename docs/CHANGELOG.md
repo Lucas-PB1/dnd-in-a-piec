@@ -166,3 +166,7 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 ## Fatia: capacidade furtividade (`FurtividadeDeCriatura`)
 - `FurtividadeDeCriatura` em `core/regras/criaturas/`: rolagem secreta vs Percepção passiva, emboscada e `esconde_de_novo`. Goblin usa; sprite/colisão e estado `Escondido` ficam na feature.
 - Backlog `capacidades-furtividade` fechado. Teste `tests/criaturas/teste_furtividade_de_criatura.gd`.
+
+## Fatia: capacidade Fuga Ágil (`FugaAgilDeCriatura`)
+- `FugaAgilDeCriatura` em `core/regras/criaturas/`: traço da ficha, velocidade de Disparada e duração do recuo. Goblin usa; estado `Desengajando` e `recuar` ficam na feature.
+- Backlog `capacidades-fuga-agil` fechado. Teste `tests/criaturas/teste_fuga_agil_de_criatura.gd`.
