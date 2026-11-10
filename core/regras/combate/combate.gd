@@ -108,6 +108,26 @@ static func passou_salvaguarda(bonus: int, cd: int, rng: RandomNumberGenerator, 
 	return rolar_d20(rng, desvantagem) + bonus >= cd
 
 
+## Dano de ambiente (lava, etc.): sempre aplica, sem ataque nem salvaguarda. Imunidade zera;
+## vulnerabilidade dobra; resistência pela metade.
+static func resolver_ambiente(golpe: Golpe, rng: RandomNumberGenerator,
+		resistencias: Array[StringName] = [], imunidades: Array[StringName] = [],
+		vulnerabilidades: Array[StringName] = []) -> Resultado:
+	var r := Resultado.new()
+	r.golpe = golpe
+	r.acertou = true
+	if golpe.tipo_dano in imunidades:
+		r.dano = 0
+		return r
+	r.dano = maxi(golpe.dano.rolar(rng), DANO_MINIMO)
+	if golpe.tipo_dano in vulnerabilidades:
+		r.dano *= 2
+	r.resistido = golpe.tipo_dano in resistencias
+	if r.resistido:
+		r.dano = TiposDano.aplicar_resistencia(r.dano)
+	return r
+
+
 ## Um d20; com desvantagem, rola dois e fica com o menor; com vantagem, o maior.
 ## Vantagem e desvantagem juntas se anulam (rola um só).
 static func rolar_d20(rng: RandomNumberGenerator, desvantagem: bool = false, vantagem: bool = false) -> int:

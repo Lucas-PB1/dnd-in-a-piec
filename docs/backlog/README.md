@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo | Tam. |
 |---|---|---|
-| 5 | `fases/lava-covil.md` | M |
 | 6 | `arte/refino-minion.md` | P |
 | 7 | `arte/arte-pantano-ruina.md` | M |
 | 8 | `audio/som-faltante.md` | M |

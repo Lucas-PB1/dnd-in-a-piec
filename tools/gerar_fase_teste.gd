@@ -19,6 +19,8 @@ const TAM := 32
 const CAMINHO_TILESET := "res://assets/tiles/ladrilhos.tres"
 const SCRIPT_FASE := "res://levels/fase.gd"
 const CENA_BLOCO := "res://features/bloco_quebravel/bloco_quebravel.tscn"
+const CENA_LAVA := "res://features/lava/lava.tscn"
+const CENA_DESAFIO_PERICIA := "res://features/desafio_pericia/desafio_pericia.tscn"
 const ALTURA_EXTRA_PAREDE := 6
 const ALTURA_PRANCHA := 10
 ## Fileira do "S": os pés ficam na base dela, em y = 288.
@@ -109,14 +111,20 @@ func _fases() -> Array[Dictionary]:
 		{
 			"nome": "Clareira", "arquivo": "res://levels/fase_1.tscn", "no": "Fase",
 			"tema": 0, "indice": 1, "ultima": false, "quantidade": 1, "tipos": TIPOS_SEM_ARCO,
+			"missao": "Limpe a clareira", "luz_do_sol": true,
 			"largura": 40, "inicio": 2,
 			"buracos": [Vector2i(31, 2)], "plataformas": [],
 			"chao": [33, 34], "plataforma": [], "porta": 35,
 			"degraus": [[12, 3, 1]], "altas": [[18, 4, 2], [25, 3, 2]], "pontos": [[19, 6]],
+			"desafios": [{
+				"x": 400, "rotulo": "Empurrar a pedra",
+				"aviso_sucesso": "A pedra rolou!", "aviso_falha": "A pedra não se moveu",
+			}],
 		},
 		{
 			"nome": "Trilha", "arquivo": "res://levels/fase_2.tscn", "no": "Fase",
 			"tema": 1, "indice": 2, "ultima": false, "quantidade": 2, "tipos": TIPOS_SEM_ARCO,
+			"missao": "Abra a trilha", "luz_do_sol": true,
 			"largura": 46, "inicio": 2,
 			"buracos": [Vector2i(8, 2), Vector2i(21, 2), Vector2i(34, 2)], "plataformas": [],
 			"chao": [10, 23, 36], "plataforma": [], "porta": 39,
@@ -125,6 +133,7 @@ func _fases() -> Array[Dictionary]:
 		{
 			"nome": "Pântano", "arquivo": "res://levels/fase_3.tscn", "no": "Fase",
 			"tema": 2, "indice": 3, "ultima": false, "quantidade": 3, "tipos": TIPOS_SEM_ARCO,
+			"missao": "Limpe o pântano",
 			"largura": 48, "inicio": 2,
 			"buracos": [Vector2i(8, 2), Vector2i(30, 2)], "plataformas": [Vector2i(16, 3)],
 			"chao": [10, 33, 40], "plataforma": [17], "porta": 43,
@@ -196,12 +205,13 @@ func _fases() -> Array[Dictionary]:
 			"enfeites": [["tocha", 6, 64], ["tocha", 15, 64], ["janela", 20, 100], ["tocha", 29, 64], ["estandarte_azul", 36, 150], ["tocha", 40, 64], ["tocha", 48, 64]],
 		},
 		{
-			# O covil da Quimera, a fase 10 (final). Arena larga e reta (colunas 30 a 63): ela espera na coluna 46. A lava (dano de
-			# fogo no chão) ainda não existe: o fundo avermelhado é só clima (ver docs/backlog/).
+			# O covil da Quimera, a fase 10 (final). Arena larga e reta (colunas 30 a 63): ela espera na coluna 46.
+			# Duas poças de lava no chão (zona de 1d6 de fogo / rodada); dá para contornar pelos degraus/plataformas.
 			"nome": "Covil", "arquivo": "res://levels/fase_10.tscn", "no": "Fase",
 			"tema": 4, "indice": 10, "ultima": true, "quantidade": 3, "tipos": TIPOS_COVIL, "missao": "Enfrente a Quimera",
 			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),
-			"buracos": [Vector2i(9, 3)], "plataformas": [],
+			"buracos": [], "plataformas": [],
+			"lavas": [Vector2i(9, 3), Vector2i(35, 2)],
 			"chao": [13, 22], "plataforma": [], "porta": 60,
 			"chefe": [&"quimera", 46],
 			"degraus": [[16, 3, 1], [19, 2, 2]], "altas": [[25, 4, 2]], "pontos": [[18, 6], [27, 6]],
@@ -279,6 +289,7 @@ func _gravar(definicao: Dictionary, mapa: Array[String], tema: int) -> void:
 	fase.quantidade = definicao.quantidade
 	fase.tipos_permitidos = definicao.tipos
 	fase.missao = definicao.get("missao", "")
+	fase.luz_do_sol = definicao.get("luz_do_sol", false)
 	fase.acompanhantes_do_chefe = _tipos(definicao.get("acompanhantes", []))
 	fase.deslocamento_loja = definicao.get("loja", fase.deslocamento_loja)
 	var terreno := _criar_terreno(fase)
@@ -287,6 +298,8 @@ func _gravar(definicao: Dictionary, mapa: Array[String], tema: int) -> void:
 	_colocar_enfeites(fase, definicao.get("enfeites", []))
 	_colocar_chefe(fase, definicao.get("chefe", []))
 	_colocar_quebraveis(fase, definicao.get("quebraveis", []))
+	_colocar_lavas(fase, definicao.get("lavas", []))
+	_colocar_desafios(fase, definicao.get("desafios", []))
 	_colocar_ceu(fase, mapa, CEU[tema])
 	var cena := PackedScene.new()
 	cena.pack(fase)
@@ -322,6 +335,40 @@ func _colocar_quebraveis(fase: Node2D, pilares: Array) -> void:
 			bloco.position = _pes(Vector2i(int(pilar[0]), LINHA_ACAO)) - Vector2(0.0, andar * TAM)
 			fase.add_child(bloco)
 			bloco.owner = fase
+
+
+## Poças de lava no chão [coluna, largura em ladrilhos]. Zona de dano; o chão embaixo continua sólido.
+func _colocar_lavas(fase: Node2D, lavas: Array) -> void:
+	if lavas.is_empty():
+		return
+	var cena: PackedScene = load(CENA_LAVA)
+	for i in lavas.size():
+		var def: Vector2i = lavas[i]
+		var lava: Lava = cena.instantiate()
+		lava.name = "Lava%d" % (i + 1)
+		lava.configurar(def.y)
+		lava.position = Vector2(def.x * TAM, (LINHA_ACAO + 1) * TAM)
+		_adicionar(fase, lava)
+
+
+## Desafios de perícia (pedra etc.): dicionário com x (px), rotulo e avisos.
+func _colocar_desafios(fase: Node2D, desafios: Array) -> void:
+	if desafios.is_empty():
+		return
+	var cena: PackedScene = load(CENA_DESAFIO_PERICIA)
+	for i in desafios.size():
+		var def: Dictionary = desafios[i]
+		var desafio: Node2D = cena.instantiate()
+		desafio.name = "DesafioPericia" if desafios.size() == 1 else "DesafioPericia%d" % (i + 1)
+		desafio.add_to_group(&"desafio_pericia", true)
+		desafio.position = Vector2(float(def.x), (LINHA_ACAO + 1) * TAM)
+		if def.has("rotulo"):
+			desafio.set("rotulo", def.rotulo)
+		if def.has("aviso_sucesso"):
+			desafio.set("aviso_sucesso", def.aviso_sucesso)
+		if def.has("aviso_falha"):
+			desafio.set("aviso_falha", def.aviso_falha)
+		_adicionar(fase, desafio)
 
 
 ## Enfeites sem colisão (tochas com chama animada, janelas, estandartes): [nome, coluna, altura dos pés do enfeite acima do chão (px)].

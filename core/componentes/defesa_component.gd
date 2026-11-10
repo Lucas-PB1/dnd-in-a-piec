@@ -83,6 +83,17 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 	golpe_resolvido.emit(resultado, origem)
 
 
+## Dano de ambiente (lava, etc.): sem rolagem de ataque; imunidade/vulnerabilidade/resistência valem.
+func receber_ambiente(golpe: Golpe, origem: Vector2) -> void:
+	if invulneravel or (vida and vida.esta_morto()):
+		return
+	var resultado := Combate.resolver_ambiente(golpe, rng, resistencias, imunidades, vulnerabilidades)
+	if resultado.dano > 0 and vida:
+		vida.receber_dano(resultado.dano)
+	golpe.resolvido.emit(resultado, resultado.dano > 0 and vida != null and vida.esta_morto())
+	golpe_resolvido.emit(resultado, origem)
+
+
 ## Ataque contra a CA, ou salvaguarda contra a CD do golpe (Borrifo Ácido).
 func _resolver(golpe: Golpe, bonus_ca: int) -> Combate.Resultado:
 	if golpe.cd_salvaguarda > 0:
