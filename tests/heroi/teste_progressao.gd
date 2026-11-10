@@ -123,15 +123,18 @@ func _testar_surto_e_descanso() -> void:
 	_checar(_jogador.surto_ativo(), "o Surto acende a aura do herói mesmo sem inimigo")
 	_main._usar_surto_acao()
 	_checar(not _jogador.armar_surto(), "o Surto não pode ser usado de novo enquanto está ativo")
-	_main._entrar_fase(load("res://levels/fase_2.tscn"))
+	_main._entrar_fase(load("res://levels/fase_2.tscn"), false)
 	await physics_frame
 	_checar(not _main._surto_usado and not _jogador.surto_ativo() and _jogador.usos_folego() == _jogador.usos_folego_total(),
-		"a fase seguinte funciona como descanso longo e recupera recursos")
-	_checar(_jogador.vida_atual() == _jogador.vida_maxima(), "o descanso longo recupera PV")
+		"fase sem chefe = descanso curto: Surto e Fôlego voltam")
+	_checar(_jogador.vida_atual() < _jogador.vida_maxima(), "descanso curto não enche PV")
 	_checar(_main._tipos_da_fase(3).has(Main.TIPO_WARRIOR),
 		"nível 3 libera o Guerreiro nas fases anteriores")
 	_checar(_main.quantidade_inimigos_da_fase(3) == 4,
 		"a fase 2 sorteia mais inimigos para um herói de nível 3")
+	_main._entrar_fase(load("res://levels/fase_4.tscn"), true)
+	await physics_frame
+	_checar(_jogador.vida_atual() == _jogador.vida_maxima(), "sair de chefe = descanso longo: PV cheio")
 
 
 func _semente_para_teste(bonus: int, cd: int, sucesso_com_d10: bool) -> int:

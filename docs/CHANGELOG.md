@@ -3,6 +3,8 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Descanso curto/longo: fase sem chefe = curto (Fôlego/Surto/Sorte, sem PV cheio); chefe ou morte = longo. Teste `teste_descanso`.
+- Backlog: removido `ataques-novos-monstros` (redundante — ataques vêm da ficha em `/nova-criatura` / `minions-recolor`).
 - Amorfo (Gray Ooze): atravessa pranchas *one-way* (camada `plataforma`); herói/minions/chefes e projéteis pisam nelas. Teste `teste_amorfo`.
 - Áudio: **mais faixas** — Trilha com Medieval Exploration; Cripta com Whispers in the Fog; batalha continua só na Ruína e Fortaleza. Item `som-faltante` fechado.
 - Áudio: **mixagem por distância** — vozes/golpe/rugido/tremor/estouro de monstro caem de 6 a 20 ladrilhos do herói (`Sons.tocar_em`).

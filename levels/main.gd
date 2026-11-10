@@ -315,12 +315,15 @@ func _ao_cair() -> void:
 	tela.mostrar_personagem(_jogador.ficha.nome, _jogador.ficha.classe.nome)
 
 
-## Recomeça a fase atual: vida cheia e um sorteio novo das armadilhas.
+## Recomeça a fase atual: descanso longo e um sorteio novo das armadilhas.
 func _tentar_de_novo(tela: TelaDerrota) -> void:
 	tela.queue_free()
 	_jogador.reviver()
+	_surto_usado = false
+	_hud.mostrar_surto(_jogador.ficha.nivel, true)
 	_nascer_armadilhas()
 	_musica.tocar_da_fase(_fase.indice)
+	_atualizar_botoes_toque()
 	_pausar(false)
 
 
@@ -392,13 +395,18 @@ func _tentar_atravessar() -> void:
 		return
 	var seguinte := _fase.indice
 	if seguinte < CENAS_FASE.size():
-		_entrar_fase(CENAS_FASE[seguinte])
+		# Chefe derrotado = longo; fase normal = curto (Surto/Fôlego voltam nos dois).
+		_entrar_fase(CENAS_FASE[seguinte], not _fase.chefe.is_empty())
 		_salvar_ao_entrar_na_fase()
 
 
-func _entrar_fase(cena: PackedScene) -> void:
+## `descanso_longo=false` = descanso curto (fase sem chefe). Começar/continuar usa longo.
+func _entrar_fase(cena: PackedScene, descanso_longo: bool = true) -> void:
 	_heroi_na_porta = false
-	_jogador.descansar_longo()
+	if descanso_longo:
+		_jogador.descansar_longo()
+	else:
+		_jogador.descansar_curto()
 	_surto_usado = false
 	_jogador.ganhar_item_do_artesao()
 	var antiga := _fase

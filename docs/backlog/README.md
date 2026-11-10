@@ -23,16 +23,13 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ## Índice (por prioridade)
 
 ### Próximas
-| Pri | Arquivo | Tam. |
-|---|---|---|
-| 10 | `criaturas/ataques-novos-monstros.md` | M |
+Nenhuma prioridade alta aberta. Criatura nova: `depois/minions-recolor` (via `/nova-criatura`).
 
 ### Regras do livro
 | Pri | Arquivo | Tam. |
 |---|---|---|
 | 50 | `regras/racas-especies.md` | G |
 | 51 | `regras/magia.md` | G |
-| 52 | `regras/descanso-curto.md` | P |
 | 55 | `regras/desvantagem-furtividade-armadura.md` | P |
 | 56 | `regras/pericias-em-jogo.md` | M |
 

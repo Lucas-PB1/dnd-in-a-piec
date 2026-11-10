@@ -585,7 +585,15 @@ func ganhar_item_do_artesao() -> void:
 		avisar("Mochila cheia")
 
 
-## Descanso longo ao entrar numa fase nova: vida, Fôlego e ação bônus recuperados.
+## Descanso curto (sair de fase sem chefe): Fôlego, Sorte e ação bônus. Não enche PV nem tira drenar.
+func descansar_curto() -> void:
+	_apagar_surto()
+	_tempo_desde_acao_bonus = INF
+	_repor_folego()
+	_repor_sorte()
+
+
+## Descanso longo (sair de chefe, morrer ou começar/continuar): vida cheia, máximo, Fôlego, dados e veneno.
 func descansar_longo() -> void:
 	_apagar_surto()
 	_tempo_desde_acao_bonus = INF
@@ -754,10 +762,9 @@ func criar_golpe() -> Golpe:
 	return _criar_golpe_de(arma_atual(), false)
 
 
-## Volta para o início com a vida cheia (ex.: "Tentar de novo" depois de cair).
+## Volta para o início com descanso longo (ex.: "Tentar de novo" depois de cair).
 func reviver() -> void:
 	_agarrao.soltar()
-	_apagar_surto()
 	_cancelar_defesa()
 	_morrendo = false
 	_animacao.morrendo = false
@@ -765,11 +772,7 @@ func reviver() -> void:
 	_contador_invencivel = 0.0
 	_defesa.invulneravel = false
 	_animacao.piscando = false
-	_tempo_desde_acao_bonus = INF
-	_vida.curar_tudo()
-	_repor_folego()
-	_repor_sorte()
-	_repor_dados_e_veneno()
+	descansar_longo()
 	reaparecer()
 
 
@@ -1039,7 +1042,7 @@ func _avisar_veneno() -> void:
 	veneno_mudou.emit(_veneno.doses, ficha.doses_de_veneno() if ficha else 0, _veneno.na_arma != &"")
 
 
-## Dados de vida e doses de veneno voltam inteiros a cada fase nova (e quando a ficha muda).
+## Dados de vida e doses de veneno voltam no descanso longo (e quando a ficha muda).
 func _repor_dados_e_veneno() -> void:
 	_dados_de_vida.repor(ficha)
 	_veneno.repor(ficha)
