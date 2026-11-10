@@ -691,7 +691,7 @@ func _ha_tela_aberta(exceto: Control = null) -> bool:
 
 
 func _telas_modais() -> Array[Control]:
-	return [_inventario, _tela_bau, _tela_loja, _comandos, _pausa, _tela_bestiario, _tela_compendio, _tela_habilidades, _tela_talento]
+	return [_inventario, _tela_bau, _tela_loja, _comandos, _pausa, _tela_bestiario, _tela_compendio, _tela_habilidades, _tela_talento, _tela_subclasse]
 
 
 ## Esc (ou o botão Menu) abre a pausa se nenhuma tela por cima já usou a tecla para voltar.
