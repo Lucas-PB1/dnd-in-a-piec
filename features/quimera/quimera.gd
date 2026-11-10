@@ -134,6 +134,8 @@ var _sopro_pronto: bool = true
 var _empurrao_restante: float = 0.0
 var _despertou: bool = false
 var _saltador: SaltadorDeMonstro
+## Cabeçada / investida da ficha (`chifrada_*`).
+var _investida: InvestidaDeCriatura
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _dissolver: DissolverComponent = $Dissolver
@@ -153,6 +155,7 @@ func _ready() -> void:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
 	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
 	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
+	_investida = InvestidaDeCriatura.new(criatura)
 	_vida.vida_mudou.connect(vida_mudou.emit)
 	_vida.vida_mudou.connect(_ao_mudar_vida)
 	_golpe.alvo_atingido.connect(func(_alvo: HurtboxComponent) -> void: _golpe_acertou = true)
@@ -548,7 +551,8 @@ func _padrao_valido(padrao: StringName) -> bool:
 		PADRAO_BOTE:
 			return mesma_altura
 		PADRAO_INVESTIDA:
-			return mesma_altura and _tem_chao_na(float(direcao_olhar))
+			return InvestidaDeCriatura.tem_chifrada(criatura) and mesma_altura \
+				and _tem_chao_na(float(direcao_olhar))
 	return true
 
 
@@ -572,9 +576,9 @@ func _ao_mudar_vida(atual: int, maxima: int) -> void:
 func _golpe_de(ataque: StringName) -> Golpe:
 	match ataque:
 		ATAQUE_CABECADA:
-			return _com_autor(criatura.golpe_chifrada(true))
+			return _com_autor(_investida.golpe(true))
 		ATAQUE_MERGULHO:
-			var mergulho := _com_autor(criatura.golpe_chifrada(true))
+			var mergulho := _com_autor(_investida.golpe(true))
 			mergulho.nome = NOME_MERGULHO
 			return mergulho
 		ATAQUE_GARRA:

@@ -148,7 +148,7 @@ func _testar_investida_e_pilares() -> void:
 
 ## Ao alcance, o glaive acerta o herói; um bloco à frente quebra com o golpe.
 func _testar_glaive_e_blocos(cena: Node) -> void:
-	_minotauro.set("_chifrada_pronta", false)
+	_minotauro.definir_chifrada_pronta(false)
 	var resultados: Array[Combate.Resultado] = []
 	var defesa: DefesaComponent = _jogador.get_node("Defesa")
 	defesa.golpe_resolvido.connect(func(r: Combate.Resultado, _o: Vector2) -> void: resultados.append(r))
@@ -180,7 +180,7 @@ func _testar_bloco_que_barra(cena: Node) -> void:
 	_minotauro.global_position = Vector2(_minotauro.global_position.x, CHAO_Y)
 	_colocar_heroi_a(DISTANCIA_ATRAS_DO_BLOCO)
 	bloco.global_position = Vector2(_minotauro.global_position.x - BLOCO_ENCOSTADO, CHAO_Y)
-	_minotauro.set("_chifrada_pronta", false)
+	_minotauro.definir_chifrada_pronta(false)
 	for i in QUADROS_POR_SEGUNDO * 6:
 		await physics_frame
 		if bloco.esta_quebrado():

@@ -57,7 +57,7 @@ func _correr(delta: float) -> void:
 	minotauro.correr_na_investida()
 	_corrida += absf(minotauro.velocity.x) * delta
 	_graca -= delta
-	if not _carreira_completa and _corrida >= minotauro.carreira_px():
+	if not _carreira_completa and minotauro.carreira_completa(_corrida):
 		_carreira_completa = true
 		minotauro.completar_carreira()
 	if minotauro.chifrada_acertou():

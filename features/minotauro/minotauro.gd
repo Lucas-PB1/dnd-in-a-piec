@@ -26,9 +26,6 @@ const TEMPO_PISCAR_DANO := 0.12
 const FORCA_ABALO_BLOCO := 4.0
 const FORCA_ABALO_CHIFRADA := 7.0
 const DURACAO_ABALO := 0.3
-## Faces do dado da recarga (1d6 do "Recarga 5-6").
-const FACES_RECARGA := 6
-
 ## Bloco de estatísticas. Padrão: data/minotauro.tres.
 @export var criatura: CriaturaRPG
 ## Ampliação da arte (os quadros têm 190 px; o corpo fica com uns 4 ladrilhos de altura).
@@ -56,11 +53,11 @@ var direcao_olhar: int = -1
 var _rng := RandomNumberGenerator.new()
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _tempo_desde_ataque: float = INF
-var _tempo_recarga: float = 0.0
-var _chifrada_pronta: bool = true
 var _chifrada_acertou: bool = false
 var _empurrao_restante: float = 0.0
 var _saltador: SaltadorDeMonstro
+## Chifrada / investida da ficha.
+var _investida: InvestidaDeCriatura
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _dissolver: DissolverComponent = $Dissolver
@@ -86,6 +83,7 @@ func _ready() -> void:
 	MontagemDeCriatura.ligar_sinais_padrao(
 		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
 	)
+	_investida = InvestidaDeCriatura.new(criatura)
 	_chifres.alvo_atingido.connect(func(_alvo: HurtboxComponent) -> void: _chifrada_acertou = true)
 	_preparar_condicoes()
 	_preparar_areas()
@@ -95,7 +93,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
 	_saltador.passar_tempo(delta)
-	_recarregar_chifrada(delta)
+	_investida.passar_tempo(delta, _rng)
 	if not is_on_floor():
 		velocity.y += _gravidade * delta
 	_maquina.processar_fisica(delta)
@@ -130,7 +128,12 @@ func nome_estado() -> StringName:
 
 
 func chifrada_pronta() -> bool:
-	return _chifrada_pronta
+	return _investida.pronta()
+
+
+## Só para testes: força a Chifrada pronta ou gasta.
+func definir_chifrada_pronta(valor: bool) -> void:
+	_investida.definir_pronta(valor)
 
 
 # --- Ferramentas dos estados ----------------------------------------------------
@@ -147,15 +150,16 @@ func pode_atacar() -> bool:
 	return _tempo_desde_ataque >= EscalaDnd.intervalo_ataque(criatura.iniciativa)
 
 
-## A Chifrada recarregou e o herói está longe o bastante para dar a corrida de 10 pés (e perto o bastante para valer o bote),
-## na mesma altura e com chão firme à frente.
+## A Chifrada recarregou e o herói está na janela da investida (mesma altura, chão à frente).
 func quer_investir() -> bool:
-	if not _chifrada_pronta or alvo == null or not is_on_floor():
+	if alvo == null:
 		return false
-	var distancia := _distancia_horizontal()
-	var minima := meia_largura_corpo + _alcance_chifrada_px() + _carreira_px()
-	return distancia >= minima and distancia <= distancia_investida + minima \
-		and absf(alvo.global_position.y - global_position.y) <= altura_golpe and _tem_chao_na(float(direcao_olhar))
+	virar_para_alvo()
+	return _investida.quer_investir(
+		_distancia_horizontal(), meia_largura_corpo, distancia_investida,
+		absf(alvo.global_position.y - global_position.y), altura_golpe,
+		is_on_floor(), _tem_chao_na(float(direcao_olhar)),
+	)
 
 
 func virar_para_alvo() -> void:
@@ -240,8 +244,7 @@ func encerrar_aviso() -> void:
 ## Começa a investida: gasta a recarga, olha para o herói e liga os chifres sem a corrida (a corrida ainda não valeu).
 func iniciar_investida() -> void:
 	virar_para_alvo()
-	_chifrada_pronta = false
-	_tempo_recarga = 0.0
+	_investida.consumir()
 	_chifrada_acertou = false
 	tocar(&"investida")
 	_chifres.ligar(_golpe_da_chifrada(false))
@@ -258,7 +261,11 @@ func completar_carreira() -> void:
 
 
 func carreira_px() -> float:
-	return _carreira_px()
+	return _investida.carreira_px()
+
+
+func carreira_completa(corrida_px: float) -> bool:
+	return _investida.carreira_completa(corrida_px)
 
 
 func desligar_chifres() -> void:
@@ -316,17 +323,6 @@ func terminar_de_morrer() -> void:
 
 # --- Interno --------------------------------------------------------------------
 
-## Recarga 5-6: no começo de cada rodada rola 1d6; com o número da ficha ou mais, a Chifrada volta.
-func _recarregar_chifrada(delta: float) -> void:
-	if _chifrada_pronta or criatura.chifrada_recarga <= 0:
-		return
-	_tempo_recarga += delta
-	if _tempo_recarga < EscalaDnd.RODADA_SEGUNDOS:
-		return
-	_tempo_recarga -= EscalaDnd.RODADA_SEGUNDOS
-	_chifrada_pronta = _rng.randi_range(1, FACES_RECARGA) >= criatura.chifrada_recarga
-
-
 func _golpe_do_glaive() -> Golpe:
 	var golpe := criatura.golpe()
 	golpe.autor_id = get_instance_id()
@@ -335,7 +331,7 @@ func _golpe_do_glaive() -> Golpe:
 
 
 func _golpe_da_chifrada(com_carreira: bool) -> Golpe:
-	var golpe := criatura.golpe_chifrada(com_carreira)
+	var golpe := _investida.golpe(com_carreira)
 	golpe.autor_id = get_instance_id()
 	return golpe
 
@@ -351,14 +347,6 @@ func _blocos_a_frente() -> Array[Node]:
 
 func _alcance_px() -> float:
 	return EscalaDnd.pes_para_pixels(criatura.ataque_alcance_pes)
-
-
-func _alcance_chifrada_px() -> float:
-	return EscalaDnd.pes_para_pixels(criatura.chifrada_alcance_pes)
-
-
-func _carreira_px() -> float:
-	return EscalaDnd.pes_para_pixels(criatura.chifrada_carreira_pes)
 
 
 func _distancia_horizontal() -> float:

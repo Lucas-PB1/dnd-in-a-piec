@@ -158,3 +158,7 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 ## Fatia: capacidade tática IA (`TaticaDeCriatura`)
 - `TaticaDeCriatura` em `core/regras/criaturas/`: cobertura, flanqueio e estratégia (timers + decisões). Goblin e Gray Ooze ligam as três; chefes ficam de fora (ADR).
 - Ooze ganhou estados `Cobrindo` / `Flanqueando` / `Afastando`. Backlog `capacidades-tatica-ia` fechado. Teste `tests/criaturas/teste_tatica_de_criatura.gd`.
+
+## Fatia: capacidade investida (`InvestidaDeCriatura`)
+- `InvestidaDeCriatura` em `core/regras/criaturas/`: recarga X-6, janela de distância, carreira e `golpe`. Minotauro e Quimera usam; quebrar blocos / fúria / aceleração ficam na feature.
+- Backlog `capacidades-investida` fechado. Teste `tests/criaturas/teste_investida_de_criatura.gd`.
