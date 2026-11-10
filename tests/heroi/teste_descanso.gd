@@ -47,8 +47,8 @@ func _testar_fase_e_morte() -> void:
 	var jogador: Jogador = main.get_node("Jogador")
 	main._entrar_fase(load("res://levels/fase_1.tscn"), true)
 	await physics_frame
-	jogador.get_node("Vida").receber_dano(4)
 	jogador.usar_folego()
+	jogador.get_node("Vida").receber_dano(maxi(jogador.vida_maxima() - 1, 1))
 	main._surto_usado = true
 
 	main._entrar_fase(load("res://levels/fase_2.tscn"), false)
