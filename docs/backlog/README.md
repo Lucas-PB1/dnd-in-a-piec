@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo | Tam. |
 |---|---|---|
-| 7 | `arte/arte-pantano-ruina.md` | M |
 | 8 | `audio/som-faltante.md` | M |
 | 9 | `criaturas/minions-recolor.md` | M |
 | 10 | `criaturas/ataques-novos-monstros.md` | M |

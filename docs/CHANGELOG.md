@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Fundos próprios do **Pântano** (Gothicvania Swamp) e da **Ruína** (GothicVania Cemetery), CC0 ansimuz; temas `pantano` e `ruina` em `FundoParalaxe`.
 - Refino visual do Goblin Minion (golpe/arremesso SpriteCook): **aceito como está** — a adaga deforma em poucos quadros, mas no ritmo do jogo quase não se nota; sem gastar créditos nem editar pixel.
 - Lava no Covil (fase 10): poças com **1d6 de fogo** a cada rodada enquanto o herói está em cima; `Combate.resolver_ambiente` + feature `lava`. Teste `teste_lava`.
 - IA dos monstros: patrulha e Fuga Ágil saltam beiras; atirador/arremessador em vantagem de terreno (≥ 1 ladrilho) fica e ataca à distância. Testes em `teste_salto_monstros` e `teste_estrategia`.

@@ -63,6 +63,10 @@ func _testar_fases_prontas() -> void:
 			"fase %d: %d de %d pontos de armadilha, com tipos permitidos" % [i + 1, fase.quantidade, pontos])
 		_checar(fase.ultima == (i == ULTIMA), "fase %d: só a última conclui o jogo" % [i + 1])
 		_checar(fase.get_node_or_null("Fundo") != null and not (fase.get_node("Ceu") as CanvasItem).visible, "fase %d: fundo em camadas no lugar do céu liso" % [i + 1])
+		if fase.nome_ambiente == "Pântano":
+			_checar(FundoParalaxe.AMBIENTES["Pântano"][0] == &"pantano", "Pântano usa o tema pantano")
+		if fase.nome_ambiente == "Ruína":
+			_checar(FundoParalaxe.AMBIENTES["Ruína"][0] == &"ruina", "Ruína usa o tema ruina")
 		fase.queue_free()
 		await physics_frame
 
