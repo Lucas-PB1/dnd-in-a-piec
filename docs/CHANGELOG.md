@@ -135,3 +135,12 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
 ## Fatia: limite de tamanho Empurrar/Derrubar (PHB 2024)
 - `CriaturaRPG.tamanho` (Minúsculo…Imenso) preenchido nas fichas; `CondicoesComponent` só aplica Empurrar/Derrubar até Grande (Enorme+ → "Grande demais!"). Teste em `teste_maestrias.gd`.
+
+## Fatia: kit básico das criaturas (`MontagemDeCriatura`)
+- ADR com 3 camadas: kit sempre / capacidades da ficha / específico de verdade. `MontagemDeCriatura` em `core/regras/` aplica ficha (incl. vulnerabilidades, fortitude, imunidades), condições, empurrão e Lentidão no andar.
+- Ooze, Goblin e os 4 chefes migrados; chefes passam a respeitar Lentidão. Receita 1 atualizada. Backlog `base-comum-criaturas` fechado; abertos `capacidades-*` (disparo-sol, arremesso, tática, investida, furtividade, fuga-ágil, matilha, voo, linha-área).
+- Teste `tests/teste_montagem_de_criatura.gd`.
+
+## Fatia: capacidade disparo + sensível ao sol (`DisparoDeCriatura`)
+- `DisparoDeCriatura` em `core/regras/`: munição da ficha, soltar flecha, alcance longo, linha de tiro, desvantagem por sol. Goblin e Wight usam a mesma implementação; IA de quando atirar fica na feature.
+- Backlog `capacidades-disparo-sol` fechado. Teste `tests/teste_disparo_de_criatura.gd`.

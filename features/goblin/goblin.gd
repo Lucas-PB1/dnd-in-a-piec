@@ -10,10 +10,6 @@ extends CharacterBody2D
 signal morreu
 
 const CENA_ADAGA := preload("res://features/goblin/adaga_goblin.tscn")
-const CENA_FLECHA := preload("res://core/projeteis/flecha.tscn")
-const FLECHA := preload("res://data/municoes/flecha.tres")
-## Texto flutuante quando a Fortitude dos Mortos-Vivos segura a criatura.
-const TEXTO_FORTITUDE := "Fortitude!"
 ## Quanto à frente (px) o raio procura chão antes de descer do penhasco.
 const DISTANCIA_BEIRA := 14.0
 const FOLGA_PE := 6.0
@@ -103,12 +99,10 @@ var _empurrao_restante: float = 0.0
 var _base_x: float = INF
 var _lado_patrulha: int = 1
 var _adagas: int = 0
-## Cópias do disparo da ficha. Menor que 0 = não acaba.
-var _flechas: int = 0
+## Disparo e Sensibilidade à Luz Solar (ficha).
+var _disparo: DisparoDeCriatura
 ## Percepção passiva de quem olha. 0 (ninguém passou) = o goblin sempre se esconde.
 var _percepcao_passiva: int = 0
-## A fase é de dia: a Sensibilidade à Luz Solar vale (a main avisa).
-var _luz_do_sol: bool = false
 var _rolou_furtividade: bool = false
 var _foi_percebido: bool = false
 ## O próximo golpe sai com vantagem (a emboscada de quem não foi percebido).
@@ -134,21 +128,13 @@ var _camada_hurtbox: int = 0
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
-	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
-	_vida.configurar(criatura.vida_maxima(_rng))
-	_defesa.classe_armadura = criatura.classe_armadura
-	_defesa.resistencias = criatura.resistencias
-	_defesa.imunidades = criatura.imunidades_dano
-	_defesa.vulnerabilidades = criatura.vulnerabilidades
-	_defesa.fortitude_morto_vivo = criatura.fortitude_morto_vivo
-	_defesa.fortitude_usada.connect(func() -> void: _texto.mostrar(TEXTO_FORTITUDE, TextoFlutuanteComponent.COR_CONDICAO))
-	_condicoes.imunidades = criatura.imunidades_condicoes
-	_condicoes.tamanho = criatura.tamanho
-	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
-	_vida.morreu.connect(_ao_morrer)
-	_dissolver.terminou.connect(terminar_de_morrer)
+	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
+	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
+	MontagemDeCriatura.ligar_sinais_padrao(
+		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
+	)
 	_adagas = criatura.arremessos
-	_flechas = criatura.disparos
+	_disparo = DisparoDeCriatura.new(criatura)
 	_prefere_distancia = EstrategiaDeMonstro.prefere_distancia(criatura.dano_medio(criatura.golpe()), criatura.dano_medio_a_distancia())
 	_sprite.modulate = cor_corpo
 	_preparar_condicoes()
@@ -185,7 +171,7 @@ func definir_percepcao_passiva(valor: int) -> void:
 
 ## A main diz se a fase é de dia (o Kobold ataca com desvantagem ao sol).
 func definir_luz_do_sol(ao_sol: bool) -> void:
-	_luz_do_sol = ao_sol
+	_disparo.luz_do_sol = ao_sol
 
 
 func vida_atual() -> int:
@@ -202,7 +188,7 @@ func adagas_restantes() -> int:
 
 ## Menor que 0: as flechas não acabam.
 func flechas_restantes() -> int:
-	return _flechas
+	return _disparo.flechas_restantes()
 
 
 # --- Ferramentas dos estados ----------------------------------------------------
@@ -278,14 +264,17 @@ func pode_arremessar() -> bool:
 
 ## Tem flecha, o alvo está longe o bastante para valer o arco e dentro do alcance longo.
 func pode_atirar() -> bool:
-	return _tem_flecha() and alvo != null and not _perto_para_oarco() and _linha_de_tiro_livre() \
-		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes)
+	return _disparo.tem_flecha() and alvo != null and not _perto_para_oarco() and _linha_de_tiro_livre() \
+		and _disparo.no_alcance_longo(_distancia_horizontal())
 
 
 ## Nada do mundo entre o peito de quem atira e o do alvo: senão o tiro bateria na parede.
 func _linha_de_tiro_livre() -> bool:
-	return alvo == null or SensorDeTerreno.linha_livre(get_world_2d().direct_space_state,
-		global_position + Vector2(0.0, -altura_mao), alvo.global_position + Vector2(0.0, -altura_alvo), MASCARA_MUNDO)
+	return alvo == null or DisparoDeCriatura.linha_de_tiro_livre(
+		get_world_2d().direct_space_state,
+		global_position + Vector2(0.0, -altura_mao),
+		alvo.global_position + Vector2(0.0, -altura_alvo),
+	)
 
 
 ## O herói atirou ou arremessou de `origem`: quem percebe passa a procurar abrigo.
@@ -468,23 +457,17 @@ func arremessar_adaga() -> void:
 func soltar_distancia() -> void:
 	if _adagas > 0:
 		arremessar_adaga()
-	elif _tem_flecha():
+	elif _disparo.tem_flecha():
 		atirar()
 
 
 ## Dispara uma flecha na direção do alvo (mira no peito dele).
 func atirar() -> void:
-	if not _tem_flecha() or alvo == null:
+	if alvo == null:
 		return
-	if _flechas > 0:
-		_flechas -= 1
-	var flecha: Flecha = CENA_FLECHA.instantiate()
-	add_child(flecha)
 	var mao := global_position + Vector2(direcao_olhar * meia_largura_corpo, -altura_mao)
 	var destino := alvo.global_position + Vector2(0.0, -altura_alvo)
-	flecha.lancar(_golpe_do_disparo(), FLECHA, mao, destino,
-		EscalaDnd.pes_para_pixels(criatura.disparo_normal_pes),
-		EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes), _gravidade)
+	_disparo.atirar(self, _golpe_do_disparo(), mao, destino, _gravidade)
 
 
 ## Levou dano: o sprite treme por `duracao` s.
@@ -586,7 +569,7 @@ func _golpe_do_arremesso() -> Golpe:
 
 func _com_autor(golpe: Golpe) -> Golpe:
 	golpe.autor_id = get_instance_id()
-	golpe.desvantagem = _condicoes.consumir_desvantagem() or (criatura.sensivel_ao_sol and _luz_do_sol)
+	golpe.desvantagem = _condicoes.consumir_desvantagem() or _disparo.desvantagem_solar()
 	if _emboscada or _tem_matilha_com_o_alvo():
 		golpe.vantagem = true
 		_emboscada = false
@@ -683,7 +666,7 @@ func _quer_recuar_ferido() -> bool:
 
 
 func _quer_manter_distancia() -> bool:
-	return _prefere_distancia and (_tem_flecha() or _adagas > 0) and _tempo_desde_afastar >= INTERVALO_AFASTAR \
+	return _prefere_distancia and (_disparo.tem_flecha() or _adagas > 0) and _tempo_desde_afastar >= INTERVALO_AFASTAR \
 		and _perto_para_oarco() and not alvo_ao_alcance() and _tem_espaco_atras()
 
 
@@ -695,12 +678,8 @@ func _tem_espaco_atras() -> bool:
 		peito + Vector2(costas * ESPACO_ATRAS_PX, 0.0), MASCARA_MUNDO)
 
 
-func _tem_flecha() -> bool:
-	return _flechas < 0 or _flechas > 0
-
-
 func _deslocamento_pes() -> float:
-	return maxf(criatura.deslocamento_pes - _condicoes.reducao_deslocamento_pes(), 0.0)
+	return MontagemDeCriatura.deslocamento_efetivo_pes(criatura, _condicoes)
 
 
 func _velocidade_fuga() -> float:
@@ -735,19 +714,17 @@ func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:
 
 ## A ficha diz as salvaguardas (Derrubar pede CON); avisos e empurrão vêm das condições.
 func _preparar_condicoes() -> void:
-	for atributo in Atributos.TODOS:
-		_condicoes.bonus_salvaguardas[atributo] = criatura.bonus_salvaguarda(atributo)
-	_condicoes.aviso.connect(func(texto: String) -> void: _texto.mostrar(texto, TextoFlutuanteComponent.COR_CONDICAO))
-	_condicoes.empurrado.connect(func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x)
+	MontagemDeCriatura.preparar_condicoes(
+		criatura, _condicoes, _texto,
+		func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x
+	)
 
 
 ## Empurrar: desliza o que falta do empurrão (com colisão), por cima do que o estado mandou.
 func _aplicar_empurrao(delta: float) -> void:
-	if is_zero_approx(_empurrao_restante):
-		return
-	var passo := signf(_empurrao_restante) * minf(absf(_empurrao_restante), velocidade_empurrao * delta)
-	velocity.x = passo / delta
-	_empurrao_restante -= passo
+	_empurrao_restante = MontagemDeCriatura.aplicar_empurrao(
+		self, _empurrao_restante, velocidade_empurrao, delta
+	)
 
 
 func _ao_morrer() -> void:

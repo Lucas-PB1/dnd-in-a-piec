@@ -56,16 +56,11 @@ var _escala_sprite: Vector2
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
-	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
-	_vida.configurar(criatura.vida_maxima(_rng))
-	_defesa.classe_armadura = criatura.classe_armadura
-	_defesa.resistencias = criatura.resistencias
-	_defesa.imunidades = criatura.imunidades_dano
-	_condicoes.imunidades = criatura.imunidades_condicoes
-	_condicoes.tamanho = criatura.tamanho
-	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
-	_vida.morreu.connect(_ao_morrer)
-	_dissolver.terminou.connect(terminar_de_morrer)
+	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
+	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
+	MontagemDeCriatura.ligar_sinais_padrao(
+		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
+	)
 	_preparar_condicoes()
 	_posicao_sprite = _sprite.position
 	_escala_sprite = _sprite.scale
@@ -127,8 +122,7 @@ func andar_para_alvo() -> void:
 	if not _tem_chao_na(float(direcao_olhar)):
 		parar()
 		return
-	var pes := maxf(criatura.deslocamento_pes - _condicoes.reducao_deslocamento_pes(), 0.0)
-	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(pes)
+	velocity.x = direcao_olhar * MontagemDeCriatura.velocidade_andar(criatura, _condicoes)
 
 
 func parar() -> void:
@@ -144,7 +138,7 @@ func planejar_salto() -> SaltoDnd.Plano:
 
 
 func iniciar_salto(plano: SaltoDnd.Plano) -> void:
-	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes), meia_largura_corpo)
+	_saltador.iniciar(plano, float(direcao_olhar), MontagemDeCriatura.velocidade_andar(criatura, _condicoes), meia_largura_corpo)
 
 
 func correr_no_ar() -> void:
@@ -271,19 +265,17 @@ func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:
 
 ## A ficha diz as salvaguardas (Derrubar pede CON); avisos e empurrão vêm das condições.
 func _preparar_condicoes() -> void:
-	for atributo in Atributos.TODOS:
-		_condicoes.bonus_salvaguardas[atributo] = criatura.bonus_salvaguarda(atributo)
-	_condicoes.aviso.connect(func(texto: String) -> void: _texto.mostrar(texto, TextoFlutuanteComponent.COR_CONDICAO))
-	_condicoes.empurrado.connect(func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x)
+	MontagemDeCriatura.preparar_condicoes(
+		criatura, _condicoes, _texto,
+		func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x
+	)
 
 
 ## Empurrar: desliza o que falta do empurrão (com colisão), por cima do que o estado mandou.
 func _aplicar_empurrao(delta: float) -> void:
-	if is_zero_approx(_empurrao_restante):
-		return
-	var passo := signf(_empurrao_restante) * minf(absf(_empurrao_restante), velocidade_empurrao * delta)
-	velocity.x = passo / delta
-	_empurrao_restante -= passo
+	_empurrao_restante = MontagemDeCriatura.aplicar_empurrao(
+		self, _empurrao_restante, velocidade_empurrao, delta
+	)
 
 
 ## Forma Corrosiva: arma não mágica que CAUSA DANO no Ooze leva penalidade cumulativa no

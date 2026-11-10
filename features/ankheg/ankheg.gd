@@ -97,14 +97,12 @@ var _saltador: SaltadorDeMonstro
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
-	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
-	_vida.configurar(criatura.vida_maxima(_rng))
+	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
+	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
 	_vida.vida_mudou.connect(vida_mudou.emit)
-	_defesa.classe_armadura = criatura.classe_armadura
-	_defesa.resistencias = criatura.resistencias
-	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
-	_vida.morreu.connect(_ao_morrer)
-	_dissolver.terminou.connect(terminar_de_morrer)
+	MontagemDeCriatura.ligar_sinais_padrao(
+		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
+	)
 	_preparar_condicoes()
 	_preparar_areas()
 	_terra.visible = false
@@ -195,7 +193,7 @@ func planejar_salto() -> SaltoDnd.Plano:
 
 ## Dá o impulso do plano: corre na velocidade da ficha e sobe o bastante para o degrau ou para cobrir o vão.
 func iniciar_salto(plano: SaltoDnd.Plano) -> void:
-	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes), meia_largura_corpo)
+	_saltador.iniciar(plano, float(direcao_olhar), MontagemDeCriatura.velocidade_andar(criatura, _condicoes), meia_largura_corpo)
 
 
 ## No ar do salto: mantém a corrida (uma batida na parede zera o x).
@@ -224,7 +222,7 @@ func andar_para_alvo() -> void:
 	if not _tem_chao_na(float(direcao_olhar)):
 		parar()
 		return
-	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes)
+	velocity.x = direcao_olhar * MontagemDeCriatura.velocidade_andar(criatura, _condicoes)
 
 
 func parar() -> void:
@@ -480,19 +478,18 @@ func _piscar_dano() -> void:
 
 
 func _preparar_condicoes() -> void:
-	_condicoes.tamanho = criatura.tamanho
-	for atributo in Atributos.TODOS:
-		_condicoes.bonus_salvaguardas[atributo] = criatura.bonus_salvaguarda(atributo)
-	_condicoes.aviso.connect(func(texto: String) -> void: _texto.mostrar(texto, TextoFlutuanteComponent.COR_CONDICAO))
-	_condicoes.empurrado.connect(func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x)
+	MontagemDeCriatura.preparar_condicoes(
+		criatura, _condicoes, _texto,
+		func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x
+	)
 
 
 func _aplicar_empurrao(delta: float) -> void:
-	if is_zero_approx(_empurrao_restante) or _escondido:
+	if _escondido:
 		return
-	var passo := signf(_empurrao_restante) * minf(absf(_empurrao_restante), velocidade_empurrao * delta)
-	velocity.x = passo / delta
-	_empurrao_restante -= passo
+	_empurrao_restante = MontagemDeCriatura.aplicar_empurrao(
+		self, _empurrao_restante, velocidade_empurrao, delta
+	)
 
 
 func _ao_morrer() -> void:

@@ -79,7 +79,7 @@ core/dados/              Item, Arma, Municao, PoseGolpe, Armadura, ClasseRPG, Cr
                          AntecedenteRPG, TalentoRPG, EntradaCompendio
 core/regras/             Dado, Atributos, CompraDePontos, Ficha, Inventario, Golpe, Combate, EscalaDnd,
                          TiposDano, Proficiencias, Equipamento, Pericia, Salvamento,
-                         ItemAleatorio
+                         ItemAleatorio, MontagemDeCriatura, DisparoDeCriatura
 core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToque
 features/jogador/        herói: jogador, stats, animação, câmera, ataque, escudo, arma de trás, estados/, sprites/
 features/jogador/talentos/ regras puras dos talentos do herói (recargas, Sorte, dados de vida, veneno, defesa, Investida)

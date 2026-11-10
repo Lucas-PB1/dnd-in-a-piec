@@ -38,37 +38,31 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\gerar_regras_cursor.ps
 
 ## 1. Criatura nova (monstro do livro)
 
-Molde: **Goblin** (`features/goblin/`), o mais completo (corpo a corpo, arremesso, fuga).
+Molde simples: **Gray Ooze** (quase só kit). Molde com capacidades da ficha: **Goblin**.
+Camadas em `docs/adr/criaturas.md`: kit sempre → capacidades do `.tres` → específico.
 
-1. **Ficha** em `data/<criatura>.tres` (`CriaturaRPG`): copie `data/goblin_minion.tres` e
-   preencha com o bloco do livro (CA, dados de vida, atributos, iniciativa, deslocamento,
-   percepção, resistências, ataque). Campo novo que a ficha precise -> acrescente em
-   `core/dados/criatura_rpg.gd` com `@export` e comentário (valor padrão que não muda as outras).
-2. **Arte**: siga `docs/reference/artes_prontas.md` (licença, permissão para baixar, crédito).
-   Tiras PNG **finais** em `features/<criatura>/sprites/` + gerador de SpriteFrames.
-   Chefes SpriteCook: `tools/gerar_monstros_spritecook.gd`. Minions/chefe Gemini:
-   `tools/montar_tiras_gemini.gd` + `tools/montar_frames_gemini.gd` (prompts em
-   prompts locais, fora do Git). **Não versionar** pastas intermediárias (`fonte_gemini/`,
-   previews chibi): só as tiras/frames aprovados entram no Git.
-3. **Script raiz** `features/<criatura>/<criatura>.gd` (`class_name`): copie `goblin.gd`,
-   tire o que a criatura não faz. Mantenha: `signal morreu`, `definir_alvo`, `vida_atual`,
-   `nome_estado`, `_ao_resolver_golpe`, `_preparar_condicoes`, `_aplicar_empurrao`, `_ao_morrer`.
-4. **Estados** em `features/<criatura>/estados/`: base `Estado<Criatura>` + um arquivo por
-   estado. No mínimo: Parado, Perseguindo, Atacando, LevandoDano, Morrendo, Caido.
-5. **Cena** `features/<criatura>/<criatura>.tscn`: copie `goblin.tscn` e troque scripts, ficha,
-   frames e as formas (corpo, alvo, golpe). `collision_layer = 16`; Hurtbox camada 4;
-   Hitbox máscara 8. **A cena tem de rodar sozinha (F6)**: sem alvo, fica Parada.
-6. **Ligar no jogo**: `levels/main.gd` -> constante `CENA_<CRIATURA>` e o nome em
-   `definir_criaturas([...])` / `_cenas_criaturas()` (lista "Trazer" da tela C).
-   Atualize o teste da lista em `tests/teste_segundo_folego.gd`.
-7. **Teste** `tests/teste_<criatura>.gd`: copie `tests/teste_goblin.gd` (ficha, cena sozinha,
-   percebe/persegue, ataca o herói, reage a dano, morre e some).
-8. `docs/adr/criaturas.md` (linha da criatura), estrutura de pastas no `CLAUDE.md`,
-   `docs/CHANGELOG.md` e apague/crie itens em `docs/backlog/`.
-   `assets/CREDITOS.md`: crédito da arte.
+1. **Ficha** em `data/<criatura>.tres` (`CriaturaRPG`): copie uma ficha parecida e preencha
+   o bloco do livro. Marque capacidades (arremesso, disparo, furtividade, sol, matilha…).
+   Campo novo -> `core/dados/criatura_rpg.gd` com `@export` e padrão que não muda as outras.
+2. **Arte**: siga `docs/reference/artes_prontas.md`. Tiras finais em
+   `features/<criatura>/sprites/` + gerador de SpriteFrames. Não versionar `fonte_gemini/`.
+3. **Script raiz** `features/<criatura>/<criatura>.gd`: use `MontagemDeCriatura` no `_ready`
+   (ficha, condições, empurrão, saltador, sinais). Andar com
+   `MontagemDeCriatura.velocidade_andar`. API: `signal morreu`, `definir_alvo`, `vida_atual`,
+   `nome_estado`, `_ao_resolver_golpe`, `_ao_morrer`. Só então o específico (se houver).
+4. **Estados** em `features/<criatura>/estados/`: base `Estado<Criatura>` + um por estado.
+   Mínimo do kit: Parado, Perseguindo, Atacando, Morrendo, Caido, Pulando (+ LevandoDano nos
+   minions; chefes podem só piscar).
+5. **Cena** `features/<criatura>/<criatura>.tscn`: copie `gray_ooze.tscn` (simples) ou
+   `goblin.tscn` (com capacidades). `collision_layer = 16`; Hurtbox 4; Hitbox máscara 8.
+   **Roda sozinha (F6)**: sem alvo, fica Parada. Variante do mesmo bicho = cena herdada.
+6. **Ligar no jogo**: `levels/main.gd` (`CENAS_DOS_TIPOS` / Trazer) + teste da lista.
+7. **Teste** `tests/teste_<criatura>.gd`: ficha, cena sozinha, percebe/persegue, ataca, morre.
+8. `docs/adr/criaturas.md`, `CLAUDE.md` se pasta nova, `CHANGELOG` / backlog, `CREDITOS.md`.
 
-> Regra de três: com a 3ª criatura, extraia o que Ooze, Goblin e ela repetem (perseguir,
-> ritmo, condições, empurrão) numa base em `core/` antes de copiar de novo.
+> Capacidades (arremesso, disparo, sol, flanqueio…) pertencem à ficha/`core/`, não à feature.
+> Se a capacidade ainda só existe no Goblin, reutilize o Goblin ou extraia (regra de três /
+> backlog `capacidades-*`) antes de copiar o monólito.
 
 ## 2. Arma, armadura ou munição nova
 

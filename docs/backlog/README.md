@@ -46,7 +46,8 @@ Legenda `size`: **P** (uma tarde), **M** (uma fatia), **G** (várias fatias).
 ### Dívidas técnicas
 | Pri | Arquivo |
 |---|---|
-| 80–90 | `base-comum-criaturas` … `validar-chefes` |
+| 82–89 | `capacidades-*` (arremesso, tática, investida, furtividade, fuga-ágil, matilha, voo, linha-área) |
+| 90+ | `dry-*` … `validar-chefes` |
 
 ### Depois
 | Pri | Arquivo |

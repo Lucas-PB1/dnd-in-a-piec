@@ -13,8 +13,6 @@ signal vida_mudou(atual: int, maxima: int)
 ## Percebeu o herói pela primeira vez: a main faz surgirem os acompanhantes da fase (a "invocação" é só de cena).
 signal despertou
 
-const CENA_FLECHA := preload("res://core/projeteis/flecha.tscn")
-const FLECHA := preload("res://data/municoes/flecha.tres")
 ## Camada "mundo" do chão.
 const MASCARA_MUNDO := 1
 const FOLGA_PE := 6.0
@@ -58,8 +56,9 @@ var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity"
 var _tempo_desde_ataque: float = INF
 var _empurrao_restante: float = 0.0
 var _despertou: bool = false
-var _luz_do_sol: bool = false
 var _prefere_atirar: bool = true
+## Disparo e Sensibilidade à Luz Solar (ficha).
+var _disparo: DisparoDeCriatura
 var _saltador: SaltadorDeMonstro
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
@@ -76,17 +75,13 @@ var _saltador: SaltadorDeMonstro
 func _ready() -> void:
 	if criatura == null:
 		criatura = CriaturaRPG.new()  # cena aberta sozinha (F6) continua funcionando
-	_saltador = SaltadorDeMonstro.new(self, criatura.atributos.get(Atributos.FORCA, Atributos.VALOR_MEDIO) as int, _gravidade)
-	_vida.configurar(criatura.vida_maxima(_rng))
+	_saltador = MontagemDeCriatura.criar_saltador(self, criatura, _gravidade)
+	MontagemDeCriatura.aplicar_ficha(criatura, _vida, _defesa, _condicoes, _rng, _texto)
 	_vida.vida_mudou.connect(vida_mudou.emit)
-	_defesa.classe_armadura = criatura.classe_armadura
-	_defesa.resistencias = criatura.resistencias
-	_defesa.imunidades = criatura.imunidades_dano
-	_condicoes.imunidades = criatura.imunidades_condicoes
-	_condicoes.tamanho = criatura.tamanho
-	_defesa.golpe_resolvido.connect(_ao_resolver_golpe)
-	_vida.morreu.connect(_ao_morrer)
-	_dissolver.terminou.connect(terminar_de_morrer)
+	MontagemDeCriatura.ligar_sinais_padrao(
+		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
+	)
+	_disparo = DisparoDeCriatura.new(criatura)
 	_preparar_condicoes()
 	_preparar_area()
 	_maquina.iniciar(self)
@@ -117,7 +112,7 @@ func definir_percepcao_passiva(_valor: int) -> void:
 
 ## Fase de dia: a Sensibilidade à Luz Solar dá desvantagem nos ataques dele.
 func definir_luz_do_sol(ao_sol: bool) -> void:
-	_luz_do_sol = ao_sol
+	_disparo.luz_do_sol = ao_sol
 
 
 func vida_atual() -> int:
@@ -149,8 +144,9 @@ func pode_atacar() -> bool:
 
 ## O herói está longe, a vontade do momento é atirar e não há parede no caminho da flecha.
 func quer_atirar() -> bool:
-	return _prefere_atirar and alvo != null and _distancia_horizontal() >= distancia_minima_tiro \
-		and _distancia_horizontal() <= EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes) and _linha_de_tiro_livre()
+	return _prefere_atirar and _disparo.tem_flecha() and alvo != null \
+		and _distancia_horizontal() >= distancia_minima_tiro \
+		and _disparo.no_alcance_longo(_distancia_horizontal()) and _linha_de_tiro_livre()
 
 
 ## Primeira vez que percebe o herói: avisa a main (uma vez só).
@@ -171,7 +167,7 @@ func andar_para_alvo() -> void:
 	if not _tem_chao_na(float(direcao_olhar)):
 		parar()
 		return
-	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes)
+	velocity.x = direcao_olhar * MontagemDeCriatura.velocidade_andar(criatura, _condicoes)
 
 
 func parar() -> void:
@@ -187,7 +183,7 @@ func planejar_salto() -> SaltoDnd.Plano:
 
 
 func iniciar_salto(plano: SaltoDnd.Plano) -> void:
-	_saltador.iniciar(plano, float(direcao_olhar), EscalaDnd.deslocamento_para_velocidade(criatura.deslocamento_pes), meia_largura_corpo)
+	_saltador.iniciar(plano, float(direcao_olhar), MontagemDeCriatura.velocidade_andar(criatura, _condicoes), meia_largura_corpo)
 
 
 func correr_no_ar() -> void:
@@ -248,13 +244,9 @@ func encerrar_aviso() -> void:
 func atirar() -> void:
 	if alvo == null:
 		return
-	var flecha: Flecha = CENA_FLECHA.instantiate()
-	add_child(flecha)
 	var mao := global_position + Vector2(direcao_olhar * meia_largura_corpo, -altura_mao)
 	var destino := alvo.global_position + Vector2(0.0, -altura_alvo)
-	flecha.lancar(_golpe_do_disparo(), FLECHA, mao, destino,
-		EscalaDnd.pes_para_pixels(criatura.disparo_normal_pes),
-		EscalaDnd.pes_para_pixels(criatura.disparo_longo_pes), _gravidade)
+	_disparo.atirar(self, _golpe_do_disparo(), mao, destino, _gravidade)
 
 
 func esta_caido() -> bool:
@@ -293,7 +285,7 @@ func _golpe_do_disparo() -> Golpe:
 
 func _com_autor(golpe: Golpe) -> Golpe:
 	golpe.autor_id = get_instance_id()
-	golpe.desvantagem = _condicoes.consumir_desvantagem() or (criatura.sensivel_ao_sol and _luz_do_sol)
+	golpe.desvantagem = _condicoes.consumir_desvantagem() or _disparo.desvantagem_solar()
 	return golpe
 
 
@@ -306,8 +298,11 @@ func _distancia_horizontal() -> float:
 
 
 func _linha_de_tiro_livre() -> bool:
-	return SensorDeTerreno.linha_livre(get_world_2d().direct_space_state,
-		global_position + Vector2(0.0, -altura_mao), alvo.global_position + Vector2(0.0, -altura_alvo), MASCARA_MUNDO)
+	return DisparoDeCriatura.linha_de_tiro_livre(
+		get_world_2d().direct_space_state,
+		global_position + Vector2(0.0, -altura_mao),
+		alvo.global_position + Vector2(0.0, -altura_alvo),
+	)
 
 
 func _tem_chao_na(direcao: float) -> bool:
@@ -343,18 +338,16 @@ func _piscar_dano() -> void:
 
 
 func _preparar_condicoes() -> void:
-	for atributo in Atributos.TODOS:
-		_condicoes.bonus_salvaguardas[atributo] = criatura.bonus_salvaguarda(atributo)
-	_condicoes.aviso.connect(func(texto: String) -> void: _texto.mostrar(texto, TextoFlutuanteComponent.COR_CONDICAO))
-	_condicoes.empurrado.connect(func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x)
+	MontagemDeCriatura.preparar_condicoes(
+		criatura, _condicoes, _texto,
+		func(deslocamento: Vector2) -> void: _empurrao_restante = deslocamento.x
+	)
 
 
 func _aplicar_empurrao(delta: float) -> void:
-	if is_zero_approx(_empurrao_restante):
-		return
-	var passo := signf(_empurrao_restante) * minf(absf(_empurrao_restante), velocidade_empurrao * delta)
-	velocity.x = passo / delta
-	_empurrao_restante -= passo
+	_empurrao_restante = MontagemDeCriatura.aplicar_empurrao(
+		self, _empurrao_restante, velocidade_empurrao, delta
+	)
 
 
 func _ao_morrer() -> void:

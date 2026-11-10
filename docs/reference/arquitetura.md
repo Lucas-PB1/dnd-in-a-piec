@@ -132,16 +132,16 @@ HitboxComponent.ligar(golpe)
 Features: `gray_ooze/`, `goblin/` (Minion, Warrior e variantes Kobold/Hobgoblin/Bugbear/Skeleton/Zombie
 por herança), `ankheg/`, `minotauro/`, `wight/`, `quimera/`, `bloco_quebravel/`.
 
-Molde dos minions (copie o Goblin, que é o mais completo):
-- Script raiz (`Goblin`): lê a `CriaturaRPG` (`data/*.tres`), configura Vida/Defesa/Condições,
-  expõe **ferramentas** (`alvo_percebido`, `alvo_ao_alcance`, `pode_atacar`, `andar_para_alvo`,
-  `ligar_golpe`...) e reage a `golpe_resolvido` trocando de estado.
-- `estados/`: uma classe base (`EstadoGoblin`) com a referência; um script por estado.
-- Nós da cena: `Sprite` (AnimatedSprite2D), `Vida`, `Hurtbox`, `Defesa`, `Texto`, `Condicoes`,
-  `Golpe` (Hitbox), `MaquinaEstados` com os estados como filhos.
-- Ritmo: `EscalaDnd.intervalo_ataque(criatura.iniciativa)`. Movimento:
-  `EscalaDnd.deslocamento_para_velocidade(pés)`. Percepção: `percepcao_pes`.
-- Chefes têm máquina própria (Ankheg, Minotauro, Wight, Quimera) e entram na cota da porta.
+Três camadas (ADR `criaturas.md`): **kit sempre** (`MontagemDeCriatura` — ficha nos componentes,
+empurrão, Lentidão, saltador), **capacidades da ficha** (arremesso/disparo/sol/…; em migração
+para `core/`), **específico** (encenação do chefe). Molde simples: Ooze. Com capacidades: Goblin.
+
+- Script raiz: chama `MontagemDeCriatura` no `_ready`, expõe ferramentas dos estados
+  (`alvo_percebido`, `andar_para_alvo`, `ligar_golpe`…) e reage a `golpe_resolvido`.
+- `estados/`: base tipada + um script por estado. Nós: `Sprite`, `Vida`, `Hurtbox`, `Defesa`,
+  `Texto`, `Condicoes`, Hitbox, `MaquinaEstados`.
+- Ritmo: `EscalaDnd.intervalo_ataque(iniciativa)`. Andar: `MontagemDeCriatura.velocidade_andar`.
+- Chefes usam o mesmo kit; a máquina extra é o específico (cavar, investir, voar…).
 
 ## 7. Itens e equipamento
 

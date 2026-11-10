@@ -1,9 +1,9 @@
 class_name Flecha
 extends CharacterBody2D
-## Flecha de quem atira com arco (Goblin Warrior, Wight). O voo repete o da adaga (outra cópia; a adaga e a flecha são
-## os dois projéteis da ficha): sai na força do alcance longo, desvantagem além do normal e cai
-## no longo. A ponta segue a velocidade, sem o giro da adaga. Fica solta no mundo
-## (top_level) mesmo sendo filha de quem atira.
+## Flecha do disparo da ficha (`DisparoDeCriatura.atirar`). O voo repete o da adaga (outra cópia;
+## a adaga e a flecha são os dois projéteis da ficha): sai na força do alcance longo, desvantagem
+## além do normal e cai no longo. A ponta segue a velocidade, sem o giro da adaga. Fica solta no
+## mundo (top_level) mesmo sendo filha de quem atira.
 
 ## O voo não fica mais curto que isto (s), para a conta da subida não estourar.
 const TEMPO_MINIMO := 0.08
