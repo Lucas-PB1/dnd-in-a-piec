@@ -20,6 +20,9 @@
 [ext_resource type="Texture2D" path="res://assets/efeitos/condicoes.png" id="16_icones"]
 [ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_caido.gd" id="17_caido"]
 [ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_pulando.gd" id="18_pulando"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_cobrindo.gd" id="19_cobrindo"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_afastando.gd" id="20_afastando"]
+[ext_resource type="Script" path="res://features/gray_ooze/estados/estado_ooze_flanqueando.gd" id="21_flanqueando"]
 
 [sub_resource type="RectangleShape2D" id="FormaCorpo"]
 size = Vector2(40, 26)
@@ -112,6 +115,15 @@ script = ExtResource("17_caido")
 
 [node name="Pulando" type="Node" parent="MaquinaEstados"]
 script = ExtResource("18_pulando")
+
+[node name="Cobrindo" type="Node" parent="MaquinaEstados"]
+script = ExtResource("19_cobrindo")
+
+[node name="Afastando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("20_afastando")
+
+[node name="Flanqueando" type="Node" parent="MaquinaEstados"]
+script = ExtResource("21_flanqueando")
 
 [node name="Tremor" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("22_tremor")

@@ -12,6 +12,9 @@ const DISTANCIA_BEIRA := 14.0
 const FOLGA_PE := 6.0
 const PROFUNDIDADE_BEIRA := 20.0
 const MASCARA_MUNDO := 1
+const GRUPO_ALIADOS := &"monstros"
+const CHEGOU_ANDAR := 6.0
+const MOTIVO_FERIDO := TaticaDeCriatura.MOTIVO_FERIDO
 
 ## Bloco de estatísticas. Padrão: data/gray_ooze.tres.
 @export var criatura: CriaturaRPG
@@ -19,6 +22,8 @@ const MASCARA_MUNDO := 1
 @export var altura_pseudopode: float = 24.0
 ## Metade da largura do corpo (px): o Pseudópode começa a partir daqui.
 @export var meia_largura_corpo: float = 20.0
+## Altura do peito (px acima dos pés) para cobertura e linha atrás ao recuar.
+@export var altura_peito: float = 20.0
 ## Empurrar (maestria): velocidade com que o empurrão o desloca (px/s).
 @export var velocidade_empurrao: float = 320.0
 ## Achatamento do sprite enquanto está Caído (multiplica a escala da cena).
@@ -37,6 +42,8 @@ var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity"
 ## Quanto ainda falta do empurrão (px, com sinal).
 var _empurrao_restante: float = 0.0
 var _saltador: SaltadorDeMonstro
+## Cobertura, flanqueio e estratégia.
+var _tatica: TaticaDeCriatura
 var _posicao_sprite: Vector2
 ## Escala do sprite na cena (a arte do Ooze é ampliada 2x): Caído achata a partir dela.
 var _escala_sprite: Vector2
@@ -61,6 +68,7 @@ func _ready() -> void:
 	MontagemDeCriatura.ligar_sinais_padrao(
 		_defesa, _vida, _dissolver, _ao_resolver_golpe, _ao_morrer, terminar_de_morrer
 	)
+	_tatica = TaticaDeCriatura.new(criatura)
 	_preparar_condicoes()
 	_posicao_sprite = _sprite.position
 	_escala_sprite = _sprite.scale
@@ -71,6 +79,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
 	_saltador.passar_tempo(delta)
+	_tatica.passar_tempo(delta)
 	if not is_on_floor():
 		velocity.y += _gravidade * delta
 	_maquina.processar_fisica(delta)
@@ -127,6 +136,92 @@ func andar_para_alvo() -> void:
 
 func parar() -> void:
 	velocity.x = 0.0
+
+
+## O herói atirou ou arremessou: passa a procurar abrigo.
+func perceber_disparo(origem: Vector2) -> void:
+	_tatica.perceber_disparo(origem)
+
+
+func tempo_sem_disparo() -> float:
+	return _tatica.tempo_sem_disparo()
+
+
+func quer_cobertura() -> bool:
+	if alvo == null:
+		return false
+	return _tatica.quer_cobertura(
+		get_world_2d().direct_space_state, global_position, altura_peito,
+		_distancia_horizontal(), alvo_ao_alcance(), alvo_percebido(),
+	)
+
+
+func protegido_do_disparo() -> bool:
+	return _tatica.protegido_do_disparo(get_world_2d().direct_space_state, global_position, altura_peito)
+
+
+func x_do_abrigo() -> float:
+	return _tatica.x_do_abrigo()
+
+
+func quer_flanquear() -> bool:
+	if alvo == null:
+		return false
+	return _tatica.quer_flanquear(
+		alvo.global_position.x, global_position.x, _distancia_horizontal(),
+		alvo_ao_alcance(), alvo_percebido(), _vida.vida_atual, _vida.vida_maxima,
+		_alcance_px(), meia_largura_corpo,
+		TaticaDeCriatura.xs_engajados(TaticaDeCriatura.aliados_em_pe(get_tree(), self, GRUPO_ALIADOS)),
+	)
+
+
+func x_do_flanco() -> float:
+	return _tatica.x_do_flanco()
+
+
+func quer_afastar() -> bool:
+	if alvo == null:
+		return false
+	virar_para_alvo()
+	var aliados := TaticaDeCriatura.aliados_em_pe(get_tree(), self, GRUPO_ALIADOS)
+	return _tatica.quer_afastar(
+		alvo_percebido(), _vida.vida_atual, _vida.vida_maxima,
+		TaticaDeCriatura.contar_aliados_perto(aliados, global_position.x),
+		_tem_espaco_atras(), false, false, alvo_ao_alcance(),
+	)
+
+
+func motivo_afastar() -> StringName:
+	return _tatica.motivo_afastar()
+
+
+func afastado_o_bastante() -> bool:
+	return _tatica.afastado_o_bastante(_distancia_horizontal(), 0.0)
+
+
+## Anda até `x` (ou corre em Disparada). True ao chegar / parede / beira.
+func andar_ate(x: float, correndo: bool = false) -> bool:
+	var falta := x - global_position.x
+	if absf(falta) <= CHEGOU_ANDAR:
+		parar()
+		return true
+	direcao_olhar = 1 if falta > 0.0 else -1
+	if is_on_wall() or not _tem_chao_na(float(direcao_olhar)):
+		parar()
+		return true
+	var base := MontagemDeCriatura.deslocamento_efetivo_pes(criatura, _condicoes)
+	var fracao := EscalaDnd.MULTIPLICADOR_DISPARADA if correndo else 1.0
+	velocity.x = direcao_olhar * EscalaDnd.deslocamento_para_velocidade(base * fracao)
+	return false
+
+
+## Recua de costas (Disparada), olhando para o alvo.
+func recuar() -> void:
+	if not _tem_chao_na(-float(direcao_olhar)):
+		parar()
+		return
+	var base := MontagemDeCriatura.deslocamento_efetivo_pes(criatura, _condicoes)
+	velocity.x = -direcao_olhar * EscalaDnd.deslocamento_para_velocidade(base * EscalaDnd.MULTIPLICADOR_DISPARADA)
 
 
 ## Diante de parede, degrau, vão ou queda que vale transpor, planeja o salto (regra em `SaltoDnd`; plano vazio se não há).
@@ -242,6 +337,15 @@ func _alcance_px() -> float:
 
 func _distancia_horizontal() -> float:
 	return absf(alvo.global_position.x - global_position.x)
+
+
+func _tem_espaco_atras() -> bool:
+	var costas := -float(direcao_olhar)
+	var peito := global_position + Vector2(0.0, -altura_peito)
+	return _tem_chao_na(costas) and SensorDeTerreno.linha_livre(
+		get_world_2d().direct_space_state, peito,
+		peito + Vector2(costas * TaticaDeCriatura.ESPACO_ATRAS_PX, 0.0), MASCARA_MUNDO,
+	)
 
 
 ## Área do Pseudópode: começa na borda do corpo e vai até o alcance da ficha (5 pés).

@@ -18,29 +18,11 @@ const MASCARA_MUNDO := 1
 ## Patrulha: anda nesta fração do deslocamento e considera que chegou a esta distância (px).
 const FRACAO_PATRULHA := 0.5
 const CHEGOU_PATRULHA := 6.0
-## Grupo onde a main põe todos os monstros: de lá saem os aliados das Táticas de Matilha.
+## Grupo onde a main põe todos os monstros: de lá saem os aliados das Táticas de Matilha / tática.
 const GRUPO_ALIADOS := &"monstros"
-## Cobertura: quanto tempo um tiro do herói ainda conta (s), de onde a busca começa e até onde vai (px), espera entre
-## buscas (s) e a distância mínima do herói para valer se esconder (px).
-const JANELA_DISPARO := 3.0
-const PASSO_ABRIGO := 16.0
-const ALCANCE_ABRIGO_PX := 192.0
-const INTERVALO_ABRIGO := 2.0
-const DISTANCIA_MINIMA_ABRIGO := 96.0
-## Estratégia: espera entre afastamentos (s, uma rodada), folga além do "perto" para considerar a distância recuperada (px), espaço
-## livre atrás para recuar (px), segurança de quem recua ferido (px) e até onde um aliado conta como "por perto" (px).
-const INTERVALO_AFASTAR := 1.5
-const FOLGA_DISTANCIA_PX := 64.0
-const ESPACO_ATRAS_PX := 24.0
-const DISTANCIA_SEGURA_FERIDO_PX := 256.0
-const ALCANCE_ALIADO_PX := 256.0
-const MOTIVO_DISTANCIA := &"distancia"
-const MOTIVO_FERIDO := &"ferido"
-## Flanqueio: espera entre manobras (s), até onde um aliado engajado puxa este monstro (px) e quanto antes do alvo ele
-## para do lado oposto (fração do alcance).
-const INTERVALO_FLANCO := 6.0
-const ALCANCE_FLANCO_PX := 256.0
-const FRACAO_ALCANCE_FLANCO := 0.6
+## Motivos de afastamento (espelho de `TaticaDeCriatura` para os estados).
+const MOTIVO_DISTANCIA := TaticaDeCriatura.MOTIVO_DISTANCIA
+const MOTIVO_FERIDO := TaticaDeCriatura.MOTIVO_FERIDO
 
 ## Bloco de estatísticas. Padrão: data/goblin_minion.tres.
 @export var criatura: CriaturaRPG
@@ -82,16 +64,6 @@ var direcao_olhar: int = -1
 var _rng := RandomNumberGenerator.new()
 var _tempo_desde_ataque: float = INF
 var _saltador: SaltadorDeMonstro
-var _origem_disparo: Vector2 = Vector2.ZERO
-var _tempo_desde_disparo: float = INF
-var _tempo_desde_abrigo: float = INF
-var _x_abrigo: float = 0.0
-var _tempo_desde_afastar: float = INF
-var _motivo_afastar: StringName = MOTIVO_DISTANCIA
-var _ja_recuou_ferido: bool = false
-var _prefere_distancia: bool = false
-var _tempo_desde_flanco: float = INF
-var _x_flanco: float = 0.0
 var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var _empurrao_restante: float = 0.0
 ## Patrulha: onde começou (X, sorteado ao 1º passo) e o lado do próximo extremo.
@@ -101,6 +73,8 @@ var _lado_patrulha: int = 1
 var _arremesso: ArremessoDeCriatura
 ## Disparo e Sensibilidade à Luz Solar (ficha).
 var _disparo: DisparoDeCriatura
+## Cobertura, flanqueio e estratégia.
+var _tatica: TaticaDeCriatura
 ## Percepção passiva de quem olha. 0 (ninguém passou) = o goblin sempre se esconde.
 var _percepcao_passiva: int = 0
 var _rolou_furtividade: bool = false
@@ -135,7 +109,7 @@ func _ready() -> void:
 	)
 	_arremesso = ArremessoDeCriatura.new(criatura)
 	_disparo = DisparoDeCriatura.new(criatura)
-	_prefere_distancia = EstrategiaDeMonstro.prefere_distancia(criatura.dano_medio(criatura.golpe()), criatura.dano_medio_a_distancia())
+	_tatica = TaticaDeCriatura.new(criatura)
 	_sprite.modulate = cor_corpo
 	_preparar_condicoes()
 	_preparar_golpe()
@@ -145,10 +119,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_tempo_desde_ataque += delta
 	_saltador.passar_tempo(delta)
-	_tempo_desde_disparo += delta
-	_tempo_desde_abrigo += delta
-	_tempo_desde_afastar += delta
-	_tempo_desde_flanco += delta
+	_tatica.passar_tempo(delta)
 	if not is_on_floor():
 		velocity.y += _gravidade * delta
 	_maquina.processar_fisica(delta)
@@ -279,39 +250,31 @@ func _linha_de_tiro_livre() -> bool:
 
 ## O herói atirou ou arremessou de `origem`: quem percebe passa a procurar abrigo.
 func perceber_disparo(origem: Vector2) -> void:
-	_origem_disparo = origem
-	_tempo_desde_disparo = 0.0
+	_tatica.perceber_disparo(origem)
 
 
 ## Segundos desde o último disparo do herói que este monstro percebeu.
 func tempo_sem_disparo() -> float:
-	return _tempo_desde_disparo
+	return _tatica.tempo_sem_disparo()
 
 
-## Há abrigo perto contra o tiro recente do herói? Guarda o X dele (`x_do_abrigo`). Quem já está protegido fica; quem está
-## no corpo a corpo ou perto demais do herói não se esconde.
+## Há abrigo perto contra o tiro recente do herói? Guarda o X dele (`x_do_abrigo`).
 func quer_cobertura() -> bool:
-	if alvo == null or _tempo_desde_disparo > JANELA_DISPARO or _tempo_desde_abrigo < INTERVALO_ABRIGO:
+	if alvo == null:
 		return false
-	if alvo_ao_alcance() or not alvo_percebido() or _distancia_horizontal() < DISTANCIA_MINIMA_ABRIGO:
-		return false
-	_tempo_desde_abrigo = 0.0
-	if protegido_do_disparo():
-		_x_abrigo = global_position.x  # já está atrás da parede: só fica
-		return true
-	_x_abrigo = BuscaDeAbrigo.procurar(get_world_2d().direct_space_state, global_position, altura_mao, _origem_disparo,
-		PASSO_ABRIGO, ceili(ALCANCE_ABRIGO_PX / PASSO_ABRIGO), MASCARA_MUNDO)
-	return not is_nan(_x_abrigo)
+	return _tatica.quer_cobertura(
+		get_world_2d().direct_space_state, global_position, altura_mao,
+		_distancia_horizontal(), alvo_ao_alcance(), alvo_percebido(),
+	)
 
 
 ## Há parede entre o último disparo do herói e o peito deste monstro.
 func protegido_do_disparo() -> bool:
-	return not SensorDeTerreno.linha_livre(get_world_2d().direct_space_state, _origem_disparo,
-		global_position + Vector2(0.0, -altura_mao), MASCARA_MUNDO)
+	return _tatica.protegido_do_disparo(get_world_2d().direct_space_state, global_position, altura_mao)
 
 
 func x_do_abrigo() -> float:
-	return _x_abrigo
+	return _tatica.x_do_abrigo()
 
 
 ## Ritmo pela iniciativa da ficha (Goblin: +2 -> um ataque a cada 0,8 s).
@@ -578,91 +541,60 @@ func _tem_matilha_com_o_alvo() -> bool:
 	return TaticasDeMatilha.vale(alvo.global_position, _posicoes_dos_aliados())
 
 
-## Onde estão os aliados em pé (nem Caídos nem mortos) do grupo de monstros.
+## Onde estão os aliados em pé (nem Caídos nem mortos) do grupo de monstros (Matilha ainda usa só Goblin).
 func _posicoes_dos_aliados() -> Array[Vector2]:
 	var posicoes: Array[Vector2] = []
-	for aliado in _aliados_em_pe():
+	for aliado in _aliados_goblin_em_pe():
 		posicoes.append(aliado.global_position)
 	return posicoes
 
 
-func _aliados_em_pe() -> Array[Goblin]:
+func _aliados_goblin_em_pe() -> Array[Goblin]:
 	var aliados: Array[Goblin] = []
-	for no in get_tree().get_nodes_in_group(GRUPO_ALIADOS):
+	for no in TaticaDeCriatura.aliados_em_pe(get_tree(), self, GRUPO_ALIADOS):
 		var aliado := no as Goblin
-		if aliado != null and aliado != self and not aliado.is_queued_for_deletion() \
-				and not aliado.esta_caido() and aliado.vida_atual() > 0:
+		if aliado != null:
 			aliados.append(aliado)
 	return aliados
 
 
-## Um aliado já segura o herói de perto do MEU lado e eu ainda não o alcancei: vale dar a volta para o lado oposto
-## (flanqueio). Guarda o X do outro lado (`x_do_flanco`). Uma vez a cada 6 s.
+## Um aliado já segura o herói de perto do MEU lado e eu ainda não o alcancei: vale flanquear.
 func quer_flanquear() -> bool:
-	if alvo == null or not alvo_percebido() or alvo_ao_alcance() or _tempo_desde_flanco < INTERVALO_FLANCO:
+	if alvo == null:
 		return false
-	if _vida.vida_atual * 3 <= _vida.vida_maxima:
-		return false  # ferido não se arrisca: recua
-	if _distancia_horizontal() > ALCANCE_FLANCO_PX:
-		return false
-	var meu_lado := Flanqueio.lado(alvo.global_position.x, global_position.x)
-	for aliado in _aliados_em_pe():
-		if aliado.alvo_ao_alcance() and Flanqueio.lado(alvo.global_position.x, aliado.global_position.x) == meu_lado:
-			_tempo_desde_flanco = 0.0
-			_x_flanco = alvo.global_position.x - meu_lado * (_alcance_px() * FRACAO_ALCANCE_FLANCO + meia_largura_corpo)
-			return true
-	return false
+	return _tatica.quer_flanquear(
+		alvo.global_position.x, global_position.x, _distancia_horizontal(),
+		alvo_ao_alcance(), alvo_percebido(), _vida.vida_atual, _vida.vida_maxima,
+		_alcance_px(), meia_largura_corpo,
+		TaticaDeCriatura.xs_engajados(TaticaDeCriatura.aliados_em_pe(get_tree(), self, GRUPO_ALIADOS)),
+	)
 
 
 func x_do_flanco() -> float:
-	return _x_flanco
+	return _tatica.x_do_flanco()
 
 
-## Estratégia: recua para manter distância (quem atira de longe tão bem quanto bate de perto) enquanto há espaço e o
-## herói ainda não está no corpo a corpo (aí vale a espada) ou, ferido, para junto
-## dos aliados. Guarda o motivo (`motivo_afastar`). Uma vez por vida no caso do ferido.
+## Estratégia: manter distância ou recuar ferido. Guarda o motivo (`motivo_afastar`).
 func quer_afastar() -> bool:
-	if alvo == null or not alvo_percebido():
+	if alvo == null:
 		return false
 	virar_para_alvo()
-	if _quer_recuar_ferido():
-		return _comecar_a_afastar(MOTIVO_FERIDO)
-	if _quer_manter_distancia():
-		return _comecar_a_afastar(MOTIVO_DISTANCIA)
-	return false
+	var aliados := TaticaDeCriatura.aliados_em_pe(get_tree(), self, GRUPO_ALIADOS)
+	return _tatica.quer_afastar(
+		alvo_percebido(), _vida.vida_atual, _vida.vida_maxima,
+		TaticaDeCriatura.contar_aliados_perto(aliados, global_position.x),
+		_tem_espaco_atras(), _disparo.tem_flecha() or _arremesso.tem_arma(),
+		_perto_para_oarco(), alvo_ao_alcance(),
+	)
 
 
 func motivo_afastar() -> StringName:
-	return _motivo_afastar
+	return _tatica.motivo_afastar()
 
 
 ## Já se afastou o bastante para o motivo atual?
 func afastado_o_bastante() -> bool:
-	if _motivo_afastar == MOTIVO_FERIDO:
-		return _distancia_horizontal() >= DISTANCIA_SEGURA_FERIDO_PX
-	return _distancia_horizontal() > EscalaDnd.pes_para_pixels(perto_pes) + FOLGA_DISTANCIA_PX
-
-
-func _comecar_a_afastar(motivo: StringName) -> bool:
-	_motivo_afastar = motivo
-	_tempo_desde_afastar = 0.0
-	_ja_recuou_ferido = _ja_recuou_ferido or motivo == MOTIVO_FERIDO
-	return true
-
-
-func _quer_recuar_ferido() -> bool:
-	if _ja_recuou_ferido or _tempo_desde_afastar < INTERVALO_AFASTAR:
-		return false
-	var aliados_perto := 0
-	for posicao in _posicoes_dos_aliados():
-		if absf(posicao.x - global_position.x) <= ALCANCE_ALIADO_PX:
-			aliados_perto += 1
-	return EstrategiaDeMonstro.deve_recuar_ferido(_vida.vida_atual, _vida.vida_maxima, aliados_perto) and _tem_espaco_atras()
-
-
-func _quer_manter_distancia() -> bool:
-	return _prefere_distancia and (_disparo.tem_flecha() or _arremesso.tem_arma()) and _tempo_desde_afastar >= INTERVALO_AFASTAR \
-		and _perto_para_oarco() and not alvo_ao_alcance() and _tem_espaco_atras()
+	return _tatica.afastado_o_bastante(_distancia_horizontal(), EscalaDnd.pes_para_pixels(perto_pes))
 
 
 ## Chão firme e sem parede para recuar de costas.
@@ -670,7 +602,7 @@ func _tem_espaco_atras() -> bool:
 	var costas := -float(direcao_olhar)
 	var peito := global_position + Vector2(0.0, -altura_mao)
 	return _tem_chao_na(costas) and SensorDeTerreno.linha_livre(get_world_2d().direct_space_state, peito,
-		peito + Vector2(costas * ESPACO_ATRAS_PX, 0.0), MASCARA_MUNDO)
+		peito + Vector2(costas * TaticaDeCriatura.ESPACO_ATRAS_PX, 0.0), MASCARA_MUNDO)
 
 
 func _deslocamento_pes() -> float:

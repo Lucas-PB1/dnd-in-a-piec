@@ -47,31 +47,19 @@ Fonte: `history-lilac.vercel.app`, arquivos `Monster Manual/09 - Monsters (H).md
 - Gray Ooze, Ankheg, Minotauro e Wight também saltam via `SaltadorDeMonstro`. Ainda **não**: Patrulha e Fuga Ágil
   saltarem na beira; esperar em vantagem de terreno.
 
-## IA: cobertura contra ataques à distância
-- A main avisa os monstros quando o herói atira ou arremessa (`perceber_disparo(origem)`). Se o monstro percebe o herói,
-  não está no corpo a corpo nem a menos de 3 ladrilhos, ele procura abrigo (`quer_cobertura`): ponto a até 6 ladrilhos,
-  alcançável a pé, onde uma parede corta a linha entre o tiro e o peito dele (`BuscaDeAbrigo` + regra `Abrigo`).
-- Estado `Cobrindo`: corre (Disparada) até o abrigo; já protegido, fica onde está. Espera o herói ficar 2 s sem atirar
-  (máx. 5 s) ou chegar ao corpo a corpo, e volta a perseguir.
-- Arqueiros e arremessadores só atiram com a linha livre (`pode_atirar`/`pode_arremessar` olham o mundo): não gastam
-  flecha na parede.
-- Limite: o abrigo tem de ser alcançável andando; paredes que bloqueiam o caminho não servem (pular para o abrigo fica para depois).
-
-## IA: estratégia (manter distância e recuar ferido)
-- Regra pura `EstrategiaDeMonstro` + estado `Afastando`. Vale a distância quando o ataque à distância da ficha bate
-  pelo menos tanto quanto o corpo a corpo (`CriaturaRPG.dano_medio_a_distancia`, soma o dano adicional): hoje Goblin
-  Warrior, Hobgoblin, Kobold e Goblin Minion.
-- Decisão do usuário: **recua enquanto for vantajoso; se o herói chegar perto (corpo a corpo), usa a espada.** Ou seja:
-  com o herói a menos de 20 pés mas fora do alcance da arma, recua na Disparada (até 1 s, a cada 1,5 s, só se tiver
-  chão e espaço atrás) e volta a atirar; encostou, luta de perto; encurralado, luta.
-- Ferido (1/3 da vida ou menos) e com aliado em pé a até 8 ladrilhos: recua até 8 ladrilhos do herói (até 3 s), uma vez por vida.
-- Não feito: esperar em vantagem de terreno.
-
-## IA: flanqueio (só manobra)
-- Decisão do usuário: **flanquear não dá vantagem no ataque**; é só uma estratégia de posição.
-- Quando um aliado já segura o herói de perto (corpo a corpo) do MESMO lado em que este monstro está, a menos de
-  8 ladrilhos, ele corre (Disparada) para o lado oposto do herói, passando por ele (monstros não colidem com o herói),
-  e volta a perseguir (estado `Flanqueando`, regra `Flanqueio.lado`). No máximo uma manobra a cada 6 s; ferido não flanqueia.
+## IA: cobertura / estratégia / flanqueio (`TaticaDeCriatura`)
+- Capacidade compartilhada em `core/regras/criaturas/tatica_de_criatura.gd` (timers + “quer agora?”). Regras puras:
+  `Abrigo` / `BuscaDeAbrigo`, `EstrategiaDeMonstro`, `Flanqueio`. Estados `Cobrindo` / `Afastando` / `Flanqueando` ficam
+  na feature.
+- **Política de quem liga:** clã Goblin (cena + variantes) e **Gray Ooze** usam as três. Chefes (Ankheg, Minotauro,
+  Wight, Quimera) ficam de fora por enquanto — padrão próprio de combate.
+- A main avisa quem tem `perceber_disparo(origem)` quando o herói atira/arremessa. Cobertura: fora do corpo a corpo e
+  a ≥ 3 ladrilhos, procura abrigo a até 6 ladrilhos (`quer_cobertura`). Estado `Cobrindo`: Disparada até o abrigo;
+  espera 2 s sem tiro (máx. 5 s) ou corpo a corpo. Limite: abrigo andando; pular para abrigo fica para depois.
+- Estratégia (`Afastando`): manter distância se o ataque à distância da ficha ≥ corpo a corpo (Goblin Warrior,
+  Hobgoblin, Kobold, Minion); Ooze não prefere distância. Ferido (≤ 1/3) com aliado perto: recua uma vez por vida.
+- Flanqueio: só manobra (sem vantagem). Aliado engajado no mesmo lado → Disparada ao lado oposto (`Flanqueando`),
+  a cada 6 s; ferido não flanqueia. Aliados = grupo `monstros` com duck typing (`alvo_ao_alcance` / `vida_atual`).
 
 ## Chefe da fase 3: Ankheg (Monster Manual 2024, ficha conferida com o usuário no Códice, `Monster Manual/02 - Monstros (A)`)
 Monstruosidade Grande, Imparcial · **ND 2 (450 XP)** · CA 14 · **PV 45 (6d10+12)** · 30 pés, escavação 10 pés · FOR 17 DES 11 CON 14 INT 1 SAB 13 CAR 6 · Visão no Escuro e Sentido Sísmico 60 pés · iniciativa +0.
@@ -120,7 +108,7 @@ Monstruosidade Grande, Caótica e Má · **ND 6 (2.300 XP)** · CA 14 · **PV 11
 
 **Kit sempre** (toda criatura, `MontagemDeCriatura` + componentes + estados mínimos Parado/Perseguindo/Atacando/Morrendo/Caido/Pulando): vida/CA/resistências/imunidades/vulnerabilidades/fortitude/tamanho; perceber → perseguir (andar com Lentidão + salto) → melee da ficha; empurrão; morte com Dissolver.
 
-**Capacidades da ficha** (não são “extra do Goblin”; o comportamento deve viver em `core/` e ligar pelo `.tres`): **arremesso** (`ArremessoDeCriatura` + `ProjetilArremesso` — Goblin; outras fichas com `arremessos > 0` reutilizam), **disparo + sensível ao sol** (`DisparoDeCriatura` — Goblin e Wight), furtividade/esconder, Fuga Ágil, Táticas de Matilha, cobertura/estratégia/flanqueio, `linha_*`, `chifrada_*` (investida), `escavacao_pes`, `drenar_*`, `garra_*`, corrosão. Voo ainda não é campo geral (`voo_pes` quando houver 2º usuário).
+**Capacidades da ficha** (não são “extra do Goblin”; o comportamento deve viver em `core/` e ligar pelo `.tres`): **arremesso** (`ArremessoDeCriatura` + `ProjetilArremesso` — Goblin), **disparo + sensível ao sol** (`DisparoDeCriatura` — Goblin e Wight), **cobertura/estratégia/flanqueio** (`TaticaDeCriatura` — Goblin e Gray Ooze; chefes off), furtividade/esconder, Fuga Ágil, Táticas de Matilha, `linha_*`, `chifrada_*` (investida), `escavacao_pes`, `drenar_*`, `garra_*`, corrosão. Voo ainda não é campo geral (`voo_pes` quando houver 2º usuário).
 
 **Específico de verdade** (fica na feature): Ooze — squash visual no Caído; Ankheg — encenação cavar/emergir; Minotauro — quebrar `quebravel`; Wight — despertar → acompanhantes na main; Quimera — roleta de padrões + fúria + rugido + combo multi-janela. Hit-stun: minions entram em `LevandoDano`; chefes só piscam (mesma reação, política diferente).
 

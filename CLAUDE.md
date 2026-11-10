@@ -77,7 +77,7 @@ core/componentes/        Hitbox, Hurtbox, Defesa, Health, TextoFlutuante, Condic
 core/regras/efeitos/     EfeitoDeGolpe e EfeitosDeTalento (um efeito de talento por classe, que o Golpe carrega)
 core/regras/base/        Dado, Atributos, EscalaDnd, TiposDano, CompraDePontos, Pericia, Proficiencias
 core/regras/combate/     Combate, Golpe, Equipamento, Inventario, ItemAleatorio
-core/regras/criaturas/   MontagemDeCriatura, DisparoDeCriatura, SaltoDnd, Abrigo, Estrategia, Flanqueio…
+core/regras/criaturas/   MontagemDeCriatura, Disparo/Arremesso/TaticaDeCriatura, SaltoDnd, Abrigo, Flanqueio…
 core/regras/mundo/       Ficha, Salvamento, Missao, Loja, Saque
 core/dados/              Item, Arma, Municao, PoseGolpe, Armadura, ClasseRPG, CriaturaRPG, PacoteInicial,
                          AntecedenteRPG, TalentoRPG, EntradaCompendio
