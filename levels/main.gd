@@ -308,6 +308,7 @@ func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao
 
 func _ao_cair() -> void:
 	_pausar(true)
+	_musica.tocar(Musica.DERROTA)
 	var tela: TelaDerrota = CENA_DERROTA.instantiate()
 	tela.tentar_de_novo_escolhido.connect(_tentar_de_novo.bind(tela))
 	_interface.add_child(tela)
@@ -319,6 +320,7 @@ func _tentar_de_novo(tela: TelaDerrota) -> void:
 	tela.queue_free()
 	_jogador.reviver()
 	_nascer_armadilhas()
+	_musica.tocar_da_fase(_fase.indice)
 	_pausar(false)
 
 

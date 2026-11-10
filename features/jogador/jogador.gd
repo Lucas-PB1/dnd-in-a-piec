@@ -252,12 +252,14 @@ func ao_mudar_ficha() -> void:
 func receber_pacote(pacote: PacoteInicial) -> void:
 	if pacote == null:
 		return
-	inventario.limpar()
-	for item in pacote.itens:
-		var meu := item.duplicate() as Item
-		inventario.adicionar(meu, pacote.itens[item])
-		if item in pacote.equipar:
-			inventario.equipar(meu)
+	inventario.em_silencio(func() -> void:
+		inventario.limpar()
+		for item in pacote.itens:
+			var meu := item.duplicate() as Item
+			inventario.adicionar(meu, pacote.itens[item])
+			if item in pacote.equipar:
+				inventario.equipar(meu)
+	)
 
 
 ## Armadura vestida (espaço corpo), ou null.

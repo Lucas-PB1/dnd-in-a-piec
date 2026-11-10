@@ -7,6 +7,10 @@ extends RefCounted
 
 ## Emitido sempre que algo muda (adicionou, equipou, desequipou, jogou fora).
 signal mudou
+## Item entrou na mochila (saque, baú, chão…). Pacote e save usam `em_silencio`.
+signal item_obtido(item: Item)
+## Item acabou de ser equipado. Pacote e save usam `em_silencio`.
+signal item_equipado(item: Item)
 
 ## Máximo de lugares na mochila (uma pilha ocupa 1).
 var capacidade: int
@@ -19,10 +23,29 @@ var _equipados: Dictionary[StringName, Item] = {}
 var _penalidades: Dictionary[Item, int] = {}
 ## Quantidade de cada pilha (itens fora daqui valem 1).
 var _quantidades: Dictionary[Item, int] = {}
+## > 0 = não emite `item_obtido` / `item_equipado` (pacote inicial, save).
+var _silencio_de_item: int = 0
 
 
 func _init(capacidade_maxima: int = 12) -> void:
 	capacidade = capacidade_maxima
+
+
+## Roda `acao` sem avisar sons de pegar/equipar (restauração e pacote).
+func em_silencio(acao: Callable) -> void:
+	_silencio_de_item += 1
+	acao.call()
+	_silencio_de_item -= 1
+
+
+func _avisar_obtido(item: Item) -> void:
+	if _silencio_de_item == 0:
+		item_obtido.emit(item)
+
+
+func _avisar_equipado(item: Item) -> void:
+	if _silencio_de_item == 0:
+		item_equipado.emit(item)
 
 
 func esta_cheio() -> bool:
@@ -43,6 +66,7 @@ func adicionar(item: Item, quantidade: int = 1) -> bool:
 		if quantidade > 1:
 			_quantidades[item] = quantidade
 	mudou.emit()
+	_avisar_obtido(item)
 	return true
 
 
@@ -84,6 +108,7 @@ func equipar(item: Item) -> bool:
 		_equipados.erase(atual)
 	_equipados[destino] = item
 	mudou.emit()
+	_avisar_equipado(item)
 	return true
 
 

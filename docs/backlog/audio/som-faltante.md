@@ -8,7 +8,7 @@ area: audio
 # Som: o que falta
 
 ## Falta
-Sons próprios de cada monstro (aviso e voz), música de derrota, ambiente por fase, equipar/pegar item, mixagem por distância, mais faixas (batalha só na Ruína e Fortaleza).
+Sons próprios de cada monstro (aviso e voz), mixagem por distância, mais faixas (batalha só na Ruína e Fortaleza).
 
 ## Onde
 `levels/sons.gd`, `levels/musica.gd`, `data/` / `assets/audio/`

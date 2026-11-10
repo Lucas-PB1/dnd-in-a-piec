@@ -123,21 +123,23 @@ static func montar_ficha(dados: Dictionary) -> Ficha:
 
 ## Esvazia a mochila e põe de volta o que foi salvo (itens novos, com o mesmo desgaste).
 static func restaurar_inventario(dados: Dictionary, inventario: Inventario) -> void:
-	var mochila: Dictionary = dados.get("mochila", {})
-	inventario.limpar()
-	var guardados: Array[Item] = []
-	for linha: Dictionary in mochila.get("itens", []):
-		var modelo := item_chamado(str(linha.get("nome", "")))
-		if modelo == null:
-			guardados.append(null)  # item que não existe mais: segura o número da posição
-			continue
-		var copia := _copia_do_modelo(modelo, int(linha.get("bonus_magico", 0)))
-		inventario.adicionar_com_desgaste(copia, int(linha.get("desgaste", 0)), int(linha.get("quantidade", 1)))
-		guardados.append(copia)
-	for indice in mochila.get("equipados", []):
-		var item: Item = guardados[int(indice)] if int(indice) < guardados.size() else null
-		if item != null:
-			inventario.equipar(item)
+	inventario.em_silencio(func() -> void:
+		var mochila: Dictionary = dados.get("mochila", {})
+		inventario.limpar()
+		var guardados: Array[Item] = []
+		for linha: Dictionary in mochila.get("itens", []):
+			var modelo := item_chamado(str(linha.get("nome", "")))
+			if modelo == null:
+				guardados.append(null)  # item que não existe mais: segura o número da posição
+				continue
+			var copia := _copia_do_modelo(modelo, int(linha.get("bonus_magico", 0)))
+			inventario.adicionar_com_desgaste(copia, int(linha.get("desgaste", 0)), int(linha.get("quantidade", 1)))
+			guardados.append(copia)
+		for indice in mochila.get("equipados", []):
+			var item: Item = guardados[int(indice)] if int(indice) < guardados.size() else null
+			if item != null:
+				inventario.equipar(item)
+	)
 
 
 ## Cópia nova do item do jogo; arma mágica salva volta com o mesmo bônus.

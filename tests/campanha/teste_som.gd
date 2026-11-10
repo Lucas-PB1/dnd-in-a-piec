@@ -48,17 +48,26 @@ func _testar_no_jogo() -> void:
 	var jogador: Jogador = main.get_node("Jogador")
 	main.tirar_criaturas()
 	_checar(musica.faixa_atual == Musica.TITULO and musica.esta_tocando(), "a Clareira toca a música da floresta")
+	_checar(musica.ambiente_atual == Musica.AMBIENTE_FLORESTA and musica.ambiente_esta_tocando(), "a Clareira toca o ambiente da floresta")
 	var antes := musica.faixa_atual
 	musica.tocar(Musica.TITULO)
 	_checar(musica.faixa_atual == antes and musica.esta_tocando(), "pedir a mesma faixa não recomeça")
+	_checar(musica.ambiente_atual == "" and not musica.ambiente_esta_tocando(), "tela de título cala o ambiente")
 	musica.tocar_da_fase(3)
 	_checar(musica.faixa_atual == Musica.TAVERNA, "a fase 3 troca para a música da trilha")
+	_checar(musica.ambiente_atual == Musica.AMBIENTE_FLORESTA, "a fase 3 mantém o ambiente da floresta")
 	musica.tocar_da_fase(5)
 	_checar(musica.faixa_atual == Musica.BATALHA, "a fase 5 troca para a música de batalha")
+	_checar(musica.ambiente_atual == Musica.AMBIENTE_RUINAS, "a fase 5 toca o ambiente das ruínas")
 	musica.tocar_da_fase(8)
 	_checar(musica.faixa_atual == Musica.CAVERNA, "a fase 8 toca a música da caverna")
+	_checar(musica.ambiente_atual == Musica.AMBIENTE_SUBTERRANEO, "a fase 8 toca o ambiente subterrâneo")
 	musica.tocar_da_fase(10)
 	_checar(musica.faixa_atual == Musica.CHEFE, "a fase do chefe final toca a música de chefe")
+	_checar(musica.ambiente_atual == Musica.AMBIENTE_COVIL, "o Covil toca o ambiente de lava")
+	musica.tocar(Musica.DERROTA)
+	_checar(musica.faixa_atual == Musica.DERROTA and musica.esta_tocando(), "a derrota toca a música de derrota")
+	_checar(musica.ambiente_atual == "", "a derrota cala o ambiente")
 	musica.tocar_da_fase(1)
 
 	# Efeitos
@@ -91,6 +100,15 @@ func _testar_no_jogo() -> void:
 	_checar(sons.tocados.get(&"folego", 0) == 1, "usar o Fôlego toca o brilho de cura")
 	jogador.comecou_a_morrer.emit()
 	_checar(sons.tocados.get(&"morte_heroi", 0) == 1, "morrer toca a queda do herói")
+	var espada := Salvamento.item_chamado("Espada Curta").duplicate() as Item
+	jogador.inventario.adicionar(espada)
+	_checar(sons.tocados.get(&"pegar_item", 0) == 1, "pegar um item toca o som de pegar")
+	jogador.inventario.equipar(espada)
+	_checar(sons.tocados.get(&"equipar", 0) == 1, "equipar toca o som de equipar")
+	jogador.inventario.em_silencio(func() -> void:
+		jogador.inventario.adicionar(Salvamento.item_chamado("Adaga").duplicate() as Item)
+	)
+	_checar(sons.tocados.get(&"pegar_item", 0) == 1, "pacote/save em silêncio não toca pegar")
 	# Criaturas e chefes
 	var chefe := Node2D.new()
 	for sinal in [&"despertou", &"morreu"]:

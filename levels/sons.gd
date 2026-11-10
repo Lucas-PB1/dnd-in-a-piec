@@ -27,6 +27,8 @@ const SONS := {
 	&"folego": [SINTETIZADO + "folego.wav"],
 	&"nivel": [SINTETIZADO + "nivel.wav"],
 	&"bau": [RPG + "creak1.ogg", RPG + "creak2.ogg"],
+	&"pegar_item": [RPG + "handleCoins.ogg", RPG + "handleCoins2.ogg"],
+	&"equipar": [RPG + "metalClick.ogg", RPG + "metalLatch.ogg", RPG + "clothBelt.ogg"],
 	&"clique": [INTERFACE_KENNEY + "click_001.ogg", INTERFACE_KENNEY + "click_002.ogg"],
 	&"abrir_tela": [INTERFACE_KENNEY + "open_001.ogg"],
 	&"fechar_tela": [INTERFACE_KENNEY + "close_001.ogg"],
@@ -39,7 +41,7 @@ const SONS := {
 ## Sons que saem no barramento da interface; o resto vai para os efeitos.
 const DA_INTERFACE: Array[StringName] = [&"clique", &"abrir_tela", &"fechar_tela", &"confirmar"]
 ## Volume (dB) de cada som que não toca no volume padrão.
-const VOLUMES := {&"golpe_monstro": -3.0, &"tremor": -2.0, &"passo": -9.0, &"pulo": -8.0, &"pouso": -5.0, &"golpe": -4.0, &"golpe_pesado": -2.0, &"clique": -4.0}
+const VOLUMES := {&"golpe_monstro": -3.0, &"tremor": -2.0, &"passo": -9.0, &"pulo": -8.0, &"pouso": -5.0, &"golpe": -4.0, &"golpe_pesado": -2.0, &"clique": -4.0, &"pegar_item": -4.0, &"equipar": -3.0}
 ## Sorteio do tom (1 = o original): cada vez soa um pouco diferente.
 const VARIACAO_DE_TOM := 0.07
 const VOZES_POR_BARRAMENTO := 8
@@ -121,6 +123,8 @@ func ligar_jogador(jogador: Jogador) -> void:
 	jogador.surto_ativo_mudou.connect(_ao_mudar_surto)
 	jogador.folego_mudou.connect(_ao_mudar_folego)
 	jogador.progressao_mudou.connect(_ao_mudar_progressao)
+	jogador.inventario.item_obtido.connect(_ao_obter_item)
+	jogador.inventario.item_equipado.connect(_ao_equipar_item)
 
 
 ## O abrir e fechar das telas de `interface` (pausa, inventário, opções...) soam.
@@ -286,3 +290,11 @@ func _ao_mudar_progressao(nivel: int, _experiencia: int, _proximo: int) -> void:
 
 func _ao_mudar_tela(tela: Control) -> void:
 	tocar(&"abrir_tela" if tela.visible else &"fechar_tela")
+
+
+func _ao_obter_item(_item: Item) -> void:
+	tocar(&"pegar_item")
+
+
+func _ao_equipar_item(_item: Item) -> void:
+	tocar(&"equipar")

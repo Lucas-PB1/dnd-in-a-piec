@@ -34,6 +34,10 @@ func _initialize() -> void:
 	_salvar("rugido", _rugido(1.0, 150.0, rng))
 	_salvar("rugido_morte", _rugido(1.6, 95.0, rng))
 	_salvar("tremor", _tremor(1.1, rng))
+	_salvar("ambiente_floresta", _ambiente_floresta(8.0, rng))
+	_salvar("ambiente_ruinas", _ambiente_ruinas(8.0, rng))
+	_salvar("ambiente_subterraneo", _ambiente_subterraneo(8.0, rng))
+	_salvar("ambiente_covil", _ambiente_covil(8.0, rng))
 	print("Sons gerados em ", PASTA)
 	quit()
 
@@ -208,6 +212,94 @@ func _somar(trilhas: Array) -> PackedFloat32Array:
 		for i in t.size():
 			saida[i] += t[i]
 	return saida
+
+
+## Vento + folhagem leve (Floresta: Clareira, Trilha, Pântano).
+func _ambiente_floresta(duracao: float, rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var n := int(duracao * TAXA)
+	var saida := PackedFloat32Array()
+	saida.resize(n)
+	var filtro := 0.0
+	var folha := 0.0
+	for i in n:
+		var t := float(i) / TAXA
+		filtro += 0.012 * (rng.randf_range(-1.0, 1.0) - filtro)
+		folha += 0.04 * (rng.randf_range(-1.0, 1.0) - folha)
+		var ondular := 0.55 + 0.45 * sin(TAU * 0.07 * t)
+		var chilrear := 0.0
+		if fmod(t * 0.37, 1.0) < 0.04:
+			chilrear = sin(TAU * lerpf(2200.0, 3200.0, fmod(t * 11.0, 1.0)) * t) * 0.08
+		saida[i] = filtro * 0.55 * ondular + folha * 0.12 + chilrear
+	return _suavizar_bordas(saida, 0.2)
+
+
+## Vento seco entre pedras (Ruínas: Ruína, Fortaleza, Labirinto).
+func _ambiente_ruinas(duracao: float, rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var n := int(duracao * TAXA)
+	var saida := PackedFloat32Array()
+	saida.resize(n)
+	var filtro := 0.0
+	var eco := 0.0
+	for i in n:
+		var t := float(i) / TAXA
+		filtro += 0.008 * (rng.randf_range(-1.0, 1.0) - filtro)
+		eco += 0.002 * (rng.randf_range(-1.0, 1.0) - eco)
+		var sopro := 0.6 + 0.4 * sin(TAU * 0.05 * t + 1.2)
+		var estalo := 0.0
+		if fmod(t * 0.19 + 0.3, 1.0) < 0.008:
+			estalo = rng.randf_range(-0.25, 0.25) * (1.0 - fmod(t * 40.0, 1.0))
+		saida[i] = filtro * 0.5 * sopro + eco * 0.35 + estalo
+	return _suavizar_bordas(saida, 0.2)
+
+
+## Pingos e zumbido úmido (Subterrâneo: Mina, Caverna, Cripta).
+func _ambiente_subterraneo(duracao: float, rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var n := int(duracao * TAXA)
+	var saida := PackedFloat32Array()
+	saida.resize(n)
+	var filtro := 0.0
+	var fase := 0.0
+	for i in n:
+		var t := float(i) / TAXA
+		filtro += 0.004 * (rng.randf_range(-1.0, 1.0) - filtro)
+		fase += TAU * 48.0 / TAXA
+		var zumbido := sin(fase) * 0.12 + sin(fase * 0.51) * 0.06
+		var pingo := 0.0
+		var ciclo := fmod(t * 0.28 + sin(t) * 0.05, 1.0)
+		if ciclo < 0.012:
+			var u := ciclo / 0.012
+			pingo = sin(TAU * lerpf(1400.0, 600.0, u) * u * 0.012) * (1.0 - u) * 0.35
+		saida[i] = filtro * 0.4 + zumbido + pingo
+	return _suavizar_bordas(saida, 0.25)
+
+
+## Rugido baixo de lava (Covil).
+func _ambiente_covil(duracao: float, rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var n := int(duracao * TAXA)
+	var saida := PackedFloat32Array()
+	saida.resize(n)
+	var filtro := 0.0
+	var fase := 0.0
+	for i in n:
+		var t := float(i) / TAXA
+		filtro += 0.02 * (rng.randf_range(-1.0, 1.0) - filtro)
+		fase += TAU * lerpf(42.0, 55.0, 0.5 + 0.5 * sin(TAU * 0.11 * t)) / TAXA
+		var bolha := 0.0
+		if fmod(t * 0.33 + 0.1, 1.0) < 0.05:
+			var u := fmod(t * 0.33 + 0.1, 1.0) / 0.05
+			bolha = sin(TAU * 90.0 * u) * (1.0 - u) * 0.2
+		saida[i] = sin(fase) * 0.55 + filtro * 0.45 + bolha
+	return _suavizar_bordas(saida, 0.25)
+
+
+## Fade nas pontas para o loop (restart no `finished`) não estalar.
+func _suavizar_bordas(amostras: PackedFloat32Array, janela: float) -> PackedFloat32Array:
+	var n_janela := mini(int(janela * TAXA), amostras.size() / 2)
+	for i in n_janela:
+		var t := float(i) / n_janela
+		amostras[i] *= t
+		amostras[amostras.size() - 1 - i] *= t
+	return amostras
 
 
 ## Normaliza para o pico e grava como WAV 16 bits mono.

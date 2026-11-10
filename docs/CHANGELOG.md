@@ -3,6 +3,8 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Áudio: **ambiente por tema** (Floresta / Ruínas / Subterrâneo / Covil) em loop baixo sob a música; some no título, derrota e vitória. WAV sintetizados.
+- Áudio: música de **derrota** (Robin Lamb, CC0) ao cair; SFX Kenney de **pegar item** e **equipar** (`Inventario.item_obtido` / `item_equipado`, silêncio em pacote/save).
 - Fundos próprios do **Pântano** (Gothicvania Swamp) e da **Ruína** (GothicVania Cemetery), CC0 ansimuz; temas `pantano` e `ruina` em `FundoParalaxe`.
 - Refino visual do Goblin Minion (golpe/arremesso SpriteCook): **aceito como está** — a adaga deforma em poucos quadros, mas no ritmo do jogo quase não se nota; sem gastar créditos nem editar pixel.
 - Lava no Covil (fase 10): poças com **1d6 de fogo** a cada rodada enquanto o herói está em cima; `Combate.resolver_ambiente` + feature `lava`. Teste `teste_lava`.

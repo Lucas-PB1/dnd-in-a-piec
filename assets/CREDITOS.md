@@ -22,7 +22,8 @@
 | Sons de interface (cliques, abrir, fechar, confirmar) | Kenney Vleugels (CC0) | https://opengameart.org/content/interface-sounds | CC0 | `assets/audio/kenney_interface/` |
 | Música: Shakkar, The Old Tower Inn e Medieval Battle (`battle_8`) | OpenGameArt, a taverna e a batalha são de RandomMind | https://opengameart.org/content/shakkar, https://opengameart.org/content/medieval-the-old-tower-inn, https://opengameart.org/content/medieval-battle | CC0 (conferida na página de cada faixa) | `assets/audio/musica/` |
 | Música: Dungeon Ambience (yd), Dark Cavern Ambient 002 (Paul Wortmann) e Boss Battle Theme (CleytonKauffman, versão Var) | OpenGameArt | https://opengameart.org/content/dungeon-ambience, https://opengameart.org/content/dark-cavern-ambient, https://opengameart.org/content/boss-battle-theme | CC0 (conferida na página de cada faixa) | `assets/audio/musica/` (fases 6 a 10) |
-| Efeitos feitos por script (impactos, apanhar, morte, magia, cura, nível, arco) | Projeto (`tools/gerar_sons.gd`) | , | próprio | `assets/audio/sintetizados/` |
+| Música de derrota: Lose Game Short Music Clip (`derrota.ogg`) | Robin Lamb (OpenGameArt) | https://opengameart.org/content/lose-game-short-music-clip | CC0 | `assets/audio/musica/derrota.ogg` |
+| Efeitos feitos por script (impactos, apanhar, morte, magia, cura, nível, arco) e ambientes por tema (floresta, ruínas, subterrâneo, covil) | Projeto (`tools/gerar_sons.gd`) | , | próprio | `assets/audio/sintetizados/` |
 | Menus (molduras, botões, painéis) | Pixel UI pack, de Kenney Vleugels (CC0) | https://www.kenney.nl/assets/pixel-ui-pack | CC0 (crédito não é obrigatório) | `assets/ui/kenney_pixel_ui/` |
 | Porta em arco de madeira (recorte da folha de castelo `castle_tileset_part3.png`; `assets/tiles/castelo/`, gerada por `tools/recortar_porta.gd`) | rubberduck | https://opengameart.org/content/pixel-art-castle-tileset | CC0 | `assets/tiles/castelo/porta.png` |
 
