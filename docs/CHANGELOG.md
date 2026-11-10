@@ -162,3 +162,7 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 ## Fatia: capacidade investida (`InvestidaDeCriatura`)
 - `InvestidaDeCriatura` em `core/regras/criaturas/`: recarga X-6, janela de distância, carreira e `golpe`. Minotauro e Quimera usam; quebrar blocos / fúria / aceleração ficam na feature.
 - Backlog `capacidades-investida` fechado. Teste `tests/criaturas/teste_investida_de_criatura.gd`.
+
+## Fatia: capacidade furtividade (`FurtividadeDeCriatura`)
+- `FurtividadeDeCriatura` em `core/regras/criaturas/`: rolagem secreta vs Percepção passiva, emboscada e `esconde_de_novo`. Goblin usa; sprite/colisão e estado `Escondido` ficam na feature.
+- Backlog `capacidades-furtividade` fechado. Teste `tests/criaturas/teste_furtividade_de_criatura.gd`.

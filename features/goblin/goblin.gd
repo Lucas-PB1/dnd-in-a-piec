@@ -75,12 +75,9 @@ var _arremesso: ArremessoDeCriatura
 var _disparo: DisparoDeCriatura
 ## Cobertura, flanqueio e estratégia.
 var _tatica: TaticaDeCriatura
-## Percepção passiva de quem olha. 0 (ninguém passou) = o goblin sempre se esconde.
-var _percepcao_passiva: int = 0
-var _rolou_furtividade: bool = false
-var _foi_percebido: bool = false
-## O próximo golpe sai com vantagem (a emboscada de quem não foi percebido).
-var _emboscada: bool = false
+## Furtividade / emboscada da ficha.
+var _furtividade: FurtividadeDeCriatura
+## Invisible no mundo (sprite/colisão); a regra da rolagem fica em `_furtividade`.
 var _escondido: bool = false
 var _camada_corpo: int = 0
 var _camada_hurtbox: int = 0
@@ -110,6 +107,7 @@ func _ready() -> void:
 	_arremesso = ArremessoDeCriatura.new(criatura)
 	_disparo = DisparoDeCriatura.new(criatura)
 	_tatica = TaticaDeCriatura.new(criatura)
+	_furtividade = FurtividadeDeCriatura.new(criatura)
 	_sprite.modulate = cor_corpo
 	_preparar_condicoes()
 	_preparar_golpe()
@@ -137,7 +135,7 @@ func definir_alvo(novo_alvo: Node2D) -> void:
 
 ## A main passa a Percepção passiva do herói. O goblin não lê a ficha dele.
 func definir_percepcao_passiva(valor: int) -> void:
-	_percepcao_passiva = valor
+	_furtividade.percepcao_passiva = valor
 
 
 ## A main diz se a fase é de dia (o Kobold ataca com desvantagem ao sol).
@@ -165,7 +163,7 @@ func flechas_restantes() -> int:
 # --- Ferramentas dos estados ----------------------------------------------------
 
 func tem_furtividade() -> bool:
-	return criatura.tem_furtividade
+	return _furtividade.tem()
 
 
 func esta_escondido() -> bool:
@@ -173,11 +171,11 @@ func esta_escondido() -> bool:
 
 
 func teste_secreto_feito() -> bool:
-	return _rolou_furtividade
+	return _furtividade.teste_secreto_feito()
 
 
 func foi_percebido() -> bool:
-	return _foi_percebido
+	return _furtividade.foi_percebido()
 
 
 ## Some: sem sprite, sem colisão com o herói e sem hurtbox (um golpe no vazio não acerta).
@@ -205,16 +203,12 @@ func revelar() -> void:
 
 ## Uma vez, contra a passiva. Sem texto: o jogador só vê o goblin aparecer ou não.
 func rolar_furtividade() -> void:
-	if _rolou_furtividade:
-		return
-	_rolou_furtividade = true
-	var rolagem := _rng.randi_range(1, Combate.FACES_D20) + criatura.bonus_furtividade
-	_foi_percebido = not Pericia.furtividade_passa(rolagem, _percepcao_passiva)
+	_furtividade.rolar(_rng)
 
 
 ## O primeiro golpe depois de não ser percebido sai com vantagem.
 func marcar_emboscada() -> void:
-	_emboscada = true
+	_furtividade.marcar_emboscada()
 
 
 ## Visão no Escuro 60 pés: percebe o alvo até essa distância.
@@ -298,13 +292,12 @@ func tem_fuga_agil() -> bool:
 
 ## O Warrior, depois do recuo, rola Furtividade de novo. O Minion não.
 func esconde_de_novo() -> bool:
-	return criatura.esconde_de_novo
+	return _furtividade.esconde_de_novo()
 
 
 ## Zera o teste secreto para a próxima vez que entrar em Escondido.
 func reiniciar_furtividade() -> void:
-	_rolou_furtividade = false
-	_foi_percebido = false
+	_furtividade.reiniciar()
 
 
 func virar_para_alvo() -> void:
@@ -439,7 +432,7 @@ func parar_tremor() -> void:
 
 ## Aviso antes do golpe: quanto tempo dura (0 na emboscada: o herói não viu o monstro).
 func tempo_aviso() -> float:
-	return 0.0 if _emboscada else criatura.aviso_ataque
+	return _furtividade.aviso_do_ataque(criatura.aviso_ataque)
 
 
 ## Começa o aviso: para, olha para o alvo e brilha.
@@ -528,9 +521,8 @@ func _golpe_do_arremesso() -> Golpe:
 func _com_autor(golpe: Golpe) -> Golpe:
 	golpe.autor_id = get_instance_id()
 	golpe.desvantagem = _condicoes.consumir_desvantagem() or _disparo.desvantagem_solar()
-	if _emboscada or _tem_matilha_com_o_alvo():
+	if _furtividade.consumir_emboscada() or _tem_matilha_com_o_alvo():
 		golpe.vantagem = true
-		_emboscada = false
 	return golpe
 
 
