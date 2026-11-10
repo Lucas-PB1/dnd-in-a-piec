@@ -8,6 +8,7 @@ extends Node
 const RPG := "res://assets/audio/kenney_rpg/OGG/"
 const SINTETIZADO := "res://assets/audio/sintetizados/"
 const INTERFACE_KENNEY := "res://assets/audio/kenney_interface/Audio/"
+const VOZES := "res://assets/audio/vozes_monstros/"
 ## Nome do som -> caminhos dos arquivos (um é sorteado a cada vez).
 const SONS := {
 	&"golpe": [SINTETIZADO + "whoosh_1.wav", SINTETIZADO + "whoosh_2.wav", RPG + "knifeSlice.ogg", RPG + "knifeSlice2.ogg"],
@@ -34,14 +35,36 @@ const SONS := {
 	&"fechar_tela": [INTERFACE_KENNEY + "close_001.ogg"],
 	&"confirmar": [INTERFACE_KENNEY + "confirmation_001.ogg"],
 	&"golpe_monstro": [SINTETIZADO + "golpe_monstro.wav"],
+	&"aviso_goblin": [VOZES + "goblin_aviso_1.wav", VOZES + "goblin_aviso_2.wav", VOZES + "goblin_aviso_3.wav"],
+	&"ataque_goblin": [VOZES + "goblin_ataque_1.wav", VOZES + "goblin_ataque_2.wav", VOZES + "goblin_ataque_3.wav"],
+	&"aviso_morto": [VOZES + "morto_aviso_1.wav", VOZES + "morto_aviso_2.wav"],
+	&"ataque_morto": [VOZES + "morto_ataque_1.wav", VOZES + "morto_ataque_2.wav", VOZES + "morto_ataque_3.wav"],
+	&"aviso_growl": [VOZES + "growl_1.ogg", VOZES + "growl_2.ogg", VOZES + "growl_3.ogg"],
+	&"ataque_growl": [VOZES + "growl_3.ogg", VOZES + "growl_4.ogg", VOZES + "growl_5.ogg"],
 	&"rugido": [SINTETIZADO + "rugido.wav"],
 	&"rugido_morte": [SINTETIZADO + "rugido_morte.wav"],
 	&"tremor": [SINTETIZADO + "tremor.wav"],
 }
+## Nome da ficha -> [som do aviso, som do ataque, tom base]. Minions; chefes ficam no rugido.
+const VOZ_DA_CRIATURA := {
+	"Goblin Minion": [&"aviso_goblin", &"ataque_goblin", 1.0],
+	"Goblin Warrior": [&"aviso_goblin", &"ataque_goblin", 1.0],
+	"Kobold Warrior": [&"aviso_goblin", &"ataque_goblin", 1.28],
+	"Hobgoblin Warrior": [&"aviso_goblin", &"ataque_goblin", 0.88],
+	"Bugbear Warrior": [&"aviso_growl", &"ataque_growl", 0.85],
+	"Gray Ooze": [&"aviso_growl", &"ataque_growl", 1.2],
+	"Skeleton": [&"aviso_morto", &"ataque_morto", 1.18],
+	"Zombie": [&"aviso_morto", &"ataque_morto", 0.92],
+}
 ## Sons que saem no barramento da interface; o resto vai para os efeitos.
 const DA_INTERFACE: Array[StringName] = [&"clique", &"abrir_tela", &"fechar_tela", &"confirmar"]
 ## Volume (dB) de cada som que não toca no volume padrão.
-const VOLUMES := {&"golpe_monstro": -3.0, &"tremor": -2.0, &"passo": -9.0, &"pulo": -8.0, &"pouso": -5.0, &"golpe": -4.0, &"golpe_pesado": -2.0, &"clique": -4.0, &"pegar_item": -4.0, &"equipar": -3.0}
+const VOLUMES := {
+	&"golpe_monstro": -3.0, &"tremor": -2.0, &"passo": -9.0, &"pulo": -8.0, &"pouso": -5.0,
+	&"golpe": -4.0, &"golpe_pesado": -2.0, &"clique": -4.0, &"pegar_item": -4.0, &"equipar": -3.0,
+	&"aviso_goblin": -2.0, &"ataque_goblin": -1.0, &"aviso_morto": -2.0, &"ataque_morto": -1.0,
+	&"aviso_growl": -3.0, &"ataque_growl": -2.0,
+}
 ## Sorteio do tom (1 = o original): cada vez soa um pouco diferente.
 const VARIACAO_DE_TOM := 0.07
 const VOZES_POR_BARRAMENTO := 8
@@ -53,6 +76,7 @@ const CAMADA_HURTBOX_JOGADOR := 8
 ## Sinais que só os chefes têm: o rugido ao despertar e o tremor do chão.
 const SINAL_DESPERTAR := &"despertou"
 const SINAL_TREMOR := &"abalou_o_chao"
+const SINAL_AVISO := &"avisou_ataque"
 
 ## Sons já tocados nesta sessão (para os testes): nome -> quantas vezes.
 var tocados: Dictionary[StringName, int] = {}
@@ -87,6 +111,7 @@ func _ready() -> void:
 		_escutar_hitbox(hitbox as HitboxComponent)
 	for no in get_tree().root.find_children("*", "", true, false):
 		_escutar_chefe(no)
+		_escutar_aviso_de_criatura(no)
 	get_tree().node_added.connect(_ao_nascer_no)
 
 
@@ -134,8 +159,8 @@ func ligar_telas(interface: Node) -> void:
 			(tela as Control).visibility_changed.connect(_ao_mudar_tela.bind(tela))
 
 
-## Toca um som do catálogo. `volume_extra` em dB soma ao volume do som.
-func tocar(nome: StringName, volume_extra: float = 0.0) -> void:
+## Toca um som do catálogo. `volume_extra` em dB soma ao volume do som. `tom` multiplica o pitch.
+func tocar(nome: StringName, volume_extra: float = 0.0, tom: float = 1.0) -> void:
 	if not SONS.has(nome):
 		return
 	var caminhos: Array = SONS[nome]
@@ -146,7 +171,7 @@ func tocar(nome: StringName, volume_extra: float = 0.0) -> void:
 	var voz := _voz_livre(barramento)
 	voz.stream = faixa
 	voz.volume_db = VOLUMES.get(nome, 0.0) + volume_extra
-	voz.pitch_scale = 1.0 + randf_range(-VARIACAO_DE_TOM, VARIACAO_DE_TOM)
+	voz.pitch_scale = tom * (1.0 + randf_range(-VARIACAO_DE_TOM, VARIACAO_DE_TOM))
 	voz.play()
 	tocados[nome] = tocados.get(nome, 0) + 1
 
@@ -178,6 +203,7 @@ func _ao_nascer_no(no: Node) -> void:
 	elif no is HitboxComponent:
 		_escutar_hitbox(no as HitboxComponent)
 	_escutar_chefe(no)
+	_escutar_aviso_de_criatura(no)
 
 
 func _escutar_defesa(defesa: DefesaComponent) -> void:
@@ -197,12 +223,24 @@ func _escutar_botao(botao: BaseButton) -> void:
 		botao.pressed.connect(_ao_clicar_botao)
 
 
-## Golpe de criatura: a área que atinge a hurtbox do herói soa quando liga (o aviso do ataque).
+## Golpe de criatura: a área que atinge a hurtbox do herói soa quando liga (o golpe em si).
 func _escutar_hitbox(hitbox: HitboxComponent) -> void:
 	if (hitbox.collision_mask & CAMADA_HURTBOX_JOGADOR) == 0:
 		return
-	if not hitbox.ligada.is_connected(_ao_ligar_golpe_de_criatura):
-		hitbox.ligada.connect(_ao_ligar_golpe_de_criatura)
+	if _sinal_ja_tem(hitbox.ligada, _ao_ligar_golpe_de_criatura):
+		return
+	hitbox.ligada.connect(_ao_ligar_golpe_de_criatura.bind(hitbox))
+
+
+## Minions com `avisou_ataque`: voz no brilho amarelo.
+func _escutar_aviso_de_criatura(no: Node) -> void:
+	if not no.has_signal(SINAL_AVISO):
+		return
+	for info in no.get_signal_connection_list(SINAL_AVISO):
+		var ligado: Callable = info["callable"]
+		if ligado.get_object() == self and ligado.get_method() == &"_ao_aviso_de_criatura":
+			return
+	no.connect(SINAL_AVISO, _ao_aviso_de_criatura.bind(no))
 
 
 ## Chefes (têm o sinal do tremor): rugem ao despertar, tremem o chão e rugem ao morrer.
@@ -239,8 +277,36 @@ func _ao_morrer_chefe() -> void:
 	tocar(&"rugido_morte")
 
 
-func _ao_ligar_golpe_de_criatura(_golpe: Golpe) -> void:
-	tocar(&"golpe_monstro")
+func _ao_ligar_golpe_de_criatura(_golpe: Golpe, hitbox: HitboxComponent) -> void:
+	var voz := _voz_da_ficha(_ficha_do_no(hitbox))
+	if voz.is_empty():
+		tocar(&"golpe_monstro")
+		return
+	tocar(voz[1], 0.0, float(voz[2]))
+
+
+func _ao_aviso_de_criatura(criatura: Node) -> void:
+	var voz := _voz_da_ficha(_ficha_do_no(criatura))
+	if voz.is_empty():
+		return
+	tocar(voz[0], 0.0, float(voz[2]))
+
+
+## Sobe na árvore até achar um nó com `criatura` (ficha).
+func _ficha_do_no(no: Node) -> CriaturaRPG:
+	var atual: Node = no
+	while atual != null:
+		var ficha: Variant = atual.get("criatura")
+		if ficha is CriaturaRPG:
+			return ficha as CriaturaRPG
+		atual = atual.get_parent()
+	return null
+
+
+func _voz_da_ficha(ficha: CriaturaRPG) -> Array:
+	if ficha == null or not VOZ_DA_CRIATURA.has(ficha.nome):
+		return []
+	return VOZ_DA_CRIATURA[ficha.nome]
 
 
 func _ao_tremer(_forca: float, _duracao: float) -> void:

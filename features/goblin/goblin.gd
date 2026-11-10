@@ -8,6 +8,8 @@ extends CharacterBody2D
 
 ## Emitido quando termina de morrer (antes de sumir).
 signal morreu
+## Emitido no brilho do aviso antes do golpe (Sons toca a voz da espécie).
+signal avisou_ataque
 
 ## Quanto à frente (px) o raio procura chão antes de descer do penhasco.
 const DISTANCIA_BEIRA := 14.0
@@ -493,6 +495,7 @@ func preparar_aviso() -> void:
 	virar_para_alvo()
 	tocar(&"parado")
 	_sprite.modulate = cor_aviso
+	avisou_ataque.emit()
 
 
 func encerrar_aviso() -> void:

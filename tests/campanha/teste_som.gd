@@ -110,6 +110,16 @@ func _testar_no_jogo() -> void:
 	)
 	_checar(sons.tocados.get(&"pegar_item", 0) == 1, "pacote/save em silêncio não toca pegar")
 	# Criaturas e chefes
+	var goblin: Goblin = load("res://features/goblin/goblin.tscn").instantiate()
+	main.add_child(goblin)
+	await process_frame
+	sons.tocados.clear()
+	goblin.preparar_aviso()
+	_checar(sons.tocados.get(&"aviso_goblin", 0) == 1, "o aviso do goblin toca a voz dele")
+	var hitbox_goblin: HitboxComponent = goblin.find_children("*", "HitboxComponent", true, false)[0]
+	hitbox_goblin.ligar(Golpe.new("Adaga", 4, Dado.de_texto("1d4")))
+	_checar(sons.tocados.get(&"ataque_goblin", 0) == 1, "o golpe do goblin toca a voz de ataque")
+	goblin.queue_free()
 	var chefe := Node2D.new()
 	for sinal in [&"despertou", &"morreu"]:
 		chefe.add_user_signal(sinal)
@@ -125,7 +135,7 @@ func _testar_no_jogo() -> void:
 	hitbox.ligar(Golpe.new("Garra", 5, Dado.de_texto("1d6")))
 	_checar(sons.tocados.get(&"rugido", 0) == 1 and sons.tocados.get(&"tremor", 0) == 1, "o chefe ruge ao despertar e treme o chão")
 	_checar(sons.tocados.get(&"rugido_morte", 0) == 1, "o chefe ruge ao morrer")
-	_checar(sons.tocados.get(&"golpe_monstro", 0) == 1, "o golpe de uma criatura contra o herói soa")
+	_checar(sons.tocados.get(&"golpe_monstro", 0) == 1, "o golpe sem voz própria soa o whoosh")
 	chefe.queue_free()
 	hitbox.queue_free()
 	var botao := Button.new()

@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Áudio: **vozes dos minions** no aviso e no golpe (Goblin/Kobold/Hobgoblin, Bugbear/Ooze, Skeleton/Zombie) com packs CC0; chefes seguem no rugido.
 - Áudio: **ambiente por tema** (Floresta / Ruínas / Subterrâneo / Covil) em loop baixo sob a música; some no título, derrota e vitória. WAV sintetizados.
 - Áudio: música de **derrota** (Robin Lamb, CC0) ao cair; SFX Kenney de **pegar item** e **equipar** (`Inventario.item_obtido` / `item_equipado`, silêncio em pacote/save).
 - Fundos próprios do **Pântano** (Gothicvania Swamp) e da **Ruína** (GothicVania Cemetery), CC0 ansimuz; temas `pantano` e `ruina` em `FundoParalaxe`.

@@ -6,6 +6,8 @@ extends CharacterBody2D
 
 ## Emitido quando termina de morrer (antes de sumir).
 signal morreu
+## Emitido no brilho do aviso antes do Pseudópode (Sons toca a voz da espécie).
+signal avisou_ataque
 
 ## Igual à beira do goblin; extrair se uma terceira criatura precisar.
 const DISTANCIA_BEIRA := 14.0
@@ -283,6 +285,7 @@ func preparar_aviso() -> void:
 	virar_para_alvo()
 	tocar(&"parado")
 	_sprite.modulate = cor_aviso
+	avisou_ataque.emit()
 
 
 func encerrar_aviso() -> void:
