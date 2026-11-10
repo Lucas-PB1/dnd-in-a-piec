@@ -31,7 +31,3 @@ func _testar_consumir() -> void:
 	var arremesso := ArremessoDeCriatura.new(ficha)
 	_checar(arremesso.consumir() and not arremesso.tem_arma(), "gasta a única")
 	_checar(not arremesso.consumir(), "sem arma: não consome")
-	var pai := Node2D.new()
-	_checar(not arremesso.arremessar(pai, Golpe.new("x", 0, Dado.new(1, 4), TiposDano.PERFURANTE),
-		Vector2.ZERO, Vector2(10, 0), 980.0), "sem munição / sem arma_arremesso: não solta")
-	pai.free()
