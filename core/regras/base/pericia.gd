@@ -123,10 +123,12 @@ static func furtividade_passa(rolagem: int, passiva_do_alvo: int) -> bool:
 
 
 ## Resolve um teste de habilidade; Mente Tática tenta o d10 só após uma falha e só gasta
-## Second Wind quando o bônus muda a falha para sucesso.
+## Second Wind quando o bônus muda a falha para sucesso. `vantagem`/`desvantagem` usam a
+## mesma regra do ataque (2d20; as duas juntas se anulam).
 static func resolver_teste(bonus: int, cd: int, mente_tatica_ligada: bool,
-		pode_usar_folego: bool, rng: RandomNumberGenerator) -> Dictionary:
-	var d20 := rng.randi_range(1, 20)
+		pode_usar_folego: bool, rng: RandomNumberGenerator,
+		vantagem: bool = false, desvantagem: bool = false) -> Dictionary:
+	var d20 := Combate.rolar_d20(rng, desvantagem, vantagem)
 	var total := d20 + bonus
 	var passou := total >= cd
 	var d10 := 0
@@ -142,4 +144,5 @@ static func resolver_teste(bonus: int, cd: int, mente_tatica_ligada: bool,
 		"total": total,
 		"passou": passou,
 		"usou_mente_tatica": usou_mente_tatica,
+		"vantagem": vantagem and not desvantagem,
 	}

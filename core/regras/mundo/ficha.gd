@@ -18,8 +18,14 @@ const NIVEL_MAXIMO := 6
 const XP_POR_NIVEL := {1: 0, 2: 300, 3: 900, 4: 2700, 5: 3600, 6: 4800}
 ## Nos níveis 4 e 6 o Guerreiro escolhe um talento geral (ou o Aumento de Valor de Habilidade).
 const NIVEIS_TALENTO_GERAL: Array[int] = [4, 6]
+## Nível da escolha de subclasse (Guerreiro).
+const NIVEL_SUBCLASSE := 3
 ## Nível do Ataque Extra e da Mudança Tática.
 const NIVEL_ATAQUE_EXTRA := 5
+## Limiar padrão de crítico no d20 (natural 20).
+const LIMIAR_CRITICO_PADRAO := 20
+const PASTA_SUBCLASSES := "res://data/subclasses"
+const SUBCLASSE_CAMPEAO := &"campeao"
 ## Teto de um atributo.
 const ATRIBUTO_MAXIMO := 20
 ## Base da CD das maestrias (8 + modificador + proficiência).
@@ -55,6 +61,8 @@ var talentos: Array[StringName] = []
 var escolhas_de_talento_feitas: int = 0
 ## Id do antecedente escolhido na criação (vazio = nenhum).
 var antecedente: StringName = &""
+## Id da subclasse no nível 3 (`SubclasseRPG.id`; vazio = ainda não escolheu).
+var subclasse: StringName = &""
 ## Salvaguardas em que o herói ficou proficiente por talento (Resiliente), além das da classe.
 var salvaguardas_extras: Array[StringName] = []
 ## Perícias treinadas (ids de Pericia), escolhidas na criação. Sem treino, o teste usa só o modificador.
@@ -218,6 +226,54 @@ func tem_talento(talento: StringName) -> bool:
 func escolhas_de_talento_pendentes() -> int:
 	var liberadas := NIVEIS_TALENTO_GERAL.filter(func(n: int) -> bool: return nivel >= n).size()
 	return maxi(liberadas - escolhas_de_talento_feitas, 0)
+
+
+## Nível 3 sem subclasse ainda: a main abre a tela de escolha.
+func escolha_de_subclasse_pendente() -> bool:
+	return nivel >= NIVEL_SUBCLASSE and subclasse == &""
+
+
+func tem_subclasse(id: StringName) -> bool:
+	return subclasse == id
+
+
+## Resource da subclasse atual, ou null.
+func recurso_da_subclasse() -> SubclasseRPG:
+	if subclasse == &"":
+		return null
+	for recurso in Recursos.da_pasta(PASTA_SUBCLASSES):
+		var candidata := recurso as SubclasseRPG
+		if candidata != null and candidata.id == subclasse:
+			return candidata
+	return null
+
+
+## Limiar do d20 para crítico (Campeão = 19; padrão = 20).
+func limiar_critico() -> int:
+	var recurso := recurso_da_subclasse()
+	if recurso != null and recurso.limiar_critico > 0:
+		return recurso.limiar_critico
+	return LIMIAR_CRITICO_PADRAO
+
+
+## Esta perícia rola com vantagem por causa da subclasse?
+func vantagem_na_pericia(pericia: StringName) -> bool:
+	var recurso := recurso_da_subclasse()
+	return recurso != null and pericia in recurso.pericias_com_vantagem
+
+
+## Fração do deslocamento liberada após crítico (0 se a subclasse não tem).
+func fracao_movimento_pos_critico() -> float:
+	var recurso := recurso_da_subclasse()
+	return recurso.fracao_movimento_pos_critico if recurso != null else 0.0
+
+
+## Confirma a subclasse. false se não há pendência ou o Resource não serve.
+func escolher_subclasse(candidata: SubclasseRPG) -> bool:
+	if not escolha_de_subclasse_pendente() or candidata == null or not candidata.escolhivel_para(self):
+		return false
+	subclasse = candidata.id
+	return true
 
 
 ## Este atributo pode receber o +1 do talento? Está na lista dele, abaixo do teto e, no Robusto de salvaguarda
@@ -423,10 +479,22 @@ func fraco_para(arma: Arma) -> bool:
 	return arma.pesada and atributos[Atributos.FORCA] < FORCA_MINIMA_ARMA_PESADA
 
 
-## Iniciativa = modificador de Destreza (+ a proficiência com o Alerta). Define o ritmo dos ataques (EscalaDnd).
+## Iniciativa = modificador de Destreza (+ proficiência com Alerta ou subclasse Atleta Notável).
+## As duas fontes não empilham: é o mesmo +prof uma vez. Define o ritmo dos ataques (EscalaDnd).
 func iniciativa() -> int:
-	var bonus := bonus_proficiencia() if tem_talento(TALENTO_ALERTA) else 0
-	return modificador(Atributos.DESTREZA) + bonus
+	return modificador(Atributos.DESTREZA) + _bonus_iniciativa_de_proficiencia()
+
+
+## +proficiência na iniciativa: Alerta ou subclasse com a flag (Campeão). Uma vez só.
+func _bonus_iniciativa_de_proficiencia() -> int:
+	if tem_talento(TALENTO_ALERTA) or _subclasse_da_iniciativa():
+		return bonus_proficiencia()
+	return 0
+
+
+func _subclasse_da_iniciativa() -> bool:
+	var recurso := recurso_da_subclasse()
+	return recurso != null and recurso.iniciativa_com_proficiencia
 
 
 ## Até onde o disparo enche (0 = toque, velocidade mínima; 1 = velocidade cheia da arma).

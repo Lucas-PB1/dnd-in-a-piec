@@ -32,6 +32,8 @@ var arma_corroivel: bool
 var desvantagem: bool = false
 ## Vantagem: rola 2d20 e fica com o maior. Com vantagem E desvantagem, as duas se anulam.
 var vantagem: bool = false
+## Menor d20 que conta como crítico se o ataque acertar (padrão 20; Campeão = 19).
+var limiar_critico: int = 20
 ## O acerto corrói a armadura não mágica do alvo (Pseudópode do Gray Ooze).
 var corroi_armadura: bool = false
 

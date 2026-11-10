@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SubclasseRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/subclasse_rpg.gd" id="1_sub"]
+
+[resource]
+script = ExtResource("1_sub")
+no_jogo = true
+id = &"campeao"
+nome = "Campeão"
+descricao = "Crítico Aprimorado: seus ataques com armas e golpes desarmados acertam crítico no 19 ou no 20 do d20.
+
+Atleta Notável: vantagem em iniciativa (no jogo: +proficiência, sem empilhar com Alerta) e em testes de Força (Atletismo). Depois de um crítico, você pode se mover até metade do deslocamento (sem provocar ataque de oportunidade)."
+classe_pai = &"guerreiro"
+nivel_minimo = 3
+iniciativa_com_proficiencia = true
+limiar_critico = 19
+pericias_com_vantagem = Array[StringName]([&"atletismo"])
+fracao_movimento_pos_critico = 0.5

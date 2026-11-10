@@ -37,7 +37,7 @@ func _testar_dados() -> void:
 			_checar(pai in ids or _habilidade(pai) != null, "%s exige uma habilidade que existe (%s)" % [habilidade.nome, pai])
 	_checar(_habilidade(&"segundo_folego").liberada(1), "Segundo Fôlego está liberado no nível 1")
 	_checar(not _habilidade(&"surto_acao").liberada(1) and _habilidade(&"surto_acao").liberada(2), "Surto de Ação chega no nível 2")
-	_checar(not _habilidade(&"subclasse").liberada(3), "a Subclasse está em breve, mesmo no nível 3")
+	_checar(_habilidade(&"subclasse").liberada(3), "a Subclasse libera no nível 3")
 
 
 func _testar_tela() -> void:
@@ -56,7 +56,7 @@ func _testar_tela() -> void:
 	arvore.no_de(&"surto_acao").pressed.emit()
 	_checar((tela.get_node("%Situacao") as Label).text == "Chega no nível 2", "habilidade ainda bloqueada diz em que nível chega")
 	arvore.no_de(&"subclasse").pressed.emit()
-	_checar((tela.get_node("%Situacao") as Label).text == "Em breve", "a Subclasse diz Em breve")
+	_checar((tela.get_node("%Situacao") as Label).text == "Chega no nível 3", "no nível 1 a Subclasse ainda não chegou")
 	var painel: Control = tela.get_node("Centro/Painel")
 	_checar(painel.size.x <= 640.0 and painel.size.y <= 360.0, "a tela cabe em 640x360 (%dx%d)" % [painel.size.x, painel.size.y])
 	tela.fechar()

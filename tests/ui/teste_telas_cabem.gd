@@ -11,6 +11,7 @@ const TELAS: Dictionary[String, String] = {
 	"bestiário": "res://ui/bestiario/tela_bestiario.tscn",
 	"compêndio": "res://ui/compendio/tela_compendio.tscn",
 	"talento": "res://ui/talento/tela_talento.tscn",
+	"subclasse": "res://ui/subclasse/tela_subclasse.tscn",
 	"habilidades": "res://ui/habilidades/tela_habilidades.tscn",
 	"inventário": "res://ui/inventario/tela_inventario.tscn",
 	"baú": "res://ui/bau/tela_bau.tscn",

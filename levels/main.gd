@@ -50,6 +50,8 @@ const ENTRADAS_BESTIARIO: Array[EntradaBestiario] = [
 ]
 ## Talentos do livro (a tela de escolha do nível 4 lê daqui).
 const PASTA_TALENTOS := "res://data/talentos"
+## Subclasses do Guerreiro (escolha no nível 3).
+const PASTA_SUBCLASSES := "res://data/subclasses"
 const GRUPO_MONSTROS := &"monstros"
 ## O que o botão de ataque do celular passa a dizer perto de um baú ou de uma arma caída.
 const ROTULO_ABRIR := "Abrir"
@@ -132,6 +134,7 @@ var _heroi_na_porta: bool = false
 @onready var _tela_habilidades: TelaHabilidades = $Interface/TelaHabilidades
 @onready var _tela_compendio: TelaCompendio = $Interface/TelaCompendio
 @onready var _tela_talento: TelaTalento = $Interface/TelaTalento
+@onready var _tela_subclasse: TelaSubclasse = $Interface/TelaSubclasse
 @onready var _sons: Sons = $Sons
 @onready var _musica: Musica = $Musica
 @onready var _controles_toque: ControlesToque = $ControlesToque
@@ -184,6 +187,9 @@ func _ready() -> void:
 	_pausa.talento_pedido.connect(_abrir_pela_pausa.bind(_abrir_talento))
 	_tela_talento.fechou.connect(_ao_fechar_modal)
 	_tela_talento.talento_escolhido.connect(_ao_escolher_talento)
+	_pausa.subclasse_pedida.connect(_abrir_pela_pausa.bind(_abrir_subclasse))
+	_tela_subclasse.fechou.connect(_ao_fechar_modal)
+	_tela_subclasse.subclasse_escolhida.connect(_ao_escolher_subclasse)
 	_pausa.habilidades_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_habilidades))
 	_tela_habilidades.fechou.connect(_ao_fechar_modal)
 	_pausa.salvar_escolhido.connect(_salvar_jogo)
@@ -744,6 +750,30 @@ func _abrir_talento() -> void:
 func _ao_escolher_talento(talento: TalentoRPG) -> void:
 	_jogador.ao_mudar_ficha()
 	_jogador.avisar(talento.nome)
+	_pausa.mostrar_talento(_jogador.ficha.escolhas_de_talento_pendentes() > 0)
+
+
+## Abre a escolha de subclasse do nível 3.
+func _abrir_subclasse() -> void:
+	if not _jogador.ficha.escolha_de_subclasse_pendente():
+		return
+	if _ha_menu_aberto(_tela_subclasse):
+		return
+	var opcoes: Array[SubclasseRPG] = []
+	for recurso in Recursos.da_pasta(PASTA_SUBCLASSES):
+		var candidata := recurso as SubclasseRPG
+		if candidata != null:
+			opcoes.append(candidata)
+	_tela_subclasse.abrir(_jogador.ficha, opcoes)
+	_controles_toque.atualizar(true)
+
+
+func _ao_escolher_subclasse(subclasse: SubclasseRPG) -> void:
+	_jogador.ao_mudar_ficha()
+	_jogador.avisar(subclasse.nome)
+	_pausa.mostrar_subclasse(false)
+	if _jogador.ficha.escolhas_de_talento_pendentes() > 0:
+		_abrir_talento.call_deferred()
 
 
 func _abrir_compendio() -> void:
@@ -956,9 +986,15 @@ func _mostrar_personagem_no_hud() -> void:
 
 func _ao_mudar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> void:
 	_hud.mostrar_investida(_jogador.ficha != null and _jogador.ficha.tem_talento(Ficha.TALENTO_INVESTIDA), _jogador.investida_empurra())
-	_pausa.mostrar_talento(_jogador.ficha != null and _jogador.ficha.escolhas_de_talento_pendentes() > 0)
-	if _jogador.ficha != null and _jogador.ficha.escolhas_de_talento_pendentes() > 0 and not _em_tela_de_pausa:
-		_abrir_talento.call_deferred()
+	var ficha := _jogador.ficha
+	_pausa.mostrar_talento(ficha != null and ficha.escolhas_de_talento_pendentes() > 0)
+	_pausa.mostrar_subclasse(ficha != null and ficha.escolha_de_subclasse_pendente())
+	if ficha != null and not _em_tela_de_pausa:
+		# Subclasse (nv 3) antes do talento (nv 4/6).
+		if ficha.escolha_de_subclasse_pendente():
+			_abrir_subclasse.call_deferred()
+		elif ficha.escolhas_de_talento_pendentes() > 0:
+			_abrir_talento.call_deferred()
 	_atualizar_botoes_toque()
 	_hud.mostrar_progressao(nivel, experiencia, proximo_nivel)
 	_hud.mostrar_surto(nivel, not _surto_usado)

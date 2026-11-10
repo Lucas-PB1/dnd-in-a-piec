@@ -112,6 +112,8 @@ var _rng_habilidades := RandomNumberGenerator.new()
 var _mente_tatica_ligada: bool = false
 ## Segundos que faltam da Mudança Tática (bônus de deslocamento depois do Fôlego).
 var _tempo_mudanca_tatica: float = 0.0
+## Pixels de deslocamento livre após crítico (Atleta Notável do Campeão).
+var _orcamento_atleta_px: float = 0.0
 ## Surto de Ação armado: o próximo ataque ganha um segundo golpe logo atrás do primeiro.
 var _surto_armado: bool = false
 ## Golpes da mesma ação de Atacar que ainda vão sair logo atrás do atual (Ataque Extra, Surto de Ação, Mestre em Arma Grande).
@@ -189,7 +191,9 @@ func _physics_process(delta: float) -> void:
 	_passar_agarrao(delta)
 	_maquina.processar_fisica(delta)
 	_prender_se_agarrado()
+	var x_antes := global_position.x
 	move_and_slide()
+	_consumir_orcamento_atleta(absf(global_position.x - x_antes))
 	_checar_aterrissagem()
 	_medir_corrida(delta)
 	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
@@ -544,17 +548,19 @@ func _apagar_surto() -> void:
 		surto_ativo_mudou.emit(false)
 
 ## Rola um teste de perícia e aplica Mente Tática automaticamente se estiver ligada.
+## Campeão: Atletismo com vantagem (Atleta Notável).
 func rolar_teste_pericia(pericia: StringName, cd: int,
 		rng: RandomNumberGenerator = null) -> Dictionary:
 	if ficha == null or Pericia.atributo_de(pericia) == &"":
 		return {}
 	var fonte := _rng_habilidades if rng == null else rng
 	var pode_usar_mente := _mente_tatica_ligada and ficha.nivel >= Ficha.NIVEL_HABILIDADES_GUERREIRO
+	var vantagem := ficha.vantagem_na_pericia(pericia)
 	var resultado := Pericia.resolver_teste(ficha.bonus_pericia(pericia), cd, pode_usar_mente,
-		pode_usar_mente and _usos_folego > 0, fonte)
+		pode_usar_mente and _usos_folego > 0, fonte, vantagem)
 	if not resultado.passou and _gastar_sorte():  # Sortudo: um d20 novo, fica o melhor
-		var segundo := Pericia.resolver_teste(ficha.bonus_pericia(pericia), cd, false, false, fonte)
-		if segundo.passou:
+		var segundo := Pericia.resolver_teste(ficha.bonus_pericia(pericia), cd, false, false, fonte, vantagem)
+		if segundo.total > resultado.total:
 			resultado = segundo
 	if resultado.usou_mente_tatica:
 		_usos_folego -= 1
@@ -1183,13 +1189,17 @@ func _extra_com_cabo() -> bool:
 ## só a quem marcou o alvo.
 func _assinar(golpe: Golpe) -> void:
 	golpe.autor_id = get_instance_id()
+	golpe.limiar_critico = ficha.limiar_critico() if ficha != null else Combate.ACERTO_CRITICO
 	if _gastar_sorte():  # Sortudo: o ataque rola um d20 a mais e fica o melhor
 		golpe.vantagem = true
 		if golpe.trespassar:
 			golpe.trespassar.vantagem = true
+	golpe.resolvido.connect(_ao_resolver_golpe_do_atacante)
 	_ligar_efeitos_de_talento(golpe)
 	if golpe.trespassar:
 		golpe.trespassar.autor_id = golpe.autor_id
+		golpe.trespassar.limiar_critico = golpe.limiar_critico
+		golpe.trespassar.resolvido.connect(_ao_resolver_golpe_do_atacante)
 		_ligar_efeitos_de_talento(golpe.trespassar)
 
 
@@ -1405,3 +1415,30 @@ func _iniciar_mudanca_tatica() -> void:
 ## A Mudança Tática está valendo (bônus de deslocamento).
 func mudanca_tatica_ativa() -> bool:
 	return _tempo_mudanca_tatica > 0.0
+
+
+## Atleta Notável: ainda há deslocamento livre depois do crítico.
+func orcamento_atleta_ativo() -> bool:
+	return _orcamento_atleta_px > 0.0
+
+
+func orcamento_atleta_px() -> float:
+	return _orcamento_atleta_px
+
+
+## Crítico do herói: Campeão libera metade do deslocamento (OA não existe no jogo).
+func _ao_resolver_golpe_do_atacante(resultado: Combate.Resultado, _abateu: bool) -> void:
+	if not resultado.critico or ficha == null:
+		return
+	var fracao := ficha.fracao_movimento_pos_critico()
+	if fracao <= 0.0:
+		return
+	var pes := Equipamento.deslocamento_pes(ficha, inventario) * fracao
+	_orcamento_atleta_px = EscalaDnd.pes_para_pixels(pes)
+	_texto.mostrar("Atleta Notável!", COR_FOLEGO_AURA)
+
+
+func _consumir_orcamento_atleta(pixels_andados: float) -> void:
+	if _orcamento_atleta_px <= 0.0 or pixels_andados <= 0.0:
+		return
+	_orcamento_atleta_px = maxf(_orcamento_atleta_px - pixels_andados, 0.0)

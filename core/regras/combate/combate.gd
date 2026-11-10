@@ -36,8 +36,10 @@ static func resolver_ataque(golpe: Golpe, ca: int, rng: RandomNumberGenerator,
 	r.golpe = golpe
 	r.d20 = rolar_d20(rng, golpe.desvantagem, golpe.vantagem)
 	r.total = r.d20 + golpe.bonus_ataque
-	r.critico = r.d20 == ACERTO_CRITICO
-	r.acertou = r.critico or (r.d20 != FALHA_AUTOMATICA and r.total >= ca)
+	# Natural 20 sempre acerta; crítico no limiar (20 ou 19 do Campeão) só se o ataque acertou.
+	var natural_vinte := r.d20 == ACERTO_CRITICO
+	r.acertou = natural_vinte or (r.d20 != FALHA_AUTOMATICA and r.total >= ca)
+	r.critico = r.acertou and r.d20 >= golpe.limiar_critico
 	if r.acertou:
 		r.dano = dano_do_acerto(golpe, rng, r.critico)
 		r.resistido = golpe.tipo_dano in resistencias

@@ -147,6 +147,8 @@ func _testar_na_main() -> void:
 	var pausa: TelaPausa = main.get_node("Interface/TelaPausa")
 	main.tirar_criaturas()
 	_checar(not tela.visible, "antes do nível 4 a escolha não aparece")
+	# Subclasse do 3 já resolvida: senão a main abre a tela de subclasse antes do talento.
+	jogador.ficha.subclasse = Ficha.SUBCLASSE_CAMPEAO
 	jogador.ganhar_experiencia(Ficha.XP_POR_NIVEL[4])
 	for i in 3:
 		await process_frame

@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://ui/habilidades/tela_habilidades.tscn" id="17_habilidades"]
 [ext_resource type="PackedScene" path="res://ui/compendio/tela_compendio.tscn" id="20_compendio"]
 [ext_resource type="PackedScene" path="res://ui/talento/tela_talento.tscn" id="21_talento"]
+[ext_resource type="PackedScene" path="res://ui/subclasse/tela_subclasse.tscn" id="24_subclasse"]
 [ext_resource type="PackedScene" path="res://features/loja/lojista.tscn" id="22_lojista"]
 [ext_resource type="PackedScene" path="res://ui/loja/tela_loja.tscn" id="23_tela_loja"]
 [ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
@@ -63,6 +64,8 @@ layer = 10
 [node name="TelaCompendio" parent="Interface" instance=ExtResource("20_compendio")]
 
 [node name="TelaTalento" parent="Interface" instance=ExtResource("21_talento")]
+
+[node name="TelaSubclasse" parent="Interface" instance=ExtResource("24_subclasse")]
 
 [node name="Impacto" type="Node2D" parent="."]
 script = ExtResource("14_impacto")

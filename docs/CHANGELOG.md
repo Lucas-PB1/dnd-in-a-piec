@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Subclasse do Guerreiro no nível 3: **Campeão** (Crítico Aprimorado 19–20, Atleta Notável com +prof na iniciativa sem empilhar com Alerta, vantagem em Atletismo, meio deslocamento após crítico). Resource SubclasseRPG, tela de escolha, save. Teste: `teste_subclasse_campeao`.
 - Fatias 1 e 2 (2.5D): boneco na relva e herói do SpriteCook. Substituídas pela fatia 3 (commits `60f2dda` e `0b1ca2b`).
 - Fatia 3: herói andando e pulando numa fase de teste em 2D lateral.
 - Fatia 4: skills de código limpo, corrida com dois toques (animação provisória), fase reta, herói refatorado em física + componente visual.

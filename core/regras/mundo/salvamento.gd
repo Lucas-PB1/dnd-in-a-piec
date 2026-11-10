@@ -77,6 +77,7 @@ static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: i
 			"armas_dominadas": ficha.armas_dominadas,
 			"talentos": ficha.talentos,
 			"escolhas_de_talento": ficha.escolhas_de_talento_feitas,
+			"subclasse": ficha.subclasse,
 			"antecedente": ficha.antecedente,
 			"salvaguardas_extras": ficha.salvaguardas_extras,
 			"pericias": ficha.pericias,
@@ -109,6 +110,7 @@ static func montar_ficha(dados: Dictionary) -> Ficha:
 	for nome in f.get("talentos", []):
 		ficha.talentos.append(id_do_talento(str(nome)))
 	ficha.escolhas_de_talento_feitas = int(f.get("escolhas_de_talento", 0))
+	ficha.subclasse = StringName(str(f.get("subclasse", "")))
 	ficha.antecedente = StringName(str(f.get("antecedente", "")))
 	for atributo in f.get("salvaguardas_extras", []):
 		ficha.salvaguardas_extras.append(StringName(atributo))

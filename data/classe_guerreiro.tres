@@ -108,10 +108,10 @@ script = ExtResource("6_habilidade")
 id = &"subclasse"
 nome = "Subclasse"
 nivel_minimo = 3
-descricao = "No nível 3 o Guerreiro escolhe uma especialização, com poderes novos. Ainda não existe no jogo."
+descricao = "No nível 3 o Guerreiro escolhe uma especialização. Campeão: crítico no 19–20, +proficiência na iniciativa (Atleta Notável), vantagem em Atletismo e meio deslocamento após um crítico."
 acao = &""
 requer = Array[StringName]([&"surto_acao", &"mente_tatica"])
-em_breve = true
+em_breve = false
 
 [sub_resource type="Resource" id="Hab_ataque_extra"]
 script = ExtResource("6_habilidade")

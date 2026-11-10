@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo | Tam. |
 |---|---|---|
-| 2 | `heroi/subclasse-guerreiro.md` | M |
 | 3 | `fases/testes-pericia-fases.md` | M |
 | 4 | `criaturas/ia-salto-terreno.md` | M |
 | 5 | `fases/lava-covil.md` | M |

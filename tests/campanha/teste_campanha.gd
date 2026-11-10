@@ -187,8 +187,11 @@ func _esperar(quadros: int) -> void:
 		await physics_frame
 
 
-## Matar a fase inteira dá XP até o nível 4: a tela de talento abre e pausa o jogo; aqui só a fechamos.
+## Matar a fase inteira dá XP até o nível 4: subclasse/talento podem abrir e pausar; aqui só fechamos.
 func _fechar_tela_de_talento() -> void:
+	var subclasse: TelaSubclasse = _main.get_node("Interface/TelaSubclasse")
+	if subclasse.visible:
+		subclasse.fechar()
 	var tela: TelaTalento = _main.get_node("Interface/TelaTalento")
 	if tela.visible:
 		tela.fechar()
