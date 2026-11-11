@@ -156,7 +156,7 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/how-to/receitas.md`
 - Campanha de **10 fases** em 4 temas (Floresta, Ruínas, Subterrâneo, Covil): encontros, portas com cota, missões, ouro/drops, loja e vitória na fase 10 (Covil).
 - Chefes: Ankheg (3), Minotauro (6, blocos quebráveis), Wight (9, Skeleton/Zombie), Quimera (10). Lava do Covil ainda pendente.
 - Minions: Goblin Minion/Warrior, Gray Ooze, Kobold, Hobgoblin, Bugbear, Skeleton, Zombie (`features/goblin/` por herança).
-- Guerreiro **1–6**: Surto/Mente Tática (2), talentos gerais (4 e 6), Ataque Extra e Mudança Tática (5); criação com antecedente; 30 talentos ligados. **Subclasse (nível 3) ainda não.**
+- Guerreiro **1–8**: Surto/Mente Tática (2), subclasse Campeão (3), talentos gerais (4/6/8), Ataque Extra e Mudança Tática (5), Estilo Extra do Campeão (7); criação com antecedente; 30 talentos ligados.
 - Save/load (`Salvamento` → `user://save.json`), Compêndio com antecedentes/talentos, toque com **8 slots**.
 - Celular: APK em `builds/android/dnd_in_a_piece.apk` (ajustes de toque quando o feedback do aparelho aparecer).
 - Docs em **Diátaxis**: `docs/adr/`, `how-to/`, `reference/`, `backlog/` (1 pendência = 1 arquivo), `CHANGELOG.md`.

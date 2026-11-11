@@ -38,7 +38,7 @@ func _testar_tela_sozinha() -> void:
 	var escolha: OptionButton = tela.get_node("%Classe")
 	_checar(escolha.item_count == 1 and escolha.get_item_text(0) == "Guerreiro", "classe: só Guerreiro por enquanto")
 	var escolha_nivel: OptionButton = tela.get_node("%Nivel")
-	_checar(escolha_nivel.item_count == Ficha.NIVEL_MAXIMO, "criação permite escolher do nível 1 ao 6")
+	_checar(escolha_nivel.item_count == Ficha.NIVEL_MAXIMO, "criação permite escolher do nível 1 ao 8")
 	tela.escolher_nivel(2)
 	var lista: ItemList = tela.get_node("%ListaMaestrias")
 	_checar(lista.select_mode == ItemList.SELECT_TOGGLE, "clique marca e desmarca a maestria")

@@ -109,6 +109,22 @@ nivel_minimo = 5
 descricao = "Ao usar o Segundo Fôlego você ganha +15 pés de deslocamento por 3 segundos."
 requer = Array[StringName]([&"segundo_folego"])
 
+[sub_resource type="Resource" id="Hab_estilo_extra_campeao"]
+script = ExtResource("6_habilidade")
+id = &"estilo_extra_campeao"
+nome = "Estilo Extra"
+nivel_minimo = 7
+descricao = "Campeão: prepare um terceiro Estilo de Luta (Additional Fighting Style). A troca abre na pausa."
+requer = Array[StringName]([&"subclasse"])
+
+[sub_resource type="Resource" id="Hab_talento_geral_8"]
+script = ExtResource("6_habilidade")
+id = &"talento_geral_8"
+nome = "Talento (nv 8)"
+nivel_minimo = 8
+descricao = "Escolha mais um talento geral ou o Aumento no Valor de Habilidade (como nos níveis 4 e 6)."
+requer = Array[StringName]([&"ataque_extra"])
+
 [resource]
 script = ExtResource("1_classe")
 atributos_sugeridos = Dictionary[StringName, int]({
@@ -129,4 +145,4 @@ pericias_escolhiveis = Array[StringName]([&"acrobacia", &"lidar_com_animais", &"
 quantidade_pericias = 2
 pericias_sugeridas = Array[StringName]([&"percepcao", &"atletismo"])
 usos_segundo_folego = 2
-habilidades = Array[ExtResource("6_habilidade")]([SubResource("Hab_segundo_folego"), SubResource("Hab_maestria_armas"), SubResource("Hab_treinamento"), SubResource("Hab_pericias"), SubResource("Hab_surto_acao"), SubResource("Hab_mente_tatica"), SubResource("Hab_subclasse"), SubResource("Hab_ataque_extra"), SubResource("Hab_mudanca_tatica")])
+habilidades = Array[ExtResource("6_habilidade")]([SubResource("Hab_segundo_folego"), SubResource("Hab_maestria_armas"), SubResource("Hab_treinamento"), SubResource("Hab_pericias"), SubResource("Hab_surto_acao"), SubResource("Hab_mente_tatica"), SubResource("Hab_subclasse"), SubResource("Hab_ataque_extra"), SubResource("Hab_mudanca_tatica"), SubResource("Hab_estilo_extra_campeao"), SubResource("Hab_talento_geral_8")])

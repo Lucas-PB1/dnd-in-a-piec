@@ -7,11 +7,11 @@ extends VBoxContainer
 ## Emitido ao escolher uma habilidade (clique ou toque).
 signal escolhida(habilidade: HabilidadeClasse)
 
-const LARGURA_ROTULO := 64.0
-const LARGURA_NO := 116.0
-const ALTURA_NO := 24.0
-const ESPACO := 3
-const TAMANHO_FONTE := 12
+const LARGURA_ROTULO := 56.0
+const LARGURA_NO := 110.0
+const ALTURA_NO := 18.0
+const ESPACO := 1
+const TAMANHO_FONTE := 11
 const COR_NIVEL_LIBERADO := Color(1.0, 0.86, 0.45, 1.0)
 const COR_APAGADO := Color(0.66, 0.58, 0.5, 1.0)
 

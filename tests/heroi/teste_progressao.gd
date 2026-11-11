@@ -53,10 +53,14 @@ func _testar_ficha() -> void:
 		"o nível 5 acrescenta PV")
 	_checar(ficha.bonus_proficiencia() == 3 and ficha.golpes_por_ataque() == 2,
 		"no nível 5 a proficiência vai a +3 e o Ataque Extra dobra o ataque")
-	_checar(ficha.adicionar_experiencia(Ficha.XP_POR_NIVEL[6] - ficha.experiencia) == 1 and ficha.nivel == Ficha.NIVEL_MAXIMO and ficha.vida_maxima() == 52,
+	_checar(ficha.adicionar_experiencia(Ficha.XP_POR_NIVEL[6] - ficha.experiencia) == 1 and ficha.nivel == 6 and ficha.vida_maxima() == 52,
 		"o nível 6 acrescenta PV")
-	_checar(ficha.adicionar_experiencia(100000) == 0 and ficha.nivel == 6,
-		"nível não passa do limite 6")
+	_checar(ficha.adicionar_experiencia(Ficha.XP_POR_NIVEL[7] - ficha.experiencia) == 1 and ficha.nivel == 7 and ficha.vida_maxima() == 60,
+		"o nível 7 acrescenta PV (marco 6000 XP)")
+	_checar(ficha.adicionar_experiencia(Ficha.XP_POR_NIVEL[8] - ficha.experiencia) == 1 and ficha.nivel == Ficha.NIVEL_MAXIMO and ficha.vida_maxima() == 68,
+		"o nível 8 acrescenta PV (marco 7200 XP)")
+	_checar(ficha.adicionar_experiencia(100000) == 0 and ficha.nivel == 8,
+		"nível não passa do limite 8")
 	var ficha_inicial := Ficha.new(classe, {})
 	ficha_inicial.definir_nivel_inicial(3)
 	_checar(ficha_inicial.nivel == 3 and ficha_inicial.experiencia == 900,

@@ -12,10 +12,10 @@ Alerta, Robusto (Resistente), Atacante Selvagem, Brigão de Taverna, Sortudo, Ar
 - **Músico** → Artista espera (precisa de aliados/inspiração).
 - **Curandeiro** → Eremita espera (cura de aliado).
 
-## Gerais — ligados (escolha nos níveis 4 e 6)
+## Gerais — ligados (escolha nos níveis 4, 6 e 8)
 Veloz, Resiliente, Aumento no Valor de Atributo, Mestre em Armaduras Médias, Mestre em Armas Grandes, Mestre em Armaduras Pesadas, Retalhador (Cortador), Perfurador, Esmagador, Combatente com Duas Armas, Mestre em Escudos, Investida, Duelista Defensivo, Sentinela, Mestre em Armas de Haste, Atleta, Agarrador, Atirador de Elite, Especialista em Bestas, Especialista em Perícia, Observador, Durável, Envenenador.
 
-Nível máximo: **6** (`Ficha.NIVEL_MAXIMO`). Dois talentos gerais (níveis 4 e 6).
+Nível máximo: **8** (`Ficha.NIVEL_MAXIMO`). Três talentos gerais (níveis 4, 6 e 8).
 
 ## Gerais — em espera
 - Treinamentos que o Guerreiro já tem: Levemente/Moderadamente/Fortemente Armado, Treinamento com Armas Marciais.

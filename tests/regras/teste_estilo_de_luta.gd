@@ -39,6 +39,20 @@ func _testar_lista_e_ficha() -> void:
 	_checar(ficha.confirmar_troca_de_estilo([&"arquearia", &"duelismo"]), "confirma 2 estilos")
 	_checar(not ficha.escolha_de_estilo_pendente() and ficha.tem_estilo(&"arquearia"),
 		"pendência gasta e Arquearia preparada")
+	ficha.nivel = Ficha.NIVEL_ESTILO_EXTRA_CAMPEAO
+	ficha.subclasse = Ficha.SUBCLASSE_CAMPEAO
+	ficha.trocas_de_estilo_feitas = ficha.nivel - 2  # só a troca do nv 7 pendente
+	_checar(ficha.capacidade_estilos() == Ficha.CAPACIDADE_ESTILOS_CAMPEAO_EXTRA,
+		"Campeão nv 7: capacidade 3")
+	_checar(ficha.escolha_de_estilo_pendente(), "Campeão nv 7: troca pendente para o 3º estilo")
+	_checar(ficha.confirmar_troca_de_estilo([&"arquearia", &"duelismo", &"defesa"]),
+		"confirma 3 estilos no Campeão")
+	_checar(ficha.tem_estilo(&"defesa") and not ficha.escolha_de_estilo_pendente(),
+		"3º estilo preparado e pendência gasta")
+	var sem_campeao := _ficha_base()
+	sem_campeao.nivel = Ficha.NIVEL_ESTILO_EXTRA_CAMPEAO
+	_checar(sem_campeao.capacidade_estilos() == Ficha.CAPACIDADE_ESTILOS_COM_TROCA,
+		"sem Campeão no nv 7 a capacidade continua 2")
 
 
 func _testar_efeitos_de_combate() -> void:

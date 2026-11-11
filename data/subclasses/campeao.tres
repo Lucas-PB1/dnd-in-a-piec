@@ -9,7 +9,9 @@ id = &"campeao"
 nome = "Campeão"
 descricao = "Crítico Aprimorado: seus ataques com armas e golpes desarmados acertam crítico no 19 ou no 20 do d20.
 
-Atleta Notável: vantagem em iniciativa (no jogo: +proficiência, sem empilhar com Alerta) e em testes de Força (Atletismo). Depois de um crítico, você pode se mover até metade do deslocamento (sem provocar ataque de oportunidade)."
+Atleta Notável: vantagem em iniciativa (no jogo: +proficiência, sem empilhar com Alerta) e em testes de Força (Atletismo). Depois de um crítico, você pode se mover até metade do deslocamento (sem provocar ataque de oportunidade).
+
+Nível 7 — Estilo Extra: prepare um terceiro Estilo de Luta (Additional Fighting Style)."
 classe_pai = &"guerreiro"
 nivel_minimo = 3
 iniciativa_com_proficiencia = true

@@ -12,12 +12,14 @@ const NIVEL_BONUS_PROFICIENCIA_MAIOR := 5
 ## Nível que libera as habilidades de segundo nível do Guerreiro.
 const NIVEL_HABILIDADES_GUERREIRO := 2
 ## Limite de nível desta campanha.
-const NIVEL_MAXIMO := 6
-## XP total necessário para cada nível. Níveis 1–4: tabela do livro. Níveis 5 e 6: regra da casa
-## (o livro pede 6500 e 14000, que a campanha de dez fases nunca alcança).
-const XP_POR_NIVEL := {1: 0, 2: 300, 3: 900, 4: 2700, 5: 3600, 6: 4800}
-## Nos níveis 4 e 6 o Guerreiro escolhe um talento geral (ou o Aumento de Valor de Habilidade).
-const NIVEIS_TALENTO_GERAL: Array[int] = [4, 6]
+const NIVEL_MAXIMO := 8
+## XP total necessário para cada nível. Níveis 1–4: tabela do livro. Níveis 5–8: regra da casa
+## (o livro pede 6500/14000/23000/34000, inalcançáveis em dez fases).
+const XP_POR_NIVEL := {1: 0, 2: 300, 3: 900, 4: 2700, 5: 3600, 6: 4800, 7: 6000, 8: 7200}
+## Nos níveis 4, 6 e 8 o Guerreiro escolhe um talento geral (ou o Aumento de Valor de Habilidade).
+const NIVEIS_TALENTO_GERAL: Array[int] = [4, 6, 8]
+## Campeão nível 7: Additional Fighting Style (3º estilo preparado).
+const NIVEL_ESTILO_EXTRA_CAMPEAO := 7
 ## Nível da escolha de subclasse (Guerreiro).
 const NIVEL_SUBCLASSE := 3
 ## Nível do Ataque Extra e da Mudança Tática.
@@ -141,6 +143,7 @@ const FACES_SOCO_ESTILO_LIVRE := 8
 ## Estilos: capacidade na criação e a partir do nível 2 (troca + 2 preparados).
 const CAPACIDADE_ESTILOS_INICIAL := 1
 const CAPACIDADE_ESTILOS_COM_TROCA := 2
+const CAPACIDADE_ESTILOS_CAMPEAO_EXTRA := 3
 const NIVEL_TROCA_ESTILO := 2
 ## Luta às Cegas: +1 na Percepção passiva.
 const LUTA_CEGAS_PASSIVA := 1
@@ -245,8 +248,10 @@ func tem_talento(talento: StringName) -> bool:
 	return talento in talentos
 
 
-## Quantos estilos pode preparar agora (1 no nível 1; 2 do nível 2 em diante).
+## Quantos estilos pode preparar agora (1 no nv 1; 2 do nv 2; 3 no nv 7+ do Campeão).
 func capacidade_estilos() -> int:
+	if nivel >= NIVEL_ESTILO_EXTRA_CAMPEAO and tem_subclasse(SUBCLASSE_CAMPEAO):
+		return CAPACIDADE_ESTILOS_CAMPEAO_EXTRA
 	return CAPACIDADE_ESTILOS_COM_TROCA if nivel >= NIVEL_TROCA_ESTILO else CAPACIDADE_ESTILOS_INICIAL
 
 

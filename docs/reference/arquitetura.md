@@ -123,7 +123,7 @@ HitboxComponent.ligar(golpe)
   ataque vêm da ficha** (deslocamento e iniciativa, via `EscalaDnd`).
 - Ficha (`Ficha`) + inventário (`Inventario`) -> `Equipamento` calcula arma na mão, CA,
   deslocamento e o `Golpe` (o inventário da tela usa a mesma conta).
-- `Ficha` acompanha XP e nível **1–6** (`NIVEL_MAXIMO`); talentos gerais nos níveis 4 e 6;
+- `Ficha` acompanha XP e nível **1–8** (`NIVEL_MAXIMO`); talentos gerais nos níveis 4, 6 e 8;
   Ataque Extra no 5. `Jogador` resolve testes de perícia e aplica Mente Tática quando ativada.
   A `main` entrega XP de inimigos, escala as cotas e aplica o Surto de Ação.
 

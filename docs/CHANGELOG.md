@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Guerreiro níveis 7–8: teto 8, XP casa 6000/7200, talento no 8, Campeão no 7 com 3º estilo. Testes progressão/talento/estilo.
 - Armadura/escudo mágicos +1/+2/+3 (CA, sem corrosão, loja, save). Teste `teste_armadura_magica`. Backlog `estilo-de-luta-guerreiro` removido (já entregue).
 - Rajada (toggle R ligado/desligado) e Disparo Duplo (2º tiro automático com desvantagem) completos. Teste `teste_estilo_de_luta`.
 - Estilo de Luta do Guerreiro: 18 estilos (`data/estilos/`), escolha na criação, troca + capacidade 2 a partir do nível 2, efeitos de combate, Compêndio, save. Teste `teste_estilo_de_luta`.

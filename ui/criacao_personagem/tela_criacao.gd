@@ -647,7 +647,7 @@ func _atualizar() -> void:
 	_montar_builds()
 	_contagem_maestrias.text = "Domine %d tipos de arma (%d/%d marcadas). Só com elas a maestria vale." % [
 		_classe.quantidade_maestrias, armas_marcadas().size(), _classe.quantidade_maestrias]
-	_contagem_estilos.text = "Escolha 1 estilo de luta (pode trocar e preparar 2 a partir do nível 2)."
+	_contagem_estilos.text = "Escolha 1 estilo (2 a partir do nv 2; 3 no nv 7 do Campeão)."
 	_atualizar_botoes_de_avanco()
 	var falta := _falta_algo()
 	_botao_comecar.disabled = falta != ""
