@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo |
 |---|---|
-| 5 | `divida/desafio-pericia-nos-duplicados` |
 | 10 | `regras/loja-renovar-estoque` |
 | 11 | `regras/loja-sempre-municao` |
 | 12 | `regras/pocoes-cura` |
@@ -42,7 +41,6 @@ Nenhuma aberta nesta fila.
 ### Dívidas técnicas
 | Pri | Arquivo |
 |---|---|
-| 5 | `divida/desafio-pericia-nos-duplicados` (também em Próximas) |
 | 90+ | `divida/dry-*`, `split-jogador-gd`, `sinais-heroi-orfaos`, `projetil-altura-nascimento`, `quimera-anim-dano`, `renomear-features-goblin` … |
 
 ### Depois

@@ -24,6 +24,27 @@ func _testar_regra_pura() -> void:
 	desafio.concluir(true)
 	_checar(desafio.esta_resolvido(), "sucesso resolve uma vez")
 	desafio.queue_free()
+	_checar_cena_sem_nos_duplicados()
+
+
+## A Clareira instancia o desafio sem regravar Visual/Bloqueio/Area (bug do owner no gerador).
+func _checar_cena_sem_nos_duplicados() -> void:
+	var fase: Node = (load("res://levels/fase_1.tscn") as PackedScene).instantiate()
+	var desafio := fase.get_node_or_null("DesafioPericia") as Node2D
+	_checar(desafio != null, "fase_1 tem DesafioPericia")
+	if desafio == null:
+		fase.free()
+		return
+	var nomes: Dictionary = {}
+	var repetido := false
+	for filho in desafio.get_children():
+		if nomes.has(filho.name):
+			repetido = true
+			break
+		nomes[filho.name] = true
+	_checar(not repetido and desafio.get_node_or_null("Visual") != null,
+		"DesafioPericia na Clareira não tem nós duplicados (só a instância)")
+	fase.free()
 
 
 func _testar_na_main() -> void:

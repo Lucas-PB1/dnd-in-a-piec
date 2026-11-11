@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Bug: DesafioPericia na Clareira sem nós duplicados — `_adicionar` do gerador não marca `owner` nos filhos de instância PackedScene; fase 1 regenerada. Teste `teste_desafio_pericia`.
 - Prancha da floresta: ilha Sunnyland (grama+rocha) no lugar da faixa verde fina; teste `teste_plataforma_visivel`.
 - Chão de grama: colisão desce 10 px (`Fase.RECUO_PES_NA_GRAMA_PX`) para os pés entrarem na relva; lojista acompanha (`posicao_loja`). Teste `teste_colisao_grama`.
 - PC: Opções → aba Som → **Tela** (Janela / Tela cheia), salvo em `user://tela.cfg` (`OpcoesTela`). Teste `teste_opcoes_tela`.

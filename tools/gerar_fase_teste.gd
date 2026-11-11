@@ -645,6 +645,10 @@ func _pintar(terreno: TileMapLayer, celula: Vector2i, tipo: int, tema: int) -> v
 func _adicionar(fase: Node2D, no: Node) -> void:
 	fase.add_child(no)
 	no.owner = fase
+	# Instância de PackedScene: os filhos já pertencem à cena empacotada. Se ganharem
+	# owner da fase, o pack grava nós duplicados (aviso no editor: name conflicts).
+	if not no.scene_file_path.is_empty():
+		return
 	for filho in no.find_children("*", "", true, false):
 		filho.owner = fase
 
