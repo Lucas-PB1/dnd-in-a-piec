@@ -14,7 +14,7 @@ size = Vector2(32, 32)
 [sub_resource type="RectangleShape2D" id="ShapeArea"]
 size = Vector2(48, 48)
 
-[node name="Fase" type="Node2D" unique_id=924121583]
+[node name="Fase" type="Node2D" unique_id=777727294]
 script = ExtResource("1_2yr5n")
 indice = 1
 nome_ambiente = "Clareira"
@@ -23,90 +23,90 @@ quantidade = 1
 tipos_permitidos = Array[StringName]([&"ooze", &"minion", &"kobold"])
 luz_do_sol = true
 
-[node name="Terreno" type="TileMapLayer" parent="." unique_id=2048361817]
+[node name="Terreno" type="TileMapLayer" parent="." unique_id=433514826]
 tile_map_data = PackedByteArray("AAASAAcAAAACAAAAAAATAAcAAAACAAAAAAAUAAcAAAACAAAAAAAVAAcAAAACAAAAAAAZAAcAAAACAAAAAAAaAAcAAAACAAAAAAAbAAcAAAACAAAAAAAMAAgAAAAFAAAAAAANAAgAAAAFAAAAAAAOAAgAAAAEAAAAAAAAAAkAAAAEAAAAAAABAAkAAAAFAAAAAAACAAkAAAAEAAAAAAADAAkAAAAAAAAAAAAEAAkAAAAEAAAAAAAFAAkAAAAAAAAAAAAGAAkAAAAFAAAAAAAHAAkAAAAFAAAAAAAIAAkAAAAFAAAAAAAJAAkAAAAEAAAAAAAKAAkAAAAFAAAAAAALAAkAAAAEAAAAAAAMAAkAAAAHAAAAAAANAAkAAAAIAAAAAAAOAAkAAAAIAAAAAAAPAAkAAAAEAAAAAAAQAAkAAAAFAAAAAAARAAkAAAAEAAAAAAASAAkAAAAAAAAAAAATAAkAAAAEAAAAAAAUAAkAAAAFAAAAAAAVAAkAAAAFAAAAAAAWAAkAAAAFAAAAAAAXAAkAAAAAAAAAAAAYAAkAAAAFAAAAAAAZAAkAAAAAAAAAAAAaAAkAAAAEAAAAAAAbAAkAAAAAAAAAAAAcAAkAAAAAAAAAAAAdAAkAAAAFAAAAAAAeAAkAAAAFAAAAAAAhAAkAAAAAAAAAAAAiAAkAAAAAAAAAAAAjAAkAAAAFAAAAAAAkAAkAAAAAAAAAAAAlAAkAAAAEAAAAAAAmAAkAAAAFAAAAAAAnAAkAAAAFAAAAAAAAAAoAAAAHAAAAAAABAAoAAAAGAAAAAAACAAoAAAABAAAAAAADAAoAAAAIAAAAAAAEAAoAAAAIAAAAAAAFAAoAAAAIAAAAAAAGAAoAAAAGAAAAAAAHAAoAAAAHAAAAAAAIAAoAAAABAAAAAAAJAAoAAAAGAAAAAAAKAAoAAAAIAAAAAAALAAoAAAAGAAAAAAAMAAoAAAAHAAAAAAANAAoAAAABAAAAAAAOAAoAAAAHAAAAAAAPAAoAAAAGAAAAAAAQAAoAAAAHAAAAAAARAAoAAAAGAAAAAAASAAoAAAAIAAAAAAATAAoAAAABAAAAAAAUAAoAAAABAAAAAAAVAAoAAAAIAAAAAAAWAAoAAAABAAAAAAAXAAoAAAAHAAAAAAAYAAoAAAAGAAAAAAAZAAoAAAAIAAAAAAAaAAoAAAAIAAAAAAAbAAoAAAAIAAAAAAAcAAoAAAAIAAAAAAAdAAoAAAAGAAAAAAAeAAoAAAABAAAAAAAhAAoAAAAIAAAAAAAiAAoAAAABAAAAAAAjAAoAAAAHAAAAAAAkAAoAAAAHAAAAAAAlAAoAAAAHAAAAAAAmAAoAAAAHAAAAAAAnAAoAAAABAAAAAAAAAAsAAAABAAAAAAABAAsAAAAGAAAAAAACAAsAAAAHAAAAAAADAAsAAAABAAAAAAAEAAsAAAAIAAAAAAAFAAsAAAAIAAAAAAAGAAsAAAAGAAAAAAAHAAsAAAAIAAAAAAAIAAsAAAAIAAAAAAAJAAsAAAAHAAAAAAAKAAsAAAAIAAAAAAALAAsAAAABAAAAAAAMAAsAAAABAAAAAAANAAsAAAAIAAAAAAAOAAsAAAAHAAAAAAAPAAsAAAAGAAAAAAAQAAsAAAAHAAAAAAARAAsAAAAIAAAAAAASAAsAAAAGAAAAAAATAAsAAAABAAAAAAAUAAsAAAAHAAAAAAAVAAsAAAAHAAAAAAAWAAsAAAAIAAAAAAAXAAsAAAAIAAAAAAAYAAsAAAAIAAAAAAAZAAsAAAAHAAAAAAAaAAsAAAABAAAAAAAbAAsAAAAGAAAAAAAcAAsAAAAGAAAAAAAdAAsAAAABAAAAAAAeAAsAAAAHAAAAAAAhAAsAAAAHAAAAAAAiAAsAAAAHAAAAAAAjAAsAAAAHAAAAAAAkAAsAAAAHAAAAAAAlAAsAAAAIAAAAAAAmAAsAAAABAAAAAAAnAAsAAAAGAAAAAAD///r/AAADAAAAAAAoAPr/AAADAAAAAAD///v/AAADAAAAAAAoAPv/AAADAAAAAAD///z/AAADAAAAAAAoAPz/AAADAAAAAAD///3/AAADAAAAAAAoAP3/AAADAAAAAAD///7/AAADAAAAAAAoAP7/AAADAAAAAAD/////AAADAAAAAAAoAP//AAADAAAAAAD//wAAAAADAAAAAAAoAAAAAAADAAAAAAD//wEAAAADAAAAAAAoAAEAAAADAAAAAAD//wIAAAADAAAAAAAoAAIAAAADAAAAAAD//wMAAAADAAAAAAAoAAMAAAADAAAAAAD//wQAAAADAAAAAAAoAAQAAAADAAAAAAD//wUAAAADAAAAAAAoAAUAAAADAAAAAAD//wYAAAADAAAAAAAoAAYAAAADAAAAAAD//wcAAAADAAAAAAAoAAcAAAADAAAAAAD//wgAAAADAAAAAAAoAAgAAAADAAAAAAD//wkAAAADAAAAAAAoAAkAAAADAAAAAAD//woAAAADAAAAAAAoAAoAAAADAAAAAAD//wsAAAADAAAAAAAoAAsAAAADAAAAAAA=")
 tile_set = ExtResource("2_xalfv")
 
-[node name="Armadilha2" type="Marker2D" parent="." unique_id=490667952 groups=["armadilha"]]
+[node name="Armadilha2" type="Marker2D" parent="." unique_id=408058063 groups=["armadilha"]]
 position = Vector2(624, 224)
 
-[node name="InicioJogador" type="Marker2D" parent="." unique_id=2132218911]
+[node name="InicioJogador" type="Marker2D" parent="." unique_id=747436763]
 position = Vector2(80, 288)
 
-[node name="Armadilha4" type="Marker2D" parent="." unique_id=1940326744 groups=["armadilha"]]
+[node name="Armadilha4" type="Marker2D" parent="." unique_id=1602066960 groups=["armadilha"]]
 position = Vector2(1072, 288)
 
-[node name="Armadilha5" type="Marker2D" parent="." unique_id=1486558277 groups=["armadilha"]]
+[node name="Armadilha5" type="Marker2D" parent="." unique_id=1498636770 groups=["armadilha"]]
 position = Vector2(1104, 288)
 
-[node name="Porta" type="Area2D" parent="." unique_id=850369870]
+[node name="Porta" type="Area2D" parent="." unique_id=1883633638]
 position = Vector2(1136, 288)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="@CollisionShape2D@4" type="CollisionShape2D" parent="Porta" unique_id=2093933444]
+[node name="@CollisionShape2D@4" type="CollisionShape2D" parent="Porta" unique_id=92327860]
 position = Vector2(0, -36)
 shape = SubResource("RectangleShape2D_bo0ws")
 
-[node name="Enfeites" type="Node2D" parent="." unique_id=2068787957]
+[node name="Enfeites" type="Node2D" parent="." unique_id=1204446276]
 z_index = -5
 
-[node name="Arbusto" type="Polygon2D" parent="Enfeites" unique_id=67881712]
+[node name="Arbusto" type="Polygon2D" parent="Enfeites" unique_id=1725391351]
 position = Vector2(176, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="@Polygon2D@5" type="Polygon2D" parent="Enfeites" unique_id=485179635]
+[node name="@Polygon2D@5" type="Polygon2D" parent="Enfeites" unique_id=1683366135]
 position = Vector2(336, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="@Polygon2D@6" type="Polygon2D" parent="Enfeites" unique_id=830444173]
+[node name="@Polygon2D@6" type="Polygon2D" parent="Enfeites" unique_id=593639245]
 position = Vector2(528, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="@Polygon2D@7" type="Polygon2D" parent="Enfeites" unique_id=1595359115]
+[node name="@Polygon2D@7" type="Polygon2D" parent="Enfeites" unique_id=1799337412]
 position = Vector2(720, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="@Polygon2D@8" type="Polygon2D" parent="Enfeites" unique_id=1175840615]
+[node name="@Polygon2D@8" type="Polygon2D" parent="Enfeites" unique_id=460239873]
 position = Vector2(912, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="DesafioPericia" type="Node2D" parent="." unique_id=768416287 groups=["desafio_pericia"] instance=ExtResource("3_cwnlk")]
+[node name="DesafioPericia" type="Node2D" parent="." unique_id=1082661314 groups=["desafio_pericia"] instance=ExtResource("3_cwnlk")]
 position = Vector2(400, 288)
 script = ExtResource("4_1e422")
 rotulo = "Empurrar a pedra"
 aviso_sucesso = "A pedra rolou!"
 aviso_falha = "A pedra não se moveu"
 
-[node name="Visual" type="ColorRect" parent="DesafioPericia" unique_id=1744628350]
+[node name="Visual" type="ColorRect" parent="DesafioPericia" unique_id=66434223]
 offset_left = -16.0
 offset_top = -32.0
 offset_right = 16.0
 color = Color(0.45, 0.38, 0.28, 1)
 
-[node name="Bloqueio" type="StaticBody2D" parent="DesafioPericia" unique_id=270360813]
+[node name="Bloqueio" type="StaticBody2D" parent="DesafioPericia" unique_id=720822758]
 collision_mask = 0
 
-[node name="Colisao" type="CollisionShape2D" parent="DesafioPericia/Bloqueio" unique_id=800258647]
+[node name="Colisao" type="CollisionShape2D" parent="DesafioPericia/Bloqueio" unique_id=1140329775]
 position = Vector2(0, -16)
 shape = SubResource("ShapeBloqueio")
 
-[node name="Area" type="Area2D" parent="DesafioPericia" unique_id=362761498]
+[node name="Area" type="Area2D" parent="DesafioPericia" unique_id=1165607866]
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="Forma" type="CollisionShape2D" parent="DesafioPericia/Area" unique_id=671316372]
+[node name="Forma" type="CollisionShape2D" parent="DesafioPericia/Area" unique_id=1693180936]
 position = Vector2(0, -16)
 shape = SubResource("ShapeArea")
 
-[node name="Aviso" type="Label" parent="DesafioPericia" unique_id=997967676]
+[node name="Aviso" type="Label" parent="DesafioPericia" unique_id=417962595]
 offset_left = -40.0
 offset_top = -56.0
 offset_right = 40.0
@@ -115,7 +115,7 @@ theme_override_font_sizes/font_size = 10
 text = "E: Empurrar"
 horizontal_alignment = 1
 
-[node name="Ceu" type="Polygon2D" parent="." unique_id=1160635348]
+[node name="Ceu" type="Polygon2D" parent="." unique_id=971004745]
 z_index = -10
 color = Color(0.53, 0.78, 0.95, 1)
 polygon = PackedVector2Array(-32, -192, 1312, -192, 1312, 384, -32, 384)

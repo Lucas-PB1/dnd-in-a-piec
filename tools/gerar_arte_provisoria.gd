@@ -68,6 +68,15 @@ const PALETAS: Array[Dictionary] = [
 		"pedra": Color8(70, 64, 72), "pedra_topo": Color8(100, 92, 100), "pedra_lado": Color8(86, 78, 86),
 		"pedra_fundo": Color8(40, 36, 44), "pedra_lado_escuro": Color8(48, 42, 50), "pedra_mancha": Color8(58, 50, 58),
 	},
+	# Caverna (provisório só se o pacote falhar; a linha 5 vem do Buch).
+	{
+		"terra": Color8(70, 68, 78), "terra_escura": Color8(48, 46, 56), "terra_clara": Color8(96, 94, 108),
+		"grama": Color8(88, 92, 104), "grama_topo": Color8(120, 124, 140), "grama_sombra": Color8(54, 56, 66),
+		"madeira": Color8(90, 78, 64), "madeira_topo": Color8(120, 104, 84), "madeira_fundo": Color8(56, 48, 40),
+		"madeira_emenda": Color8(70, 60, 50), "prego": Color8(40, 36, 40),
+		"pedra": Color8(96, 100, 112), "pedra_topo": Color8(130, 134, 148), "pedra_lado": Color8(110, 114, 126),
+		"pedra_fundo": Color8(58, 60, 70), "pedra_lado_escuro": Color8(66, 68, 78), "pedra_mancha": Color8(78, 82, 94),
+	},
 ]
 
 
@@ -86,52 +95,80 @@ func _gerar_ladrilhos() -> void:
 	img.save_png(ARQ_LADRILHOS)
 
 
-## Ladrilhos recortados dos pacotes CC0 do ansimuz (assets/fundos/), uma linha por ambiente, na
-## mesma ordem de FundoParalaxe.AMBIENTES e pintados com o mesmo tom. Os recortes são de 32x32
-## (a plataforma, de 32x16) e ficam numa lista na ordem do enum: GRAMA, TERRA, PLATAFORMA, PEDRA.
+## Uma linha do atlas = um `tema` de fase (0..). Pacotes CC0; tom multiplica a cor.
+## Recortes na ordem GRAMA, TERRA, PLATAFORMA, PEDRA. `celula` = lado no PNG (16 sobe 2× para 32).
 const ALTURA_PLATAFORMA := 16
-## Chão do SpriteCook (assets/tiles/spritecook): recortes de 32x32 do autotile 4x4, que entram no lugar
-## da GRAMA e da TERRA nos ambientes de floresta (coluna, linha do recorte).
 const ARQ_CHAO_SPRITECOOK := "res://assets/tiles/spritecook/chao_floresta.png"
-## O 1º de cada lista vai na coluna normal (GRAMA, TERRA); os demais, nas colunas extras de sorteio
-## (`COLUNAS_EXTRAS_GRAMA`, `COLUNAS_EXTRAS_TERRA`), que gerar_fase_teste.gd sorteia por ladrilho.
 const CELULAS_GRAMA_SPRITECOOK: Array[Vector2i] = [Vector2i(2, 0), Vector2i(3, 0), Vector2i(1, 0)]
 const CELULAS_TERRA_SPRITECOOK: Array[Vector2i] = [Vector2i(2, 1), Vector2i(2, 2), Vector2i(3, 1), Vector2i(3, 2)]
 const COLUNAS_EXTRAS_GRAMA: Array[int] = [4, 5]
 const COLUNAS_EXTRAS_TERRA: Array[int] = [6, 7, 8]
 const COLUNAS_ATLAS := 9
+## Linha do atlas → pacote. Índices = `tema` em gerar_fase_teste.gd (0 floresta … 5 caverna).
+const LINHAS_LADRILHO: Array[Dictionary] = [
+	{"pacote": &"floresta", "tom": Color(1, 1, 1), "spritecook": true},
+	{"pacote": &"floresta", "tom": Color(1.0, 0.82, 0.68), "spritecook": true},
+	{"pacote": &"pantano", "tom": Color(1, 1, 1), "spritecook": false},
+	{"pacote": &"ruina", "tom": Color(1, 1, 1), "spritecook": false},
+	{"pacote": &"fortaleza", "tom": Color(1, 1, 1), "spritecook": false},
+	{"pacote": &"caverna", "tom": Color(1, 1, 1), "spritecook": false},
+]
 const PACOTES_LADRILHO := {
 	&"floresta": {
-		"arquivo": "res://assets/fundos/floresta/tiles.png",
+		"arquivo": "res://assets/fundos/floresta/tiles.png", "celula": 32,
 		"recortes": [Vector2i(16, 12), Vector2i(48, 36), Vector2i(96, 12), Vector2i(16, 40)],
 	},
 	&"fortaleza": {
-		"arquivo": "res://assets/fundos/fortaleza/tileset.png",
+		"arquivo": "res://assets/fundos/fortaleza/tileset.png", "celula": 32,
 		"recortes": [Vector2i(48, 48), Vector2i(48, 80), Vector2i(0, 16), Vector2i(0, 48)],
+	},
+	# Gothicvania Swamp (16×16 → 32): musgo, terra, prancha, rocha.
+	&"pantano": {
+		"arquivo": "res://assets/fundos/pantano/tileset.png", "celula": 16,
+		"recortes": [Vector2i(32, 80), Vector2i(32, 32), Vector2i(128, 80), Vector2i(32, 0)],
+	},
+	# Gothicvania Cemetery (16×16 → 32): relva com ossos, terra, prancha, pedra.
+	&"ruina": {
+		"arquivo": "res://assets/fundos/ruina/tileset.png", "celula": 16,
+		"recortes": [Vector2i(16, 64), Vector2i(16, 80), Vector2i(192, 64), Vector2i(256, 80)],
+	},
+	# Buch DB32 Cave (CC0): superfície, preenchimento, prancha, parede.
+	&"caverna": {
+		"arquivo": "res://assets/tiles/caverna/chao/cave_tileset.png", "celula": 32,
+		"recortes": [Vector2i(0, 32), Vector2i(0, 64), Vector2i(160, 32), Vector2i(0, 128)],
 	},
 }
 
 
 func _ladrilhos_do_pacote(img: Image) -> void:
-	var ambientes := FundoParalaxe.AMBIENTES.keys()
-	for linha in mini(ambientes.size(), PALETAS.size()):
-		var dados: Array = FundoParalaxe.AMBIENTES[ambientes[linha]]
-		var pacote: Dictionary = PACOTES_LADRILHO[dados[0]]
-		var fonte := Image.load_from_file(ProjectSettings.globalize_path(pacote["arquivo"]))
+	for linha in mini(LINHAS_LADRILHO.size(), PALETAS.size()):
+		var dados: Dictionary = LINHAS_LADRILHO[linha]
+		var pacote: Dictionary = PACOTES_LADRILHO[dados.pacote]
+		var fonte := Image.load_from_file(ProjectSettings.globalize_path(pacote.arquivo))
 		fonte.convert(Image.FORMAT_RGBA8)
-		var chao: Image = _chao_spritecook() if dados[0] == &"floresta" else null
+		var chao: Image = _chao_spritecook() if dados.spritecook else null
+		var tom: Color = dados.tom
+		var celula: int = int(pacote.get("celula", TAM))
 		for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA]:
 			var altura := ALTURA_PLATAFORMA if tipo == PLATAFORMA else TAM
-			var origem: Vector2i = pacote["recortes"][tipo]
-			var bloco := fonte.get_region(Rect2i(origem, Vector2i(TAM, altura)))
+			var bloco := _recortar_ladrilho(fonte, pacote.recortes[tipo], celula, altura)
 			if chao != null and (tipo == GRAMA or tipo == TERRA):
 				var celulas := CELULAS_GRAMA_SPRITECOOK if tipo == GRAMA else CELULAS_TERRA_SPRITECOOK
 				bloco = chao.get_region(Rect2i(celulas[0] * TAM, Vector2i(TAM, TAM)))
-			_pintar(bloco, dados[1])
+			_pintar(bloco, tom)
 			var destino := Vector2i(tipo * TAM, linha * TAM)
 			img.fill_rect(Rect2i(destino, Vector2i(TAM, TAM)), Color(0, 0, 0, 0))
 			img.blit_rect(bloco, Rect2i(Vector2i.ZERO, bloco.get_size()), destino)
-		_variantes_de_sorteio(img, linha, chao, dados[1])
+		_variantes_de_sorteio(img, linha, chao, tom)
+
+
+## Recorte na folha; se a célula for 16, amplia 2× (nearest) para o atlas 32.
+func _recortar_ladrilho(fonte: Image, origem: Vector2i, celula: int, altura_destino: int) -> Image:
+	var altura_fonte := celula / 2 if altura_destino == ALTURA_PLATAFORMA else celula
+	var bloco := fonte.get_region(Rect2i(origem, Vector2i(celula, altura_fonte)))
+	if celula != TAM or altura_fonte != altura_destino:
+		bloco.resize(TAM, altura_destino, Image.INTERPOLATE_NEAREST)
+	return bloco
 
 
 ## Preenche as colunas extras da linha: com o ladrilho normal (sorteio sem efeito) ou, na floresta,

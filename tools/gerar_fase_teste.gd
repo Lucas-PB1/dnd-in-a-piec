@@ -95,6 +95,7 @@ const CEU := [
 	Color(0.40, 0.50, 0.36),
 	Color(0.30, 0.24, 0.40),
 	Color(0.26, 0.09, 0.11),
+	Color(0.12, 0.14, 0.18),  # caverna
 ]
 
 
@@ -207,7 +208,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Mina", "arquivo": "res://levels/fase_7.tscn", "no": "Fase",
-			"tema": 4, "indice": 7, "ultima": false, "quantidade": 4, "tipos": TIPOS_MINA, "missao": "Atravesse a mina",
+			"tema": 5, "indice": 7, "ultima": false, "quantidade": 4, "tipos": TIPOS_MINA, "missao": "Atravesse a mina",
 			"largura": 60, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(9, 2), Vector2i(26, 3), Vector2i(41, 2)], "plataformas": [],
 			"chao": [13, 30, 39, 44], "plataforma": [], "porta": 56,
@@ -220,7 +221,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Caverna Úmida", "arquivo": "res://levels/fase_8.tscn", "no": "Fase",
-			"tema": 3, "indice": 8, "ultima": false, "quantidade": 5, "tipos": TIPOS_CAVERNA, "missao": "Atravesse a caverna",
+			"tema": 5, "indice": 8, "ultima": false, "quantidade": 5, "tipos": TIPOS_CAVERNA, "missao": "Atravesse a caverna",
 			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(8, 3), Vector2i(22, 2), Vector2i(37, 3), Vector2i(50, 2)], "plataformas": [],
 			"chao": [11, 19, 30, 44, 53], "plataforma": [], "porta": 60,
@@ -234,7 +235,7 @@ func _fases() -> Array[Dictionary]:
 		{
 			# A cripta do Wight, a fase 9 do plano.
 			"nome": "Cripta", "arquivo": "res://levels/fase_9.tscn", "no": "Fase",
-			"tema": 3, "indice": 9, "ultima": false, "quantidade": 2, "tipos": TIPOS_CRIPTA, "missao": "Desça à cripta",
+			"tema": 5, "indice": 9, "ultima": false, "quantidade": 2, "tipos": TIPOS_CRIPTA, "missao": "Desça à cripta",
 			"largura": 54, "inicio": 2,
 			"buracos": [Vector2i(12, 2)], "plataformas": [],
 			"chao": [15, 30], "plataforma": [], "porta": 50,
@@ -252,7 +253,7 @@ func _fases() -> Array[Dictionary]:
 			# O covil da Quimera, a fase 10 (final). Arena larga e reta (colunas 30 a 63): ela espera na coluna 46.
 			# Duas poças de lava no chão (zona de 1d6 de fogo / rodada); dá para contornar pelos degraus/plataformas.
 			"nome": "Covil", "arquivo": "res://levels/fase_10.tscn", "no": "Fase",
-			"tema": 4, "indice": 10, "ultima": true, "quantidade": 3, "tipos": TIPOS_COVIL, "missao": "Enfrente a Quimera",
+			"tema": 5, "indice": 10, "ultima": true, "quantidade": 3, "tipos": TIPOS_COVIL, "missao": "Enfrente a Quimera",
 			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [], "plataformas": [],
 			"lavas": [Vector2i(9, 3), Vector2i(35, 2)],
