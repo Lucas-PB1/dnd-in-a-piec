@@ -174,6 +174,7 @@ func _ready() -> void:
 	_bau.abrir_pedido.connect(_abrir_bau)
 	_bau.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_ABRIR))
 	_jogador.inventario.mudou.connect(_atualizar_botoes_toque)
+	_tela_bau.fechou.connect(_bau.fechar_tampa)
 	_tela_bau.fechou.connect(_ao_fechar_modal)
 	_lojista.abrir_pedido.connect(_abrir_loja)
 	_lojista.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_ABRIR))

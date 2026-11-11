@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://features/bau/bau.gd" id="1_bau"]
-[ext_resource type="Texture2D" path="res://features/bau/sprites/bau.png" id="2_arte"]
+[ext_resource type="SpriteFrames" path="res://features/bau/sprites/bau_frames.tres" id="2_frames"]
 
 [sub_resource type="RectangleShape2D" id="Forma_perto"]
 size = Vector2(64, 40)
@@ -12,9 +12,13 @@ collision_mask = 2
 monitorable = false
 script = ExtResource("1_bau")
 
-[node name="Sprite" type="Sprite2D" parent="."]
-texture = ExtResource("2_arte")
-offset = Vector2(0, -11)
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+process_mode = 3
+scale = Vector2(2, 2)
+offset = Vector2(0, -17.5)
+sprite_frames = ExtResource("2_frames")
+animation = &"fechado"
+autoplay = "fechado"
 
 [node name="Perto" type="CollisionShape2D" parent="."]
 position = Vector2(0, -20)

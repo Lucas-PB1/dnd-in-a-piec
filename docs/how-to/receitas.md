@@ -22,6 +22,8 @@ Outros comandos de ferramenta (sem `--debug`):
 & $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/gerar_arte_provisoria.gd
 # Efeitos de golpe (Kenney Particle Pack → corte/rastro/impacto)
 & $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/montar_efeitos_golpe.gd
+# Baú abrindo (folha CC0 → SpriteFrames)
+& $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/montar_bau.gd
 & $env:GODOT_EDITOR_PATH --headless --path . --import
 & $env:GODOT_EDITOR_PATH --headless --path . --script res://tools/gerar_fase_teste.gd
 # Só uma fase (sem apagar as outras, que têm marcadores postos à mão): `-- 6` grava a fase 6 (com o chefe e os pilares quebráveis)

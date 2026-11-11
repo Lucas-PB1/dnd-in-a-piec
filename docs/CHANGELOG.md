@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Baú do arsenal: animação de abrir/fechar com arte CC0 do **r0ar** (`bau_abrindo.png`); fecha a tampa ao sair da tela.
 - Ladrilhos de cenário CC0: tilesets Gothicvania **Swamp** e **Cemetery** (pântano/ruína), **Buch** DB32 Cave (mina–covil); atlas com 6 temas; fases 7–10 no tema caverna.
 - Efeitos de golpe: arte **Kenney Particle Pack** (CC0) no lugar do desenho por script — arco (`slash`), rastro (`trace`), impacto (`circle`); montador `tools/montar_efeitos_golpe.gd`.
 - Enfeites de mapa: tochas/estandartes/janelas (Ruína–Labirinto/Cripta), props OPP2017 (Mina/Caverna/Covil), arbustos/juncos/água provisórios (Clareira–Pântano). Gerador + regeneração das 10 fases.

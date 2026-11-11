@@ -14,14 +14,12 @@ const CONTORNO := Color8(34, 28, 40)
 const ARQ_LADRILHOS := "res://assets/tiles/ladrilhos.png"
 const ARQ_CONDICOES := "res://assets/efeitos/condicoes.png"
 const ARQ_BONECO := "res://features/boneco_treino/boneco_treino.png"
-const ARQ_BAU := "res://features/bau/sprites/bau.png"
 
 
 func _initialize() -> void:
 	_gerar_ladrilhos()
 	_gerar_condicoes()
 	_gerar_boneco()
-	_gerar_bau()
 	print("Arte provisória gerada.")
 	quit()
 
@@ -244,21 +242,6 @@ func _gerar_boneco() -> void:
 	img.fill_rect(Rect2i(6, 52, 16, 4), Color8(80, 60, 40))  # base
 	_contornar(img, Rect2i(0, 0, 28, 56))
 	_salvar(img, ARQ_BONECO)
-
-
-## Baú de madeira com cintas e fechadura dourada, visto de lado (30x22).
-func _gerar_bau() -> void:
-	var img := Image.create(30, 22, false, Image.FORMAT_RGBA8)
-	img.fill_rect(Rect2i(1, 3, 28, 18), Color8(126, 82, 46))  # corpo
-	img.fill_rect(Rect2i(1, 3, 28, 7), Color8(150, 100, 58))  # tampa
-	img.fill_rect(Rect2i(1, 10, 28, 1), Color8(70, 44, 26))  # fresta da tampa
-	for x in [5, 23]:  # cintas de metal
-		img.fill_rect(Rect2i(x, 3, 2, 18), Color8(120, 124, 134))
-	img.fill_rect(Rect2i(13, 8, 4, 5), Color8(214, 170, 60))  # fechadura
-	img.fill_rect(Rect2i(14, 10, 2, 2), Color8(70, 44, 26))
-	_contornar(img, Rect2i(0, 0, 30, 22))
-	_salvar(img, ARQ_BAU)
-
 
 
 func _salvar(img: Image, caminho: String) -> void:

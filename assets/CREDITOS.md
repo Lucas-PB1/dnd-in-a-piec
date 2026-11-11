@@ -11,6 +11,7 @@
 | Fundos e **tileset** do Pântano (Gothicvania Swamp; `back`, `middle`, `front`, `tileset.png`) | **ansimuz (Luis Zuno)** | https://opengameart.org/content/gotthicvania-swamp | CC0 1.0 (domínio público; crédito opcional) | `assets/fundos/pantano/` |
 | Fundos e **tileset** da Ruína (GothicVania Cemetery; `back`, `mountains`, `graveyard`, `tileset.png`) | **ansimuz (Luis Zuno)** | https://opengameart.org/content/gothicvania-cemetery-pack | CC0 1.0 (domínio público; crédito opcional) | `assets/fundos/ruina/` |
 | Ladrilhos de caverna (DB32 Cave tileset) | **Buch** | https://opengameart.org/content/db32-cave-tileset | CC0 1.0 (crédito não obrigatório) | `assets/tiles/caverna/chao/cave_tileset.png` |
+| Baú abrindo (8 quadros) | **r0ar** | https://opengameart.org/content/treasure-chest-sprite | CC0 1.0 | `features/bau/sprites/fonte_bau/` (originais), `features/bau/sprites/bau_abrindo.png` |
 | Goblin Warrior (soldado de lado: parado, andar, golpe com espada, morte). A flecha que ele atira é a do Aerial Arsenal | **MoikMellah** | https://opengameart.org/content/goblin-corps-mv-platformer-set (Goblin Corps) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/goblin/sprites/fonte_goblin_corps/` |
 | Herói | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/jogador/sprites/` |
 | Chão da floresta | Gerado no SpriteCook (tileset) | https://spritecook.ai | Conta do usuário | `assets/tiles/spritecook/` |
