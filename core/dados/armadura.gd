@@ -33,7 +33,6 @@ enum Padrao { LISO, MALHA, TACHAS, PLACAS, ACOLCHOADO, ESCAMAS }
 ## Nome no livro (inglês).
 @export var nome_original: String = ""
 @export var peso: String = ""
-@export var preco: String = ""
 @export var livro: String = ""
 
 

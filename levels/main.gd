@@ -172,6 +172,7 @@ func _ready() -> void:
 	_jogador.caiu.connect(_ao_cair)
 	_mostrar_personagem_no_hud()
 	_inventario.abrir_pedido.connect(_abrir_inventario)
+	_inventario.usar_item_pedido.connect(_ao_usar_item_do_inventario)
 	_inventario.fechou.connect(_ao_fechar_modal)
 	_bau.abrir_pedido.connect(_abrir_bau)
 	_bau.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_ABRIR))
@@ -844,6 +845,12 @@ func _abrir_inventario() -> void:
 	_inventario.abrir(_jogador.inventario, _jogador.ficha, _jogador.vida_atual(),
 		_jogador.vida_maxima(), _jogador.ataque_desarmado)
 	_controles_toque.atualizar(true)
+
+
+func _ao_usar_item_do_inventario(item: Item) -> void:
+	if _jogador.usar_pocao_de_cura(item) <= 0:
+		return
+	_inventario.atualizar_vida(_jogador.vida_atual(), _jogador.vida_maxima())
 
 
 func _ao_arremessar(arma: Arma, golpe: Golpe, penalidade: int, origem: Vector2, direcao: int, forca: float, mira: float, municao: Municao, ignora_alcance_longo: bool, destreza: int) -> void:

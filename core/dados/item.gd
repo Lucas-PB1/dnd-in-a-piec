@@ -18,10 +18,19 @@ const ESPACO_MAO_SECUNDARIA := &"mao_secundaria"
 
 ## Empilhável: várias unidades ocupam 1 lugar na mochila (ex.: Azagaia ×8).
 @export var empilhavel: bool = false
+## Preço do livro para a loja (ex.: "50 GP"). Vazio = preço padrão da loja.
+@export var preco: String = ""
+## Cura ao beber (ex.: "2d4+2"). Vazio = não é poção usável no inventário.
+@export var cura: String = ""
 
 
 func equipavel() -> bool:
 	return espaco != &""
+
+
+## Poção (ou outro consumível) com fórmula de cura válida.
+func e_pocao_de_cura() -> bool:
+	return not cura.is_empty() and Dado.de_texto(cura) != null
 
 
 ## Mesmo item empilhável (cópias do mesmo .tres têm o mesmo nome).

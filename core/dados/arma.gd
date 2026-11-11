@@ -58,7 +58,6 @@ extends Item
 ## Nome no livro (inglês).
 @export var nome_original: String = ""
 @export var peso: String = ""
-@export var preco: String = ""
 @export var livro: String = ""
 ## Efeito visual do golpe (EFEITO_*): arco nos cortes, rastro nas estocadas, impacto nos
 ## contundentes. Vazio = nenhum (o chicote já desenha o estalo nos quadros).

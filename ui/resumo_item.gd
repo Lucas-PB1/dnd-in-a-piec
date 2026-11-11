@@ -9,6 +9,12 @@ static func texto(item: Item, ficha: Ficha = null, inventario: Inventario = null
 		return _arma(item as Arma, ficha, inventario)
 	if item is Armadura:
 		return _armadura(item as Armadura, ficha, inventario)
+	if item != null and item.e_pocao_de_cura():
+		var partes: PackedStringArray = ["Cura %s" % item.cura]
+		if ficha == null:
+			_referencia(partes, "", item.preco)
+			return " · ".join(partes)
+		return "%s\n%s" % [" · ".join(partes), item.descricao]
 	return item.descricao if item else ""
 
 

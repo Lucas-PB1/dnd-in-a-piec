@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Poções de cura (PHB): Cura (2d4+2, 50 GP) e Maior (4d4+4, 200 GP) na loja/`data/itens/`; botão **Usar** no inventário. Teste `teste_pocoes`.
 - Loja: estoque **sempre com ≥ 1 munição** (também no Trocar). Teste `teste_loja`.
 - Loja: botão **Trocar** renova o estoque — 1ª grátis, depois +10 po por vez (10, 20…). Testes `teste_loja` / `teste_tela_loja`.
 - Bug: DesafioPericia na Clareira sem nós duplicados — `_adicionar` do gerador não marca `owner` nos filhos de instância PackedScene; fase 1 regenerada. Teste `teste_desafio_pericia`.

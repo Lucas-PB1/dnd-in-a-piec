@@ -973,6 +973,24 @@ func gastar_dado_de_vida() -> bool:
 	return true
 
 
+## Bebe uma poção de cura da mochila: gasta 1 unidade e recupera a fórmula do item. Devolve o PV ganho (0 se não usou).
+func usar_pocao_de_cura(item: Item) -> int:
+	if item == null or not item.e_pocao_de_cura() or _vida.esta_morto():
+		return 0
+	if item not in inventario.itens:
+		return 0
+	if _vida.vida_atual >= _vida.vida_maxima:
+		avisar("Vida cheia")
+		return 0
+	var dado := Dado.de_texto(item.cura)
+	if dado == null or inventario.extrair_uma(item) == null:
+		return 0
+	var ganho := _vida.curar(dado.rolar(_rng_folego))
+	_animacao.pulso_cura()
+	_texto.mostrar_cura("%s +%d" % [item.nome, ganho])
+	return ganho
+
+
 func dados_de_vida_restantes() -> int:
 	return _dados_de_vida.restantes
 

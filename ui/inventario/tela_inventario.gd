@@ -8,6 +8,8 @@ extends Control
 signal abrir_pedido
 ## Emitido ao fechar a tela para quem controla a interface de toque.
 signal fechou
+## Pedido para beber/usar um consumível (poção). A main aplica no herói.
+signal usar_item_pedido(item: Item)
 
 const FAIXA_DO_EQUIPADO := 0.35
 
@@ -22,6 +24,7 @@ var _vida_maxima: int = 0
 @onready var _nome: Label = %Nome
 @onready var _dano_item: Label = %DanoItem
 @onready var _botao_equipar: Button = %Equipar
+@onready var _botao_usar: Button = %Usar
 @onready var _botao_jogar_fora: Button = %JogarFora
 @onready var _painel_item: Control = %PainelItem
 @onready var _painel_ficha: Control = %PainelFicha
@@ -38,6 +41,7 @@ func _ready() -> void:
 	hide()
 	_lista.item_selected.connect(func(_i: int) -> void: _atualizar_detalhes())
 	_botao_equipar.pressed.connect(_alternar_equipamento)
+	_botao_usar.pressed.connect(usar_selecionado)
 	_botao_jogar_fora.pressed.connect(_perguntar_jogar_fora)
 	_aba_item.pressed.connect(_mostrar_item.bind(true))
 	_aba_ficha.pressed.connect(_mostrar_item.bind(false))
@@ -102,6 +106,20 @@ func jogar_fora_selecionado() -> void:
 	var item := _item_selecionado()
 	if item:
 		_inventario.descartar(item)
+
+
+## Pede para a main usar a poção selecionada (cura).
+func usar_selecionado() -> void:
+	var item := _item_selecionado()
+	if item != null and item.e_pocao_de_cura():
+		usar_item_pedido.emit(item)
+
+
+## Atualiza os PV mostrados na ficha (depois de beber poção, etc.).
+func atualizar_vida(atual: int, maxima: int) -> void:
+	_vida_atual = atual
+	_vida_maxima = maxima
+	_atualizar_ficha()
 
 
 func _alternar_equipamento() -> void:
@@ -174,6 +192,8 @@ func _atualizar_detalhes() -> void:
 	_nome.text = item.nome if item else "(nenhum item)"
 	_dano_item.text = ResumoItem.texto(item, _ficha, _inventario)
 	_ajustar_botao_equipar(item)
+	_botao_usar.disabled = item == null or not item.e_pocao_de_cura()
+	_botao_usar.visible = item != null and item.e_pocao_de_cura()
 	_botao_jogar_fora.disabled = item == null
 
 
@@ -181,6 +201,7 @@ func _ajustar_botao_equipar(item: Item) -> void:
 	var equipado := item != null and _inventario != null and _inventario.esta_equipado(item)
 	_botao_equipar.text = "Desequipar" if equipado else "Equipar"
 	_botao_equipar.disabled = item == null or not item.equipavel()
+	_botao_equipar.visible = item == null or item.equipavel() or not item.e_pocao_de_cura()
 
 
 func _atualizar_ficha() -> void:

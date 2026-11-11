@@ -13,14 +13,16 @@ const ALTURA_JANELA := 720
 
 ## Onde as opções ficam gravadas. Os testes trocam por outro arquivo.
 static var caminho: String = "user://tela.cfg"
-static var modo: int = JANELA
+## Sem arquivo salvo (primeira execução / exe novo) = tela cheia.
+static var modo: int = TELA_CHEIA
 
 
 static func carregar() -> void:
 	var arquivo := ConfigFile.new()
 	if arquivo.load(caminho) != OK:
+		modo = TELA_CHEIA
 		return
-	modo = clampi(int(arquivo.get_value(SECAO, "modo", modo)), JANELA, TELA_CHEIA)
+	modo = clampi(int(arquivo.get_value(SECAO, "modo", TELA_CHEIA)), JANELA, TELA_CHEIA)
 
 
 static func salvar() -> void:

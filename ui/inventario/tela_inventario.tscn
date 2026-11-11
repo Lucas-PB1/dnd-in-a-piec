@@ -117,6 +117,13 @@ custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "Equipar"
 
+[node name="Usar" type="Button" parent="Centro/Painel/Coluna/Colunas/Direita/PainelItem"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Usar"
+
 [node name="JogarFora" type="Button" parent="Centro/Painel/Coluna/Colunas/Direita/PainelItem"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
