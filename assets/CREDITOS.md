@@ -29,6 +29,7 @@
 | Growls (Bugbear / Gray Ooze) | StarNinjas | https://opengameart.org/content/16-monster-growls | CC0 | `assets/audio/vozes_monstros/growl_*.ogg` (fonte: `fonte_vozes_monstros/monster_starninjas.zip`) |
 | Efeitos feitos por script (impactos, apanhar, morte, magia, cura, nível, arco) e ambientes por tema (floresta, ruínas, subterrâneo, covil) | Projeto (`tools/gerar_sons.gd`) | , | próprio | `assets/audio/sintetizados/` |
 | Menus (molduras, botões, painéis) | Pixel UI pack, de Kenney Vleugels (CC0) | https://www.kenney.nl/assets/pixel-ui-pack | CC0 (crédito não é obrigatório) | `assets/ui/kenney_pixel_ui/` |
+| Efeitos de golpe (arco, rastro, impacto; `slash_*`, `trace_*`, `circle_*`) | Kenney Particle Pack, Kenney Vleugels (CC0) | https://kenney.nl/assets/particle-pack (também em OpenGameArt) | CC0 (crédito não é obrigatório) | `assets/efeitos/fonte_kenney_particle/` (originais), `assets/efeitos/` (tiras via `tools/montar_efeitos_golpe.gd`) |
 | Porta em arco de madeira (recorte da folha de castelo `castle_tileset_part3.png`; `assets/tiles/castelo/`, gerada por `tools/recortar_porta.gd`) | rubberduck | https://opengameart.org/content/pixel-art-castle-tileset | CC0 | `assets/tiles/castelo/porta.png` |
 
 

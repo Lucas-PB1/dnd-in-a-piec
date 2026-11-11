@@ -121,6 +121,7 @@ centered = false
 
 [node name="Efeito" type="AnimatedSprite2D" parent="Ataque"]
 visible = false
+texture_filter = 2
 position = Vector2(10, 0)
 sprite_frames = ExtResource("14_corte")
 animation = &"corte"

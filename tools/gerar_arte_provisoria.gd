@@ -1,5 +1,6 @@
 extends SceneTree
-## Gera a arte provisória (pixel art): ladrilhos, efeitos de golpe (arco, rastro, impacto) e boneco de treino.
+## Gera a arte provisória (pixel art): ladrilhos, ícones de condição, boneco e baú.
+## Efeitos de golpe vêm do Kenney (`tools/montar_efeitos_golpe.gd`), não daqui.
 ## Rodar: godot --headless --path . --script res://tools/gerar_arte_provisoria.gd
 ## Depois rode "godot --headless --path . --import" (e gerar_fase_teste.gd se mudou ladrilhos).
 
@@ -11,28 +12,13 @@ enum { GRAMA, TERRA, PLATAFORMA, PEDRA }
 const CONTORNO := Color8(34, 28, 40)
 
 const ARQ_LADRILHOS := "res://assets/tiles/ladrilhos.png"
-const ARQ_CORTE := "res://assets/efeitos/corte.png"
-const ARQ_RASTRO := "res://assets/efeitos/rastro.png"
-const ARQ_IMPACTO := "res://assets/efeitos/impacto.png"
 const ARQ_CONDICOES := "res://assets/efeitos/condicoes.png"
 const ARQ_BONECO := "res://features/boneco_treino/boneco_treino.png"
 const ARQ_BAU := "res://features/bau/sprites/bau.png"
 
-## Arco de corte: quadros quadrados lado a lado.
-const TAM_CORTE := 48
-const QUADROS_CORTE := 4
-## Rastro da estocada: quadros compridos (da mão até a ponta).
-const TAM_RASTRO := Vector2i(48, 12)
-## Impacto dos contundentes: quadros quadrados.
-const TAM_IMPACTO := 32
-const QUADROS_EFEITO := 4
-
 
 func _initialize() -> void:
 	_gerar_ladrilhos()
-	_gerar_corte()
-	_gerar_rastro()
-	_gerar_impacto()
 	_gerar_condicoes()
 	_gerar_boneco()
 	_gerar_bau()
@@ -181,76 +167,7 @@ func _pintar(img: Image, tom: Color) -> void:
 			img.set_pixel(x, y, Color(cor.r * tom.r, cor.g * tom.g, cor.b * tom.b, cor.a))
 
 
-# --- Corte e boneco ----------------------------------------------------
-
-## Arco de corte branco (a cor vem da Arma via modulate), em QUADROS_CORTE quadros:
-## o arco cresce, fica cheio e some.
-func _gerar_corte() -> void:
-	var img := Image.create(TAM_CORTE * QUADROS_CORTE, TAM_CORTE, false, Image.FORMAT_RGBA8)
-	var faixas := [[-1.2, -0.4, 1.0], [-1.3, 0.6, 1.0], [-1.3, 1.1, 0.75], [-0.2, 1.2, 0.35]]
-	for q in QUADROS_CORTE:
-		var faixa: Array = faixas[q]
-		_desenhar_arco(img, q * TAM_CORTE, faixa[0], faixa[1], faixa[2])
-	_salvar(img, ARQ_CORTE)
-
-
-## Lua crescente entre os ângulos (radianos, 0 = frente) com a transparência dada.
-func _desenhar_arco(img: Image, ox: int, ang_ini: float, ang_fim: float, alfa: float) -> void:
-	var centro := Vector2(TAM_CORTE * 0.3, TAM_CORTE * 0.5)
-	var raio_fora := TAM_CORTE * 0.46
-	for y in TAM_CORTE:
-		for x in TAM_CORTE:
-			var v := Vector2(x, y) - centro
-			var ang := v.angle()
-			if ang < ang_ini or ang > ang_fim:
-				continue
-			# A espessura do arco é maior no meio do ângulo (formato de lua).
-			var meio := (ang - ang_ini) / maxf(ang_fim - ang_ini, 0.01)
-			var espessura := 2.0 + 6.0 * sin(meio * PI)
-			if v.length() <= raio_fora and v.length() >= raio_fora - espessura:
-				img.set_pixel(ox + x, y, Color(1, 1, 1, alfa))
-
-
-## Rastro da estocada (branco; a cor vem da Arma): linhas paralelas que correm da mão até
-## a ponta, mais fortes perto da ponta, e somem.
-func _gerar_rastro() -> void:
-	var img := Image.create(TAM_RASTRO.x * QUADROS_EFEITO, TAM_RASTRO.y, false, Image.FORMAT_RGBA8)
-	# [onde a linha começa (fração), alfa] por quadro: estica, fica cheia, recua para a ponta e some.
-	var quadros := [[0.55, 1.0], [0.1, 1.0], [0.35, 0.65], [0.7, 0.3]]
-	var linhas := [[3, 0.5], [6, 1.0], [9, 0.5], [5, 0.35], [7, 0.35]]  # [y, força]
-	for q in QUADROS_EFEITO:
-		var inicio := int(TAM_RASTRO.x * quadros[q][0])
-		for linha: Array in linhas:
-			for x in range(inicio, TAM_RASTRO.x):
-				var perto_da_ponta := float(x - inicio) / maxf(TAM_RASTRO.x - inicio, 1.0)
-				var alfa: float = quadros[q][1] * linha[1] * (0.35 + 0.65 * perto_da_ponta)
-				img.set_pixel(q * TAM_RASTRO.x + x, linha[0], Color(1, 1, 1, alfa))
-	_salvar(img, ARQ_RASTRO)
-
-
-## Impacto dos contundentes (branco; a cor vem da Arma): clarão, anel que abre e faíscas.
-func _gerar_impacto() -> void:
-	var img := Image.create(TAM_IMPACTO * QUADROS_EFEITO, TAM_IMPACTO, false, Image.FORMAT_RGBA8)
-	# [raio do anel, grossura, comprimento das faíscas, alfa] por quadro.
-	var quadros := [[3.0, 3.0, 6.0, 1.0], [7.0, 2.0, 11.0, 1.0], [11.0, 1.5, 14.0, 0.7], [14.0, 1.0, 15.0, 0.35]]
-	var centro := Vector2(TAM_IMPACTO, TAM_IMPACTO) / 2.0
-	for q in QUADROS_EFEITO:
-		var raio: float = quadros[q][0]
-		var alfa: float = quadros[q][3]
-		for y in TAM_IMPACTO:
-			for x in TAM_IMPACTO:
-				var d := Vector2(x + 0.5, y + 0.5).distance_to(centro)
-				if absf(d - raio) <= quadros[q][1] * 0.5 or (q == 0 and d < raio):
-					img.set_pixel(q * TAM_IMPACTO + x, y, Color(1, 1, 1, alfa))
-		for k in 8:  # faíscas
-			var direcao := Vector2.from_angle(k * TAU / 8.0 + 0.2)
-			for s in range(int(raio) + 2, int(quadros[q][2])):
-				if s % 2 == 0 or q < 2:
-					var p := Vector2i(centro + direcao * s)
-					if Rect2i(0, 0, TAM_IMPACTO, TAM_IMPACTO).has_point(p):
-						img.set_pixel(q * TAM_IMPACTO + p.x, p.y, Color(1, 1, 1, alfa))
-	_salvar(img, ARQ_IMPACTO)
-
+# --- Condições, boneco e baú ----------------------------------------------------
 
 ## Ícones das condições (8x8, na ordem de CondicoesComponent.ORDEM): Caído (seta para
 ## baixo), Lento (ampulheta), Enfraquecido (espada quebrada), Atormentado (alvo).

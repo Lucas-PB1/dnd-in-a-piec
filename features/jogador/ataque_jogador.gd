@@ -14,12 +14,12 @@ const FOLGA_PONTA := 6.0
 ## Com a lâmina mais para trás que isto (graus; -90 = para cima), o golpe ainda está sendo
 ## armado atrás da cabeça e não acerta: só acerta quem está à frente.
 const ANGULO_ATRAS := -100.0
-## Medidas da arte dos efeitos (tools/gerar_arte_provisoria.gd): raio do arco e onde fica o
-## centro dele no quadro; comprimento do rastro; tamanho do impacto.
-const RAIO_DO_ARCO := 22.0
-const CENTRO_DO_ARCO := Vector2(9.6, 0.0)
-const COMPRIMENTO_DO_RASTRO := 48.0
-const TAMANHO_DO_IMPACTO := 40.0
+## Medidas da arte dos efeitos (Kenney via tools/montar_efeitos_golpe.gd): raio do arco
+## (metade da célula 64) com centro no meio do quadro; rastro 64 px; impacto 48 px.
+const RAIO_DO_ARCO := 28.0
+const CENTRO_DO_ARCO := Vector2.ZERO
+const COMPRIMENTO_DO_RASTRO := 64.0
+const TAMANHO_DO_IMPACTO := 48.0
 ## O impacto cresce com a arma, entre estes limites.
 const ESCALA_IMPACTO := Vector2(0.8, 1.4)
 ## Golpe extra de duas armas, cruzado (X): poses da 2ª arma [tempo, ângulo, mão x, mão y,
