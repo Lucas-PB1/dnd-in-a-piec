@@ -99,6 +99,22 @@ static func velocidade_andar(criatura: CriaturaRPG, condicoes: CondicoesComponen
 	return EscalaDnd.deslocamento_para_velocidade(deslocamento_efetivo_pes(criatura, condicoes))
 
 
+## Ritmo da animação `andar`: 1 = velocidade da ficha; Disparada > 1. Fora de `andar`, usa `ritmo_fora`.
+const PASSADA_MINIMA := 0.5
+const PASSADA_MAXIMA := 2.0
+
+
+static func ritmo_da_passada(
+	velocidade_x: float,
+	velocidade_andar_px: float,
+	animacao: StringName,
+	ritmo_fora: float = 1.0,
+) -> float:
+	if animacao != &"andar" or velocidade_andar_px <= 0.0:
+		return ritmo_fora
+	return clampf(absf(velocidade_x) / velocidade_andar_px, PASSADA_MINIMA, PASSADA_MAXIMA)
+
+
 ## Desliza o empurrão no corpo e devolve quanto ainda falta (px, com sinal).
 static func aplicar_empurrao(
 	corpo: CharacterBody2D,

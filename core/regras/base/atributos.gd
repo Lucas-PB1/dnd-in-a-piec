@@ -27,8 +27,8 @@ const DESCRICOES := {
 	DESTREZA: "Classe de Armadura, iniciativa (ritmo dos golpes), acerto e dano de armas de Acuidade e de disparo, e a força do tiro.",
 	CONSTITUICAO: "Pontos de vida: cada nível dá mais vida quanto maior for. Também ajuda nas salvaguardas contra veneno.",
 	INTELIGENCIA: "Perícias de conhecimento (Arcanismo, História, Investigação, Natureza e Religião). Não muda o combate do Guerreiro.",
-	SABEDORIA: "Perícias de percepção (Intuição, Percepção, Sobrevivência...) e a salvaguarda contra medo e encantos.",
-	CARISMA: "Perícias sociais (Persuasão, Atuação...) e a sorte do saque: quanto maior, mais ouro e mais chance de armas dos inimigos.",
+	SABEDORIA: "Perícias de percepção (Intuição, Percepção, Sobrevivência...) — Sobrevivência aumenta a chance de arma no saque — e a salvaguarda contra medo e encantos.",
+	CARISMA: "Perícias sociais: Persuasão dá desconto na loja; Intimidação aumenta o ouro do saque.",
 }
 
 ## Valor "médio" de um atributo (modificador zero).

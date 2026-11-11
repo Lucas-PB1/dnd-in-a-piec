@@ -9,7 +9,7 @@ enum Tamanho { MINUSCULO, PEQUENO, MEDIO, GRANDE, ENORME, IMENSO }
 @export var nome: String = "Criatura"
 ## XP concedido ao derrotar esta criatura da cota da fase.
 @export var experiencia: int = 0
-## Ouro (em peças) que ela costuma soltar; o saque sorteia em volta disto e o Carisma do herói ajusta (Saque).
+## Ouro (em peças) que ela costuma soltar; o saque sorteia em volta disto e a Intimidação do herói ajusta (Saque).
 @export var ouro: int = 0
 ## Tamanho e tipo, só para mostrar (ex.: "Medium Ooze, Unaligned").
 @export var tipo: String = ""

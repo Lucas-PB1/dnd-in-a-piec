@@ -31,7 +31,6 @@ Nenhuma prioridade alta aberta. Criatura nova: `depois/minions-recolor` (via `/n
 | 50 | `regras/racas-especies.md` | G |
 | 51 | `regras/magia.md` | G |
 | 55 | `regras/desvantagem-furtividade-armadura.md` | P |
-| 56 | `regras/pericias-em-jogo.md` | M |
 
 ### Arte / polish
 | Pri | Arquivo | Tam. |

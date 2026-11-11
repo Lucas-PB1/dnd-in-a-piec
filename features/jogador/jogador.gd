@@ -447,7 +447,7 @@ func usos_folego_total() -> int:
 	return classe.usos_segundo_folego
 
 
-## Atribui XP da cota. PV atuais sobem junto com o máximo ao ganhar nível.
+## Atribui XP da cota. PV atuais sobem junto com o máximo ao ganhar nível; sobe = descanso longo.
 func ganhar_experiencia(quantidade: int) -> int:
 	if ficha == null:
 		return 0
@@ -458,6 +458,7 @@ func ganhar_experiencia(quantidade: int) -> int:
 		_texto.mostrar("Nível %d!" % ficha.nivel, TextoFlutuanteComponent.COR_CURA)
 		_dados_de_vida.ao_subir_de_nivel(ficha, novos_niveis)  # cada nível traz mais um dado de vida
 		dados_de_vida_mudou.emit(_dados_de_vida.restantes, ficha.dados_de_vida())
+		descansar_longo()
 	progressao_mudou.emit(ficha.nivel, ficha.experiencia, ficha.xp_proximo_nivel())
 	return ficha.nivel - nivel_anterior
 

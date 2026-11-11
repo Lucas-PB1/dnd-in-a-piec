@@ -72,16 +72,16 @@ func _testar_dificuldade() -> void:
 
 func _testar_mente_tatica() -> void:
 	_jogador.ficha.pericias = [Pericia.ATLETISMO]
-	var vida := _jogador.get_node("Vida") as HealthComponent
-	vida.receber_dano(2)
-	var pv_antes := _jogador.vida_atual()
 	var maximo_antes := _jogador.vida_maxima()
 	var ganho_por_nivel := 6 + _jogador.ficha.modificador(Atributos.CONSTITUICAO)
+	_jogador.get_node("Vida").receber_dano(5)
+	_jogador.usar_folego()
 	_checar(_jogador.ganhar_experiencia(Ficha.XP_POR_NIVEL[2]) == 1
 		and _jogador.ficha.nivel == 2, "ganhar 300 XP aumenta o nível durante a campanha")
 	_checar(_jogador.vida_maxima() == maximo_antes + ganho_por_nivel
-		and _jogador.vida_atual() == pv_antes + ganho_por_nivel,
-		"ao subir de nível, os PV máximos e atuais sobem juntos")
+		and _jogador.vida_atual() == _jogador.vida_maxima(),
+		"ao subir de nível, o descanso longo enche os PV (máximo sobe)")
+	_checar(_jogador.usos_folego() == _jogador.usos_folego_total(), "subir de nível = descanso longo (Fôlego)")
 	_main._alternar_mente_tatica()
 	_checar(_jogador.mente_tatica_ligada(), "no nível 2 a Mente Tática liga pela ação (tecla T ou botão)")
 	_main._alternar_mente_tatica()

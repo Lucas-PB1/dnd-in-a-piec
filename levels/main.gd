@@ -508,7 +508,7 @@ func _nascer_acompanhante(tipo: StringName, lugar: Vector2) -> void:
 
 
 func _ao_morrer_acompanhante(experiencia: int, ouro: int) -> void:
-	_jogador.ganhar_experiencia(experiencia)
+	_aplicar_experiencia(experiencia)
 	_soltar_saque(ouro)
 
 
@@ -555,7 +555,7 @@ func _ligar_morte_da_cota(monstro: Node2D, id: int, experiencia: int, ouro: int)
 
 func _ao_morreu_da_cota(id: int, experiencia: int, ouro: int) -> void:
 	_ids_da_cota.erase(id)
-	_jogador.ganhar_experiencia(experiencia)
+	_aplicar_experiencia(experiencia)
 	_soltar_saque(ouro)
 	_missao.registrar_morte()
 	_mostrar_missao()
@@ -564,6 +564,15 @@ func _ao_morreu_da_cota(id: int, experiencia: int, ouro: int) -> void:
 	# Adia: quem morreu ainda está emitindo o sinal e não pode ser apagado agora.
 	if _heroi_na_porta:
 		_tentar_atravessar.call_deferred()
+
+
+## XP da cota; se subiu de nível, o Surto volta (o herói já fez descanso longo).
+func _aplicar_experiencia(experiencia: int) -> void:
+	if _jogador.ganhar_experiencia(experiencia) <= 0:
+		return
+	_surto_usado = false
+	_hud.mostrar_surto(_jogador.ficha.nivel, true)
+	_atualizar_botoes_toque()
 
 
 ## Cada fase fica com mais um inimigo por nível; níveis mais altos liberam Guerreiro cedo.
@@ -657,12 +666,13 @@ func _alternar_mente_tatica() -> void:
 	_atualizar_botoes_toque()
 
 
-## O herói recebe o ouro e, às vezes, uma arma do inimigo derrotado; o Carisma dele melhora a sorte (Saque).
+## O herói recebe o ouro e, às vezes, uma arma; Intimidação / Sobrevivência melhoram a sorte (Saque).
 func _soltar_saque(ouro: int) -> void:
-	var carisma := _jogador.ficha.modificador(Atributos.CARISMA)
+	var intimidacao := _jogador.ficha.bonus_pericia(Pericia.INTIMIDACAO)
+	var sobrevivencia := _jogador.ficha.bonus_pericia(Pericia.SOBREVIVENCIA)
 	var rng := _rng_da_fase()
-	_jogador.ganhar_ouro(Saque.ouro(ouro, carisma, rng))
-	_jogador.receber_saque(Saque.arma(carisma, rng))
+	_jogador.ganhar_ouro(Saque.ouro(ouro, intimidacao, rng))
+	_jogador.receber_saque(Saque.arma(sobrevivencia, rng))
 
 
 func _rng_da_fase() -> RandomNumberGenerator:

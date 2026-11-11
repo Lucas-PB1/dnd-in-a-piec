@@ -100,6 +100,9 @@ func _physics_process(delta: float) -> void:
 	_maquina.processar_fisica(delta)
 	_aplicar_empurrao(delta)
 	move_and_slide()
+	_sprite.speed_scale = MontagemDeCriatura.ritmo_da_passada(
+		velocity.x, MontagemDeCriatura.velocidade_andar(criatura, _condicoes), _sprite.animation
+	)
 	_sprite.scale.x = escala_arte * direcao_olhar  # a arte olha para a direita
 	for area: Node2D in [_golpe, _chifres, _impacto]:
 		area.scale.x = direcao_olhar

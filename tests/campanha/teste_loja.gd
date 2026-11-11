@@ -18,6 +18,16 @@ func _initialize() -> void:
 	ficha.talentos.append(Ficha.TALENTO_ARTESAO)
 	_checar(Loja.preco_de_compra(espada_curta, ficha) == 8, "o Artesão tem 20% de desconto")
 	ficha.talentos.clear()
+	ficha.atributos[Atributos.CARISMA] = 16
+	ficha.pericias = [Pericia.PERSUASAO]
+	# CAR +3 + prof +2 = 5 → 10% de Persuasão
+	_checar(is_equal_approx(Loja.desconto_de_compra(ficha), 0.1), "Persuasão +5 dá 10% de desconto")
+	_checar(Loja.preco_de_compra(espada_curta, ficha) == 9, "10 po com 10% = 9")
+	ficha.talentos.append(Ficha.TALENTO_ARTESAO)
+	_checar(is_equal_approx(Loja.desconto_de_compra(ficha), 0.3), "Artesão + Persuasão somam")
+	ficha.talentos.clear()
+	ficha.pericias.clear()
+	ficha.atributos[Atributos.CARISMA] = 10
 	inventario.equipar(inventario.itens[0])
 	_checar(Loja.vender(inventario.itens[0], ficha, inventario) == Loja.Resultado.OK and ficha.ouro == 20 and inventario.itens.is_empty(), "vender paga metade e tira da mochila")
 	_checar(inventario.equipado(Item.ESPACO_MAO) == null, "vender o equipado esvazia a mão")

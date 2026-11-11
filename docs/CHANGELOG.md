@@ -3,6 +3,8 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Deslocamento dos mobs: confirmado por ficha (Ooze 10 / Zumbi 20 / maioria 30 / Minotauro 40); passada da animação acompanha a velocidade; teste `teste_deslocamento_criaturas`.
+- Perícias em jogo: **Persuasão** desconto na loja; **Intimidação** ouro do saque; **Sobrevivência** chance de arma; subir de nível = descanso longo. Testes saque/loja/progressão.
 - Descanso curto/longo: fase sem chefe = curto (Fôlego/Surto/Sorte, sem PV cheio); chefe ou morte = longo. Teste `teste_descanso`.
 - Backlog: removido `ataques-novos-monstros` (redundante — ataques vêm da ficha em `/nova-criatura` / `minions-recolor`).
 - Amorfo (Gray Ooze): atravessa pranchas *one-way* (camada `plataforma`); herói/minions/chefes e projéteis pisam nelas. Teste `teste_amorfo`.

@@ -89,6 +89,9 @@ func _physics_process(delta: float) -> void:
 	_maquina.processar_fisica(delta)
 	_aplicar_empurrao(delta)
 	move_and_slide()
+	_sprite.speed_scale = MontagemDeCriatura.ritmo_da_passada(
+		velocity.x, MontagemDeCriatura.velocidade_andar(criatura, _condicoes), _sprite.animation
+	)
 	_sprite.flip_h = direcao_olhar < 0  # a arte do SpriteCook olha para a direita
 	_pseudopode.scale.x = direcao_olhar
 

@@ -12,7 +12,7 @@ e `tests/teste_combate_dnd.gd`.
 | Progressão do Guerreiro | Proficiência +2 até o nível 4 e +3 do 5 em diante. Fôlego segue com 2 usos; cura 1d10 + nível. **Subclasse no nível 3:** Campeão (ver abaixo). | PHB 2024. |
 | Subclasse Campeão (nv 3) | Escolha em `Ficha.subclasse` / `SubclasseRPG` (`data/subclasses/`). **Crítico Aprimorado:** `Golpe.limiar_critico` 19 (crítico se acertou e d20 ≥ limiar; 20 natural sempre acerta). **Atleta Notável:** “vantagem em iniciativa” = **+proficiência** (regra de casa, igual Alerta; **não empilha**); vantagem em Atletismo; após crítico, meio deslocamento livre (OA não existe no jogo). | PHB 2024; iniciativa pedida pelo usuário. |
 | Surto de Ação | A partir do nível 2, uma vez por fase, o próximo ataque corpo a corpo sai **em dobro**: dois golpes seguidos, cada um com a sua rolagem (aproxima do livro, onde o Surto dá uma ação extra e o Ataque pode ser feito de novo). Recarrega no **descanso curto ou longo** (ver Descansos). | Pedido do usuário; difere um pouco do PHB 2024 (só o ataque dobra). |
-| Descansos | **Curto** ao sair de fase **sem** chefe: Fôlego, Sorte, Surto e ação bônus; **não** enche PV nem tira drenar (Drenar Vida). **Longo** ao sair de fase **com** chefe, ao morrer (“Tentar de novo”) e ao começar/continuar: PV cheio, máximo restaurado, Fôlego, Surto, dados de vida e veneno. | Regra da casa (opção 1, 2026-11-10); mais duro entre chefes, generoso na morte. |
+| Descansos | **Curto** ao sair de fase **sem** chefe: Fôlego, Sorte, Surto e ação bônus; **não** enche PV nem tira drenar (Drenar Vida). **Longo** ao sair de fase **com** chefe, ao morrer (“Tentar de novo”), ao **subir de nível** e ao começar/continuar: PV cheio, máximo restaurado, Fôlego, Surto, dados de vida e veneno. | Regra da casa (opção 1, 2026-11-10); mais duro entre chefes, generoso na morte. |
 | Mente Tática | A partir do nível 2, ligada (tecla T ou botão) tenta automaticamente 1d10 depois de uma falha em teste de habilidade. O teste inclui o d10; só consome um uso de Fôlego se virar sucesso. Desligado, não rola o dado. O resolvedor está em `Pericia`. Na campanha: `DesafioPericia` (ex.: pedra na Clareira, Atletismo CD 12) chama `Jogador.rolar_teste_pericia`. | PHB 2024; automatização do gasto escolhida pelo usuário. |
 | Desafio de perícia | `features/desafio_pericia/`: obstáculo com E; a `main` rola e chama `concluir(passou)`. Sucesso remove o bloqueio; falha tem recarga curta. Toque: rótulo **Usar**. | Pedido do usuário. |
 | Dano | **Dados da arma + mod.** Arma com `acuidade` usa o maior entre FOR e DES. À distância usa DES. **Mínimo 1** por acerto. | Livro; mínimo 1 é regra da casa. |
@@ -51,9 +51,11 @@ e `tests/teste_combate_dnd.gd`.
 - Duelista Defensivo: `DefesaComponent.bonus_ca_corpo_a_corpo` na janela de 0,75 s; `aparou` quando o bônus faz um golpe errar. Investida: a corrida em linha reta é medida em `Jogador._corrida_reta_px`. Haste: `Jogador._cabo_da_haste()` é uma `Arma` montada (1d4 contundente). Durável e Envenenador: `Jogador` guarda dados de vida e doses, repostos a cada fase.
 - A escalada do Atleta (`Escalando`) e o tiro que atravessa do Atirador de Elite estão prontos.
 
-## Saque e Carisma (regra da casa, pedida pelo usuário)
+## Saque e perícias (regra da casa)
 - Cada inimigo da cota solta **ouro** (`CriaturaRPG.ouro`, sorteado de 0,5 a 1,5 vezes) e, às vezes, uma **arma** (`Saque`).
-- O modificador de **Carisma** do herói: ouro ±10% por ponto (mínimo 50%); chance de arma 15% + 3% por ponto (entre 5% e 50%).
+- **Intimidação** (bônus passivo): ouro ±10% por ponto (mínimo 50%). **Sobrevivência**: chance de arma 15% + 3% por ponto (entre 5% e 50%).
+- **Persuasão**: desconto na loja (2% por ponto positivo; soma com Artesão 20%; teto 50%).
+- Subir de nível = **descanso longo**. Percepção passiva vs Furtividade dos goblins já existia.
 - A arma cai direto na mochila (se estiver cheia, avisa "Mochila cheia" e se perde). Ouro na HUD e na ficha.
 
 ## Salvaguarda no lugar de ataque e herói agarrado (fatia do Ankheg)

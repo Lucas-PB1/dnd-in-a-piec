@@ -1,7 +1,8 @@
 class_name Loja
 extends RefCounted
 ## A loja do início da fase: o que ela vende, quanto custa e a compra e a venda em si. Regra pura.
-## Preço = o do livro (GP/SP/CP) em peças de ouro; a venda paga metade; o Artesão tem 20% de desconto.
+## Preço = o do livro (GP/SP/CP) em peças de ouro; a venda paga metade.
+## Desconto: Artesão 20% + 2% por ponto de Persuasão (teto 50%).
 
 enum Resultado { OK, SEM_OURO, MOCHILA_CHEIA, ITEM_INVALIDO }
 
@@ -11,6 +12,10 @@ const PRECO_PADRAO := 5
 const FRACAO_DA_VENDA := 0.5
 ## Desconto do talento Artesão na compra.
 const DESCONTO_ARTESAO := 0.2
+## Cada ponto do bônus de Persuasão (só positivo) tira esta fração do preço.
+const DESCONTO_POR_PONTO_PERSUASAO := 0.02
+## Teto do desconto total (Artesão + Persuasão).
+const DESCONTO_MAXIMO := 0.5
 ## Quanto o bônus mágico soma ao preço da arma (+1, +2, +3).
 const EXTRA_POR_BONUS_MAGICO := {1: 60, 2: 240, 3: 960}
 ## Na fase 1 só aparece o que custa até isto; o teto dobra a cada fase (as caras ficam para o fim).
@@ -31,12 +36,18 @@ static func preco(item: Item) -> int:
 	return maxi(base, 1)
 
 
-## Quanto o herói paga: o preço cheio, com o desconto do Artesão se ele tiver o talento.
+## Fração de desconto na compra (0 a DESCONTO_MAXIMO): Artesão + Persuasão.
+static func desconto_de_compra(ficha: Ficha) -> float:
+	if ficha == null:
+		return 0.0
+	var desconto := DESCONTO_ARTESAO if ficha.tem_talento(Ficha.TALENTO_ARTESAO) else 0.0
+	desconto += DESCONTO_POR_PONTO_PERSUASAO * maxi(ficha.bonus_pericia(Pericia.PERSUASAO), 0)
+	return minf(desconto, DESCONTO_MAXIMO)
+
+
+## Quanto o herói paga: preço cheio menos Artesão e Persuasão.
 static func preco_de_compra(item: Item, ficha: Ficha) -> int:
-	var cheio := preco(item)
-	if ficha != null and ficha.tem_talento(Ficha.TALENTO_ARTESAO):
-		return maxi(roundi(cheio * (1.0 - DESCONTO_ARTESAO)), 1)
-	return cheio
+	return maxi(roundi(preco(item) * (1.0 - desconto_de_compra(ficha))), 1)
 
 
 ## Quanto a loja paga pelo item (uma pilha inteira de munição paga por todas as unidades).
