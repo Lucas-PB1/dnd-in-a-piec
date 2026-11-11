@@ -19,6 +19,8 @@ enum Padrao { LISO, MALHA, TACHAS, PLACAS, ACOLCHOADO, ESCAMAS }
 @export var desvantagem_furtividade: bool = false
 ## Armadura não mágica: sofre a corrosão do Pseudópode do Gray Ooze.
 @export var corroivel: bool = true
+## Bônus mágico (+1/+2/+3) somado à CA. 0 = comum.
+@export var bonus_magico: int = 0
 
 @export_group("Visual no herói")
 ## Cor principal pintada na roupa do herói (o shader mantém a luz e sombra da arte).
@@ -36,16 +38,39 @@ enum Padrao { LISO, MALHA, TACHAS, PLACAS, ACOLCHOADO, ESCAMAS }
 @export var livro: String = ""
 
 
+## Maior bônus mágico comum (igual às armas).
+const BONUS_MAGICO_MAXIMO := Arma.BONUS_MAGICO_MAXIMO
+
+
 func e_escudo() -> bool:
 	return categoria == Proficiencias.ESCUDO
 
 
-## "CA 16", "CA 12 + DES", "CA 14 + DES (máx. 2)", "CA +2".
+## "CA 16", "CA 12 + DES", "CA 14 + DES (máx. 2)", "CA +2" (já com bônus mágico).
 func texto_ca() -> String:
+	var base := ca_base + bonus_magico
 	if e_escudo():
-		return "CA +%d" % ca_base
+		return "CA +%d" % base
 	if not soma_destreza:
-		return "CA %d" % ca_base
+		return "CA %d" % base
 	if max_destreza >= 0:
-		return "CA %d + DES (máx. %d)" % [ca_base, max_destreza]
-	return "CA %d + DES" % ca_base
+		return "CA %d + DES (máx. %d)" % [base, max_destreza]
+	return "CA %d + DES" % base
+
+
+## Cor do brilho mágico (igual às armas); branco se comum.
+func cor_do_brilho() -> Color:
+	return Arma.CORES_MAGICAS.get(bonus_magico, Color.WHITE)
+
+
+## Cópia com bônus mágico (nome "Cota de Malha +1", sem Corrosão, cor do brilho).
+## Bônus 0 devolve só a cópia.
+func com_bonus_magico(bonus: int) -> Armadura:
+	var copia := duplicate() as Armadura
+	if bonus < 1:
+		return copia
+	copia.bonus_magico = clampi(bonus, 1, BONUS_MAGICO_MAXIMO)
+	copia.nome = "%s +%d" % [nome, copia.bonus_magico]
+	copia.corroivel = false
+	copia.cor = copia.cor_do_brilho()
+	return copia

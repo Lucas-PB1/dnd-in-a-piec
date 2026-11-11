@@ -9,7 +9,7 @@ area: regras
 
 ## Falta
 - Subir `NIVEL_MAXIMO` e a tabela de XP além do 6 (marcos do livro ou casa, como no 5–6).
-- **Nível 7 (Campeão):** *Additional Fighting Style* — ganha **outro** Estilo de Luta à escolha (depende de `estilo-de-luta-guerreiro` existir).
+- **Nível 7 (Campeão):** *Additional Fighting Style* — ganha **outro** Estilo de Luta à escolha (os 18 estilos e a UI de troca já existem).
 - **Nível 8:** mais um **talento geral** / ASI (como 4 e 6).
 - Criação, save, Compêndio, HUD de progresso.
 

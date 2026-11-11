@@ -59,10 +59,10 @@ static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: i
 	var itens: Array[Dictionary] = []
 	for item in inventario.itens:
 		itens.append({
-			"nome": item.nome if not (item is Arma and (item as Arma).bonus_magico > 0) else Arma.separar_nome_magico(item.nome)[0],
+			"nome": _nome_base_do_item(item),
 			"quantidade": inventario.quantidade_de(item),
 			"desgaste": inventario.penalidade(item),
-			"bonus_magico": (item as Arma).bonus_magico if item is Arma else 0,
+			"bonus_magico": _bonus_magico_do_item(item),
 		})
 	return {
 		"versao": VERSAO,
@@ -151,9 +151,28 @@ static func restaurar_inventario(dados: Dictionary, inventario: Inventario) -> v
 
 
 ## Cópia nova do item do jogo; arma mágica salva volta com o mesmo bônus.
+## Nome sem o sufixo " +N" (arma ou armadura mágica).
+static func _nome_base_do_item(item: Item) -> String:
+	if item is Arma and (item as Arma).bonus_magico > 0:
+		return Arma.separar_nome_magico(item.nome)[0]
+	if item is Armadura and (item as Armadura).bonus_magico > 0:
+		return Arma.separar_nome_magico(item.nome)[0]
+	return item.nome
+
+
+static func _bonus_magico_do_item(item: Item) -> int:
+	if item is Arma:
+		return (item as Arma).bonus_magico
+	if item is Armadura:
+		return (item as Armadura).bonus_magico
+	return 0
+
+
 static func _copia_do_modelo(modelo: Item, bonus_magico: int) -> Item:
 	if modelo is Arma and bonus_magico > 0:
 		return (modelo as Arma).com_bonus_magico(bonus_magico)
+	if modelo is Armadura and bonus_magico > 0:
+		return (modelo as Armadura).com_bonus_magico(bonus_magico)
 	return modelo.duplicate() as Item
 
 ## Põe de volta as criaturas já derrotadas.

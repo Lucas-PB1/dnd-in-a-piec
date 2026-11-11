@@ -16,13 +16,15 @@ const DESCONTO_ARTESAO := 0.2
 const DESCONTO_POR_PONTO_PERSUASAO := 0.02
 ## Teto do desconto total (Artesão + Persuasão).
 const DESCONTO_MAXIMO := 0.5
-## Quanto o bônus mágico soma ao preço da arma (+1, +2, +3).
+## Quanto o bônus mágico soma ao preço da arma/armadura (+1, +2, +3).
 const EXTRA_POR_BONUS_MAGICO := {1: 60, 2: 240, 3: 960}
 ## Na fase 1 só aparece o que custa até isto; o teto dobra a cada fase (as caras ficam para o fim).
 const TETO_DE_PRECO_NA_FASE_1 := 25
-## Quantos itens a loja põe à venda por visita, e a chance de uma arma dela vir mágica.
+## Quantos itens a loja põe à venda por visita, e a chance de arma/armadura vir mágica.
 const TAMANHO_DO_ESTOQUE := 7
-const CHANCE_ARMA_MAGICA := 0.25
+const CHANCE_ITEM_MAGICO := 0.25
+## Nome antigo (testes/docs); mesma chance.
+const CHANCE_ARMA_MAGICA := CHANCE_ITEM_MAGICO
 ## Cada renovação paga isto a mais que a anterior (1ª grátis → 10 → 20 → …).
 const CUSTO_RENOVACAO_PASSO := 10
 const PASTAS_DO_ESTOQUE: Array[String] = ["res://data/armas", "res://data/armaduras", "res://data/municoes", "res://data/itens"]
@@ -33,9 +35,16 @@ const VALOR_DA_MOEDA := {"GP": 1.0, "SP": 0.1, "CP": 0.01}
 ## Preço cheio do item, em peças de ouro (mínimo 1).
 static func preco(item: Item) -> int:
 	var base := _preco_do_livro(item)
-	if item is Arma:
-		base += EXTRA_POR_BONUS_MAGICO.get((item as Arma).bonus_magico, 0)
+	base += EXTRA_POR_BONUS_MAGICO.get(_bonus_magico(item), 0)
 	return maxi(base, 1)
+
+
+static func _bonus_magico(item: Item) -> int:
+	if item is Arma:
+		return (item as Arma).bonus_magico
+	if item is Armadura:
+		return (item as Armadura).bonus_magico
+	return 0
 
 
 ## Fração de desconto na compra (0 a DESCONTO_MAXIMO): Artesão + Persuasão.
@@ -74,7 +83,7 @@ static func renovar(ficha: Ficha, renovacoes_ja_feitas: int, indice_fase: int, r
 	return {&"resultado": Resultado.OK, &"estoque": sortear_estoque(indice_fase, rng)}
 
 
-## O estoque da fase: itens sorteados do arsenal que custam até o teto da fase; algumas armas vêm mágicas.
+## O estoque da fase: itens sorteados do arsenal que custam até o teto da fase; algumas armas/armaduras vêm mágicas.
 ## Sempre inclui pelo menos um tipo de munição (quando houver alguma no teto de preço).
 static func sortear_estoque(indice_fase: int, rng: RandomNumberGenerator) -> Array[Item]:
 	var teto := TETO_DE_PRECO_NA_FASE_1 * (1 << clampi(indice_fase - 1, 0, 10))
@@ -151,7 +160,10 @@ static func _regex_do_preco() -> RegEx:
 
 ## O bônus mágico máximo da loja sobe com a fase (+1 até a 3, +2 até a 6, +3 depois).
 static func _copia_para_a_venda(item: Item, rng: RandomNumberGenerator, indice_fase: int) -> Item:
-	if item is Arma and not item.empilhavel and rng.randf() < CHANCE_ARMA_MAGICA:
-		var maximo := clampi(ceili(indice_fase / 3.0), 1, Arma.BONUS_MAGICO_MAXIMO)
-		return (item as Arma).com_bonus_magico(rng.randi_range(1, maximo))
+	var maximo := clampi(ceili(indice_fase / 3.0), 1, Arma.BONUS_MAGICO_MAXIMO)
+	var bonus := rng.randi_range(1, maximo)
+	if item is Arma and not item.empilhavel and rng.randf() < CHANCE_ITEM_MAGICO:
+		return (item as Arma).com_bonus_magico(bonus)
+	if item is Armadura and rng.randf() < CHANCE_ITEM_MAGICO:
+		return (item as Armadura).com_bonus_magico(bonus)
 	return item.duplicate() as Item

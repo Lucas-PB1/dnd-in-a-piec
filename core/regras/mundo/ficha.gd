@@ -609,9 +609,9 @@ func deslocamento_pes(armadura: Armadura = null) -> float:
 func classe_armadura(armadura: Armadura = null, escudo: Armadura = null, desgaste_armadura: int = 0) -> int:
 	var ca := CA_BASE + modificador(Atributos.DESTREZA)
 	if armadura:
-		ca = armadura.ca_base - desgaste_armadura + _destreza_na_armadura(armadura)
+		ca = armadura.ca_base + armadura.bonus_magico - desgaste_armadura + _destreza_na_armadura(armadura)
 	if escudo and treinado_com(escudo):
-		ca += escudo.ca_base
+		ca += escudo.ca_base + escudo.bonus_magico
 	return ca
 
 

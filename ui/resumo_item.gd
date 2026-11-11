@@ -75,6 +75,8 @@ static func _avisos_arma(partes: PackedStringArray, arma: Arma, ficha: Ficha, in
 
 
 static func _avisos_armadura(partes: PackedStringArray, armadura: Armadura, ficha: Ficha, inventario: Inventario) -> void:
+	if armadura.bonus_magico > 0:
+		partes.append("Mágica +%d (sem corrosão)" % armadura.bonus_magico)
 	if not ficha.treinado_com(armadura):
 		var efeito := "não soma CA" if armadura.e_escudo() else "desvantagem em FOR e DES"
 		partes.append("Sem treinamento: %s" % efeito)

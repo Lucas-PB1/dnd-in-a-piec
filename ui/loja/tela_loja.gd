@@ -149,6 +149,8 @@ func _preencher_lista() -> void:
 		_lista.add_item("%s  (%d po)" % [item.nome, _preco_mostrado(item)], item.icone)
 		if item is Arma:
 			_lista.set_item_icon_modulate(_lista.item_count - 1, (item as Arma).cor_do_brilho())
+		elif item is Armadura:
+			_lista.set_item_icon_modulate(_lista.item_count - 1, (item as Armadura).cor_do_brilho())
 	if _lista.item_count > 0:
 		_lista.select(mini(anterior[0] if not anterior.is_empty() else 0, _lista.item_count - 1))
 	_atualizar_detalhes()

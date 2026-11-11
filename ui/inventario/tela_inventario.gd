@@ -177,6 +177,8 @@ func _adicionar_na_lista(item: Item) -> void:
 	var indice := _lista.add_item(marca + _nome_com_quantidade(item), item.icone)
 	if item is Arma:
 		_lista.set_item_icon_modulate(indice, (item as Arma).cor_do_brilho())  # arma mágica brilha na cor do bônus
+	elif item is Armadura:
+		_lista.set_item_icon_modulate(indice, (item as Armadura).cor_do_brilho())
 	if corroido:
 		_lista.set_item_icon_modulate(indice, EstiloCartao.COR_CORROSAO)
 		_lista.set_item_custom_fg_color(indice, EstiloCartao.COR_CORROSAO)

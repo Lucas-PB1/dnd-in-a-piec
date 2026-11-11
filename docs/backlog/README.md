@@ -25,10 +25,8 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo |
 |---|---|
-| 18 | `regras/estilo-de-luta-guerreiro` |
 | 19 | `heroi/disparo-no-botao-ataque` |
 | 20 | `heroi/placar-kills-timer` |
-| 21 | `regras/armadura-escudo-magicos` |
 | 22 | `regras/guerreiro-niveis-7-8` |
 | 23 | `fases/tutorial` |
 | 24 | `fases/interacoes-e-afastadas` |
@@ -39,7 +37,7 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 | 40 | `fases/recalibrar-dificuldade` (depois das fatias de progressão/tutorial/placar) |
 
 ### Regras do livro
-Estilo de Luta, nv 7–8 e armadura/escudo mágicos estão em **Próximas**. Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
+Nv 7–8 em **Próximas**. Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
 
 ### Arte / polish
 | Pri | Arquivo |
