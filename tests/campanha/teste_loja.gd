@@ -38,7 +38,26 @@ func _initialize() -> void:
 	_checar(Loja.comprar(espada_curta, ficha, cheia) == Loja.Resultado.MOCHILA_CHEIA and ficha.ouro == 100, "mochila cheia não gasta ouro")
 	_checar(not Loja.fica_no_estoque(espada_curta), "arma comprada sai do estoque")
 	_testar_estoque()
+	_testar_renovar()
 	_terminar("regra da loja e estoque")
+
+
+func _testar_renovar() -> void:
+	_checar(Loja.preco_da_renovacao(0) == 0, "1ª renovação é grátis")
+	_checar(Loja.preco_da_renovacao(1) == 10, "2ª renovação custa 10 po")
+	_checar(Loja.preco_da_renovacao(2) == 20, "3ª renovação custa 20 po")
+	var ficha := _ficha()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	ficha.ouro = 0
+	var sem := Loja.renovar(ficha, 1, 1, rng)
+	_checar(sem.resultado == Loja.Resultado.SEM_OURO and ficha.ouro == 0, "sem ouro não renova")
+	ficha.ouro = 25
+	var gratis := Loja.renovar(ficha, 0, 1, rng)
+	_checar(gratis.resultado == Loja.Resultado.OK and ficha.ouro == 25, "1ª renovação não gasta ouro")
+	_checar((gratis.estoque as Array).size() == Loja.TAMANHO_DO_ESTOQUE, "renovar devolve estoque completo")
+	var paga := Loja.renovar(ficha, 1, 1, rng)
+	_checar(paga.resultado == Loja.Resultado.OK and ficha.ouro == 15, "2ª renovação tira 10 po")
 
 
 func _testar_estoque() -> void:

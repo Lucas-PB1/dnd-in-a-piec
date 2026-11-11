@@ -64,6 +64,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Vender"
 
+[node name="Renovar" type="Button" parent="Centro/Painel/Coluna/Colunas/Itens/Filtros"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Trocar (grátis)"
+
 [node name="Lista" type="ItemList" parent="Centro/Painel/Coluna/Colunas/Itens"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(270, 190)

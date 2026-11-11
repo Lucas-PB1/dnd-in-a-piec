@@ -23,6 +23,8 @@ const TETO_DE_PRECO_NA_FASE_1 := 25
 ## Quantos itens a loja põe à venda por visita, e a chance de uma arma dela vir mágica.
 const TAMANHO_DO_ESTOQUE := 7
 const CHANCE_ARMA_MAGICA := 0.25
+## Cada renovação paga isto a mais que a anterior (1ª grátis → 10 → 20 → …).
+const CUSTO_RENOVACAO_PASSO := 10
 const PASTAS_DO_ESTOQUE: Array[String] = ["res://data/armas", "res://data/armaduras", "res://data/municoes", "res://data/itens"]
 ## Valor em peças de cada moeda do livro (GP = 1).
 const VALOR_DA_MOEDA := {"GP": 1.0, "SP": 0.1, "CP": 0.01}
@@ -54,6 +56,22 @@ static func preco_de_compra(item: Item, ficha: Ficha) -> int:
 static func preco_de_venda(item: Item, inventario: Inventario = null) -> int:
 	var unidade := maxi(roundi(preco(item) * FRACAO_DA_VENDA), 1)
 	return unidade * (inventario.quantidade_de(item) if inventario != null else 1)
+
+
+## Custo da próxima renovação: 0 (1ª), 10, 20, 30… conforme quantas já foram feitas nesta visita.
+static func preco_da_renovacao(renovacoes_ja_feitas: int) -> int:
+	return maxi(renovacoes_ja_feitas, 0) * CUSTO_RENOVACAO_PASSO
+
+
+## Cobra o ouro e devolve estoque novo. Sem ouro: não muda a ficha nem o estoque.
+static func renovar(ficha: Ficha, renovacoes_ja_feitas: int, indice_fase: int, rng: RandomNumberGenerator) -> Dictionary:
+	if ficha == null or rng == null:
+		return {&"resultado": Resultado.ITEM_INVALIDO, &"estoque": [] as Array[Item]}
+	var custo := preco_da_renovacao(renovacoes_ja_feitas)
+	if ficha.ouro < custo:
+		return {&"resultado": Resultado.SEM_OURO, &"estoque": [] as Array[Item]}
+	ficha.ouro -= custo
+	return {&"resultado": Resultado.OK, &"estoque": sortear_estoque(indice_fase, rng)}
 
 
 ## O estoque da fase: itens sorteados do arsenal que custam até o teto da fase; algumas armas vêm mágicas.

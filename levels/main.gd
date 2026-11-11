@@ -890,7 +890,7 @@ func _abrir_loja() -> void:
 	if _ha_menu_aberto(_tela_loja):
 		return
 	_sons.tocar(&"bau")
-	_tela_loja.abrir(_estoque_da_loja, _jogador.ficha, _jogador.inventario)
+	_tela_loja.abrir(_estoque_da_loja, _jogador.ficha, _jogador.inventario, _fase.indice, _rng_da_fase())
 	_controles_toque.atualizar(true)
 
 

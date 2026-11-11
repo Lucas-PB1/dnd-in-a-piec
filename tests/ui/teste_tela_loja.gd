@@ -34,6 +34,13 @@ func _rodar() -> void:
 		if comprada.nome in lista.get_item_text(i):
 			lista.select(i)
 	_checar(tela.confirmar() and jogador.ficha.ouro == 25, "vender paga metade")
+	(tela.find_child("ModoComprar", true, false) as Button).pressed.emit()
+	jogador.ficha.ouro = 30
+	var renovar: Button = tela.find_child("Renovar", true, false)
+	_checar(renovar != null and "grátis" in renovar.text.to_lower(), "botão Trocar começa grátis")
+	_checar(tela.renovar_estoque() and estoque.size() == Loja.TAMANHO_DO_ESTOQUE and jogador.ficha.ouro == 30, "1ª troca é grátis e enche o estoque")
+	_checar("10 po" in renovar.text, "2ª troca mostra 10 po")
+	_checar(tela.renovar_estoque() and jogador.ficha.ouro == 20, "2ª troca cobra 10 po")
 	tela.fechar()
 	_checar(not tela.visible and not paused, "fechar devolve o jogo")
 	_terminar("tela da loja e lojista")
