@@ -1,6 +1,6 @@
 class_name TelaTitulo
 extends Control
-## Tela de título: nome do jogo (vem do project.godot), Continuar, Novo Jogo, Compêndio, Opções e Sair.
+## Tela de título: nome do jogo (vem do project.godot), Continuar, Novo Jogo, Compêndio, Bestiário, Opções e Sair.
 ## Não decide nada: só avisa quem montou o jogo pelos sinais.
 
 ## Emitido ao escolher "Continuar" (só fica ativo se há jogo salvo).
@@ -11,6 +11,8 @@ signal novo_jogo_escolhido
 signal opcoes_escolhidas
 ## Emitido ao escolher "Compêndio".
 signal compendio_escolhido
+## Emitido ao escolher "Bestiário" (inimigos descobertos no save).
+signal bestiario_escolhido
 ## Emitido ao escolher "Sair".
 signal sair_escolhido
 
@@ -19,6 +21,7 @@ signal sair_escolhido
 @onready var _botao_novo: Button = %NovoJogo
 @onready var _botao_opcoes: Button = %Opcoes
 @onready var _botao_compendio: Button = %Compendio
+@onready var _botao_bestiario: Button = %Bestiario
 @onready var _botao_sair: Button = %Sair
 
 
@@ -29,6 +32,7 @@ func _ready() -> void:
 	_botao_novo.pressed.connect(novo_jogo_escolhido.emit)
 	_botao_opcoes.pressed.connect(opcoes_escolhidas.emit)
 	_botao_compendio.pressed.connect(compendio_escolhido.emit)
+	_botao_bestiario.pressed.connect(bestiario_escolhido.emit)
 	_botao_sair.pressed.connect(sair_escolhido.emit)
 	mostrar_continuar(false)
 

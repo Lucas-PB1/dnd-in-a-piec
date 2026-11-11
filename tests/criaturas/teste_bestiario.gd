@@ -14,6 +14,7 @@ func _rodar() -> void:
 	_testar_registro()
 	await _testar_tela()
 	await _testar_no_jogo()
+	await _testar_atalho_do_titulo()
 	Salvamento.apagar()
 	print("PASSOU: todos os testes do bestiário" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
 	quit(_falhas)
@@ -103,5 +104,43 @@ func _testar_no_jogo() -> void:
 	var lido := Bestiario.new()
 	Salvamento.restaurar_bestiario(dados, lido)
 	_checar(lido.foi_derrotada("Gray Ooze"), "o save guarda o bestiário")
+	main.free()
+	await process_frame
+
+
+## Do título dá para abrir o Bestiário e ver o que o save já revelou.
+func _testar_atalho_do_titulo() -> void:
+	var titulo: TelaTitulo = load("res://ui/titulo/tela_titulo.tscn").instantiate()
+	root.add_child(titulo)
+	await process_frame
+	var pedido: Array[bool] = [false]
+	titulo.bestiario_escolhido.connect(func() -> void: pedido[0] = true)
+	(titulo.get_node("%Bestiario") as Button).pressed.emit()
+	_checar(pedido[0], "o botão Bestiário do título pede a tela")
+	titulo.queue_free()
+	await process_frame
+
+	var main: Main = load("res://levels/main.tscn").instantiate()
+	main.mostrar_inicio = true
+	root.add_child(main)
+	for i in 10:
+		await process_frame
+	var tela_titulo: TelaTitulo = main.get_node("Interface").find_child("TelaTitulo", true, false)
+	var tela: TelaBestiario = main.get_node("Interface/TelaBestiario")
+	_checar(tela_titulo != null, "o título aparece no início")
+	# Save com Ooze revelado (do teste anterior) ou registra e grava de novo.
+	var b := Bestiario.new()
+	b.registrar_derrota("Gray Ooze")
+	var ficha := Ficha.new(load("res://data/classe_guerreiro.tres") as ClasseRPG,
+		{&"forca": 15, &"destreza": 14, &"constituicao": 14, &"inteligencia": 10, &"sabedoria": 10, &"carisma": 10}, "Teste")
+	Salvamento.gravar(ficha, Inventario.new(8), 1, b)
+	(tela_titulo.get_node("%Bestiario") as Button).pressed.emit()
+	await process_frame
+	_checar(tela.visible and not tela_titulo.visible and paused, "Bestiário pelo título abre e esconde o menu")
+	_checar((tela.get_node("%Lista") as ItemList).get_item_text(0) == "Gray Ooze",
+		"do título as criaturas do save aparecem reveladas")
+	tela.fechar()
+	await process_frame
+	_checar(tela_titulo.visible and not tela.visible, "fechar o Bestiário volta ao título")
 	main.free()
 	await process_frame

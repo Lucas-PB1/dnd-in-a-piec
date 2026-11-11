@@ -233,6 +233,7 @@ func _abrir_titulo() -> void:
 	titulo.continuar_escolhido.connect(_ao_continuar.bind(titulo))
 	titulo.opcoes_escolhidas.connect(_abrir_opcoes_do_titulo.bind(titulo))
 	titulo.compendio_escolhido.connect(_abrir_compendio_do_titulo.bind(titulo))
+	titulo.bestiario_escolhido.connect(_abrir_bestiario_do_titulo.bind(titulo))
 	titulo.sair_escolhido.connect(get_tree().quit)
 	_interface.add_child(titulo)
 	titulo.mostrar_continuar(not Salvamento.ler().is_empty())
@@ -255,6 +256,14 @@ func _abrir_compendio_do_titulo(titulo: TelaTitulo) -> void:
 	_titulo_escondido = titulo
 	titulo.hide()
 	_tela_compendio.abrir(Compendio.montar(_classe_padrao_do_compendio()))
+
+
+## Bestiário pelo título: carrega as derrotas do save (silhueta até revelar).
+func _abrir_bestiario_do_titulo(titulo: TelaTitulo) -> void:
+	_titulo_escondido = titulo
+	titulo.hide()
+	Salvamento.restaurar_bestiario(Salvamento.ler(), _bestiario)
+	_tela_bestiario.abrir(_bestiario, ENTRADAS_BESTIARIO)
 
 
 func _classe_padrao_do_compendio() -> ClasseRPG:

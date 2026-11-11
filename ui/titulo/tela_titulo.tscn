@@ -35,7 +35,7 @@ layout_mode = 2
 
 [node name="Coluna" type="VBoxContainer" parent="Centro/Painel"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Titulo" type="Label" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
@@ -51,40 +51,50 @@ text = "Uma aventura de ação com regras de D&D"
 horizontal_alignment = 1
 
 [node name="Espaco" type="Control" parent="Centro/Painel/Coluna"]
-custom_minimum_size = Vector2(0, 8)
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="Continuar" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
+custom_minimum_size = Vector2(200, 32)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Continuar"
 
 [node name="NovoJogo" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
+custom_minimum_size = Vector2(200, 32)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Novo Jogo"
 
 [node name="Opcoes" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
+custom_minimum_size = Vector2(200, 32)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Opções"
 
-[node name="Compendio" type="Button" parent="Centro/Painel/Coluna"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
+[node name="Livros" type="HBoxContainer" parent="Centro/Painel/Coluna"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_constants/separation = 8
+
+[node name="Compendio" type="Button" parent="Centro/Painel/Coluna/Livros"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 32)
+layout_mode = 2
 text = "Compêndio"
+
+[node name="Bestiario" type="Button" parent="Centro/Painel/Coluna/Livros"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 32)
+layout_mode = 2
+text = "Bestiário"
 
 [node name="Sair" type="Button" parent="Centro/Painel/Coluna"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
+custom_minimum_size = Vector2(200, 32)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Sair"
