@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_wuv02"]
+
+[resource]
+script = ExtResource("1_wuv02")
+id = &"glima"
+nome = "Glima"
+descricao = "Acerto desarmado pode forçar salvaguarda de Força; falha = Caído."
+fonte = "Northlands"
+efeito = 8

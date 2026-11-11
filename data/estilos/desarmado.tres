@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_gxhdb"]
+
+[resource]
+script = ExtResource("1_gxhdb")
+id = &"desarmado"
+nome = "Combate Desarmado"
+descricao = "Soco: 1d6+FOR (1d8 sem arma nem escudo). No início do turno, 1d4 em criatura Agarrada por você."
+efeito = 6

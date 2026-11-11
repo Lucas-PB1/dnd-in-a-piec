@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_6sxw8"]
+
+[resource]
+script = ExtResource("1_6sxw8")
+id = &"arremesso"
+nome = "Combate com Armas de Arremesso"
+descricao = "+2 no dano de ataque à distância com arma que tem a propriedade Arremesso."
+efeito = 3

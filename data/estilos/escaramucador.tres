@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_uqk85"]
+
+[resource]
+script = ExtResource("1_uqk85")
+id = &"escaramucador"
+nome = "Escaramuçador"
+descricao = "+3 m de deslocamento. +proficiência no dano se moveu antes do golpe."
+fonte = "Northlands"
+efeito = 10

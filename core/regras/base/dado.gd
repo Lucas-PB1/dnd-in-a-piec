@@ -39,14 +39,18 @@ static func de_texto(notacao: String) -> Dado:
 
 ## Rola e soma (dados + bônus). Com `critico`, rola os dados em dobro (o bônus não dobra).
 ## Com `rerrolar_um`, um dado que tira 1 é rolado de novo uma vez (Brigão de Taverna).
+## Com `um_e_dois_viram_tres`, faces 1–2 viram 3 (Armas Grandes).
 ## Passe um `rng` com semente para resultados repetíveis.
-func rolar(rng: RandomNumberGenerator, critico: bool = false, rerrolar_um: bool = false) -> int:
+func rolar(rng: RandomNumberGenerator, critico: bool = false, rerrolar_um: bool = false,
+		um_e_dois_viram_tres: bool = false) -> int:
 	var vezes := quantidade * (2 if critico else 1)
 	var total := bonus
 	for i in vezes:
 		var valor := rng.randi_range(1, faces)
 		if rerrolar_um and valor == 1:
 			valor = rng.randi_range(1, faces)
+		if um_e_dois_viram_tres and valor <= 2:
+			valor = 3
 		total += valor
 	return total
 

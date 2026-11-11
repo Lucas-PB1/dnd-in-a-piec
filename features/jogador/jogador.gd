@@ -135,6 +135,9 @@ var _agarrao := AgarraoDoHeroi.new()
 var _rng_agarrao := RandomNumberGenerator.new()
 var _janela_defesa := JanelaDeDefesa.new()
 var _investida := InvestidaDoHeroi.new()
+var _estilos := EstilosDoHeroi.new()
+## True enquanto o ritmo de ataque já permite golpear de novo (para resetar o turno dos estilos).
+var _pronto_para_estilos: bool = true
 ## O "cabo" da haste (Mestre em Armas de Haste): o soco feito com a outra ponta, montado uma vez.
 var _cabo_da_haste_arma: Arma
 var _contador_coyote: float = 0.0
@@ -187,6 +190,7 @@ func _physics_process(delta: float) -> void:
 	_atualizar_contadores(delta)
 	_atualizar_invencibilidade(delta)
 	_passar_recargas_de_talento(delta)
+	_estilos.passar(delta)
 	_passar_defesa(delta)
 	_passar_veneno(delta)
 	_passar_agarrao(delta)
@@ -194,7 +198,9 @@ func _physics_process(delta: float) -> void:
 	_prender_se_agarrado()
 	var x_antes := global_position.x
 	move_and_slide()
-	_consumir_orcamento_atleta(absf(global_position.x - x_antes))
+	var andou := absf(global_position.x - x_antes)
+	_estilos.registrar_movimento(andou)
+	_consumir_orcamento_atleta(andou)
 	_checar_aterrissagem()
 	_medir_corrida(delta)
 	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
@@ -273,7 +279,8 @@ func escudo_atual() -> Armadura:
 
 ## CA com a armadura e o escudo vestidos (e o desgaste da armadura).
 func classe_armadura() -> int:
-	return Equipamento.classe_armadura(ficha, inventario)
+	var pena := Ficha.PENALIDADE_SELVAGERIA_CA if _estilos.selvageria_ativa else 0
+	return Equipamento.classe_armadura(ficha, inventario, pena)
 
 
 func esta_invencivel() -> bool:
@@ -346,6 +353,7 @@ func velocidade_andar() -> float:
 	var pes := Equipamento.deslocamento_pes(ficha, inventario)
 	if _tempo_mudanca_tatica > 0.0:
 		pes += MUDANCA_TATICA_PES
+	pes += _estilos.deslocamento_extra_pes
 	return EscalaDnd.deslocamento_para_velocidade(pes)
 
 
@@ -835,6 +843,11 @@ func _atualizar_contadores(delta: float) -> void:
 	_tempo_desde_golpe += delta
 	_tempo_desde_acao_bonus += delta
 	_tempo_mudanca_tatica = maxf(_tempo_mudanca_tatica - delta, 0.0)
+	var pronto_agora := tempo_para_proximo_golpe() <= 0.0
+	if pronto_agora and not _pronto_para_estilos:
+		_estilos.resetar_turno()
+		_atualizar_equipamento()
+	_pronto_para_estilos = pronto_agora
 	if Input.is_action_just_pressed("atacar"):
 		_contador_buffer_ataque = stats.tempo_buffer_ataque
 		if nome_estado() == &"Atacando" and not _golpe_extra:
@@ -895,6 +908,8 @@ func _ao_resolver_golpe(resultado: Combate.Resultado, origem: Vector2) -> void:
 	_texto.mostrar_resultado(resultado, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
 	if not resultado.acertou:
 		return
+	if ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.OPORTUNISTA):
+		_estilos.ao_levar_dano()
 	if resultado.golpe.corroi_armadura:
 		_corroer_armadura()
 	origem_ultimo_golpe = origem
@@ -1194,6 +1209,7 @@ func _comecar_golpe(extra: bool, do_surto: bool = false) -> void:
 
 func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
 	var golpe := Equipamento.golpe(ficha, inventario, arma, extra)
+	_aplicar_estilos_ao_golpe(golpe, arma, extra)
 	_assinar(golpe)
 	if not arma.disparavel():
 		_aplicar_investida(golpe)
@@ -1201,6 +1217,42 @@ func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
 	if inventario.esta_equipado(arma):
 		golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
 	return golpe
+
+
+## Bônus situacionais dos estilos (Selvageria, Escaramuçador, Oportunista, Artilheiro, Combatente Móvel).
+func _aplicar_estilos_ao_golpe(golpe: Golpe, arma: Arma, extra: bool) -> void:
+	if ficha == null:
+		return
+	var bonus := 0
+	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.SELVAGERIA) and not extra and not arma.disparavel() and not _estilos.selvageria_ativa:
+		bonus += ficha.bonus_proficiencia()
+		_estilos.ativar_selvageria()
+		_atualizar_equipamento()
+	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ESCARAMUCADOR) and _estilos.moveu_neste_turno:
+		bonus += ficha.bonus_proficiencia()
+	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.OPORTUNISTA) and _estilos.consumir_oportunista():
+		golpe.bonus_ataque += Ficha.BONUS_OPORTUNISTA
+		bonus += Ficha.BONUS_OPORTUNISTA
+	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARTILHEIRO) and arma.disparavel() and _inimigo_em_5_pes():
+		bonus += Ficha.BONUS_ARTILHEIRO_PERTO
+	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.COMBATENTE_MOVEL):
+		_estilos.ativar_movimento_extra()
+	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.PELOS_PES) and _inimigo_maior_perto():
+		golpe.vantagem = true
+	if bonus != 0:
+		golpe.dano = golpe.dano.com_bonus(bonus)
+
+
+## Pelos Pés: inimigo maior que Médio a até 5 pés.
+func _inimigo_maior_perto() -> bool:
+	var limite := EscalaDnd.pes_para_pixels(DISTANCIA_PERTO_TIRO_PES)
+	for n in get_tree().get_nodes_in_group(GRUPO_INIMIGOS):
+		if not (n is Node2D) or global_position.distance_to((n as Node2D).global_position) > limite:
+			continue
+		var ficha_inimigo: Variant = n.get("criatura") if n else null
+		if ficha_inimigo is CriaturaRPG and (ficha_inimigo as CriaturaRPG).tamanho > CriaturaRPG.Tamanho.MEDIO:
+			return true
+	return false
 
 
 ## O golpe com a outra ponta da haste: um soco de 1d4 contundente, com o modificador de Força inteiro.
@@ -1313,6 +1365,9 @@ func _arma_do_k() -> Arma:
 func _arremessar(arma: Arma, forca: float, mira: float) -> void:
 	var pen := inventario.penalidade(arma)
 	var golpe := Equipamento.golpe(ficha, inventario, arma)
+	_aplicar_estilos_ao_golpe(golpe, arma, false)
+	if ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARREMESSO):
+		golpe.dano = golpe.dano.com_bonus(Ficha.BONUS_ARREMESSO)
 	_assinar(golpe)
 	var extraida := inventario.extrair_uma(arma) as Arma
 	_marcar_ataque(false, false)
@@ -1326,11 +1381,18 @@ func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
 		_contador_buffer_arremesso = 0.0
 		return
 	var golpe := _criar_golpe_de(arma, false)
-	if _inimigo_em_5_pes() and not _besta_ignora_perto(arma):
+	if _inimigo_em_5_pes() and not _besta_ignora_perto(arma) and not _artilheiro_ignora_perto():
+		golpe.desvantagem = true
+	# Disparo Duplo: o 2º tiro do combo (ação bônus / encadeado) sai com desvantagem.
+	if extra and ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DISPARO_DUPLO):
 		golpe.desvantagem = true
 	_marcar_ataque(extra, true)
 	arma_arremessada.emit(arma, golpe, 0, _ataque.global_position, direcao_olhar, forca, mira, pilha,
 		ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE), _destreza())
+
+
+func _artilheiro_ignora_perto() -> bool:
+	return ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARTILHEIRO)
 
 
 func _marcar_ataque(extra: bool, manter_pose: bool) -> void:

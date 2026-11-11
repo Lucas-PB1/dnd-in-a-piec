@@ -137,6 +137,7 @@ var _heroi_na_porta: bool = false
 @onready var _tela_compendio: TelaCompendio = $Interface/TelaCompendio
 @onready var _tela_talento: TelaTalento = $Interface/TelaTalento
 @onready var _tela_subclasse: TelaSubclasse = $Interface/TelaSubclasse
+@onready var _tela_estilo: TelaEstilo = $Interface/TelaEstilo
 @onready var _sons: Sons = $Sons
 @onready var _musica: Musica = $Musica
 @onready var _controles_toque: ControlesToque = $ControlesToque
@@ -197,6 +198,9 @@ func _ready() -> void:
 	_pausa.subclasse_pedida.connect(_abrir_pela_pausa.bind(_abrir_subclasse))
 	_tela_subclasse.fechou.connect(_ao_fechar_modal)
 	_tela_subclasse.subclasse_escolhida.connect(_ao_escolher_subclasse)
+	_pausa.estilo_pedido.connect(_abrir_pela_pausa.bind(_abrir_estilo))
+	_tela_estilo.fechou.connect(_ao_fechar_modal)
+	_tela_estilo.estilos_confirmados.connect(_ao_confirmar_estilos)
 	_pausa.habilidades_escolhidas.connect(_abrir_pela_pausa.bind(_abrir_habilidades))
 	_tela_habilidades.fechou.connect(_ao_fechar_modal)
 	_pausa.salvar_escolhido.connect(_salvar_jogo)
@@ -766,7 +770,7 @@ func _ha_tela_aberta(exceto: Control = null) -> bool:
 
 
 func _telas_modais() -> Array[Control]:
-	return [_inventario, _tela_bau, _tela_loja, _comandos, _pausa, _tela_bestiario, _tela_compendio, _tela_habilidades, _tela_talento, _tela_subclasse]
+	return [_inventario, _tela_bau, _tela_loja, _comandos, _pausa, _tela_bestiario, _tela_compendio, _tela_habilidades, _tela_talento, _tela_subclasse, _tela_estilo]
 
 
 ## Esc (ou o botão Menu) abre a pausa se nenhuma tela por cima já usou a tecla para voltar.
@@ -847,6 +851,25 @@ func _ao_escolher_subclasse(subclasse: SubclasseRPG) -> void:
 	_jogador.ao_mudar_ficha()
 	_jogador.avisar(subclasse.nome)
 	_pausa.mostrar_subclasse(false)
+	_pausa.mostrar_estilo(_jogador.ficha.escolha_de_estilo_pendente())
+	if _jogador.ficha.escolhas_de_talento_pendentes() > 0:
+		_abrir_talento.call_deferred()
+
+
+## Abre a troca/preparação de Estilos de Luta (a partir do nível 2).
+func _abrir_estilo() -> void:
+	if not _jogador.ficha.escolha_de_estilo_pendente():
+		return
+	if _ha_menu_aberto(_tela_estilo):
+		return
+	_tela_estilo.abrir(_jogador.ficha, EstiloDeLutaRPG.todos())
+	_controles_toque.atualizar(true)
+
+
+func _ao_confirmar_estilos(_ids: Array[StringName]) -> void:
+	_jogador.ao_mudar_ficha()
+	_jogador.avisar("Estilos atualizados")
+	_pausa.mostrar_estilo(false)
 	if _jogador.ficha.escolhas_de_talento_pendentes() > 0:
 		_abrir_talento.call_deferred()
 
@@ -1070,6 +1093,8 @@ func _ao_mudar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> v
 	var ficha := _jogador.ficha
 	_pausa.mostrar_talento(ficha != null and ficha.escolhas_de_talento_pendentes() > 0)
 	_pausa.mostrar_subclasse(ficha != null and ficha.escolha_de_subclasse_pendente())
+	# Estilo: só o botão na pausa (não abre sozinho — não atrapalha Surto/subclasse/talento).
+	_pausa.mostrar_estilo(ficha != null and ficha.escolha_de_estilo_pendente())
 	if ficha != null and not _em_tela_de_pausa:
 		# Subclasse (nv 3) antes do talento (nv 4/6).
 		if ficha.escolha_de_subclasse_pendente():

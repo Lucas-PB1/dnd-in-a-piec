@@ -64,9 +64,11 @@ static func dano_do_acerto(golpe: Golpe, rng: RandomNumberGenerator, critico: bo
 
 
 static func _rolar_dano(golpe: Golpe, rng: RandomNumberGenerator, critico: bool) -> int:
-	var dano := golpe.dano.rolar_perfurador(rng, critico) if golpe.rerrola_menor() else golpe.dano.rolar(rng, critico, golpe.rerrola_um())
+	var gwf := golpe.trata_um_e_dois_como_tres()
+	var dano := golpe.dano.rolar_perfurador(rng, critico) if golpe.rerrola_menor() \
+		else golpe.dano.rolar(rng, critico, golpe.rerrola_um(), gwf)
 	if teve_vantagem(golpe) and golpe.dano_extra != null:
-		dano += golpe.dano_extra.rolar(rng, critico, golpe.rerrola_um())
+		dano += golpe.dano_extra.rolar(rng, critico, golpe.rerrola_um(), gwf)
 	return dano
 
 

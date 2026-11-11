@@ -15,6 +15,11 @@ func rerrola_um() -> bool:
 	return false
 
 
+## Armas Grandes: faces 1–2 nos dados de dano viram 3.
+func trata_um_e_dois_como_tres() -> bool:
+	return false
+
+
 ## Rola o menor dado de novo e, no crítico, um dado a mais (Perfurador).
 func rerrola_menor() -> bool:
 	return false

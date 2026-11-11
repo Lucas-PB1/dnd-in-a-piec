@@ -11,6 +11,7 @@ const ABA_ARMADURAS := "Armaduras"
 const ABA_ITENS := "Itens"
 const ABA_ANTECEDENTES := "Antecedentes"
 const ABA_TALENTOS := "Talentos"
+const ABA_ESTILOS := "Estilos"
 const PASTA_ARMAS := "res://data/armas"
 const PASTA_ARMADURAS := "res://data/armaduras"
 const PASTA_MUNICOES := "res://data/municoes"
@@ -31,6 +32,7 @@ static func montar(classe: ClasseRPG) -> Dictionary[String, Array]:
 	_adicionar_secao(secoes, ABA_ITENS, itens(_itens(PASTA_MUNICOES) + _itens(PASTA_ITENS)))
 	_adicionar_secao(secoes, ABA_ANTECEDENTES, antecedentes(Recursos.da_pasta(PASTA_ANTECEDENTES)))
 	_adicionar_secao(secoes, ABA_TALENTOS, talentos(Recursos.da_pasta(PASTA_TALENTOS)))
+	_adicionar_secao(secoes, ABA_ESTILOS, estilos(EstiloDeLutaRPG.todos()))
 	return secoes
 
 
@@ -105,6 +107,13 @@ static func talentos(todos: Array[Resource]) -> Array:
 		var t := recurso as TalentoRPG
 		if t.no_jogo:
 			paginas.append(EntradaCompendio.new(t.nome, TalentoRPG.nome_da_categoria(t.categoria), t.resumo))
+	return paginas
+
+
+static func estilos(todos: Array[EstiloDeLutaRPG]) -> Array:
+	var paginas: Array = []
+	for estilo in todos:
+		paginas.append(EntradaCompendio.new(estilo.nome, "Estilo · %s" % estilo.fonte, estilo.descricao))
 	return paginas
 
 

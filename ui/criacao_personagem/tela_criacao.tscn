@@ -321,7 +321,50 @@ custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "Voltar"
 
-[node name="Comecar" type="Button" parent="Centro/Painel/Coluna/PassoMaestrias/BotoesMaestrias"]
+[node name="IrEstilos" type="Button" parent="Centro/Painel/Coluna/PassoMaestrias/BotoesMaestrias"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Estilo de Luta"
+
+[node name="PassoEstilos" type="VBoxContainer" parent="Centro/Painel/Coluna"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="ContagemEstilos" type="Label" parent="Centro/Painel/Coluna/PassoEstilos"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ListaEstilos" type="ItemList" parent="Centro/Painel/Coluna/PassoEstilos"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+max_columns = 2
+same_column_width = true
+
+[node name="DetalheEstilo" type="Label" parent="Centro/Painel/Coluna/PassoEstilos"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+horizontal_alignment = 1
+
+[node name="BotoesEstilos" type="HBoxContainer" parent="Centro/Painel/Coluna/PassoEstilos"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="VoltarDasMaestrias" type="Button" parent="Centro/Painel/Coluna/PassoEstilos/BotoesEstilos"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Voltar"
+
+[node name="Comecar" type="Button" parent="Centro/Painel/Coluna/PassoEstilos/BotoesEstilos"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2

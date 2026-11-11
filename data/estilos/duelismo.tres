@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_obtup"]
+
+[resource]
+script = ExtResource("1_obtup")
+id = &"duelismo"
+nome = "Duelismo"
+descricao = "Com uma arma corpo a corpo numa mão e sem outra arma, +2 no dano dessa arma (escudo ok)."
+efeito = 1

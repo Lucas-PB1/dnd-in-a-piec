@@ -69,6 +69,10 @@ var salvaguardas_extras: Array[StringName] = []
 var pericias: Array[StringName] = []
 ## Perícias com Especialização (Observador, Especialista em Perícia): a proficiência conta em dobro.
 var pericias_especializadas: Array[StringName] = []
+## Ids dos estilos de luta preparados (`EstiloDeLutaRPG.id`). Capacidade 1 na criação; 2 a partir do nível 2.
+var estilos: Array[StringName] = []
+## Quantas vezes o jogador já confirmou a troca/preparação de estilos ao subir de nível.
+var trocas_de_estilo_feitas: int = 0
 
 ## Destreza da ficha sugerida: o teto da carga e o tempo de voo do disparo são os dela.
 const DESTREZA_REFERENCIA := 14
@@ -131,6 +135,25 @@ const TETO_DESTREZA_MESTRE_MEDIA := 3
 const VIDA_POR_NIVEL_RESISTENTE := 2
 ## Brigão de Taverna: o soco passa a ser 1d4.
 const FACES_SOCO_BRIGAO := 4
+## Estilo Desarmado: soco 1d6 (1d8 sem arma nem escudo na outra mão).
+const FACES_SOCO_ESTILO := 6
+const FACES_SOCO_ESTILO_LIVRE := 8
+## Estilos: capacidade na criação e a partir do nível 2 (troca + 2 preparados).
+const CAPACIDADE_ESTILOS_INICIAL := 1
+const CAPACIDADE_ESTILOS_COM_TROCA := 2
+const NIVEL_TROCA_ESTILO := 2
+## Luta às Cegas: +1 na Percepção passiva.
+const LUTA_CEGAS_PASSIVA := 1
+## Escaramuçador: +10 pés (≈ 3 m) de deslocamento.
+const ESCARAMUCADOR_PES := 10.0
+## Duelismo / Arquearia / Arremesso / Artilheiro / Oportunista: bônus numéricos.
+const BONUS_DUELISMO := 2
+const BONUS_ARQUEARIA := 2
+const BONUS_ARREMESSO := 2
+const BONUS_ARTILHEIRO_PERTO := 2
+const BONUS_OPORTUNISTA := 2
+const BONUS_DEFESA_CA := 1
+const PENALIDADE_SELVAGERIA_CA := 2
 
 
 func _init(classe_rpg: ClasseRPG, valores: Dictionary, nome_personagem: String = NOME_PADRAO) -> void:
@@ -220,6 +243,56 @@ func bonus_dano(arma: Arma) -> int:
 
 func tem_talento(talento: StringName) -> bool:
 	return talento in talentos
+
+
+## Quantos estilos pode preparar agora (1 no nível 1; 2 do nível 2 em diante).
+func capacidade_estilos() -> int:
+	return CAPACIDADE_ESTILOS_COM_TROCA if nivel >= NIVEL_TROCA_ESTILO else CAPACIDADE_ESTILOS_INICIAL
+
+
+## Tem o estilo com este id preparado?
+func tem_estilo(id_estilo: StringName) -> bool:
+	return id_estilo in estilos
+
+
+## Tem algum estilo preparado com este efeito de combate?
+func tem_efeito_estilo(efeito: EstiloDeLutaRPG.Efeito) -> bool:
+	for id_estilo in estilos:
+		var estilo := EstiloDeLutaRPG.por_id(id_estilo)
+		if estilo != null and estilo.efeito == efeito:
+			return true
+	return false
+
+
+## Define a lista preparada (até a capacidade). false se passar do limite ou id inválido.
+func definir_estilos(ids: Array[StringName]) -> bool:
+	if ids.size() > capacidade_estilos() or ids.is_empty():
+		return false
+	var limpos: Array[StringName] = []
+	for id_estilo in ids:
+		if EstiloDeLutaRPG.por_id(id_estilo) == null or id_estilo in limpos:
+			return false
+		limpos.append(id_estilo)
+	estilos = limpos
+	return true
+
+
+## Confirma a preparação no nível-up (gasta a pendência de troca).
+func confirmar_troca_de_estilo(ids: Array[StringName]) -> bool:
+	if not escolha_de_estilo_pendente():
+		return false
+	if not definir_estilos(ids):
+		return false
+	trocas_de_estilo_feitas += 1
+	return true
+
+
+## Do nível 2 em diante: uma oportunidade de troca/preparação por nível ganho após o 1.
+func escolha_de_estilo_pendente() -> bool:
+	if nivel < NIVEL_TROCA_ESTILO:
+		return false
+	var liberadas := nivel - 1
+	return trocas_de_estilo_feitas < liberadas
 
 
 ## Escolhas de talento geral que o nível já liberou e o jogador ainda não fez.
@@ -351,7 +424,12 @@ func escolher_talento(talento: TalentoRPG, aumentos: Array[StringName], escolhas
 ## Dados de dano da arma já com o modificador (ex.: espada curta + 2 = "1d6+2").
 ## `duas_maos` = empunhando com as duas mãos (arma Versátil usa o dado maior).
 ## `ataque_extra` = 2º golpe de arma leve: não soma modificador positivo.
-func dado_dano(arma: Arma, duas_maos: bool = false, ataque_extra: bool = false) -> Dado:
+## `mao_secundaria_livre` = sem arma/escudo na outra mão (Estilo Desarmado usa 1d8).
+func dado_dano(arma: Arma, duas_maos: bool = false, ataque_extra: bool = false,
+		mao_secundaria_livre: bool = false) -> Dado:
+	if arma.categoria == &"" and tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DESARMADO):
+		var faces := FACES_SOCO_ESTILO_LIVRE if mao_secundaria_livre else FACES_SOCO_ESTILO
+		return Dado.new(1, faces).com_bonus(_bonus_no_dano(arma, ataque_extra))
 	if _e_soco_do_brigao(arma):
 		return Dado.new(1, FACES_SOCO_BRIGAO).com_bonus(_bonus_no_dano(arma, ataque_extra))
 	return arma.dado(duas_maos).com_bonus(_bonus_no_dano(arma, ataque_extra))
@@ -368,8 +446,9 @@ func rolar_dano(arma: Arma, rng: RandomNumberGenerator, critico: bool = false, d
 
 
 ## Texto do dano para a ficha, ex.: "1d6+2". Dano fixo (dado de 1 face, como o soco) vira o total: "3".
-func texto_dano(arma: Arma, duas_maos: bool = false, ataque_extra: bool = false) -> String:
-	var dado := dado_dano(arma, duas_maos, ataque_extra)
+func texto_dano(arma: Arma, duas_maos: bool = false, ataque_extra: bool = false,
+		mao_secundaria_livre: bool = false) -> String:
+	var dado := dado_dano(arma, duas_maos, ataque_extra, mao_secundaria_livre)
 	if dado.faces == 1:
 		return str(maxi(dado.minimo(), DANO_MINIMO))
 	return dado.texto()
@@ -393,18 +472,19 @@ func bonus_ataque(arma: Arma) -> int:
 ## Arma Pesada com FOR < 13 também dá desvantagem. `duas_maos`: Versátil com as duas mãos.
 ## `ataque_extra`: 2º golpe de arma leve (o d20 soma o modificador; o dano, não).
 func golpe_com(arma: Arma, penalidade: int = 0, armadura: Armadura = null, duas_maos: bool = false,
-		ataque_extra: bool = false) -> Golpe:
-	var dado := dado_dano(arma, duas_maos, ataque_extra)
+		ataque_extra: bool = false, mao_secundaria_livre: bool = false) -> Golpe:
+	var dado := dado_dano(arma, duas_maos, ataque_extra, mao_secundaria_livre)
 	var golpe := Golpe.new(arma.nome, bonus_ataque(arma) - penalidade, dado, arma.tipo_dano, arma.corroivel)
 	golpe.desvantagem = desvantagem_por_armadura(armadura) or fraco_para(arma)
 	golpe.maestria = maestria_de(arma)
 	golpe.cd_maestria = cd_maestria(arma)
 	_juntar_efeitos_de_talento(golpe, arma)
+	_juntar_efeitos_de_estilo(golpe, arma, duas_maos)
 	if golpe.maestria == Proficiencias.RASPAO:
 		golpe.dano_raspao = maxi(bonus_dano(arma), 0)
 	if golpe.maestria == Proficiencias.TRESPASSAR and not ataque_extra:
 		# 2º alvo: mesmo ataque, mas o dano não soma o modificador positivo (como o ataque extra).
-		golpe.trespassar = golpe_com(arma, penalidade, armadura, duas_maos, true)
+		golpe.trespassar = golpe_com(arma, penalidade, armadura, duas_maos, true, mao_secundaria_livre)
 	return golpe
 
 
@@ -514,6 +594,7 @@ func tempo_ate_teto_da_carga() -> float:
 func deslocamento_pes(armadura: Armadura = null) -> float:
 	var base := DESLOCAMENTO_PADRAO_PES + (VELOZ_PES if tem_talento(TALENTO_VELOZ) else 0.0)
 	base += ATLETA_PES if tem_talento(TALENTO_ATLETA) else 0.0
+	base += ESCARAMUCADOR_PES if tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ESCARAMUCADOR) else 0.0
 	if falta_forca_para(armadura):
 		return base - PERDA_DESLOCAMENTO_SEM_FORCA
 	return base
@@ -549,12 +630,21 @@ func falta_forca_para(armadura: Armadura) -> bool:
 	return armadura != null and atributos[Atributos.FORCA] < armadura.forca_minima
 
 
-## Ataque extra de arma leve: modificador positivo não entra no dano.
+## Ataque extra de arma leve: modificador positivo não entra no dano (exceto Estilo Duas Armas).
 func _bonus_no_dano(arma: Arma, ataque_extra: bool) -> int:
 	var bonus := bonus_dano(arma)
 	if arma.pesada and tem_talento(TALENTO_MESTRE_ARMA_GRANDE):
 		bonus += bonus_proficiencia()  # Mestre em Arma Grande: a proficiência soma ao dano
-	return (mini(bonus, 0) if ataque_extra else bonus) + arma.bonus_magico  # o bônus mágico soma até no ataque extra
+	var corta_positivo := ataque_extra and not tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DUAS_ARMAS)
+	return (mini(bonus, 0) if corta_positivo else bonus) + arma.bonus_magico  # o bônus mágico soma até no ataque extra
+
+
+## Efeitos de estilo que o golpe carrega (GWF, Glima). Bônus numéricos ficam em `Equipamento`.
+func _juntar_efeitos_de_estilo(golpe: Golpe, arma: Arma, duas_maos: bool) -> void:
+	if tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARMAS_GRANDES) and (arma.duas_maos or (arma.e_versatil() and duas_maos)):
+		golpe.efeitos.append(EfeitosDeTalento.ArmasGrandes.new())
+	if tem_efeito_estilo(EstiloDeLutaRPG.Efeito.GLIMA) and arma.categoria == &"":
+		golpe.efeitos.append(EfeitosDeTalento.GlimaDerruba.new(cd_maestria(arma)))
 
 
 func _destreza_na_armadura(armadura: Armadura) -> int:
@@ -598,4 +688,5 @@ func bonus_pericia(pericia: StringName) -> int:
 
 ## Percepção passiva: 10 + Sabedoria, + proficiência se Percepção foi escolhida.
 func percepcao_passiva() -> int:
-	return Pericia.passiva(bonus_pericia(Pericia.PERCEPCAO))
+	var base := Pericia.passiva(bonus_pericia(Pericia.PERCEPCAO))
+	return base + (LUTA_CEGAS_PASSIVA if tem_efeito_estilo(EstiloDeLutaRPG.Efeito.LUTA_CEGAS) else 0)

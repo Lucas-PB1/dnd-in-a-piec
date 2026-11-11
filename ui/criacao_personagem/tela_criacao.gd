@@ -1,8 +1,7 @@
 class_name TelaCriacao
 extends Control
-## Criação em cinco passos: quem é o herói, o antecedente (aumento de atributo, 2 perícias e o
-## talento de origem), os atributos, as perícias (Guerreiro: 2, além das do antecedente) e as
-## maestrias (os tipos de arma que domina; Guerreiro: 3). Não deixa avançar com o passo incompleto.
+## Criação em seis passos: quem é o herói, o antecedente, os atributos, as perícias, as
+## maestrias e o Estilo de Luta. Não deixa avançar com o passo incompleto.
 ## Funciona com o jogo pausado. Ao confirmar, emite `confirmada`.
 
 ## Emitido ao clicar em "Começar", com a ficha montada e o pacote inicial escolhido
@@ -31,7 +30,7 @@ const ID_TALENTO_PERITO := &"perito"
 @export var pasta_antecedentes: String = "res://data/antecedentes/"
 @export var pasta_talentos: String = "res://data/talentos/"
 
-enum Passo { QUEM, ANTECEDENTE, ATRIBUTOS, PERICIAS, MAESTRIAS }
+enum Passo { QUEM, ANTECEDENTE, ATRIBUTOS, PERICIAS, MAESTRIAS, ESTILOS }
 
 var _passo_atual: Passo = Passo.QUEM
 const TITULOS := {
@@ -40,6 +39,7 @@ const TITULOS := {
 	Passo.ATRIBUTOS: "Atributos",
 	Passo.PERICIAS: "Perícias",
 	Passo.MAESTRIAS: "Maestrias",
+	Passo.ESTILOS: "Estilo de Luta",
 }
 
 var _classe: ClasseRPG
@@ -61,6 +61,8 @@ var _talentos_de_origem: Dictionary[StringName, TalentoRPG] = {}
 var _aumentos: Array[Dictionary] = []
 ## Perícias que a lista do passo mostra: as da classe e, com o Perito, todas as do jogo.
 var _ids_pericias: Array[StringName] = []
+## Estilos de luta jogáveis, na ordem da lista.
+var _estilos: Array[EstiloDeLutaRPG] = []
 
 @onready var _campo_nome: LineEdit = %Nome
 @onready var _escolha_classe: OptionButton = %Classe
@@ -83,6 +85,7 @@ const COR_DICA := Color(0.85, 0.75, 0.55, 1.0)
 @onready var _passo_atributos: Control = %PassoAtributos
 @onready var _passo_pericias: Control = %PassoPericias
 @onready var _passo_maestrias: Control = %PassoMaestrias
+@onready var _passo_estilos: Control = %PassoEstilos
 @onready var _lista_antecedentes: ItemList = %ListaAntecedentes
 @onready var _detalhe_antecedente: Label = %DetalheAntecedente
 @onready var _escolha_aumento: OptionButton = %EscolhaAumento
@@ -92,6 +95,9 @@ const COR_DICA := Color(0.85, 0.75, 0.55, 1.0)
 @onready var _lista_maestrias: ItemList = %ListaMaestrias
 @onready var _contagem_maestrias: Label = %ContagemMaestrias
 @onready var _detalhe_maestria: Label = %DetalheMaestria
+@onready var _lista_estilos: ItemList = %ListaEstilos
+@onready var _contagem_estilos: Label = %ContagemEstilos
+@onready var _detalhe_estilo: Label = %DetalheEstilo
 @onready var _caixa_builds: HBoxContainer = %Builds
 @onready var _botao_comecar: Button = %Comecar
 ## Os botões que levam ao passo seguinte; ficam apagados enquanto o passo atual está incompleto.
@@ -99,6 +105,7 @@ const COR_DICA := Color(0.85, 0.75, 0.55, 1.0)
 @onready var _botao_ir_atributos: Button = %IrAtributos
 @onready var _botao_ir_pericias: Button = %IrPericias
 @onready var _botao_ir_maestrias: Button = %IrMaestrias
+@onready var _botao_ir_estilos: Button = %IrEstilos
 
 
 func _ready() -> void:
@@ -248,8 +255,18 @@ func _preparar_campos() -> void:
 	(%VoltarDasPericias as Button).pressed.connect(_mostrar_passo.bind(Passo.ATRIBUTOS))
 	_botao_ir_maestrias.pressed.connect(_mostrar_passo.bind(Passo.MAESTRIAS))
 	(%VoltarAtributos as Button).pressed.connect(_mostrar_passo.bind(Passo.PERICIAS))
+	_botao_ir_estilos.pressed.connect(_mostrar_passo.bind(Passo.ESTILOS))
+	(%VoltarDasMaestrias as Button).pressed.connect(_mostrar_passo.bind(Passo.MAESTRIAS))
 	_lista_pericias.multi_selected.connect(_ao_marcar_pericia)
 	_lista_maestrias.multi_selected.connect(_ao_marcar)
+	_lista_estilos.item_selected.connect(_ao_escolher_estilo)
+	_estilos = EstiloDeLutaRPG.todos()
+	_lista_estilos.clear()
+	for estilo in _estilos:
+		_lista_estilos.add_item("%s (%s)" % [estilo.nome, estilo.fonte])
+	if not _estilos.is_empty():
+		_lista_estilos.select(0)
+		_ao_escolher_estilo(0)
 
 
 ## Esc (ou o botão voltar do celular) volta um passo; no primeiro, pede para voltar ao título.
@@ -270,6 +287,8 @@ func _unhandled_input(evento: InputEvent) -> void:
 			_mostrar_passo(Passo.ATRIBUTOS)
 		Passo.MAESTRIAS:
 			_mostrar_passo(Passo.PERICIAS)
+		Passo.ESTILOS:
+			_mostrar_passo(Passo.MAESTRIAS)
 
 
 ## No celular, o primeiro "voltar" com o nome em edição só fecha o teclado: não sai do passo.
@@ -303,6 +322,7 @@ func _mostrar_passo(passo: Passo) -> void:
 	_passo_atributos.visible = passo == Passo.ATRIBUTOS
 	_passo_pericias.visible = passo == Passo.PERICIAS
 	_passo_maestrias.visible = passo == Passo.MAESTRIAS
+	_passo_estilos.visible = passo == Passo.ESTILOS
 	_titulo.text = TITULOS[passo]
 
 
@@ -325,6 +345,8 @@ func _falta_no_passo(passo: Passo) -> String:
 		Passo.MAESTRIAS:
 			var pedidas := _classe.quantidade_maestrias
 			return "" if armas_marcadas().size() == pedidas else "Escolha %d armas" % pedidas
+		Passo.ESTILOS:
+			return "" if _estilo_marcado() != &"" else "Escolha um estilo"
 	return ""
 
 
@@ -485,6 +507,23 @@ func _ao_marcar(indice: int, marcada: bool) -> void:
 	_atualizar()
 
 
+## Escolheu o estilo `indice` na lista (um só na criação).
+func _ao_escolher_estilo(indice: int) -> void:
+	if indice < 0 or indice >= _estilos.size():
+		return
+	var estilo := _estilos[indice]
+	_detalhe_estilo.text = "%s — %s\n%s" % [estilo.nome, estilo.fonte, estilo.descricao]
+	_atualizar()
+
+
+## Id do estilo marcado, ou vazio.
+func _estilo_marcado() -> StringName:
+	var sel := _lista_estilos.get_selected_items()
+	if sel.is_empty() or sel[0] >= _estilos.size():
+		return &""
+	return _estilos[sel[0]].id
+
+
 ## Lista os pacotes da classe ("Pacote A") e escolhe o primeiro. O que leva fica numa linha.
 func _preencher_pacotes() -> void:
 	_escolha_pacote.clear()
@@ -508,6 +547,9 @@ func _ficha_atual() -> Ficha:
 		var talento := _talentos_de_origem.get(_antecedente.talento) as TalentoRPG
 		if talento != null:
 			ficha.talentos.append(talento.id)
+	var id_estilo := _estilo_marcado()
+	if id_estilo != &"":
+		ficha.estilos = [id_estilo]
 	return ficha
 
 
@@ -605,6 +647,7 @@ func _atualizar() -> void:
 	_montar_builds()
 	_contagem_maestrias.text = "Domine %d tipos de arma (%d/%d marcadas). Só com elas a maestria vale." % [
 		_classe.quantidade_maestrias, armas_marcadas().size(), _classe.quantidade_maestrias]
+	_contagem_estilos.text = "Escolha 1 estilo de luta (pode trocar e preparar 2 a partir do nível 2)."
 	_atualizar_botoes_de_avanco()
 	var falta := _falta_algo()
 	_botao_comecar.disabled = falta != ""
@@ -631,6 +674,7 @@ func _atualizar_botoes_de_avanco() -> void:
 	_ajustar_avanco(_botao_ir_atributos, Passo.ANTECEDENTE, "Atributos")
 	_ajustar_avanco(_botao_ir_pericias, Passo.ATRIBUTOS, "Perícias")
 	_ajustar_avanco(_botao_ir_maestrias, Passo.PERICIAS, "Maestrias")
+	_ajustar_avanco(_botao_ir_estilos, Passo.MAESTRIAS, "Estilo de Luta")
 
 
 func _ajustar_avanco(botao: Button, passo: Passo, texto: String) -> void:

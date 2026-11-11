@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_8b6cb"]
+
+[resource]
+script = ExtResource("1_8b6cb")
+id = &"combatente_movel"
+nome = "Combatente Móvel"
+descricao = "Ao atacar, +3 m de deslocamento até o fim do turno."
+fonte = "Grim Hollow"
+efeito = 15

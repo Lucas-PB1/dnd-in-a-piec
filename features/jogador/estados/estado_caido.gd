@@ -27,11 +27,19 @@ func processar_fisica(delta: float) -> void:
 	_tempo += delta
 	jogador.aplicar_gravidade(delta)
 	jogador.mover_horizontal(0.0, jogador.velocidade_andar(), delta, false)
-	if _tempo >= TEMPO_DEITADO:
+	var deitado := _tempo_deitado()
+	if _tempo >= deitado:
 		jogador.deitar(false)
-	if _tempo < TEMPO_DEITADO + TEMPO_PARA_LEVANTAR:
+	if _tempo < deitado + TEMPO_PARA_LEVANTAR:
 		return
 	if not jogador.is_on_floor():
 		trocar_para.emit(&"NoAr")
 	else:
 		trocar_para.emit(&"Andando" if jogador.direcao() != 0.0 else &"Parado")
+
+
+## Defesa no Chão: levantar custa só ~5 pés (metade do tempo deitado padrão).
+func _tempo_deitado() -> float:
+	if jogador.ficha != null and jogador.ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DEFESA_CHAO):
+		return TEMPO_DEITADO * 0.5
+	return TEMPO_DEITADO

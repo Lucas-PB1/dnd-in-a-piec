@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_ahmfk"]
+
+[resource]
+script = ExtResource("1_ahmfk")
+id = &"armas_grandes"
+nome = "Combate com Armas Grandes"
+descricao = "Com arma Duas Mãos ou Versátil a duas mãos, trata 1 ou 2 nos dados de dano como 3."
+efeito = 5

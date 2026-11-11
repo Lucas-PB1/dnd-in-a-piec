@@ -76,6 +76,8 @@ func _testar_tela_sozinha() -> void:
 		and recebida[0].percepcao_passiva() == 13, "a ficha guarda as perícias; SAB 12 treinada: passiva 13")
 	_checar(recebida[0].nivel == 3 and recebida[0].experiencia == 900,
 		"o nível inicial escolhido e o XP correspondente vão para a ficha")
+	_checar(recebida[0].estilos.size() == 1 and recebida[0].estilos[0] != &"",
+		"criação escolhe um estilo de luta")
 	await _testar_antecedente_e_passos()
 	await _testar_perito()
 	tela.queue_free()

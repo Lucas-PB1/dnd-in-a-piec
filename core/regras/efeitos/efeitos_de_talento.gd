@@ -210,3 +210,30 @@ class DrenarVida extends EfeitoDeGolpe:
 	func _init() -> void:
 		id = Proficiencias.EFEITO_DRENAR_VIDA
 		por_rodada = false
+
+
+## Combate com Armas Grandes: 1–2 nos dados de dano viram 3 (sem recarga).
+class ArmasGrandes extends EfeitoDeGolpe:
+	func _init() -> void:
+		id = &"armas_grandes"
+		por_rodada = false
+
+	func trata_um_e_dois_como_tres() -> bool:
+		return true
+
+
+## Glima: acerto desarmado pode derrubar (salvaguarda de Força).
+class GlimaDerruba extends EfeitoDeGolpe:
+	var cd: int = 8
+
+	func _init(cd_salvaguarda: int) -> void:
+		id = &"glima"
+		cd = cd_salvaguarda
+		por_rodada = false
+
+	func ao_acertar(golpe: Golpe, _resultado: Combate.Resultado, alvo: CondicoesComponent, _lado: float) -> void:
+		golpe.efeito_usado.emit(id)
+		if alvo.salvou(Atributos.FORCA, cd):
+			alvo.aviso.emit("Resistiu à Glima!")
+		else:
+			alvo.impor(CondicoesComponent.CAIDO, CondicoesComponent.DURACAO_CAIDO)

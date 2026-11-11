@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_nt3u6"]
+
+[resource]
+script = ExtResource("1_nt3u6")
+id = &"oportunista"
+nome = "Oportunista"
+descricao = "No jogo: +2 ataque e dano no 1º golpe depois de levar dano (janela curta)."
+fonte = "Grim Hollow"
+efeito = 16

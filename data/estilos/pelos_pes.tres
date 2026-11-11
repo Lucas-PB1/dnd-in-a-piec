@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EstiloDeLutaRPG" format=3]
+
+[ext_resource type="Script" path="res://core/dados/estilo_de_luta_rpg.gd" id="1_6jdlc"]
+
+[resource]
+script = ExtResource("1_6jdlc")
+id = &"pelos_pes"
+nome = "Pelos Pés"
+descricao = "Vantagem no ataque contra inimigo maior quando bem perto."
+fonte = "Northlands"
+efeito = 11

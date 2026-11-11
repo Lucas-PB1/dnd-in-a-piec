@@ -82,6 +82,8 @@ static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: i
 			"salvaguardas_extras": ficha.salvaguardas_extras,
 			"pericias": ficha.pericias,
 			"pericias_especializadas": ficha.pericias_especializadas,
+			"estilos": ficha.estilos,
+			"trocas_de_estilo": ficha.trocas_de_estilo_feitas,
 		},
 		"mochila": {"itens": itens, "equipados": _posicoes_dos_equipados(inventario)},
 		"bestiario": bestiario.para_dicionario() if bestiario else {},
@@ -118,6 +120,12 @@ static func montar_ficha(dados: Dictionary) -> Ficha:
 		ficha.pericias.append(StringName(pericia))
 	for pericia in f.get("pericias_especializadas", []):
 		ficha.pericias_especializadas.append(StringName(pericia))
+	for id_estilo in f.get("estilos", []):
+		ficha.estilos.append(StringName(id_estilo))
+	ficha.trocas_de_estilo_feitas = int(f.get("trocas_de_estilo", 0))
+	# Saves antigos sem estilo: Guerreiro começa com Defesa.
+	if ficha.estilos.is_empty():
+		ficha.estilos = [&"defesa"]
 	return ficha
 
 

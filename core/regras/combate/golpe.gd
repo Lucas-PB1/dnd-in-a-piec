@@ -83,6 +83,10 @@ func rerrola_menor() -> bool:
 	return efeitos.any(func(e: EfeitoDeGolpe) -> bool: return e.rerrola_menor())
 
 
+func trata_um_e_dois_como_tres() -> bool:
+	return efeitos.any(func(e: EfeitoDeGolpe) -> bool: return e.trata_um_e_dois_como_tres())
+
+
 func rola_duas_vezes() -> bool:
 	return efeitos.any(func(e: EfeitoDeGolpe) -> bool: return e.rola_duas_vezes())
 
