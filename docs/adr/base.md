@@ -7,7 +7,7 @@ decisão deste tema mudar.**
 |---|---|---|
 | Motor | Godot 4.7.2, GDScript | Já instalado; sem C#. |
 | Renderizador | GL Compatibility (também no celular) | Leve e ótimo para pixel art 2D. |
-| Resolução interna | **640x360**, `stretch/mode = viewport`, `scale_mode = integer`, **`aspect = expand`**: celular mais largo que 16:9 mostra mais fase em vez de faixas pretas (a altura fica 360). Celular sempre deitado (`handheld/orientation` = sensor paisagem). | Pixel art ampliada sem borrar (2x = 1280x720, 3x = 1920x1080). |
+| Resolução interna | **640x360**, `stretch/mode = viewport`, `scale_mode = integer`, **`aspect = expand`**: celular mais largo que 16:9 mostra mais fase em vez de faixas pretas (a altura fica 360). Celular sempre deitado (`handheld/orientation` = sensor paisagem). No PC: Opções → Som → **Tela** (Janela 1280×720 ou tela cheia borderless). | Pixel art ampliada sem borrar (2x = 1280x720, 3x = 1920x1080). |
 | Filtro de textura | Nearest (padrão do projeto) | Pixel art nítida. |
 | Unidade | Pixels. Ladrilhos de **32x32**. Herói com ~73 px de altura (~2,3 ladrilhos). | Proporção boa para ação lateral. |
 | Importação de PNG | Lossless, sem mipmaps. | Não estragar a pixel art. |

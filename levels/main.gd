@@ -146,6 +146,8 @@ var _heroi_na_porta: bool = false
 func _enter_tree() -> void:
 	OpcoesSom.carregar()
 	OpcoesSom.preparar_barramentos()
+	OpcoesTela.carregar()
+	OpcoesTela.aplicar()
 
 
 func _ready() -> void:

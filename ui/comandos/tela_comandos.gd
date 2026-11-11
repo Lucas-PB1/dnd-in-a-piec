@@ -30,6 +30,7 @@ var _cenas: Array[PackedScene] = []
 var _botoes: Dictionary[StringName, Button] = {}
 var _lista_modo: OptionButton
 var _lista_mostrar: OptionButton
+var _lista_tela: OptionButton
 var _botao_ajustar: Button
 
 @onready var _lista_acoes: GridContainer = %ListaAcoes
@@ -76,6 +77,7 @@ func _ready() -> void:
 	_criar_opcoes_toque()
 	_criar_atalhos()
 	_criar_volumes()
+	_criar_opcao_tela()
 	set_process_input(false)
 	_atualizar_rotulos()
 
@@ -118,6 +120,7 @@ func abrir(permitir_ajuste: bool = true) -> void:
 	_lista_mostrar.select(OpcoesToque.mostrar)
 	_marcar_atalhos()
 	_marcar_volumes()
+	_lista_tela.select(OpcoesTela.modo)
 	_aba_controles.button_pressed = true
 	_mostrar_pagina(_pagina_controles)
 	show()
@@ -178,6 +181,23 @@ func _criar_volumes() -> void:
 		valor.name = "Valor_%s" % barramento
 		_grade_som.add_child(valor)
 		barra.value_changed.connect(_escolher_volume.bind(barramento, valor))
+
+
+## Modo da janela no PC (Janela / Tela cheia), na mesma aba Som.
+func _criar_opcao_tela() -> void:
+	var rotulo := Label.new()
+	rotulo.text = "Tela"
+	_grade_som.add_child(rotulo)
+	_lista_tela = _lista_de_opcoes(OpcoesTela.NOMES, _escolher_tela)
+	_lista_tela.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_lista_tela.custom_minimum_size = Vector2(LARGURA_BARRA_DE_VOLUME, ALTURA_BOTAO_TOQUE)
+	_grade_som.add_child(_lista_tela)
+	_grade_som.add_child(Control.new())  # ocupa a 3ª coluna da grade
+
+
+func _escolher_tela(indice: int) -> void:
+	OpcoesTela.definir(indice)
+	OpcoesTela.salvar()
 
 
 func _marcar_volumes() -> void:

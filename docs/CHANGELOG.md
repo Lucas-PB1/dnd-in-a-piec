@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- PC: Opções → aba Som → **Tela** (Janela / Tela cheia), salvo em `user://tela.cfg` (`OpcoesTela`). Teste `teste_opcoes_tela`.
 - Armaduras no herói: ladrilhos **16×16** (mais leitura) + shader com contraste/brilho; ainda sem peças por cima. Prévia aprovada; teste `teste_armaduras`.
 - Estocada do herói: corpo `estocada` (`heroi_estocada.png`, SpriteCook, 20 créditos) nas armas de rastro (rapieira, lança…); mesmo pipeline do corte. Teste em `teste_ataque`.
 - Baú do arsenal: animação de abrir/fechar com arte CC0 do **r0ar** (`bau_abrindo.png`); fecha a tampa ao sair da tela.
