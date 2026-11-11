@@ -31,12 +31,29 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 | 13 | `mobile/defaults-primeira-execucao` |
 | 14 | `heroi/corrosao-mais-clara` |
 | 15 | `heroi/veneno-uso-claro` |
+| 16 | `heroi/invencibilidade-ao-nascer` |
+| 17 | `heroi/compendio-inimigos-menu` |
+| 18 | `regras/estilo-de-luta-guerreiro` |
+| 19 | `heroi/disparo-no-botao-ataque` |
+| 20 | `heroi/placar-kills-timer` |
+| 21 | `regras/armadura-escudo-magicos` |
+| 22 | `regras/guerreiro-niveis-7-8` |
+| 23 | `fases/tutorial` |
+| 24 | `fases/interacoes-e-afastadas` |
+| 25 | `arte/pedra-desafio-pericia` |
+| 26 | `heroi/intro-lore` |
+| 27 | `heroi/final-mais-legal` |
+| 28 | `arte/icone-do-jogo` |
+| 40 | `fases/recalibrar-dificuldade` (depois das fatias de progressão/tutorial/placar) |
 
 ### Regras do livro
-Nenhuma aberta nesta fila. Magia, raças e desvantagem de Furtividade na armadura foram para `depois/`. Poções de cura e loja estão em **Próximas** (`regras/`).
+Estilo de Luta, nv 7–8 e armadura/escudo mágicos estão em **Próximas**. Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
 
 ### Arte / polish
-Nenhuma aberta nesta fila.
+| Pri | Arquivo |
+|---|---|
+| 25 | `arte/pedra-desafio-pericia` |
+| 28 | `arte/icone-do-jogo` |
 
 ### Dívidas técnicas
 | Pri | Arquivo |
