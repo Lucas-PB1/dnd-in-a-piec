@@ -113,8 +113,9 @@ const LINHAS_LADRILHO: Array[Dictionary] = [
 ]
 const PACOTES_LADRILHO := {
 	&"floresta": {
-		"arquivo": "res://assets/fundos/floresta/tiles.png", "celula": 32,
-		"recortes": [Vector2i(16, 12), Vector2i(48, 36), Vector2i(96, 12), Vector2i(16, 40)],
+		# Plataforma = ilha flutuante (grama+rocha), não a faixa verde fina que some no fundo.
+		"arquivo": "res://assets/fundos/floresta/tiles.png", "celula": 32, "plataforma_cheia": true,
+		"recortes": [Vector2i(16, 12), Vector2i(48, 36), Vector2i(32, 16), Vector2i(16, 40)],
 	},
 	&"fortaleza": {
 		"arquivo": "res://assets/fundos/fortaleza/tileset.png", "celula": 32,
@@ -148,7 +149,9 @@ func _ladrilhos_do_pacote(img: Image) -> void:
 		var tom: Color = dados.tom
 		var celula: int = int(pacote.get("celula", TAM))
 		for tipo in [GRAMA, TERRA, PLATAFORMA, PEDRA]:
-			var altura := ALTURA_PLATAFORMA if tipo == PLATAFORMA else TAM
+			var altura := TAM
+			if tipo == PLATAFORMA and not bool(pacote.get("plataforma_cheia", false)):
+				altura = ALTURA_PLATAFORMA
 			var bloco := _recortar_ladrilho(fonte, pacote.recortes[tipo], celula, altura)
 			if chao != null and (tipo == GRAMA or tipo == TERRA):
 				var celulas := CELULAS_GRAMA_SPRITECOOK if tipo == GRAMA else CELULAS_TERRA_SPRITECOOK

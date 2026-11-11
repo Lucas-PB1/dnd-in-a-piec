@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="Arma" format=3]
+[gd_resource type="Resource" script_class="Arma" format=3 uid="uid://b1l1fk5vjyyxe"]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/mangual.png" id="1_ec865"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_pduhp"]
-[ext_resource type="Texture2D" path="res://assets/armas/quadros/mangual.png" id="3_bans3"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_4ekwc"]
-[ext_resource type="Texture2D" path="res://assets/armas/mangual.png" id="5_r4b0s"]
+[ext_resource type="Texture2D" uid="uid://cceiyqvorrast" path="res://assets/armas/icones/mangual.png" id="1_ec865"]
+[ext_resource type="Script" uid="uid://ckilivgc17xyy" path="res://core/dados/pose_golpe.gd" id="2_pduhp"]
+[ext_resource type="Texture2D" uid="uid://dsgvlxxshp7f7" path="res://assets/armas/quadros/mangual.png" id="3_bans3"]
+[ext_resource type="Script" uid="uid://8sie7gy5vgu2" path="res://core/dados/arma.gd" id="4_4ekwc"]
+[ext_resource type="Texture2D" uid="uid://di6gxb5esdx4s" path="res://assets/armas/mangual.png" id="5_r4b0s"]
 
 [sub_resource type="Resource" id="Resource_ta5t0"]
 script = ExtResource("2_pduhp")
@@ -59,7 +59,7 @@ escala = 0.8243442139896661
 script = ExtResource("2_pduhp")
 tempo = 0.4
 angulo = 421.2230358330021
-escala = 0.9513169865943117
+escala = 0.9513169865943116
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3v4bd"]
 atlas = ExtResource("3_bans3")
@@ -104,7 +104,7 @@ categoria = &"marcial"
 textura = ExtResource("5_r4b0s")
 angulo_arte = -45.0
 pegada = Vector2(9.328427, 26.671574)
-comprimento = 29.900000000000002
+comprimento = 29.9
 maestria = &"enfraquecer"
 nome_original = "Flail"
 peso = "2 lb."

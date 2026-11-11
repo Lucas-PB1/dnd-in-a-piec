@@ -882,7 +882,7 @@ func _abrir_bau(itens: Array[Item]) -> void:
 
 ## A banca do lojista fica ao lado do começo da fase, com o estoque novo dela.
 func _posicionar_a_loja() -> void:
-	_lojista.global_position = _fase.posicao_inicio() + _fase.deslocamento_loja
+	_lojista.global_position = _fase.posicao_loja()
 	_estoque_da_loja = Loja.sortear_estoque(_fase.indice, _rng_da_fase())
 
 

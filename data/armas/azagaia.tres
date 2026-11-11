@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Arma" format=3]
+[gd_resource type="Resource" script_class="Arma" format=3 uid="uid://dnwcryw0wqoqf"]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/azagaia.png" id="1_0iguj"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_ffsv8"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_alffr"]
-[ext_resource type="Texture2D" path="res://assets/armas/azagaia.png" id="4_07w86"]
+[ext_resource type="Texture2D" uid="uid://cx70tt8nytedq" path="res://assets/armas/icones/azagaia.png" id="1_0iguj"]
+[ext_resource type="Script" uid="uid://ckilivgc17xyy" path="res://core/dados/pose_golpe.gd" id="2_ffsv8"]
+[ext_resource type="Script" uid="uid://8sie7gy5vgu2" path="res://core/dados/arma.gd" id="3_alffr"]
+[ext_resource type="Texture2D" uid="uid://k88gmlfp58oi" path="res://assets/armas/azagaia.png" id="4_07w86"]
 
 [sub_resource type="Resource" id="Resource_ovm8l"]
 script = ExtResource("2_ffsv8")

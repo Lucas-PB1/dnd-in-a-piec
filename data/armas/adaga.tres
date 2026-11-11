@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Arma" format=3]
+[gd_resource type="Resource" script_class="Arma" format=3 uid="uid://du631bnqwxl2o"]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/adaga.png" id="1_0t26k"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_yw3yb"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_p2wsy"]
-[ext_resource type="Texture2D" path="res://assets/armas/adaga.png" id="4_wchd7"]
+[ext_resource type="Texture2D" uid="uid://c0xeur8nd6g2q" path="res://assets/armas/icones/adaga.png" id="1_0t26k"]
+[ext_resource type="Script" uid="uid://ckilivgc17xyy" path="res://core/dados/pose_golpe.gd" id="2_yw3yb"]
+[ext_resource type="Script" uid="uid://8sie7gy5vgu2" path="res://core/dados/arma.gd" id="3_p2wsy"]
+[ext_resource type="Texture2D" uid="uid://mou61in1hov6" path="res://assets/armas/adaga.png" id="4_wchd7"]
 
 [sub_resource type="Resource" id="Resource_o8qq5"]
 script = ExtResource("2_yw3yb")
@@ -36,7 +36,7 @@ acuidade = true
 textura = ExtResource("4_wchd7")
 angulo_arte = -135.0
 pegada = Vector2(16.671574, 16.671574)
-comprimento = 22.900000000000002
+comprimento = 22.9
 leve = true
 arremesso_normal_pes = 20.0
 arremesso_longo_pes = 60.0

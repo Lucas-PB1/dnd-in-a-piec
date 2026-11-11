@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="Arma" format=3]
+[gd_resource type="Resource" script_class="Arma" format=3 uid="uid://cthb2fh07ime"]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/arco_longo.png" id="1_cttmo"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_7epwb"]
-[ext_resource type="Texture2D" path="res://assets/armas/quadros/arco_longo.png" id="3_smkqg"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="4_mesmq"]
-[ext_resource type="Texture2D" path="res://assets/armas/arco_longo.png" id="5_liige"]
+[ext_resource type="Texture2D" uid="uid://cbtrd0ei0hha1" path="res://assets/armas/icones/arco_longo.png" id="1_cttmo"]
+[ext_resource type="Script" uid="uid://ckilivgc17xyy" path="res://core/dados/pose_golpe.gd" id="2_7epwb"]
+[ext_resource type="Texture2D" uid="uid://48yp0dvlty0r" path="res://assets/armas/quadros/arco_longo.png" id="3_smkqg"]
+[ext_resource type="Script" uid="uid://8sie7gy5vgu2" path="res://core/dados/arma.gd" id="4_mesmq"]
+[ext_resource type="Texture2D" uid="uid://bkvscgk5bjf4r" path="res://assets/armas/arco_longo.png" id="5_liige"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8c882"]
 atlas = ExtResource("3_smkqg")

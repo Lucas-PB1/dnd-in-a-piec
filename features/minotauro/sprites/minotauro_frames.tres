@@ -1,10 +1,10 @@
-[gd_resource type="SpriteFrames" load_steps=42 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://d2nj5khcs74ml"]
 
-[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_parado.png" id="1"]
-[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_investida.png" id="2"]
-[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_chifrada.png" id="3"]
-[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_glaive.png" id="4"]
-[ext_resource type="Texture2D" path="res://features/minotauro/sprites/minotauro_andar.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://uq5yfibbverc" path="res://features/minotauro/sprites/minotauro_parado.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://c2b73na1we2fp" path="res://features/minotauro/sprites/minotauro_investida.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://73lgh6t81kpm" path="res://features/minotauro/sprites/minotauro_chifrada.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://bjmwwijiqgiaf" path="res://features/minotauro/sprites/minotauro_glaive.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://vukp5vw5fwap" path="res://features/minotauro/sprites/minotauro_andar.png" id="5"]
 
 [sub_resource type="AtlasTexture" id="andar_0"]
 atlas = ExtResource("5")
@@ -36,70 +36,6 @@ region = Rect2(1140, 0, 190, 190)
 
 [sub_resource type="AtlasTexture" id="andar_7"]
 atlas = ExtResource("5")
-region = Rect2(1330, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_0"]
-atlas = ExtResource("1")
-region = Rect2(0, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_1"]
-atlas = ExtResource("1")
-region = Rect2(190, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_2"]
-atlas = ExtResource("1")
-region = Rect2(380, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_3"]
-atlas = ExtResource("1")
-region = Rect2(570, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_4"]
-atlas = ExtResource("1")
-region = Rect2(760, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_5"]
-atlas = ExtResource("1")
-region = Rect2(950, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_6"]
-atlas = ExtResource("1")
-region = Rect2(1140, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="parado_7"]
-atlas = ExtResource("1")
-region = Rect2(1330, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_0"]
-atlas = ExtResource("2")
-region = Rect2(0, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_1"]
-atlas = ExtResource("2")
-region = Rect2(190, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_2"]
-atlas = ExtResource("2")
-region = Rect2(380, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_3"]
-atlas = ExtResource("2")
-region = Rect2(570, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_4"]
-atlas = ExtResource("2")
-region = Rect2(760, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_5"]
-atlas = ExtResource("2")
-region = Rect2(950, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_6"]
-atlas = ExtResource("2")
-region = Rect2(1140, 0, 190, 190)
-
-[sub_resource type="AtlasTexture" id="investida_7"]
-atlas = ExtResource("2")
 region = Rect2(1330, 0, 190, 190)
 
 [sub_resource type="AtlasTexture" id="chifrada_0"]
@@ -166,37 +102,72 @@ region = Rect2(1140, 0, 190, 190)
 atlas = ExtResource("4")
 region = Rect2(1330, 0, 190, 190)
 
+[sub_resource type="AtlasTexture" id="investida_4"]
+atlas = ExtResource("2")
+region = Rect2(760, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_5"]
+atlas = ExtResource("2")
+region = Rect2(950, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_6"]
+atlas = ExtResource("2")
+region = Rect2(1140, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_7"]
+atlas = ExtResource("2")
+region = Rect2(1330, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_0"]
+atlas = ExtResource("1")
+region = Rect2(0, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_1"]
+atlas = ExtResource("1")
+region = Rect2(190, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_2"]
+atlas = ExtResource("1")
+region = Rect2(380, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_3"]
+atlas = ExtResource("1")
+region = Rect2(570, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_4"]
+atlas = ExtResource("1")
+region = Rect2(760, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_5"]
+atlas = ExtResource("1")
+region = Rect2(950, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_6"]
+atlas = ExtResource("1")
+region = Rect2(1140, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="parado_7"]
+atlas = ExtResource("1")
+region = Rect2(1330, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_0"]
+atlas = ExtResource("2")
+region = Rect2(0, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_1"]
+atlas = ExtResource("2")
+region = Rect2(190, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_2"]
+atlas = ExtResource("2")
+region = Rect2(380, 0, 190, 190)
+
+[sub_resource type="AtlasTexture" id="investida_3"]
+atlas = ExtResource("2")
+region = Rect2(570, 0, 190, 190)
+
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("parado_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("parado_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("parado_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("parado_3")
-}, {
-"duration": 1.0,
-"texture": SubResource("parado_4")
-}, {
-"duration": 1.0,
-"texture": SubResource("parado_5")
-}, {
-"duration": 1.0,
-"texture": SubResource("parado_6")
-}, {
-"duration": 1.0,
-"texture": SubResource("parado_7")
-}],
-"loop": true,
-"name": &"parado",
-"speed": 8
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("andar_0")
@@ -222,43 +193,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("andar_7")
 }],
-"loop": true,
+"loop": 1,
 "name": &"andar",
-"speed": 8
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("investida_0")
-}, {
-"duration": 1.0,
-"texture": SubResource("investida_1")
-}, {
-"duration": 1.0,
-"texture": SubResource("investida_2")
-}, {
-"duration": 1.0,
-"texture": SubResource("investida_3")
-}],
-"loop": false,
-"name": &"preparar",
-"speed": 8
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("investida_4")
-}, {
-"duration": 1.0,
-"texture": SubResource("investida_5")
-}, {
-"duration": 1.0,
-"texture": SubResource("investida_6")
-}, {
-"duration": 1.0,
-"texture": SubResource("investida_7")
-}],
-"loop": true,
-"name": &"investida",
-"speed": 14
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -285,9 +222,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("chifrada_7")
 }],
-"loop": false,
+"loop": 0,
 "name": &"chifrada",
-"speed": 12
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -314,7 +251,70 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("glaive_7")
 }],
-"loop": false,
+"loop": 0,
 "name": &"glaive",
-"speed": 12
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("investida_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_7")
+}],
+"loop": 1,
+"name": &"investida",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("parado_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("parado_7")
+}],
+"loop": 1,
+"name": &"parado",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("investida_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("investida_3")
+}],
+"loop": 0,
+"name": &"preparar",
+"speed": 8.0
 }]

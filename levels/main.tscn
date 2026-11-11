@@ -1,77 +1,77 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://ccasd28r53pv0"]
 
-[ext_resource type="Script" path="res://levels/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://c7wymxelirawa" path="res://levels/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://levels/fase_1.tscn" id="2_fase"]
 [ext_resource type="PackedScene" path="res://features/jogador/jogador.tscn" id="3_jogador"]
 [ext_resource type="PackedScene" path="res://features/boneco_treino/boneco_treino.tscn" id="4_boneco"]
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://ui/inventario/tela_inventario.tscn" id="6_inventario"]
 [ext_resource type="Resource" path="res://data/classe_guerreiro.tres" id="7_guerreiro"]
-[ext_resource type="Script" path="res://core/dados/classe_rpg.gd" id="8_classe_rpg"]
+[ext_resource type="Script" uid="uid://bypej354t0dup" path="res://core/dados/classe_rpg.gd" id="8_classe_rpg"]
 [ext_resource type="PackedScene" path="res://features/bau/bau.tscn" id="10_bau"]
 [ext_resource type="PackedScene" path="res://ui/bau/tela_bau.tscn" id="11_tela_bau"]
 [ext_resource type="PackedScene" path="res://ui/comandos/tela_comandos.tscn" id="12_comandos"]
+[ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
+[ext_resource type="Script" uid="uid://bhm12hd6l4tyw" path="res://levels/impacto.gd" id="14_impacto"]
 [ext_resource type="PackedScene" path="res://ui/pausa/tela_pausa.tscn" id="15_pausa"]
 [ext_resource type="PackedScene" path="res://ui/bestiario/tela_bestiario.tscn" id="16_bestiario"]
 [ext_resource type="PackedScene" path="res://ui/habilidades/tela_habilidades.tscn" id="17_habilidades"]
+[ext_resource type="Script" uid="uid://c7f1k2sum3t3c" path="res://levels/sons.gd" id="18_sons"]
+[ext_resource type="Script" uid="uid://cyr7o2wuxo8lb" path="res://levels/musica.gd" id="19_musica"]
 [ext_resource type="PackedScene" path="res://ui/compendio/tela_compendio.tscn" id="20_compendio"]
 [ext_resource type="PackedScene" path="res://ui/talento/tela_talento.tscn" id="21_talento"]
-[ext_resource type="PackedScene" path="res://ui/subclasse/tela_subclasse.tscn" id="24_subclasse"]
 [ext_resource type="PackedScene" path="res://features/loja/lojista.tscn" id="22_lojista"]
 [ext_resource type="PackedScene" path="res://ui/loja/tela_loja.tscn" id="23_tela_loja"]
-[ext_resource type="PackedScene" path="res://ui/controles_toque/controles_toque.tscn" id="13_toque"]
-[ext_resource type="Script" path="res://levels/impacto.gd" id="14_impacto"]
-[ext_resource type="Script" path="res://levels/sons.gd" id="18_sons"]
-[ext_resource type="Script" path="res://levels/musica.gd" id="19_musica"]
+[ext_resource type="PackedScene" path="res://ui/subclasse/tela_subclasse.tscn" id="24_subclasse"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=424120600]
 script = ExtResource("1_main")
 classes_disponiveis = Array[ExtResource("8_classe_rpg")]([ExtResource("7_guerreiro")])
 
-[node name="Fase" parent="." instance=ExtResource("2_fase")]
+[node name="Fase" parent="." unique_id=632479931 instance=ExtResource("2_fase")]
 
-[node name="Bau" parent="." instance=ExtResource("10_bau")]
+[node name="Bau" parent="." unique_id=606985396 instance=ExtResource("10_bau")]
 position = Vector2(150, 288)
 
-[node name="Lojista" parent="." instance=ExtResource("22_lojista")]
+[node name="Lojista" parent="." unique_id=1860408415 instance=ExtResource("22_lojista")]
 
-[node name="BonecoTreino" parent="." instance=ExtResource("4_boneco")]
+[node name="BonecoTreino" parent="." unique_id=385718367 instance=ExtResource("4_boneco")]
 position = Vector2(240, 288)
 
-[node name="Jogador" parent="." instance=ExtResource("3_jogador")]
+[node name="Jogador" parent="." unique_id=141353593 instance=ExtResource("3_jogador")]
 
-[node name="Hud" parent="." instance=ExtResource("5_hud")]
+[node name="Hud" parent="." unique_id=559394563 instance=ExtResource("5_hud")]
 
-[node name="ControlesToque" parent="." instance=ExtResource("13_toque")]
+[node name="ControlesToque" parent="." unique_id=1077930798 instance=ExtResource("13_toque")]
 
-[node name="Interface" type="CanvasLayer" parent="."]
+[node name="Interface" type="CanvasLayer" parent="." unique_id=1444450120]
 layer = 10
 
-[node name="TelaInventario" parent="Interface" instance=ExtResource("6_inventario")]
+[node name="TelaInventario" parent="Interface" unique_id=1553978903 instance=ExtResource("6_inventario")]
 
-[node name="TelaBau" parent="Interface" instance=ExtResource("11_tela_bau")]
+[node name="TelaBau" parent="Interface" unique_id=1033609478 instance=ExtResource("11_tela_bau")]
 
-[node name="TelaLoja" parent="Interface" instance=ExtResource("23_tela_loja")]
+[node name="TelaLoja" parent="Interface" unique_id=184225471 instance=ExtResource("23_tela_loja")]
 
-[node name="TelaComandos" parent="Interface" instance=ExtResource("12_comandos")]
+[node name="TelaComandos" parent="Interface" unique_id=1915838481 instance=ExtResource("12_comandos")]
 
-[node name="TelaPausa" parent="Interface" instance=ExtResource("15_pausa")]
+[node name="TelaPausa" parent="Interface" unique_id=149777643 instance=ExtResource("15_pausa")]
 
-[node name="TelaBestiario" parent="Interface" instance=ExtResource("16_bestiario")]
+[node name="TelaBestiario" parent="Interface" unique_id=1787347413 instance=ExtResource("16_bestiario")]
 
-[node name="TelaHabilidades" parent="Interface" instance=ExtResource("17_habilidades")]
+[node name="TelaHabilidades" parent="Interface" unique_id=953503727 instance=ExtResource("17_habilidades")]
 
-[node name="TelaCompendio" parent="Interface" instance=ExtResource("20_compendio")]
+[node name="TelaCompendio" parent="Interface" unique_id=835808672 instance=ExtResource("20_compendio")]
 
-[node name="TelaTalento" parent="Interface" instance=ExtResource("21_talento")]
+[node name="TelaTalento" parent="Interface" unique_id=246054027 instance=ExtResource("21_talento")]
 
-[node name="TelaSubclasse" parent="Interface" instance=ExtResource("24_subclasse")]
+[node name="TelaSubclasse" parent="Interface" unique_id=1959221653 instance=ExtResource("24_subclasse")]
 
-[node name="Impacto" type="Node2D" parent="."]
+[node name="Impacto" type="Node2D" parent="." unique_id=552796074]
 script = ExtResource("14_impacto")
 
-[node name="Sons" type="Node" parent="."]
+[node name="Sons" type="Node" parent="." unique_id=1507733783]
 script = ExtResource("18_sons")
 
-[node name="Musica" type="Node" parent="."]
+[node name="Musica" type="Node" parent="." unique_id=546940449]
 script = ExtResource("19_musica")

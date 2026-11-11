@@ -16,6 +16,8 @@ const PAREDES_POR_LADO := 1
 const TEXTURA_PORTA := preload("res://assets/tiles/castelo/porta.png")
 ## O teto invisível fica isto acima do topo da fase (px): o Atleta que escala não sai do mapa.
 const ALTURA_DO_TETO_ACIMA_PX := 96.0
+## Topo da colisão da grama desce isto (px) para os pés entrarem na relva; o gerador do TileSet usa o mesmo valor.
+const RECUO_PES_NA_GRAMA_PX := 10.0
 const CAMADA_MUNDO := 1
 
 ## Número da fase na campanha (1 a 10). A fase reta de teste fica em 0.
@@ -100,6 +102,11 @@ func _criar_fundo() -> void:
 
 func posicao_inicio() -> Vector2:
 	return _inicio.global_position
+
+
+## Banca do lojista: deslocamento da fase + o mesmo recuo da colisão da grama (NPC sem física).
+func posicao_loja() -> Vector2:
+	return posicao_inicio() + deslocamento_loja + Vector2(0.0, RECUO_PES_NA_GRAMA_PX)
 
 
 ## Onde a porta espera o herói. Sem porta, devolve o início.

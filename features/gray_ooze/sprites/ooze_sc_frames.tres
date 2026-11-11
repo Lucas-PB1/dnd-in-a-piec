@@ -1,9 +1,9 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://b2j5hlai4bwrr"]
 
-[ext_resource type="Texture2D" path="res://features/gray_ooze/sprites/ooze_deslizar_sc.png" id="1_jnxqo"]
-[ext_resource type="Texture2D" path="res://features/gray_ooze/sprites/ooze_pseudopode2_sc.png" id="2_l5457"]
-[ext_resource type="Texture2D" path="res://features/gray_ooze/sprites/ooze_dano_sc.png" id="3_ep3e1"]
-[ext_resource type="Texture2D" path="res://features/gray_ooze/sprites/ooze_parado_sc.png" id="4_pcd7b"]
+[ext_resource type="Texture2D" uid="uid://twg4w17b7hri" path="res://features/gray_ooze/sprites/ooze_deslizar_sc.png" id="1_jnxqo"]
+[ext_resource type="Texture2D" uid="uid://sv5n4id07cyj" path="res://features/gray_ooze/sprites/ooze_pseudopode2_sc.png" id="2_l5457"]
+[ext_resource type="Texture2D" uid="uid://c6kicrb11petv" path="res://features/gray_ooze/sprites/ooze_dano_sc.png" id="3_ep3e1"]
+[ext_resource type="Texture2D" uid="uid://dku8p7jmv4hv1" path="res://features/gray_ooze/sprites/ooze_parado_sc.png" id="4_pcd7b"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6jtug"]
 atlas = ExtResource("1_jnxqo")

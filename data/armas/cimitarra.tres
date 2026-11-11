@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Arma" format=3]
+[gd_resource type="Resource" script_class="Arma" format=3 uid="uid://12pkg00wcute"]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/cimitarra.png" id="1_dfm1l"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_j5k3a"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_8murm"]
-[ext_resource type="Texture2D" path="res://assets/armas/cimitarra.png" id="4_356m1"]
+[ext_resource type="Texture2D" uid="uid://df6v3rxk6eukc" path="res://assets/armas/icones/cimitarra.png" id="1_dfm1l"]
+[ext_resource type="Script" uid="uid://ckilivgc17xyy" path="res://core/dados/pose_golpe.gd" id="2_j5k3a"]
+[ext_resource type="Script" uid="uid://8sie7gy5vgu2" path="res://core/dados/arma.gd" id="3_8murm"]
+[ext_resource type="Texture2D" uid="uid://bqy1mdfvo8uns" path="res://assets/armas/cimitarra.png" id="4_356m1"]
 
 [sub_resource type="Resource" id="Resource_uaulf"]
 script = ExtResource("2_j5k3a")

@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="Arma" format=3]
+[gd_resource type="Resource" script_class="Arma" format=3 uid="uid://dtw32r2m3r6i3"]
 
-[ext_resource type="Texture2D" path="res://assets/armas/icones/espada_grande.png" id="1_fsp7t"]
-[ext_resource type="Script" path="res://core/dados/pose_golpe.gd" id="2_aufpn"]
-[ext_resource type="Script" path="res://core/dados/arma.gd" id="3_123yy"]
-[ext_resource type="Texture2D" path="res://assets/armas/espada_grande.png" id="4_0gkxi"]
+[ext_resource type="Texture2D" uid="uid://byyuk5ivf6bun" path="res://assets/armas/icones/espada_grande.png" id="1_fsp7t"]
+[ext_resource type="Script" uid="uid://ckilivgc17xyy" path="res://core/dados/pose_golpe.gd" id="2_aufpn"]
+[ext_resource type="Script" uid="uid://8sie7gy5vgu2" path="res://core/dados/arma.gd" id="3_123yy"]
+[ext_resource type="Texture2D" uid="uid://cot8d23c45v1y" path="res://assets/armas/espada_grande.png" id="4_0gkxi"]
 
 [sub_resource type="Resource" id="Resource_xn52f"]
 script = ExtResource("2_aufpn")

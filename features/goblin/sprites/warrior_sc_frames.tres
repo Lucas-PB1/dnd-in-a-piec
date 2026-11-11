@@ -1,10 +1,10 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dbcpv3miwakwk"]
 
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/warrior_golpe_sc.png" id="1_qpwo2"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/warrior_andar_sc.png" id="2_oe51y"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/warrior_dano_sc.png" id="3_7asmi"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/warrior_arco_sc.png" id="4_20irt"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/warrior_parado_sc.png" id="5_xhaon"]
+[ext_resource type="Texture2D" uid="uid://b5im0j2t856bo" path="res://features/goblin/sprites/warrior_golpe_sc.png" id="1_qpwo2"]
+[ext_resource type="Texture2D" uid="uid://d3c6yoxgm0y2n" path="res://features/goblin/sprites/warrior_andar_sc.png" id="2_oe51y"]
+[ext_resource type="Texture2D" uid="uid://bv5qekkkayaqa" path="res://features/goblin/sprites/warrior_dano_sc.png" id="3_7asmi"]
+[ext_resource type="Texture2D" uid="uid://cpmo1uqe1q88m" path="res://features/goblin/sprites/warrior_arco_sc.png" id="4_20irt"]
+[ext_resource type="Texture2D" uid="uid://cggcvv7l05xtw" path="res://features/goblin/sprites/warrior_parado_sc.png" id="5_xhaon"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_07hcx"]
 atlas = ExtResource("1_qpwo2")

@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://cphc8k4e37e3"]
 
-[ext_resource type="Texture2D" path="res://assets/efeitos/corte.png" id="1_7knhe"]
-[ext_resource type="Texture2D" path="res://assets/efeitos/impacto.png" id="2_or20g"]
-[ext_resource type="Texture2D" path="res://assets/efeitos/rastro.png" id="3_tfp2w"]
+[ext_resource type="Texture2D" uid="uid://c8x1ltongeidy" path="res://assets/efeitos/corte.png" id="1_7knhe"]
+[ext_resource type="Texture2D" uid="uid://byoy625v8mm3u" path="res://assets/efeitos/impacto.png" id="2_or20g"]
+[ext_resource type="Texture2D" uid="uid://c0vt5j2tkqc2n" path="res://assets/efeitos/rastro.png" id="3_tfp2w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yf8c6"]
 atlas = ExtResource("1_7knhe")

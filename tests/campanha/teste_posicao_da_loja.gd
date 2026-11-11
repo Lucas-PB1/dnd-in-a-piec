@@ -18,7 +18,7 @@ func _rodar() -> void:
 		root.add_child(fase)
 		await physics_frame
 		await physics_frame
-		var destino := fase.posicao_inicio() + fase.deslocamento_loja
+		var destino := fase.posicao_loja()
 		var raio := PhysicsRayQueryParameters2D.create(destino - Vector2(0.0, ALTURA_DA_SONDA), destino + Vector2(0.0, ALTURA_DA_SONDA), 1)
 		var acerto := fase.get_world_2d().direct_space_state.intersect_ray(raio)
 		_checar(not acerto.is_empty() and absf((acerto["position"] as Vector2).y - destino.y) < 4.0,

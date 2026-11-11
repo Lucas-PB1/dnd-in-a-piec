@@ -23,10 +23,18 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ## Índice (por prioridade)
 
 ### Próximas
-Nenhuma prioridade alta aberta. Criatura nova: `depois/minions-recolor` (via `/nova-criatura`).
+| Pri | Arquivo |
+|---|---|
+| 5 | `divida/desafio-pericia-nos-duplicados` |
+| 10 | `regras/loja-renovar-estoque` |
+| 11 | `regras/loja-sempre-municao` |
+| 12 | `regras/pocoes-cura` |
+| 13 | `mobile/defaults-primeira-execucao` |
+| 14 | `heroi/corrosao-mais-clara` |
+| 15 | `heroi/veneno-uso-claro` |
 
 ### Regras do livro
-Nenhuma aberta nesta fila. Magia, raças e desvantagem de Furtividade na armadura foram para `depois/`.
+Nenhuma aberta nesta fila. Magia, raças e desvantagem de Furtividade na armadura foram para `depois/`. Poções de cura e loja estão em **Próximas** (`regras/`).
 
 ### Arte / polish
 Nenhuma aberta nesta fila.
@@ -34,6 +42,7 @@ Nenhuma aberta nesta fila.
 ### Dívidas técnicas
 | Pri | Arquivo |
 |---|---|
+| 5 | `divida/desafio-pericia-nos-duplicados` (também em Próximas) |
 | 90+ | `divida/dry-*`, `split-jogador-gd`, `sinais-heroi-orfaos`, `projetil-altura-nascimento`, `quimera-anim-dano`, `renomear-features-goblin` … |
 
 ### Depois

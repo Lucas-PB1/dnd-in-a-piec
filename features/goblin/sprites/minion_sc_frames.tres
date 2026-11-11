@@ -1,10 +1,10 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://bxmttajgvyc3q"]
 
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/minion_arremesso_sc.png" id="1_kvump"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/minion_golpe_sc.png" id="2_f4o3h"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/minion_andar_sc.png" id="3_ndtbc"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/minion_dano_sc.png" id="4_uhc68"]
-[ext_resource type="Texture2D" path="res://features/goblin/sprites/minion_parado_sc.png" id="5_b25r3"]
+[ext_resource type="Texture2D" uid="uid://b42ele0r5pv7w" path="res://features/goblin/sprites/minion_arremesso_sc.png" id="1_kvump"]
+[ext_resource type="Texture2D" uid="uid://drykcnvdi36r1" path="res://features/goblin/sprites/minion_golpe_sc.png" id="2_f4o3h"]
+[ext_resource type="Texture2D" uid="uid://disjmiiufcife" path="res://features/goblin/sprites/minion_andar_sc.png" id="3_ndtbc"]
+[ext_resource type="Texture2D" uid="uid://clo42hdqc1wg0" path="res://features/goblin/sprites/minion_dano_sc.png" id="4_uhc68"]
+[ext_resource type="Texture2D" uid="uid://ck8i47mailwab" path="res://features/goblin/sprites/minion_parado_sc.png" id="5_b25r3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1hdyd"]
 atlas = ExtResource("1_kvump")

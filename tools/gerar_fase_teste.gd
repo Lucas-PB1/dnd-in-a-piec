@@ -23,6 +23,8 @@ const CENA_LAVA := "res://features/lava/lava.tscn"
 const CENA_DESAFIO_PERICIA := "res://features/desafio_pericia/desafio_pericia.tscn"
 const ALTURA_EXTRA_PAREDE := 6
 const ALTURA_PRANCHA := 10
+## Tem de bater com `Fase.RECUO_PES_NA_GRAMA_PX`: pés dentro da relva, não em cima dela.
+const RECUO_COLISAO_GRAMA := 10
 ## Fileira do "S": os pés ficam na base dela, em y = 288.
 const LINHA_ACAO := 8
 const PROFUNDIDADE_CHAO := 3
@@ -684,15 +686,18 @@ func _criar_tileset() -> TileSet:
 			fonte.create_tile(coord)
 			var dados := fonte.get_tile_data(coord, 0)
 			var e_plataforma: bool = tipo == PLATAFORMA
+			var e_grama: bool = tipo == GRAMA or VARIANTES_GRAMA.has(tipo)
 			var camada_fisica := 1 if e_plataforma else 0
+			var altura := ALTURA_PRANCHA if e_plataforma else TAM
+			var recuo := float(RECUO_COLISAO_GRAMA) if e_grama else 0.0
 			dados.add_collision_polygon(camada_fisica)
-			dados.set_collision_polygon_points(camada_fisica, 0, _retangulo_colisao(ALTURA_PRANCHA if e_plataforma else TAM))
+			dados.set_collision_polygon_points(camada_fisica, 0, _retangulo_colisao(altura, recuo))
 			dados.set_collision_polygon_one_way(camada_fisica, 0, e_plataforma)
 	return tileset
 
 
-func _retangulo_colisao(altura: float) -> PackedVector2Array:
+func _retangulo_colisao(altura: float, recuo_topo: float = 0.0) -> PackedVector2Array:
 	var meio := TAM / 2.0
 	return PackedVector2Array([
-		Vector2(-meio, -meio), Vector2(meio, -meio),
+		Vector2(-meio, -meio + recuo_topo), Vector2(meio, -meio + recuo_topo),
 		Vector2(meio, -meio + altura), Vector2(-meio, -meio + altura)])
