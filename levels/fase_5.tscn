@@ -1,62 +1,289 @@
 [gd_scene format=4]
 
-[ext_resource type="Script" path="res://levels/fase.gd" id="1_22dj0"]
-[ext_resource type="TileSet" path="res://assets/tiles/ladrilhos.tres" id="2_kwn0r"]
+[ext_resource type="Script" path="res://levels/fase.gd" id="1_kwn0r"]
+[ext_resource type="TileSet" path="res://assets/tiles/ladrilhos.tres" id="2_vwjgw"]
+[ext_resource type="Texture2D" path="res://assets/tiles/castelo/castle_tileset_part3.png" id="3_ruhe8"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_vwjgw"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ikju4"]
 size = Vector2(28, 72)
 
-[node name="Fase" type="Node2D" unique_id=1009334627]
-script = ExtResource("1_22dj0")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogrsb"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(45, 5, 7, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e8d3w"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(77, 4, 6, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qrxnc"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(109, 5, 6, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jq3jm"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(141, 3, 7, 10)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_it1r2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogrsb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e8d3w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qrxnc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jq3jm")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5nrjv"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(19, 198, 90, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wd3r6"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(45, 5, 7, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pybgr"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(77, 4, 6, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pk8rc"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(109, 5, 6, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fq6iw"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(141, 3, 7, 10)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cr2fv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wd3r6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pybgr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pk8rc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fq6iw")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kv0ak"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(3, 6, 26, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kp845"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(45, 5, 7, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3hrwv"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(77, 4, 6, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kncvw"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(109, 5, 6, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ptui"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(141, 3, 7, 10)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ygw4o"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kp845")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3hrwv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kncvw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ptui")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nsmdb"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(147, 198, 90, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_55ql7"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(45, 5, 7, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_obaff"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(77, 4, 6, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ybad"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(109, 5, 6, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v0hdp"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(141, 3, 7, 10)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xx4bl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_55ql7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_obaff")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ybad")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v0hdp")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ikpsy"]
+atlas = ExtResource("3_ruhe8")
+region = Rect2(19, 326, 90, 41)
+
+[node name="Fase" type="Node2D" unique_id=1606780634]
+script = ExtResource("1_kwn0r")
 indice = 5
 nome_ambiente = "Fortaleza"
-missao = "Tome a fortaleza"
 quantidade = 4
 tipos_permitidos = Array[StringName]([&"ooze", &"minion", &"warrior", &"hobgoblin", &"bugbear"])
 deslocamento_loja = Vector2(150, 0)
 
-[node name="Terreno" type="TileMapLayer" parent="." unique_id=1293483873]
-tile_map_data = PackedByteArray("AAAQAAcAAAAAAAQAAAARAAcAAAAFAAQAAAAZAAcAAAACAAQAAAAaAAcAAAACAAQAAAAbAAcAAAACAAQAAAAcAAcAAAACAAQAAAAdAAcAAAACAAQAAAAmAAcAAAAEAAQAAAAOAAgAAAAEAAQAAAAPAAgAAAAEAAQAAAAQAAgAAAAHAAQAAAARAAgAAAAGAAQAAAATAAgAAAACAAQAAAAUAAgAAAACAAQAAAAVAAgAAAACAAQAAAAkAAgAAAAFAAQAAAAlAAgAAAAEAAQAAAAmAAgAAAAGAAQAAAAAAAkAAAAEAAQAAAABAAkAAAAFAAQAAAACAAkAAAAEAAQAAAADAAkAAAAAAAQAAAAEAAkAAAAEAAQAAAAFAAkAAAAAAAQAAAAGAAkAAAAFAAQAAAAHAAkAAAAFAAQAAAAKAAkAAAAFAAQAAAALAAkAAAAEAAQAAAAMAAkAAAAFAAQAAAANAAkAAAAEAAQAAAAOAAkAAAAIAAQAAAAPAAkAAAAHAAQAAAAQAAkAAAABAAQAAAARAAkAAAAHAAQAAAASAAkAAAAAAAQAAAATAAkAAAAEAAQAAAAUAAkAAAAFAAQAAAAVAAkAAAAFAAQAAAAWAAkAAAAFAAQAAAAXAAkAAAAAAAQAAAAYAAkAAAAFAAQAAAAZAAkAAAAAAAQAAAAcAAkAAAAAAAQAAAAdAAkAAAAFAAQAAAAeAAkAAAAFAAQAAAAfAAkAAAAAAAQAAAAgAAkAAAAEAAQAAAAhAAkAAAAAAAQAAAAiAAkAAAAAAAQAAAAjAAkAAAAFAAQAAAAkAAkAAAAIAAQAAAAlAAkAAAABAAQAAAAmAAkAAAABAAQAAAAnAAkAAAAFAAQAAAAoAAkAAAAAAAQAAAApAAkAAAAFAAQAAAAqAAkAAAAFAAQAAAArAAkAAAAFAAQAAAAsAAkAAAAAAAQAAAAtAAkAAAAFAAQAAAAuAAkAAAAFAAQAAAAvAAkAAAAAAAQAAAAwAAkAAAAAAAQAAAAxAAkAAAAEAAQAAAAAAAoAAAAHAAQAAAABAAoAAAAGAAQAAAACAAoAAAABAAQAAAADAAoAAAAIAAQAAAAEAAoAAAAIAAQAAAAFAAoAAAAIAAQAAAAGAAoAAAAGAAQAAAAHAAoAAAAHAAQAAAAKAAoAAAAIAAQAAAALAAoAAAAGAAQAAAAMAAoAAAAHAAQAAAANAAoAAAABAAQAAAAOAAoAAAAHAAQAAAAPAAoAAAAGAAQAAAAQAAoAAAAHAAQAAAARAAoAAAAGAAQAAAASAAoAAAAIAAQAAAATAAoAAAABAAQAAAAUAAoAAAABAAQAAAAVAAoAAAAIAAQAAAAWAAoAAAABAAQAAAAXAAoAAAAHAAQAAAAYAAoAAAAGAAQAAAAZAAoAAAAIAAQAAAAcAAoAAAAIAAQAAAAdAAoAAAAGAAQAAAAeAAoAAAABAAQAAAAfAAoAAAAHAAQAAAAgAAoAAAAIAAQAAAAhAAoAAAAIAAQAAAAiAAoAAAABAAQAAAAjAAoAAAAHAAQAAAAkAAoAAAAHAAQAAAAlAAoAAAAHAAQAAAAmAAoAAAAHAAQAAAAnAAoAAAABAAQAAAAoAAoAAAAIAAQAAAApAAoAAAAGAAQAAAAqAAoAAAAGAAQAAAArAAoAAAAGAAQAAAAsAAoAAAAGAAQAAAAtAAoAAAAIAAQAAAAuAAoAAAAIAAQAAAAvAAoAAAAHAAQAAAAwAAoAAAAIAAQAAAAxAAoAAAAGAAQAAAAAAAsAAAABAAQAAAABAAsAAAAGAAQAAAACAAsAAAAHAAQAAAADAAsAAAABAAQAAAAEAAsAAAAIAAQAAAAFAAsAAAAIAAQAAAAGAAsAAAAGAAQAAAAHAAsAAAAIAAQAAAAKAAsAAAAIAAQAAAALAAsAAAABAAQAAAAMAAsAAAABAAQAAAANAAsAAAAIAAQAAAAOAAsAAAAHAAQAAAAPAAsAAAAGAAQAAAAQAAsAAAAHAAQAAAARAAsAAAAIAAQAAAASAAsAAAAGAAQAAAATAAsAAAABAAQAAAAUAAsAAAAHAAQAAAAVAAsAAAAHAAQAAAAWAAsAAAAIAAQAAAAXAAsAAAAIAAQAAAAYAAsAAAAIAAQAAAAZAAsAAAAHAAQAAAAcAAsAAAAGAAQAAAAdAAsAAAABAAQAAAAeAAsAAAAHAAQAAAAfAAsAAAAIAAQAAAAgAAsAAAAIAAQAAAAhAAsAAAAHAAQAAAAiAAsAAAAHAAQAAAAjAAsAAAAHAAQAAAAkAAsAAAAHAAQAAAAlAAsAAAAIAAQAAAAmAAsAAAABAAQAAAAnAAsAAAAGAAQAAAAoAAsAAAAHAAQAAAApAAsAAAAGAAQAAAAqAAsAAAAGAAQAAAArAAsAAAAGAAQAAAAsAAsAAAABAAQAAAAtAAsAAAAGAAQAAAAuAAsAAAAGAAQAAAAvAAsAAAAHAAQAAAAwAAsAAAAGAAQAAAAxAAsAAAABAAQAAAD///r/AAADAAQAAAAyAPr/AAADAAQAAAD///v/AAADAAQAAAAyAPv/AAADAAQAAAD///z/AAADAAQAAAAyAPz/AAADAAQAAAD///3/AAADAAQAAAAyAP3/AAADAAQAAAD///7/AAADAAQAAAAyAP7/AAADAAQAAAD/////AAADAAQAAAAyAP//AAADAAQAAAD//wAAAAADAAQAAAAyAAAAAAADAAQAAAD//wEAAAADAAQAAAAyAAEAAAADAAQAAAD//wIAAAADAAQAAAAyAAIAAAADAAQAAAD//wMAAAADAAQAAAAyAAMAAAADAAQAAAD//wQAAAADAAQAAAAyAAQAAAADAAQAAAD//wUAAAADAAQAAAAyAAUAAAADAAQAAAD//wYAAAADAAQAAAAyAAYAAAADAAQAAAD//wcAAAADAAQAAAAyAAcAAAADAAQAAAD//wgAAAADAAQAAAAyAAgAAAADAAQAAAD//wkAAAADAAQAAAAyAAkAAAADAAQAAAD//woAAAADAAQAAAAyAAoAAAADAAQAAAD//wsAAAADAAQAAAAyAAsAAAADAAQAAAAtAAQA//////////8tAAUA//////////8tAAYA//////////8tAAcA//////////8tAAgA//////////8=")
-tile_set = ExtResource("2_kwn0r")
+[node name="Terreno" type="TileMapLayer" parent="." unique_id=1963075153]
+tile_map_data = PackedByteArray("AAAQAAcAAAAAAAQAAAARAAcAAAAFAAQAAAAZAAcAAAACAAQAAAAaAAcAAAACAAQAAAAbAAcAAAACAAQAAAAcAAcAAAACAAQAAAAdAAcAAAACAAQAAAAmAAcAAAAEAAQAAAAOAAgAAAAEAAQAAAAPAAgAAAAEAAQAAAAQAAgAAAAHAAQAAAARAAgAAAAGAAQAAAATAAgAAAACAAQAAAAUAAgAAAACAAQAAAAVAAgAAAACAAQAAAAkAAgAAAAFAAQAAAAlAAgAAAAEAAQAAAAmAAgAAAAGAAQAAAAAAAkAAAAEAAQAAAABAAkAAAAFAAQAAAACAAkAAAAEAAQAAAADAAkAAAAAAAQAAAAEAAkAAAAEAAQAAAAFAAkAAAAAAAQAAAAGAAkAAAAFAAQAAAAHAAkAAAAFAAQAAAAKAAkAAAAFAAQAAAALAAkAAAAEAAQAAAAMAAkAAAAFAAQAAAANAAkAAAAEAAQAAAAOAAkAAAAIAAQAAAAPAAkAAAAHAAQAAAAQAAkAAAABAAQAAAARAAkAAAAHAAQAAAASAAkAAAAAAAQAAAATAAkAAAAEAAQAAAAUAAkAAAAFAAQAAAAVAAkAAAAFAAQAAAAWAAkAAAAFAAQAAAAXAAkAAAAAAAQAAAAYAAkAAAAFAAQAAAAZAAkAAAAAAAQAAAAcAAkAAAAAAAQAAAAdAAkAAAAFAAQAAAAeAAkAAAAFAAQAAAAfAAkAAAAAAAQAAAAgAAkAAAAEAAQAAAAhAAkAAAAAAAQAAAAiAAkAAAAAAAQAAAAjAAkAAAAFAAQAAAAkAAkAAAAIAAQAAAAlAAkAAAABAAQAAAAmAAkAAAABAAQAAAAnAAkAAAAFAAQAAAAoAAkAAAAAAAQAAAApAAkAAAAFAAQAAAAqAAkAAAAFAAQAAAArAAkAAAAFAAQAAAAsAAkAAAAAAAQAAAAtAAkAAAAEAAQAAAAuAAkAAAAFAAQAAAAvAAkAAAAAAAQAAAAwAAkAAAAAAAQAAAAxAAkAAAAEAAQAAAAAAAoAAAAHAAQAAAABAAoAAAAGAAQAAAACAAoAAAABAAQAAAADAAoAAAAIAAQAAAAEAAoAAAAIAAQAAAAFAAoAAAAIAAQAAAAGAAoAAAAGAAQAAAAHAAoAAAAHAAQAAAAKAAoAAAAIAAQAAAALAAoAAAAGAAQAAAAMAAoAAAAHAAQAAAANAAoAAAABAAQAAAAOAAoAAAAHAAQAAAAPAAoAAAAGAAQAAAAQAAoAAAAHAAQAAAARAAoAAAAGAAQAAAASAAoAAAAIAAQAAAATAAoAAAABAAQAAAAUAAoAAAABAAQAAAAVAAoAAAAIAAQAAAAWAAoAAAABAAQAAAAXAAoAAAAHAAQAAAAYAAoAAAAGAAQAAAAZAAoAAAAIAAQAAAAcAAoAAAAIAAQAAAAdAAoAAAAGAAQAAAAeAAoAAAABAAQAAAAfAAoAAAAHAAQAAAAgAAoAAAAIAAQAAAAhAAoAAAAIAAQAAAAiAAoAAAABAAQAAAAjAAoAAAAHAAQAAAAkAAoAAAAHAAQAAAAlAAoAAAAHAAQAAAAmAAoAAAAHAAQAAAAnAAoAAAABAAQAAAAoAAoAAAAIAAQAAAApAAoAAAAGAAQAAAAqAAoAAAAGAAQAAAArAAoAAAAGAAQAAAAsAAoAAAAGAAQAAAAtAAoAAAAHAAQAAAAuAAoAAAAIAAQAAAAvAAoAAAAHAAQAAAAwAAoAAAAIAAQAAAAxAAoAAAAGAAQAAAAAAAsAAAABAAQAAAABAAsAAAAGAAQAAAACAAsAAAAHAAQAAAADAAsAAAABAAQAAAAEAAsAAAAIAAQAAAAFAAsAAAAIAAQAAAAGAAsAAAAGAAQAAAAHAAsAAAAIAAQAAAAKAAsAAAAIAAQAAAALAAsAAAABAAQAAAAMAAsAAAABAAQAAAANAAsAAAAIAAQAAAAOAAsAAAAHAAQAAAAPAAsAAAAGAAQAAAAQAAsAAAAHAAQAAAARAAsAAAAIAAQAAAASAAsAAAAGAAQAAAATAAsAAAABAAQAAAAUAAsAAAAHAAQAAAAVAAsAAAAHAAQAAAAWAAsAAAAIAAQAAAAXAAsAAAAIAAQAAAAYAAsAAAAIAAQAAAAZAAsAAAAHAAQAAAAcAAsAAAAGAAQAAAAdAAsAAAABAAQAAAAeAAsAAAAHAAQAAAAfAAsAAAAIAAQAAAAgAAsAAAAIAAQAAAAhAAsAAAAHAAQAAAAiAAsAAAAHAAQAAAAjAAsAAAAHAAQAAAAkAAsAAAAHAAQAAAAlAAsAAAAIAAQAAAAmAAsAAAABAAQAAAAnAAsAAAAGAAQAAAAoAAsAAAAHAAQAAAApAAsAAAAGAAQAAAAqAAsAAAAGAAQAAAArAAsAAAAGAAQAAAAsAAsAAAABAAQAAAAtAAsAAAAGAAQAAAAuAAsAAAAGAAQAAAAvAAsAAAAHAAQAAAAwAAsAAAAGAAQAAAAxAAsAAAABAAQAAAD///r/AAADAAQAAAAyAPr/AAADAAQAAAD///v/AAADAAQAAAAyAPv/AAADAAQAAAD///z/AAADAAQAAAAyAPz/AAADAAQAAAD///3/AAADAAQAAAAyAP3/AAADAAQAAAD///7/AAADAAQAAAAyAP7/AAADAAQAAAD/////AAADAAQAAAAyAP//AAADAAQAAAD//wAAAAADAAQAAAAyAAAAAAADAAQAAAD//wEAAAADAAQAAAAyAAEAAAADAAQAAAD//wIAAAADAAQAAAAyAAIAAAADAAQAAAD//wMAAAADAAQAAAAyAAMAAAADAAQAAAD//wQAAAADAAQAAAAyAAQAAAADAAQAAAD//wUAAAADAAQAAAAyAAUAAAADAAQAAAD//wYAAAADAAQAAAAyAAYAAAADAAQAAAD//wcAAAADAAQAAAAyAAcAAAADAAQAAAD//wgAAAADAAQAAAAyAAgAAAADAAQAAAD//wkAAAADAAQAAAAyAAkAAAADAAQAAAD//woAAAADAAQAAAAyAAoAAAADAAQAAAD//wsAAAADAAQAAAAyAAsAAAADAAQAAAA=")
+tile_set = ExtResource("2_vwjgw")
 
-[node name="Armadilha2" type="Marker2D" parent="." unique_id=1861118727 groups=["armadilha"]]
+[node name="Armadilha2" type="Marker2D" parent="." unique_id=255752612 groups=["armadilha"]]
 position = Vector2(528, 224)
 
-[node name="Armadilha3" type="Marker2D" parent="." unique_id=708313828 groups=["armadilha"]]
+[node name="Armadilha3" type="Marker2D" parent="." unique_id=1373983887 groups=["armadilha"]]
 position = Vector2(880, 224)
 
-[node name="Armadilha4" type="Marker2D" parent="." unique_id=829041055 groups=["armadilha"]]
+[node name="Armadilha4" type="Marker2D" parent="." unique_id=1921827271 groups=["armadilha"]]
 position = Vector2(1232, 224)
 
-[node name="Armadilha5" type="Marker2D" parent="." unique_id=1186643618 groups=["armadilha"]]
+[node name="Armadilha5" type="Marker2D" parent="." unique_id=1627666507 groups=["armadilha"]]
 position = Vector2(688, 256)
 
-[node name="InicioJogador" type="Marker2D" parent="." unique_id=325221325]
+[node name="InicioJogador" type="Marker2D" parent="." unique_id=1884708754]
 position = Vector2(80, 288)
 
-[node name="Armadilha7" type="Marker2D" parent="." unique_id=300624801 groups=["armadilha"]]
+[node name="Armadilha7" type="Marker2D" parent="." unique_id=186740915 groups=["armadilha"]]
 position = Vector2(336, 288)
 
-[node name="Armadilha8" type="Marker2D" parent="." unique_id=197128458 groups=["armadilha"]]
+[node name="Armadilha8" type="Marker2D" parent="." unique_id=804248695 groups=["armadilha"]]
 position = Vector2(400, 288)
 
-[node name="Armadilha9" type="Marker2D" parent="." unique_id=765695594 groups=["armadilha"]]
+[node name="Armadilha9" type="Marker2D" parent="." unique_id=1548036512 groups=["armadilha"]]
 position = Vector2(1072, 288)
 
-[node name="Armadilha10" type="Marker2D" parent="." unique_id=116387984 groups=["armadilha"]]
+[node name="Armadilha10" type="Marker2D" parent="." unique_id=1836192287 groups=["armadilha"]]
 position = Vector2(1296, 288)
 
-[node name="Porta" type="Area2D" parent="." unique_id=809040747]
+[node name="Porta" type="Area2D" parent="." unique_id=61748676]
 position = Vector2(1424, 288)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="@CollisionShape2D@12" type="CollisionShape2D" parent="Porta" unique_id=1974481787]
+[node name="@CollisionShape2D@43" type="CollisionShape2D" parent="Porta" unique_id=696867299]
 position = Vector2(0, -36)
-shape = SubResource("RectangleShape2D_vwjgw")
+shape = SubResource("RectangleShape2D_ikju4")
 
-[node name="Ceu" type="Polygon2D" parent="." unique_id=839782655]
+[node name="Enfeites" type="Node2D" parent="." unique_id=1815021145]
+z_index = -5
+
+[node name="SuporteTocha" type="Polygon2D" parent="Enfeites" unique_id=573316195]
+position = Vector2(176, 224)
+color = Color(0.2, 0.13, 0.09, 1)
+polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
+
+[node name="ChamaTocha" type="AnimatedSprite2D" parent="Enfeites" unique_id=684151528]
+position = Vector2(176, 198)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_it1r2")
+autoplay = "default"
+
+[node name="EstandarteVermelho" type="Sprite2D" parent="Enfeites" unique_id=976842015]
+position = Vector2(323, 97)
+texture = SubResource("AtlasTexture_5nrjv")
+centered = false
+
+[node name="@Polygon2D@44" type="Polygon2D" parent="Enfeites" unique_id=1685801810]
+position = Vector2(592, 224)
+color = Color(0.2, 0.13, 0.09, 1)
+polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
+
+[node name="@AnimatedSprite2D@45" type="AnimatedSprite2D" parent="Enfeites" unique_id=1500641399]
+position = Vector2(592, 198)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_cr2fv")
+autoplay = "default"
+
+[node name="Janela" type="Sprite2D" parent="Enfeites" unique_id=1564723431]
+position = Vector2(739, 132)
+texture = SubResource("AtlasTexture_kv0ak")
+centered = false
+
+[node name="@Polygon2D@46" type="Polygon2D" parent="Enfeites" unique_id=1108264856]
+position = Vector2(976, 224)
+color = Color(0.2, 0.13, 0.09, 1)
+polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
+
+[node name="@AnimatedSprite2D@47" type="AnimatedSprite2D" parent="Enfeites" unique_id=1904162682]
+position = Vector2(976, 198)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_ygw4o")
+autoplay = "default"
+
+[node name="EstandarteAmarelo" type="Sprite2D" parent="Enfeites" unique_id=1685370328]
+position = Vector2(1091, 97)
+texture = SubResource("AtlasTexture_nsmdb")
+centered = false
+
+[node name="@Polygon2D@48" type="Polygon2D" parent="Enfeites" unique_id=119400507]
+position = Vector2(1328, 224)
+color = Color(0.2, 0.13, 0.09, 1)
+polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
+
+[node name="@AnimatedSprite2D@49" type="AnimatedSprite2D" parent="Enfeites" unique_id=1446220919]
+position = Vector2(1328, 198)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_xx4bl")
+autoplay = "default"
+
+[node name="EstandarteAzul" type="Sprite2D" parent="Enfeites" unique_id=1547716361]
+position = Vector2(1443, 97)
+texture = SubResource("AtlasTexture_ikpsy")
+centered = false
+
+[node name="Ceu" type="Polygon2D" parent="." unique_id=759470740]
 z_index = -10
 color = Color(0.26, 0.09, 0.11, 1)
 polygon = PackedVector2Array(-32, -192, 1632, -192, 1632, 384, -32, 384)

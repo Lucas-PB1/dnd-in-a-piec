@@ -3,6 +3,8 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Enfeites de mapa: tochas/estandartes/janelas (Ruína–Labirinto/Cripta), props OPP2017 (Mina/Caverna/Covil), arbustos/juncos/água provisórios (Clareira–Pântano). Gerador + regeneração das 10 fases.
+- Arte: `goblin-arte-adaga` fechado (refino do Minion aceito como está).
 - Deslocamento dos mobs: confirmado por ficha (Ooze 10 / Zumbi 20 / maioria 30 / Minotauro 40); passada da animação acompanha a velocidade; teste `teste_deslocamento_criaturas`.
 - Perícias em jogo: **Persuasão** desconto na loja; **Intimidação** ouro do saque; **Sobrevivência** chance de arma; subir de nível = descanso longo. Testes saque/loja/progressão.
 - Descanso curto/longo: fase sem chefe = curto (Fôlego/Surto/Sorte, sem PV cheio); chefe ou morte = longo. Teste `teste_descanso`.

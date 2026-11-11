@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wwmta"]
 size = Vector2(28, 72)
 
-[node name="Fase" type="Node2D" unique_id=989839306]
+[node name="Fase" type="Node2D" unique_id=2069810783]
 script = ExtResource("1_6p56y")
 indice = 3
 nome_ambiente = "Pântano"
@@ -16,48 +16,156 @@ tipos_permitidos = Array[StringName]([&"ooze", &"minion", &"kobold"])
 chefe = &"ankheg"
 deslocamento_loja = Vector2(150, 0)
 
-[node name="Terreno" type="TileMapLayer" parent="." unique_id=1948491741]
-tile_map_data = PackedByteArray("AAAmAAYAAAACAAIAAAAnAAYAAAACAAIAAAAoAAYAAAACAAIAAAAWAAcAAAAEAAIAAAAXAAcAAAAFAAIAAAAYAAcAAAAAAAIAAAAiAAcAAAACAAIAAAAjAAcAAAACAAIAAAAkAAcAAAACAAIAAAAQAAgAAAACAAIAAAARAAgAAAACAAIAAAASAAgAAAACAAIAAAAWAAgAAAABAAIAAAAXAAgAAAAHAAIAAAAYAAgAAAABAAIAAAAAAAkAAAAEAAIAAAABAAkAAAAFAAIAAAACAAkAAAAEAAIAAAADAAkAAAAAAAIAAAAEAAkAAAAEAAIAAAAFAAkAAAAAAAIAAAAGAAkAAAAFAAIAAAAHAAkAAAAFAAIAAAAKAAkAAAAFAAIAAAALAAkAAAAEAAIAAAAMAAkAAAAFAAIAAAANAAkAAAAEAAIAAAAOAAkAAAAEAAIAAAAPAAkAAAAEAAIAAAAQAAkAAAAFAAIAAAARAAkAAAAEAAIAAAASAAkAAAAAAAIAAAATAAkAAAAEAAIAAAAUAAkAAAAFAAIAAAAVAAkAAAAFAAIAAAAWAAkAAAAHAAIAAAAXAAkAAAABAAIAAAAYAAkAAAAHAAIAAAAZAAkAAAAAAAIAAAAaAAkAAAAEAAIAAAAbAAkAAAAAAAIAAAAcAAkAAAAAAAIAAAAdAAkAAAAFAAIAAAAgAAkAAAAEAAIAAAAhAAkAAAAAAAIAAAAiAAkAAAAAAAIAAAAjAAkAAAAFAAIAAAAkAAkAAAAAAAIAAAAlAAkAAAAEAAIAAAAmAAkAAAAFAAIAAAAnAAkAAAAFAAIAAAAoAAkAAAAAAAIAAAApAAkAAAAFAAIAAAAqAAkAAAAFAAIAAAArAAkAAAAFAAIAAAAsAAkAAAAEAAIAAAAtAAkAAAAEAAIAAAAuAAkAAAAFAAIAAAAvAAkAAAAAAAIAAAAAAAoAAAAHAAIAAAABAAoAAAAGAAIAAAACAAoAAAABAAIAAAADAAoAAAAIAAIAAAAEAAoAAAAIAAIAAAAFAAoAAAAIAAIAAAAGAAoAAAAGAAIAAAAHAAoAAAAHAAIAAAAKAAoAAAAIAAIAAAALAAoAAAAGAAIAAAAMAAoAAAAHAAIAAAANAAoAAAABAAIAAAAOAAoAAAAHAAIAAAAPAAoAAAAGAAIAAAAQAAoAAAAHAAIAAAARAAoAAAAGAAIAAAASAAoAAAAIAAIAAAATAAoAAAABAAIAAAAUAAoAAAABAAIAAAAVAAoAAAAIAAIAAAAWAAoAAAABAAIAAAAXAAoAAAAHAAIAAAAYAAoAAAAGAAIAAAAZAAoAAAAIAAIAAAAaAAoAAAAIAAIAAAAbAAoAAAAIAAIAAAAcAAoAAAAIAAIAAAAdAAoAAAAGAAIAAAAgAAoAAAAIAAIAAAAhAAoAAAAIAAIAAAAiAAoAAAABAAIAAAAjAAoAAAAHAAIAAAAkAAoAAAAHAAIAAAAlAAoAAAAHAAIAAAAmAAoAAAAHAAIAAAAnAAoAAAABAAIAAAAoAAoAAAAIAAIAAAApAAoAAAAGAAIAAAAqAAoAAAAGAAIAAAArAAoAAAAGAAIAAAAsAAoAAAAHAAIAAAAtAAoAAAAHAAIAAAAuAAoAAAAIAAIAAAAvAAoAAAAHAAIAAAAAAAsAAAABAAIAAAABAAsAAAAGAAIAAAACAAsAAAAHAAIAAAADAAsAAAABAAIAAAAEAAsAAAAIAAIAAAAFAAsAAAAIAAIAAAAGAAsAAAAGAAIAAAAHAAsAAAAIAAIAAAAKAAsAAAAIAAIAAAALAAsAAAABAAIAAAAMAAsAAAABAAIAAAANAAsAAAAIAAIAAAAOAAsAAAAHAAIAAAAPAAsAAAAGAAIAAAAQAAsAAAAHAAIAAAARAAsAAAAIAAIAAAASAAsAAAAGAAIAAAATAAsAAAABAAIAAAAUAAsAAAAHAAIAAAAVAAsAAAAHAAIAAAAWAAsAAAAIAAIAAAAXAAsAAAAIAAIAAAAYAAsAAAAIAAIAAAAZAAsAAAAHAAIAAAAaAAsAAAABAAIAAAAbAAsAAAAGAAIAAAAcAAsAAAAGAAIAAAAdAAsAAAABAAIAAAAgAAsAAAAIAAIAAAAhAAsAAAAHAAIAAAAiAAsAAAAHAAIAAAAjAAsAAAAHAAIAAAAkAAsAAAAHAAIAAAAlAAsAAAAIAAIAAAAmAAsAAAABAAIAAAAnAAsAAAAGAAIAAAAoAAsAAAAHAAIAAAApAAsAAAAGAAIAAAAqAAsAAAAGAAIAAAArAAsAAAAGAAIAAAAsAAsAAAAGAAIAAAAtAAsAAAAGAAIAAAAuAAsAAAAGAAIAAAAvAAsAAAAHAAIAAAD///r/AAADAAIAAAAwAPr/AAADAAIAAAD///v/AAADAAIAAAAwAPv/AAADAAIAAAD///z/AAADAAIAAAAwAPz/AAADAAIAAAD///3/AAADAAIAAAAwAP3/AAADAAIAAAD///7/AAADAAIAAAAwAP7/AAADAAIAAAD/////AAADAAIAAAAwAP//AAADAAIAAAD//wAAAAADAAIAAAAwAAAAAAADAAIAAAD//wEAAAADAAIAAAAwAAEAAAADAAIAAAD//wIAAAADAAIAAAAwAAIAAAADAAIAAAD//wMAAAADAAIAAAAwAAMAAAADAAIAAAD//wQAAAADAAIAAAAwAAQAAAADAAIAAAD//wUAAAADAAIAAAAwAAUAAAADAAIAAAD//wYAAAADAAIAAAAwAAYAAAADAAIAAAD//wcAAAADAAIAAAAwAAcAAAADAAIAAAD//wgAAAADAAIAAAAwAAgAAAADAAIAAAD//wkAAAADAAIAAAAwAAkAAAADAAIAAAD//woAAAADAAIAAAAwAAoAAAADAAIAAAD//wsAAAADAAIAAAAwAAsAAAADAAIAAAAsAAQA//////////8sAAUA//////////8sAAYA//////////8sAAcA//////////8sAAgA//////////8=")
+[node name="Terreno" type="TileMapLayer" parent="." unique_id=2086733845]
+tile_map_data = PackedByteArray("AAAmAAYAAAACAAIAAAAnAAYAAAACAAIAAAAoAAYAAAACAAIAAAAWAAcAAAAEAAIAAAAXAAcAAAAFAAIAAAAYAAcAAAAAAAIAAAAiAAcAAAACAAIAAAAjAAcAAAACAAIAAAAkAAcAAAACAAIAAAAQAAgAAAACAAIAAAARAAgAAAACAAIAAAASAAgAAAACAAIAAAAWAAgAAAABAAIAAAAXAAgAAAAHAAIAAAAYAAgAAAABAAIAAAAAAAkAAAAEAAIAAAABAAkAAAAFAAIAAAACAAkAAAAEAAIAAAADAAkAAAAAAAIAAAAEAAkAAAAEAAIAAAAFAAkAAAAAAAIAAAAGAAkAAAAFAAIAAAAHAAkAAAAFAAIAAAAKAAkAAAAFAAIAAAALAAkAAAAEAAIAAAAMAAkAAAAFAAIAAAANAAkAAAAEAAIAAAAOAAkAAAAEAAIAAAAPAAkAAAAEAAIAAAAQAAkAAAAFAAIAAAARAAkAAAAEAAIAAAASAAkAAAAAAAIAAAATAAkAAAAEAAIAAAAUAAkAAAAFAAIAAAAVAAkAAAAFAAIAAAAWAAkAAAAHAAIAAAAXAAkAAAABAAIAAAAYAAkAAAAHAAIAAAAZAAkAAAAAAAIAAAAaAAkAAAAEAAIAAAAbAAkAAAAAAAIAAAAcAAkAAAAAAAIAAAAdAAkAAAAFAAIAAAAgAAkAAAAEAAIAAAAhAAkAAAAAAAIAAAAiAAkAAAAAAAIAAAAjAAkAAAAFAAIAAAAkAAkAAAAAAAIAAAAlAAkAAAAEAAIAAAAmAAkAAAAFAAIAAAAnAAkAAAAFAAIAAAAoAAkAAAAAAAIAAAApAAkAAAAFAAIAAAAqAAkAAAAFAAIAAAArAAkAAAAFAAIAAAAsAAkAAAAAAAIAAAAtAAkAAAAEAAIAAAAuAAkAAAAFAAIAAAAvAAkAAAAAAAIAAAAAAAoAAAAHAAIAAAABAAoAAAAGAAIAAAACAAoAAAABAAIAAAADAAoAAAAIAAIAAAAEAAoAAAAIAAIAAAAFAAoAAAAIAAIAAAAGAAoAAAAGAAIAAAAHAAoAAAAHAAIAAAAKAAoAAAAIAAIAAAALAAoAAAAGAAIAAAAMAAoAAAAHAAIAAAANAAoAAAABAAIAAAAOAAoAAAAHAAIAAAAPAAoAAAAGAAIAAAAQAAoAAAAHAAIAAAARAAoAAAAGAAIAAAASAAoAAAAIAAIAAAATAAoAAAABAAIAAAAUAAoAAAABAAIAAAAVAAoAAAAIAAIAAAAWAAoAAAABAAIAAAAXAAoAAAAHAAIAAAAYAAoAAAAGAAIAAAAZAAoAAAAIAAIAAAAaAAoAAAAIAAIAAAAbAAoAAAAIAAIAAAAcAAoAAAAIAAIAAAAdAAoAAAAGAAIAAAAgAAoAAAAIAAIAAAAhAAoAAAAIAAIAAAAiAAoAAAABAAIAAAAjAAoAAAAHAAIAAAAkAAoAAAAHAAIAAAAlAAoAAAAHAAIAAAAmAAoAAAAHAAIAAAAnAAoAAAABAAIAAAAoAAoAAAAIAAIAAAApAAoAAAAGAAIAAAAqAAoAAAAGAAIAAAArAAoAAAAGAAIAAAAsAAoAAAAGAAIAAAAtAAoAAAAHAAIAAAAuAAoAAAAIAAIAAAAvAAoAAAAHAAIAAAAAAAsAAAABAAIAAAABAAsAAAAGAAIAAAACAAsAAAAHAAIAAAADAAsAAAABAAIAAAAEAAsAAAAIAAIAAAAFAAsAAAAIAAIAAAAGAAsAAAAGAAIAAAAHAAsAAAAIAAIAAAAKAAsAAAAIAAIAAAALAAsAAAABAAIAAAAMAAsAAAABAAIAAAANAAsAAAAIAAIAAAAOAAsAAAAHAAIAAAAPAAsAAAAGAAIAAAAQAAsAAAAHAAIAAAARAAsAAAAIAAIAAAASAAsAAAAGAAIAAAATAAsAAAABAAIAAAAUAAsAAAAHAAIAAAAVAAsAAAAHAAIAAAAWAAsAAAAIAAIAAAAXAAsAAAAIAAIAAAAYAAsAAAAIAAIAAAAZAAsAAAAHAAIAAAAaAAsAAAABAAIAAAAbAAsAAAAGAAIAAAAcAAsAAAAGAAIAAAAdAAsAAAABAAIAAAAgAAsAAAAIAAIAAAAhAAsAAAAHAAIAAAAiAAsAAAAHAAIAAAAjAAsAAAAHAAIAAAAkAAsAAAAHAAIAAAAlAAsAAAAIAAIAAAAmAAsAAAABAAIAAAAnAAsAAAAGAAIAAAAoAAsAAAAHAAIAAAApAAsAAAAGAAIAAAAqAAsAAAAGAAIAAAArAAsAAAAGAAIAAAAsAAsAAAABAAIAAAAtAAsAAAAGAAIAAAAuAAsAAAAGAAIAAAAvAAsAAAAHAAIAAAD///r/AAADAAIAAAAwAPr/AAADAAIAAAD///v/AAADAAIAAAAwAPv/AAADAAIAAAD///z/AAADAAIAAAAwAPz/AAADAAIAAAD///3/AAADAAIAAAAwAP3/AAADAAIAAAD///7/AAADAAIAAAAwAP7/AAADAAIAAAD/////AAADAAIAAAAwAP//AAADAAIAAAD//wAAAAADAAIAAAAwAAAAAAADAAIAAAD//wEAAAADAAIAAAAwAAEAAAADAAIAAAD//wIAAAADAAIAAAAwAAIAAAADAAIAAAD//wMAAAADAAIAAAAwAAMAAAADAAIAAAD//wQAAAADAAIAAAAwAAQAAAADAAIAAAD//wUAAAADAAIAAAAwAAUAAAADAAIAAAD//wYAAAADAAIAAAAwAAYAAAADAAIAAAD//wcAAAADAAIAAAAwAAcAAAADAAIAAAD//wgAAAADAAIAAAAwAAgAAAADAAIAAAD//wkAAAADAAIAAAAwAAkAAAADAAIAAAD//woAAAADAAIAAAAwAAoAAAADAAIAAAD//wsAAAADAAIAAAAwAAsAAAADAAIAAAA=")
 tile_set = ExtResource("2_73yac")
 
-[node name="Armadilha2" type="Marker2D" parent="." unique_id=1546994223 groups=["armadilha"]]
+[node name="Armadilha2" type="Marker2D" parent="." unique_id=1348159289 groups=["armadilha"]]
 position = Vector2(1264, 192)
 
-[node name="Armadilha3" type="Marker2D" parent="." unique_id=1888486249 groups=["armadilha"]]
+[node name="Armadilha3" type="Marker2D" parent="." unique_id=1869093092 groups=["armadilha"]]
 position = Vector2(752, 224)
 
-[node name="Armadilha4" type="Marker2D" parent="." unique_id=2052169855 groups=["armadilha"]]
+[node name="Armadilha4" type="Marker2D" parent="." unique_id=419001469 groups=["armadilha"]]
 position = Vector2(1136, 224)
 
-[node name="Armadilha5" type="Marker2D" parent="." unique_id=1630417718 groups=["armadilha"]]
+[node name="Armadilha5" type="Marker2D" parent="." unique_id=632011543 groups=["armadilha"]]
 position = Vector2(560, 256)
 
-[node name="InicioJogador" type="Marker2D" parent="." unique_id=2074022347]
+[node name="InicioJogador" type="Marker2D" parent="." unique_id=779286030]
 position = Vector2(80, 288)
 
-[node name="Armadilha7" type="Marker2D" parent="." unique_id=1674386199 groups=["armadilha"]]
+[node name="Armadilha7" type="Marker2D" parent="." unique_id=1269482124 groups=["armadilha"]]
 position = Vector2(336, 288)
 
-[node name="Armadilha8" type="Marker2D" parent="." unique_id=945464259 groups=["armadilha"]]
+[node name="Armadilha8" type="Marker2D" parent="." unique_id=1751205661 groups=["armadilha"]]
 position = Vector2(1072, 288)
 
-[node name="Armadilha9" type="Marker2D" parent="." unique_id=1415188365 groups=["armadilha"]]
+[node name="Armadilha9" type="Marker2D" parent="." unique_id=861777092 groups=["armadilha"]]
 position = Vector2(1296, 288)
 
-[node name="Chefe" type="Marker2D" parent="." unique_id=1058208804]
-position = Vector2(1200, 288)
-
-[node name="Porta" type="Area2D" parent="." unique_id=215379523]
+[node name="Porta" type="Area2D" parent="." unique_id=724585755]
 position = Vector2(1392, 288)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="@CollisionShape2D@8" type="CollisionShape2D" parent="Porta" unique_id=1502557526]
+[node name="@CollisionShape2D@16" type="CollisionShape2D" parent="Porta" unique_id=1617582381]
 position = Vector2(0, -36)
 shape = SubResource("RectangleShape2D_wwmta")
 
-[node name="Ceu" type="Polygon2D" parent="." unique_id=1876868467]
+[node name="Enfeites" type="Node2D" parent="." unique_id=127126311]
+z_index = -5
+
+[node name="Agua" type="Polygon2D" parent="Enfeites" unique_id=346842292]
+position = Vector2(176, 288)
+color = Color(0.18, 0.36, 0.28, 0.72)
+polygon = PackedVector2Array(-22, -2, -18, -8, -4, -10, 12, -8, 22, -3, 18, 2, -16, 2)
+
+[node name="Bolha1" type="Polygon2D" parent="Enfeites" unique_id=1728941296]
+position = Vector2(166, 282)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-2, 0, 0, -2, 2, 0, 0, 1.2)
+
+[node name="Bolha2" type="Polygon2D" parent="Enfeites" unique_id=960131324]
+position = Vector2(176, 279)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-3, 0, 0, -3, 3, 0, 0, 1.8)
+
+[node name="Bolha3" type="Polygon2D" parent="Enfeites" unique_id=99133684]
+position = Vector2(186, 276)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-4, 0, 0, -4, 4, 0, 0, 2.4)
+
+[node name="Junco" type="Polygon2D" parent="Enfeites" unique_id=870745241]
+position = Vector2(208, 288)
+color = Color(0.28, 0.42, 0.18, 1)
+polygon = PackedVector2Array(-8, 0, -10, -22, -6, -36, -2, -20, 0, -40, 2, -18, 6, -34, 10, -16, 8, 0)
+
+[node name="@Polygon2D@17" type="Polygon2D" parent="Enfeites" unique_id=1127869471]
+position = Vector2(368, 288)
+color = Color(0.28, 0.42, 0.18, 1)
+polygon = PackedVector2Array(-8, 0, -10, -22, -6, -36, -2, -20, 0, -40, 2, -18, 6, -34, 10, -16, 8, 0)
+
+[node name="@Polygon2D@18" type="Polygon2D" parent="Enfeites" unique_id=1557746075]
+position = Vector2(432, 288)
+color = Color(0.18, 0.36, 0.28, 0.72)
+polygon = PackedVector2Array(-22, -2, -18, -8, -4, -10, 12, -8, 22, -3, 18, 2, -16, 2)
+
+[node name="@Polygon2D@19" type="Polygon2D" parent="Enfeites" unique_id=25060088]
+position = Vector2(422, 282)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-2, 0, 0, -2, 2, 0, 0, 1.2)
+
+[node name="@Polygon2D@20" type="Polygon2D" parent="Enfeites" unique_id=1859543723]
+position = Vector2(432, 279)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-3, 0, 0, -3, 3, 0, 0, 1.8)
+
+[node name="@Polygon2D@21" type="Polygon2D" parent="Enfeites" unique_id=1921089744]
+position = Vector2(442, 276)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-4, 0, 0, -4, 4, 0, 0, 2.4)
+
+[node name="@Polygon2D@22" type="Polygon2D" parent="Enfeites" unique_id=558788127]
+position = Vector2(656, 288)
+color = Color(0.28, 0.42, 0.18, 1)
+polygon = PackedVector2Array(-8, 0, -10, -22, -6, -36, -2, -20, 0, -40, 2, -18, 6, -34, 10, -16, 8, 0)
+
+[node name="@Polygon2D@23" type="Polygon2D" parent="Enfeites" unique_id=1319024082]
+position = Vector2(816, 288)
+color = Color(0.18, 0.36, 0.28, 0.72)
+polygon = PackedVector2Array(-22, -2, -18, -8, -4, -10, 12, -8, 22, -3, 18, 2, -16, 2)
+
+[node name="@Polygon2D@24" type="Polygon2D" parent="Enfeites" unique_id=596513515]
+position = Vector2(806, 282)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-2, 0, 0, -2, 2, 0, 0, 1.2)
+
+[node name="@Polygon2D@25" type="Polygon2D" parent="Enfeites" unique_id=107134871]
+position = Vector2(816, 279)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-3, 0, 0, -3, 3, 0, 0, 1.8)
+
+[node name="@Polygon2D@26" type="Polygon2D" parent="Enfeites" unique_id=1876268528]
+position = Vector2(826, 276)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-4, 0, 0, -4, 4, 0, 0, 2.4)
+
+[node name="@Polygon2D@27" type="Polygon2D" parent="Enfeites" unique_id=20318822]
+position = Vector2(880, 288)
+color = Color(0.28, 0.42, 0.18, 1)
+polygon = PackedVector2Array(-8, 0, -10, -22, -6, -36, -2, -20, 0, -40, 2, -18, 6, -34, 10, -16, 8, 0)
+
+[node name="@Polygon2D@28" type="Polygon2D" parent="Enfeites" unique_id=1947166159]
+position = Vector2(1168, 288)
+color = Color(0.28, 0.42, 0.18, 1)
+polygon = PackedVector2Array(-8, 0, -10, -22, -6, -36, -2, -20, 0, -40, 2, -18, 6, -34, 10, -16, 8, 0)
+
+[node name="@Polygon2D@29" type="Polygon2D" parent="Enfeites" unique_id=490791189]
+position = Vector2(1328, 288)
+color = Color(0.18, 0.36, 0.28, 0.72)
+polygon = PackedVector2Array(-22, -2, -18, -8, -4, -10, 12, -8, 22, -3, 18, 2, -16, 2)
+
+[node name="@Polygon2D@30" type="Polygon2D" parent="Enfeites" unique_id=1521733639]
+position = Vector2(1318, 282)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-2, 0, 0, -2, 2, 0, 0, 1.2)
+
+[node name="@Polygon2D@31" type="Polygon2D" parent="Enfeites" unique_id=566096813]
+position = Vector2(1328, 279)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-3, 0, 0, -3, 3, 0, 0, 1.8)
+
+[node name="@Polygon2D@32" type="Polygon2D" parent="Enfeites" unique_id=1482296784]
+position = Vector2(1338, 276)
+color = Color(0.55, 0.75, 0.65, 0.55)
+polygon = PackedVector2Array(-4, 0, 0, -4, 4, 0, 0, 2.4)
+
+[node name="Chefe" type="Marker2D" parent="." unique_id=1233699332]
+position = Vector2(1200, 288)
+
+[node name="Ceu" type="Polygon2D" parent="." unique_id=1287511199]
 z_index = -10
 color = Color(0.4, 0.5, 0.36, 1)
 polygon = PackedVector2Array(-32, -192, 1568, -192, 1568, 384, -32, 384)

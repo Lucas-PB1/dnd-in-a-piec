@@ -26,16 +26,12 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 Nenhuma prioridade alta aberta. Criatura nova: `depois/minions-recolor` (via `/nova-criatura`).
 
 ### Regras do livro
-| Pri | Arquivo | Tam. |
-|---|---|---|
-| 50 | `regras/racas-especies.md` | G |
-| 51 | `regras/magia.md` | G |
-| 55 | `regras/desvantagem-furtividade-armadura.md` | P |
+Nenhuma aberta nesta fila. Magia, raças e desvantagem de Furtividade na armadura foram para `depois/`.
 
 ### Arte / polish
 | Pri | Arquivo | Tam. |
 |---|---|---|
-| 70–76 | `arte/efeitos-golpe-arte`, `tileset-cenario`, `armaduras-visuais`, `goblin-arte-adaga`, `estocada-heroi`, `bau-abrindo`, `enfeites-mapa` | P–M |
+| 70–74 | `arte/efeitos-golpe-arte`, `tileset-cenario`, `armaduras-visuais`, `estocada-heroi`, `bau-abrindo` | P–M |
 
 ### Dívidas técnicas
 | Pri | Arquivo |
@@ -45,6 +41,6 @@ Nenhuma prioridade alta aberta. Criatura nova: `depois/minions-recolor` (via `/n
 ### Depois
 | Pri | Arquivo |
 |---|---|
-| 95–100 | `depois/gamepad`, `ios`, `renomear-jogo`, `porta-aparencia-cota`, `municao-comum-inventario`, `atirador-elite-obstaculos`, `minions-recolor` (em espera: inimigos atuais ok) |
+| 95–100 | `depois/gamepad`, `ios`, `renomear-jogo`, `porta-aparencia-cota`, `municao-comum-inventario`, `atirador-elite-obstaculos`, `minions-recolor`, `magia`, `racas-especies`, `desvantagem-furtividade-armadura` |
 
 Novo item: copie `_modelo.md` para a pasta da `area`.

@@ -56,20 +56,37 @@ const TIPOS_CAVERNA: Array[StringName] = [OOZE, WARRIOR, BUGBEAR, SKELETON, ZOMB
 const TIPOS_CRIPTA: Array[StringName] = [SKELETON, ZOMBIE, WARRIOR, HOBGOBLIN]
 const TIPOS_COVIL: Array[StringName] = [WARRIOR, HOBGOBLIN, BUGBEAR, SKELETON, ZOMBIE]
 
-## Enfeites das Ruínas: recortes da folha CC0 do castelo (rubberduck, ver assets/CREDITOS.md). Sem colisão, atrás do terreno.
+## Enfeites sem colisão, atrás do terreno. Castelo = rubberduck; caverna = OPP2017 (ver assets/CREDITOS.md).
+## Floresta/pântano: polígonos provisórios (arbusto, junco, água) até haver folha própria.
 const FOLHA_CASTELO := "res://assets/tiles/castelo/castle_tileset_part3.png"
+const FOLHA_CAVERNA_OBJ := "res://assets/tiles/caverna/enfeites/tile_cave_bg_objects.png"
+const FOLHA_CAVERNA_CRISTAL := "res://assets/tiles/caverna/enfeites/tile_cave_bg_crystal.png"
+const FOLHA_CAVERNA_FLUO := "res://assets/tiles/caverna/enfeites/tile_cave_bg_fluo.png"
 const ENFEITE_Z := -5
 const CHAMA_QUADROS: Array[Rect2] = [Rect2(45, 5, 7, 8), Rect2(77, 4, 6, 9), Rect2(109, 5, 6, 8), Rect2(141, 3, 7, 10)]
 const CHAMA_ESCALA := 2.0
 const CHAMA_VELOCIDADE := 8.0
 const TOCHA_ALTURA_SUPORTE := 18.0
+## nome -> {folha, regiao}. Procedurais (arbusto/junco/agua) não entram aqui.
 const ENFEITES_PRONTOS := {
-	"janela": Rect2(3, 6, 26, 56),
-	"estandarte_vermelho": Rect2(19, 198, 90, 41),
-	"estandarte_amarelo": Rect2(147, 198, 90, 41),
-	"estandarte_verde": Rect2(19, 262, 90, 41),
-	"estandarte_azul": Rect2(19, 326, 90, 41),
-	"estandarte_laranja": Rect2(147, 326, 90, 41),
+	"janela": {"folha": FOLHA_CASTELO, "regiao": Rect2(3, 6, 26, 56)},
+	"estandarte_vermelho": {"folha": FOLHA_CASTELO, "regiao": Rect2(19, 198, 90, 41)},
+	"estandarte_amarelo": {"folha": FOLHA_CASTELO, "regiao": Rect2(147, 198, 90, 41)},
+	"estandarte_verde": {"folha": FOLHA_CASTELO, "regiao": Rect2(19, 262, 90, 41)},
+	"estandarte_azul": {"folha": FOLHA_CASTELO, "regiao": Rect2(19, 326, 90, 41)},
+	"estandarte_laranja": {"folha": FOLHA_CASTELO, "regiao": Rect2(147, 326, 90, 41)},
+	"rocha_baixa": {"folha": FOLHA_CAVERNA_OBJ, "regiao": Rect2(0, 10, 64, 22)},
+	"cranio": {"folha": FOLHA_CAVERNA_OBJ, "regiao": Rect2(0, 33, 61, 31)},
+	"cranio_b": {"folha": FOLHA_CAVERNA_OBJ, "regiao": Rect2(64, 33, 61, 31)},
+	"picareta": {"folha": FOLHA_CAVERNA_OBJ, "regiao": Rect2(10, 71, 86, 25)},
+	"carrinho": {"folha": FOLHA_CAVERNA_OBJ, "regiao": Rect2(0, 112, 64, 48)},
+	"rocha_grande": {"folha": FOLHA_CAVERNA_OBJ, "regiao": Rect2(0, 185, 96, 39)},
+	"cristal_largo": {"folha": FOLHA_CAVERNA_CRISTAL, "regiao": Rect2(0, 2, 96, 62)},
+	"cristal_fino": {"folha": FOLHA_CAVERNA_CRISTAL, "regiao": Rect2(106, 0, 45, 64)},
+	"cristal_medio": {"folha": FOLHA_CAVERNA_CRISTAL, "regiao": Rect2(167, 0, 57, 64)},
+	"cristal_alto": {"folha": FOLHA_CAVERNA_CRISTAL, "regiao": Rect2(231, 0, 57, 64)},
+	"cogumelo": {"folha": FOLHA_CAVERNA_FLUO, "regiao": Rect2(8, 77, 50, 51)},
+	"cogumelo_b": {"folha": FOLHA_CAVERNA_FLUO, "regiao": Rect2(71, 78, 48, 50)},
 }
 
 const CEU := [
@@ -120,40 +137,55 @@ func _fases() -> Array[Dictionary]:
 				"x": 400, "rotulo": "Empurrar a pedra",
 				"aviso_sucesso": "A pedra rolou!", "aviso_falha": "A pedra não se moveu",
 			}],
+			"enfeites": [["arbusto", 5, 0], ["arbusto", 10, 0], ["arbusto", 16, 0], ["arbusto", 22, 0], ["arbusto", 28, 0]],
 		},
 		{
 			"nome": "Trilha", "arquivo": "res://levels/fase_2.tscn", "no": "Fase",
 			"tema": 1, "indice": 2, "ultima": false, "quantidade": 2, "tipos": TIPOS_SEM_ARCO,
 			"missao": "Abra a trilha", "luz_do_sol": true,
-			"largura": 46, "inicio": 2,
+			"largura": 46, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(8, 2), Vector2i(21, 2), Vector2i(34, 2)], "plataformas": [],
 			"chao": [10, 23, 36], "plataforma": [], "porta": 39,
 			"degraus": [[13, 2, 1], [15, 2, 2], [17, 2, 1]], "altas": [[27, 4, 2]], "pontos": [[15, 6], [28, 6]],
+			"enfeites": [["arbusto", 4, 0], ["arbusto", 12, 0], ["arbusto", 19, 0], ["arbusto", 30, 0], ["arbusto", 37, 0]],
 		},
 		{
 			"nome": "Pântano", "arquivo": "res://levels/fase_3.tscn", "no": "Fase",
 			"tema": 2, "indice": 3, "ultima": false, "quantidade": 3, "tipos": TIPOS_SEM_ARCO,
 			"missao": "Limpe o pântano",
-			"largura": 48, "inicio": 2,
+			"largura": 48, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(8, 2), Vector2i(30, 2)], "plataformas": [Vector2i(16, 3)],
 			"chao": [10, 33, 40], "plataforma": [17], "porta": 43,
+			"chefe": [&"ankheg", 37],
 			"degraus": [[22, 3, 2]], "altas": [[34, 3, 2], [38, 3, 3]], "pontos": [[23, 6], [35, 6], [39, 5]],
+			"enfeites": [
+				["agua", 5, 0], ["junco", 6, 0], ["junco", 11, 0], ["agua", 13, 0],
+				["junco", 20, 0], ["agua", 25, 0], ["junco", 27, 0], ["junco", 36, 0], ["agua", 41, 0],
+			],
 		},
 		{
 			"nome": "Ruína", "arquivo": "res://levels/fase_4.tscn", "no": "Fase",
 			"tema": 3, "indice": 4, "ultima": false, "quantidade": 3, "tipos": TIPOS_RUINA,
-			"largura": 48, "inicio": 2,
+			"largura": 48, "inicio": 2, "loja": Vector2(190, 0),
 			"buracos": [Vector2i(6, 2), Vector2i(18, 2)], "plataformas": [Vector2i(30, 3)],
 			"chao": [8, 38], "plataforma": [31], "arco": [25], "porta": 42,
 			"degraus": [[10, 2, 1], [12, 3, 2], [15, 2, 1]], "altas": [[34, 3, 2]], "pontos": [[13, 6], [35, 6]],
+			"enfeites": [
+				["tocha", 5, 64], ["janela", 9, 100], ["tocha", 14, 64], ["estandarte_vermelho", 22, 150],
+				["tocha", 28, 64], ["janela", 33, 100], ["tocha", 37, 64], ["estandarte_azul", 40, 150],
+			],
 		},
 		{
 			"nome": "Fortaleza", "arquivo": "res://levels/fase_5.tscn", "no": "Fase",
 			"tema": 4, "indice": 5, "ultima": false, "quantidade": 4, "tipos": TIPOS_FORTALEZA,
-			"largura": 50, "inicio": 2,
+			"largura": 50, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(8, 2), Vector2i(26, 2)], "plataformas": [Vector2i(19, 3)],
 			"chao": [10, 12, 40], "plataforma": [21], "arco": [33], "porta": 44,
 			"degraus": [[14, 2, 1], [16, 2, 2], [36, 2, 1], [38, 1, 2]], "altas": [[25, 5, 2]], "pontos": [[16, 6], [27, 6], [38, 6]],
+			"enfeites": [
+				["tocha", 5, 64], ["estandarte_vermelho", 11, 150], ["tocha", 18, 64], ["janela", 23, 100],
+				["tocha", 30, 64], ["estandarte_amarelo", 35, 150], ["tocha", 41, 64], ["estandarte_azul", 46, 150],
+			],
 		},
 		{
 			"nome": "Labirinto", "arquivo": "res://levels/fase_6.tscn", "no": "Fase",
@@ -180,7 +212,11 @@ func _fases() -> Array[Dictionary]:
 			"buracos": [Vector2i(9, 2), Vector2i(26, 3), Vector2i(41, 2)], "plataformas": [],
 			"chao": [13, 30, 39, 44], "plataforma": [], "porta": 56,
 			"degraus": [[16, 3, 1], [19, 2, 2], [33, 3, 1], [36, 2, 2], [47, 3, 1]], "altas": [[22, 4, 2]], "pontos": [[20, 6], [23, 6], [37, 6]],
-			"enfeites": [["tocha", 6, 64], ["tocha", 14, 64], ["tocha", 31, 64], ["tocha", 45, 64], ["tocha", 52, 64]],
+			"enfeites": [
+				["tocha", 6, 64], ["rocha_baixa", 11, 0], ["picareta", 18, 0], ["tocha", 14, 64],
+				["carrinho", 28, 0], ["tocha", 31, 64], ["cristal_fino", 38, 0], ["tocha", 45, 64],
+				["rocha_grande", 49, 0], ["tocha", 52, 64],
+			],
 		},
 		{
 			"nome": "Caverna Úmida", "arquivo": "res://levels/fase_8.tscn", "no": "Fase",
@@ -189,7 +225,11 @@ func _fases() -> Array[Dictionary]:
 			"buracos": [Vector2i(8, 3), Vector2i(22, 2), Vector2i(37, 3), Vector2i(50, 2)], "plataformas": [],
 			"chao": [11, 19, 30, 44, 53], "plataforma": [], "porta": 60,
 			"degraus": [[13, 3, 1], [15, 2, 2], [26, 3, 1], [28, 2, 2], [40, 3, 1], [42, 2, 2]], "altas": [[33, 4, 2]], "pontos": [[16, 6], [29, 6], [43, 6], [34, 6]],
-			"enfeites": [["tocha", 5, 64], ["tocha", 17, 64], ["tocha", 33, 64], ["tocha", 47, 64], ["tocha", 57, 64]],
+			"enfeites": [
+				["tocha", 5, 64], ["cogumelo", 10, 0], ["cristal_medio", 14, 0], ["tocha", 17, 64],
+				["cogumelo_b", 24, 0], ["cristal_largo", 31, 0], ["tocha", 33, 64], ["cristal_alto", 45, 0],
+				["tocha", 47, 64], ["cogumelo", 54, 0], ["tocha", 57, 64],
+			],
 		},
 		{
 			# A cripta do Wight, a fase 9 do plano.
@@ -202,7 +242,11 @@ func _fases() -> Array[Dictionary]:
 			# o Zombie vem do sorteio da cripta também) surgem perto dele quando ele percebe o herói.
 			"chefe": [&"wight", 44], "acompanhantes": [&"skeleton", &"zombie"],
 			"degraus": [[18, 3, 1], [21, 2, 2]], "altas": [[24, 4, 2]], "pontos": [[22, 6], [36, 6]],
-			"enfeites": [["tocha", 6, 64], ["tocha", 15, 64], ["janela", 20, 100], ["tocha", 29, 64], ["estandarte_azul", 36, 150], ["tocha", 40, 64], ["tocha", 48, 64]],
+			"enfeites": [
+				["tocha", 6, 64], ["cranio", 10, 0], ["tocha", 15, 64], ["janela", 20, 100],
+				["cranio_b", 25, 0], ["tocha", 29, 64], ["estandarte_azul", 36, 150],
+				["tocha", 40, 64], ["cranio", 45, 0], ["tocha", 48, 64],
+			],
 		},
 		{
 			# O covil da Quimera, a fase 10 (final). Arena larga e reta (colunas 30 a 63): ela espera na coluna 46.
@@ -215,7 +259,11 @@ func _fases() -> Array[Dictionary]:
 			"chao": [13, 22], "plataforma": [], "porta": 60,
 			"chefe": [&"quimera", 46],
 			"degraus": [[16, 3, 1], [19, 2, 2]], "altas": [[25, 4, 2]], "pontos": [[18, 6], [27, 6]],
-			"enfeites": [["tocha", 6, 64], ["tocha", 14, 64], ["tocha", 24, 64], ["tocha", 34, 64], ["tocha", 44, 64], ["tocha", 54, 64]],
+			"enfeites": [
+				["tocha", 6, 64], ["rocha_grande", 12, 0], ["tocha", 14, 64], ["cristal_largo", 22, 0],
+				["tocha", 24, 64], ["cranio", 30, 0], ["tocha", 34, 64], ["cristal_alto", 40, 0],
+				["tocha", 44, 64], ["cogumelo", 50, 0], ["tocha", 54, 64], ["rocha_baixa", 58, 0],
+			],
 		}
 	]
 	return fases
@@ -371,7 +419,7 @@ func _colocar_desafios(fase: Node2D, desafios: Array) -> void:
 		_adicionar(fase, desafio)
 
 
-## Enfeites sem colisão (tochas com chama animada, janelas, estandartes): [nome, coluna, altura dos pés do enfeite acima do chão (px)].
+## Enfeites sem colisão: [nome, coluna, altura dos pés acima do chão (px)]. 0 = assentado no chão.
 func _colocar_enfeites(fase: Node2D, enfeites: Array) -> void:
 	if enfeites.is_empty():
 		return
@@ -381,16 +429,24 @@ func _colocar_enfeites(fase: Node2D, enfeites: Array) -> void:
 	_adicionar(fase, grupo)
 	for enfeite: Array in enfeites:
 		var centro := Vector2(int(enfeite[1]) * TAM + TAM / 2.0, (LINHA_ACAO + 1) * TAM - float(enfeite[2]))
-		if enfeite[0] == "tocha":
-			_colocar_tocha(grupo, centro, fase)
-		else:
-			_colocar_enfeite_pronto(grupo, centro, enfeite[0], fase)
+		match String(enfeite[0]):
+			"tocha":
+				_colocar_tocha(grupo, centro, fase)
+			"arbusto":
+				_colocar_arbusto(grupo, centro, fase)
+			"junco":
+				_colocar_junco(grupo, centro, fase)
+			"agua":
+				_colocar_agua(grupo, centro, fase)
+			_:
+				_colocar_enfeite_pronto(grupo, centro, enfeite[0], fase)
 
 
 func _colocar_enfeite_pronto(grupo: Node2D, pes: Vector2, nome: String, fase: Node2D) -> void:
-	var regiao: Rect2 = ENFEITES_PRONTOS[nome]
+	var def: Dictionary = ENFEITES_PRONTOS[nome]
+	var regiao: Rect2 = def.regiao
 	var textura := AtlasTexture.new()
-	textura.atlas = load(FOLHA_CASTELO)
+	textura.atlas = load(def.folha)
 	textura.region = regiao
 	var sprite := Sprite2D.new()
 	sprite.name = nome.capitalize().replace(" ", "")
@@ -425,6 +481,59 @@ func _colocar_tocha(grupo: Node2D, pes: Vector2, fase: Node2D) -> void:
 	chama.position = pes + Vector2(0, -TOCHA_ALTURA_SUPORTE - 8.0)
 	grupo.add_child(chama)
 	chama.owner = fase
+
+
+## Arbusto provisório da floresta (polígono verde).
+func _colocar_arbusto(grupo: Node2D, pes: Vector2, fase: Node2D) -> void:
+	var arbusto := Polygon2D.new()
+	arbusto.name = "Arbusto"
+	arbusto.color = Color(0.22, 0.48, 0.20)
+	arbusto.polygon = PackedVector2Array([
+		Vector2(-14, 0), Vector2(-10, -10), Vector2(-16, -18), Vector2(-6, -26),
+		Vector2(0, -30), Vector2(8, -24), Vector2(16, -16), Vector2(12, -8), Vector2(14, 0),
+	])
+	arbusto.position = pes
+	grupo.add_child(arbusto)
+	arbusto.owner = fase
+
+
+## Junco do pântano: hastes finas.
+func _colocar_junco(grupo: Node2D, pes: Vector2, fase: Node2D) -> void:
+	var junco := Polygon2D.new()
+	junco.name = "Junco"
+	junco.color = Color(0.28, 0.42, 0.18)
+	junco.polygon = PackedVector2Array([
+		Vector2(-8, 0), Vector2(-10, -22), Vector2(-6, -36), Vector2(-2, -20),
+		Vector2(0, -40), Vector2(2, -18), Vector2(6, -34), Vector2(10, -16), Vector2(8, 0),
+	])
+	junco.position = pes
+	grupo.add_child(junco)
+	junco.owner = fase
+
+
+## Poça de água turva do pântano + bolhas estáticas (polish barato até haver sprite).
+func _colocar_agua(grupo: Node2D, pes: Vector2, fase: Node2D) -> void:
+	var agua := Polygon2D.new()
+	agua.name = "Agua"
+	agua.color = Color(0.18, 0.36, 0.28, 0.72)
+	agua.polygon = PackedVector2Array([
+		Vector2(-22, -2), Vector2(-18, -8), Vector2(-4, -10), Vector2(12, -8),
+		Vector2(22, -3), Vector2(18, 2), Vector2(-16, 2),
+	])
+	agua.position = pes
+	grupo.add_child(agua)
+	agua.owner = fase
+	for i in 3:
+		var bolha := Polygon2D.new()
+		bolha.name = "Bolha%d" % (i + 1)
+		bolha.color = Color(0.55, 0.75, 0.65, 0.55)
+		var r := 2.0 + float(i)
+		bolha.polygon = PackedVector2Array([
+			Vector2(-r, 0), Vector2(0, -r), Vector2(r, 0), Vector2(0, r * 0.6),
+		])
+		bolha.position = pes + Vector2(-10.0 + i * 10.0, -6.0 - i * 3.0)
+		grupo.add_child(bolha)
+		bolha.owner = fase
 
 
 func _criar_terreno(fase: Node2D) -> TileMapLayer:
