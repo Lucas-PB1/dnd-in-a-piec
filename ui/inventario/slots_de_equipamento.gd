@@ -32,7 +32,8 @@ func mostrar(inventario: Inventario, mao_vazia: String) -> void:
 		var item := inventario.equipado(espaco)
 		_itens[espaco] = item
 		var duas_maos := espaco == Item.ESPACO_MAO_SECUNDARIA and item != null and item == inventario.equipado(Item.ESPACO_MAO)
-		_preencher(_cartoes[espaco], espaco, item, mao_vazia, duas_maos)
+		var corroido := item != null and inventario.penalidade(item) > 0
+		_preencher(_cartoes[espaco], espaco, item, mao_vazia, duas_maos, corroido)
 
 
 func _criar_cartao(espaco: StringName) -> PanelContainer:
@@ -71,26 +72,35 @@ func _rotulo(nome: String, tamanho: int) -> Label:
 	return rotulo
 
 
-func _preencher(cartao: PanelContainer, espaco: StringName, item: Item, mao_vazia: String, duas_maos: bool) -> void:
+func _preencher(cartao: PanelContainer, espaco: StringName, item: Item, mao_vazia: String, duas_maos: bool, corroido: bool) -> void:
 	var cor := EstiloCartao.cor_do_espaco(espaco)
 	var cabecalho := cartao.find_child("Rotulo", true, false) as Label
 	cabecalho.text = "[%s] %s" % [EstiloCartao.selo_do_espaco(espaco), ROTULOS[espaco]]
 	cabecalho.add_theme_color_override(&"font_color", cor)
-	cartao.add_theme_stylebox_override(&"panel", EstiloCartao.cartao(cor if item != null else EstiloCartao.BORDA))
+	var borda := EstiloCartao.COR_CORROSAO if corroido else (cor if item != null else EstiloCartao.BORDA)
+	cartao.add_theme_stylebox_override(&"panel", EstiloCartao.cartao(borda))
 	var icone := cartao.find_child("Icone", true, false) as TextureRect
 	var nome := cartao.find_child("Nome", true, false) as Label
 	icone.texture = item.icone if item != null else null
-	icone.modulate = Color(1, 1, 1, 0.55) if duas_maos else Color.WHITE
-	nome.text = _texto_do_nome(espaco, item, mao_vazia, duas_maos)
-	nome.add_theme_color_override(&"font_color", Color.WHITE if item != null else EstiloCartao.TEXTO_FRACO)
+	if duas_maos:
+		icone.modulate = Color(1, 1, 1, 0.55)
+	elif corroido:
+		icone.modulate = EstiloCartao.COR_CORROSAO
+	else:
+		icone.modulate = Color.WHITE
+	nome.text = _texto_do_nome(espaco, item, mao_vazia, duas_maos, corroido)
+	var cor_nome := EstiloCartao.TEXTO_FRACO
+	if item != null:
+		cor_nome = EstiloCartao.COR_CORROSAO if corroido else Color.WHITE
+	nome.add_theme_color_override(&"font_color", cor_nome)
 	cartao.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if item != null else Control.CURSOR_ARROW
 
 
-func _texto_do_nome(espaco: StringName, item: Item, mao_vazia: String, duas_maos: bool) -> String:
+func _texto_do_nome(espaco: StringName, item: Item, mao_vazia: String, duas_maos: bool, corroido: bool) -> String:
 	if duas_maos:
 		return "%s (%s)" % [item.nome, TEXTO_DUAS_MAOS]
 	if item != null:
-		return item.nome
+		return "[%s] %s" % [EstiloCartao.SELO_CORROSAO, item.nome] if corroido else item.nome
 	return mao_vazia if espaco == Item.ESPACO_MAO else TEXTO_VAZIO
 
 

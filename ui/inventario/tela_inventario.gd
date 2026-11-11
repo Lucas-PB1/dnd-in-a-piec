@@ -167,14 +167,23 @@ func _atualizar() -> void:
 
 
 ## Um item na lista: ícone, nome e, se está equipado, o selo da mão ([P], [S], [C]) na cor do slot dela.
+## Corroído: selo [~] e faixa/texto ácido (dá para ver de relance).
 func _adicionar_na_lista(item: Item) -> void:
 	var espaco := _inventario.espaco_de(item)
+	var corroido := _inventario.penalidade(item) > 0
 	var marca := "[%s] " % EstiloCartao.selo_do_espaco(espaco) if espaco != &"" else ""
+	if corroido:
+		marca += "[%s] " % EstiloCartao.SELO_CORROSAO
 	var indice := _lista.add_item(marca + _nome_com_quantidade(item), item.icone)
 	if item is Arma:
 		_lista.set_item_icon_modulate(indice, (item as Arma).cor_do_brilho())  # arma mágica brilha na cor do bônus
+	if corroido:
+		_lista.set_item_icon_modulate(indice, EstiloCartao.COR_CORROSAO)
+		_lista.set_item_custom_fg_color(indice, EstiloCartao.COR_CORROSAO)
 	if espaco != &"":  # faixa na cor do slot (o texto continua legível, inclusive selecionado)
 		_lista.set_item_custom_bg_color(indice, Color(EstiloCartao.cor_do_espaco(espaco), FAIXA_DO_EQUIPADO))
+	elif corroido:
+		_lista.set_item_custom_bg_color(indice, Color(EstiloCartao.COR_CORROSAO, EstiloCartao.FAIXA_CORROSAO))
 
 
 ## O jogador clicou num slot: seleciona o item na mochila e mostra os detalhes (dá para desequipar).

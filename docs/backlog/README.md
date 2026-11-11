@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo |
 |---|---|
-| 14 | `heroi/corrosao-mais-clara` |
 | 16 | `heroi/invencibilidade-ao-nascer` |
 | 17 | `heroi/compendio-inimigos-menu` |
 | 18 | `regras/estilo-de-luta-guerreiro` |

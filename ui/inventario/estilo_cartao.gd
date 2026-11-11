@@ -13,8 +13,12 @@ const COR_MAO_SECUNDARIA := Color(0.55, 0.78, 1.0, 1.0)
 const COR_CORPO := Color(0.6, 0.9, 0.55, 1.0)
 const COR_PV := Color(0.78, 0.2, 0.2, 1.0)
 const COR_XP := Color(0.45, 0.35, 0.85, 1.0)
+## Ácido / corrosão (Gray Ooze): selo e texto do item desgastado.
+const COR_CORROSAO := Color(0.55, 0.9, 0.35, 1.0)
+const SELO_CORROSAO := "~"
 const RAIO := 3
 const MARGEM := 4
+const FAIXA_CORROSAO := 0.28
 
 
 ## Moldura de cartão: fundo escuro translúcido e borda da `cor_borda`.

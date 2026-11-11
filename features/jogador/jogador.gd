@@ -1164,9 +1164,9 @@ func _corroer_armadura() -> void:
 		return
 	var limite := armadura.ca_base - Ficha.CA_BASE
 	if inventario.desgastar(armadura, 1, limite):
-		_texto.mostrar("%s se desfez!" % armadura.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
+		_texto.mostrar("Corrosão! %s se desfez!" % armadura.nome, TextoFlutuanteComponent.COR_CORROSAO)
 	else:
-		_texto.mostrar("%s corroída -%d" % [armadura.nome, inventario.penalidade(armadura)], TextoFlutuanteComponent.COR_ERRO)
+		_texto.mostrar("Corrosão! %s -%d CA" % [armadura.nome, inventario.penalidade(armadura)], TextoFlutuanteComponent.COR_CORROSAO)
 
 
 ## Começa o golpe da arma da mão (ou o extra, da outra mão). O extra sem Corte Duplo gasta
@@ -1372,9 +1372,9 @@ func _besta_ignora_perto(arma: Arma) -> bool:
 ## e é destruída no limite.
 func _ao_corroer_arma(penalidade: int, limite: int, arma: Arma) -> void:
 	if inventario.desgastar(arma, penalidade, limite):
-		_texto.mostrar("%s derreteu!" % arma.nome, TextoFlutuanteComponent.COR_DANO_SOFRIDO)
+		_texto.mostrar("Corrosão! %s derreteu!" % arma.nome, TextoFlutuanteComponent.COR_CORROSAO)
 	else:
-		_texto.mostrar("%s corroída -%d" % [arma.nome, inventario.penalidade(arma)], TextoFlutuanteComponent.COR_ERRO)
+		_texto.mostrar("Corrosão! %s -%d" % [arma.nome, inventario.penalidade(arma)], TextoFlutuanteComponent.COR_CORROSAO)
 
 
 # --- Derrubado ---------------------------------------------------------------------

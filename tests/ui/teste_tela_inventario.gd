@@ -37,6 +37,10 @@ func _rodar() -> void:
 	jogador.inventario.desgastar(jogador.arma_atual(), 3, 5)
 	_checar("Ataque +1 (FOR +2, prof. +2, corroída -3)   Dano 1d6+2" in _texto(ficha_visual, "Ataque"),
 		"com desgaste a proficiência continua na conta e o ataque cai")
+	_checar("[%s]" % EstiloCartao.SELO_CORROSAO in lista.get_item_text(0),
+		"lista marca item corroído com o selo [~]")
+	_checar(_texto(slots, "Slot_mao/Nome").begins_with("[%s]" % EstiloCartao.SELO_CORROSAO),
+		"slot da mão mostra [~] no nome da arma corroída")
 	_checar(_texto(ficha_visual, "Chip_CA/Texto") == "CA 12", "ficha mostra a CA")
 	_checar("salv." in _texto(ficha_visual, "Atributo_forca/Sigla") and "salv." not in _texto(ficha_visual, "Atributo_destreza/Sigla"),
 		"o cartão da FOR marca a salvaguarda proficiente e o da DES não")
