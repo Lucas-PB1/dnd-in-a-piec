@@ -303,6 +303,7 @@ func reaparecer() -> void:
 	posicionar_no_inicio(posicao_inicial)
 	velocity = Vector2.ZERO
 	_maquina.trocar(&"NoAr")
+	proteger_ao_nascer()
 	reapareceu.emit()
 
 
@@ -768,11 +769,15 @@ func reviver() -> void:
 	_morrendo = false
 	_animacao.morrendo = false
 	_mostrar_equipamento(true)
-	_contador_invencivel = 0.0
-	_defesa.invulneravel = false
-	_animacao.piscando = false
 	descansar_longo()
-	reaparecer()
+	reaparecer()  # protege 1 s ao nascer de novo
+
+
+## 1 s invulnerável (mesmo timer do pós-acerto): spawn, fase nova, queda do mapa, Tentar de novo.
+func proteger_ao_nascer() -> void:
+	_contador_invencivel = stats.tempo_invencibilidade
+	_defesa.invulneravel = true
+	_animacao.piscando = esta_invencivel()
 
 
 func esta_golpeando() -> bool:
