@@ -70,6 +70,21 @@ func _testar_opcoes() -> void:
 	var sempre := OpcoesToque.visiveis()
 	OpcoesToque.mostrar = OpcoesToque.Mostrar.NUNCA
 	_checar(sempre and not OpcoesToque.visiveis(), "opção Sempre mostra e Nunca esconde os controles")
+	var caminho_antes := OpcoesToque.caminho
+	OpcoesToque.caminho = "user://toque_padrao_teste.cfg"
+	DirAccess.remove_absolute(OpcoesToque.caminho)
+	OpcoesToque.modo = OpcoesToque.Modo.SETAS
+	OpcoesToque.opacidade = 0.3
+	OpcoesToque.slots = [&"", &"", &"", &"", &"", &"", &"", &""]
+	OpcoesToque.carregar()
+	_checar(OpcoesToque.modo == OpcoesToque.Modo.ANALOGICO
+		and is_equal_approx(OpcoesToque.opacidade, OpcoesToque.OPACIDADE_PADRAO)
+		and OpcoesToque.slots == OpcoesToque.padrao_slots()
+		and OpcoesToque.mostrar == OpcoesToque.Mostrar.AUTOMATICO,
+		"sem toque.cfg a primeira execução volta ao padrão jogável")
+	DirAccess.remove_absolute(OpcoesToque.caminho)
+	OpcoesToque.caminho = caminho_antes
+
 
 
 func _testar_botao() -> void:

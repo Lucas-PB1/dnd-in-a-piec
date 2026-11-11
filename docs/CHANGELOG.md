@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Defaults da 1ª execução: PC em **tela cheia** sem `tela.cfg`; toque volta ao padrão jogável sem `toque.cfg`. Testes `teste_opcoes_tela` / `teste_toque`.
 - Poções de cura (PHB): Cura (2d4+2, 50 GP) e Maior (4d4+4, 200 GP) na loja/`data/itens/`; botão **Usar** no inventário. Teste `teste_pocoes`.
 - Loja: estoque **sempre com ≥ 1 munição** (também no Trocar). Teste `teste_loja`.
 - Loja: botão **Trocar** renova o estoque — 1ª grátis, depois +10 po por vez (10, 20…). Testes `teste_loja` / `teste_tela_loja`.

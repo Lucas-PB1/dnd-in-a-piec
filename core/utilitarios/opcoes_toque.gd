@@ -46,12 +46,22 @@ static var slots: Array[StringName] = padrao_slots()
 static func carregar() -> void:
 	var arquivo := ConfigFile.new()
 	if arquivo.load(caminho) != OK:
+		restaurar_padrao()
 		return
-	modo = clampi(int(arquivo.get_value(SECAO, "modo", modo)), 0, Modo.size() - 1) as Modo
-	mostrar = clampi(int(arquivo.get_value(SECAO, "mostrar", mostrar)), 0, Mostrar.size() - 1) as Mostrar
-	opacidade = clampf(float(arquivo.get_value(SECAO, "opacidade", opacidade)), OPACIDADE_MINIMA, 1.0)
+	modo = clampi(int(arquivo.get_value(SECAO, "modo", Modo.ANALOGICO)), 0, Modo.size() - 1) as Modo
+	mostrar = clampi(int(arquivo.get_value(SECAO, "mostrar", Mostrar.AUTOMATICO)), 0, Mostrar.size() - 1) as Mostrar
+	opacidade = clampf(float(arquivo.get_value(SECAO, "opacidade", OPACIDADE_PADRAO)), OPACIDADE_MINIMA, 1.0)
 	posicoes = arquivo.get_value(SECAO, "posicoes", {})
 	slots = _ler_slots(arquivo.get_value(SECAO, "slots", []))
+
+
+## Fábrica do celular: analógico, automático, opacidade cheia, slots das 8 habilidades, posições padrão.
+static func restaurar_padrao() -> void:
+	modo = Modo.ANALOGICO
+	mostrar = Mostrar.AUTOMATICO
+	opacidade = OPACIDADE_PADRAO
+	posicoes = {}
+	slots = padrao_slots()
 
 
 static func salvar() -> void:

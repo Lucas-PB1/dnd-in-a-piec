@@ -11,6 +11,8 @@ func _rodar() -> void:
 	OpcoesTela.caminho = "user://tela_teste.cfg"
 	DirAccess.remove_absolute(OpcoesTela.caminho)
 	OpcoesTela.modo = OpcoesTela.JANELA
+	OpcoesTela.carregar()
+	_checar(OpcoesTela.modo == OpcoesTela.TELA_CHEIA, "sem tela.cfg a primeira execução fica em tela cheia")
 	OpcoesTela.definir(OpcoesTela.TELA_CHEIA)
 	OpcoesTela.salvar()
 	OpcoesTela.modo = OpcoesTela.JANELA
@@ -20,7 +22,7 @@ func _rodar() -> void:
 	OpcoesTela.salvar()
 	await _testar_na_tela_de_opcoes()
 	DirAccess.remove_absolute(OpcoesTela.caminho)
-	OpcoesTela.modo = OpcoesTela.JANELA
+	OpcoesTela.modo = OpcoesTela.TELA_CHEIA
 	print("PASSOU: opções de tela" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
 	quit(_falhas)
 
