@@ -106,6 +106,8 @@ var _em_tela_de_pausa: bool = false
 var _ids_da_cota: Array[int] = []
 ## A missão da fase atual (os inimigos da cota são o objetivo).
 var _missao := Missao.new()
+## Abates e cronômetro da fase/run (recordes em user://placar.cfg).
+var _placar := Placar.new()
 var _surto_usado: bool = false
 ## A tela aberta agora veio do menu de pausa: ao fechar, a pausa volta.
 var _voltar_para_pausa: bool = false
@@ -225,7 +227,18 @@ func _ready() -> void:
 	if mostrar_inicio:
 		_abrir_titulo()
 	else:
+		_placar.iniciar_run()
+		_placar.iniciar_fase(_fase.indice)
+		_mostrar_placar()
 		_musica.tocar_da_fase(_fase.indice)
+
+
+## Cronômetro: só com inimigos da cota vivos (pausa do jogo já para o `_process`).
+func _process(delta: float) -> void:
+	if _em_tela_de_pausa or _ids_da_cota.is_empty():
+		return
+	_placar.avancar(delta)
+	_mostrar_placar()
 
 
 # --- Início -----------------------------------------------------------------------
@@ -289,6 +302,7 @@ func _ao_continuar(titulo: TelaTitulo) -> void:
 	Salvamento.restaurar_inventario(dados, _jogador.inventario)
 	Salvamento.restaurar_bestiario(dados, _bestiario)
 	var indice := clampi(Salvamento.fase_de(dados) - 1, 0, CENAS_FASE.size() - 1)
+	_placar.iniciar_run()
 	_entrar_fase(CENAS_FASE[indice])
 	_mostrar_personagem_no_hud()
 	_apontar_monstros_para(_jogador)
@@ -318,6 +332,9 @@ func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao
 	_jogador.receber_pacote(pacote)
 	_mostrar_personagem_no_hud()
 	_apontar_monstros_para(_jogador)
+	_placar.iniciar_run()
+	_placar.iniciar_fase(_fase.indice)
+	_mostrar_placar()
 	tela.queue_free()
 	_pausar(false)
 	_musica.tocar_da_fase(_fase.indice)
@@ -332,6 +349,7 @@ func _ao_cair() -> void:
 	tela.tentar_de_novo_escolhido.connect(_tentar_de_novo.bind(tela))
 	_interface.add_child(tela)
 	tela.mostrar_personagem(_jogador.ficha.nome, _jogador.ficha.classe.nome)
+	tela.mostrar_resumo(_placar.texto_resumo(true))
 
 
 ## Recomeça a fase atual: descanso longo e um sorteio novo das armadilhas.
@@ -347,16 +365,20 @@ func _tentar_de_novo(tela: TelaDerrota) -> void:
 
 
 func _abrir_vitoria() -> void:
+	var novo := _placar.fechar_fase(true, true)
 	_pausar(true)
 	_musica.tocar(Musica.TAVERNA)
 	var tela: TelaVitoria = CENA_VITORIA.instantiate()
 	tela.jogar_de_novo_escolhido.connect(_ao_jogar_de_novo.bind(tela))
 	_interface.add_child(tela)
+	var extra := "\nNovo recorde da fase!" if novo else ""
+	tela.mostrar_resumo(_placar.texto_resumo(true) + extra)
 
 
 ## Volta à primeira fase, com vida cheia e armadilhas novas.
 func _ao_jogar_de_novo(tela: TelaVitoria) -> void:
 	tela.queue_free()
+	_placar.iniciar_run()
 	_entrar_fase(CENAS_FASE[0])
 	_jogador.reviver()
 	_pausar(false)
@@ -412,6 +434,7 @@ func _tentar_atravessar() -> void:
 	if _fase.ultima:
 		_abrir_vitoria()
 		return
+	_placar.fechar_fase(true, false)
 	var seguinte := _fase.indice
 	if seguinte < CENAS_FASE.size():
 		# Chefe derrotado = longo; fase normal = curto (Surto/Fôlego voltam nos dois).
@@ -473,6 +496,8 @@ func _nascer_armadilhas() -> void:
 	var nome_do_chefe := _nascer_chefe()
 	_missao = Missao.new(_fase.missao, _ids_da_cota.size(), nome_do_chefe)
 	_mostrar_missao()
+	_placar.iniciar_fase(_fase.indice)
+	_mostrar_placar()
 
 
 ## Põe um monstro da cota da fase no `lugar` e o liga à porta, ao XP, ao ouro e ao herói.
@@ -530,6 +555,8 @@ func _nascer_acompanhante(tipo: StringName, lugar: Vector2) -> void:
 func _ao_morrer_acompanhante(experiencia: int, ouro: int) -> void:
 	_aplicar_experiencia(experiencia)
 	_soltar_saque(ouro)
+	_placar.registrar_morte()
+	_mostrar_placar()
 
 
 ## A fase de chefe: o chefe nasce no marcador, conta na cota (a porta só abre quando ele cai) e mostra a barra de vida.
@@ -553,6 +580,10 @@ func _nascer_chefe() -> String:
 ## A linha da missão na HUD (some se a fase não tem inimigos).
 func _mostrar_missao() -> void:
 	_hud.mostrar_missao(_missao.texto() if _missao.existe() else "", _missao.cumprida())
+
+
+func _mostrar_placar() -> void:
+	_hud.mostrar_placar(_placar.texto_hud() if _missao.existe() else "")
 
 
 ## Quando a criatura morre, o bestiário anota a derrota dela.
@@ -579,6 +610,8 @@ func _ao_morreu_da_cota(id: int, experiencia: int, ouro: int) -> void:
 	_soltar_saque(ouro)
 	_missao.registrar_morte()
 	_mostrar_missao()
+	_placar.registrar_morte()
+	_mostrar_placar()
 	if _missao.cumprida():
 		_jogador.avisar(AVISO_MISSAO_CUMPRIDA)
 	# Adia: quem morreu ainda está emitindo o sinal e não pode ser apagado agora.

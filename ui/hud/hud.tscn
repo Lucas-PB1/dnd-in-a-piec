@@ -92,6 +92,17 @@ theme_override_font_sizes/font_size = 11
 text = ""
 autowrap_mode = 3
 
+[node name="Placar" type="Label" parent="Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(148, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.88, 1, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.08, 0.14, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 11
+text = ""
+autowrap_mode = 3
+
 [node name="Folego" type="Label" parent="Coluna"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(148, 0)

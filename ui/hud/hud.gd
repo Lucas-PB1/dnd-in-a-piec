@@ -15,6 +15,7 @@ const COR_MISSAO_CUMPRIDA := Color(0.55, 0.95, 0.62, 1.0)
 @onready var _progressao: Label = %Progressao
 @onready var _ouro: Label = %Ouro
 @onready var _missao: Label = %Missao
+@onready var _placar: Label = %Placar
 @onready var _surto: Label = %Surto
 @onready var _sorte: Label = %Sorte
 @onready var _investida: Label = %Investida
@@ -80,6 +81,12 @@ func mostrar_missao(texto: String, cumprida: bool) -> void:
 	_missao.visible = texto != ""
 	_missao.text = texto
 	_missao.add_theme_color_override(&"font_color", COR_MISSAO_CUMPRIDA if cumprida else COR_MISSAO)
+
+
+## Abates e tempos da fase/run. Texto vazio some.
+func mostrar_placar(texto: String) -> void:
+	_placar.visible = texto != ""
+	_placar.text = texto
 
 
 ## Mostra o ouro em peças ("Ouro 12").

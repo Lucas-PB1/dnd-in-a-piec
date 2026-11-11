@@ -7,6 +7,7 @@ extends Control
 signal tentar_de_novo_escolhido
 
 @onready var _subtitulo: Label = %Subtitulo
+@onready var _resumo: Label = %Resumo
 @onready var _botao: Button = %TentarDeNovo
 
 
@@ -19,3 +20,9 @@ func _ready() -> void:
 ## Mostra quem caiu (ex.: "Aldric, o Guerreiro, foi derrotado.").
 func mostrar_personagem(nome: String, classe: String) -> void:
 	_subtitulo.text = "%s, o %s, foi derrotado." % [nome, classe]
+
+
+## Abates e tempos até a queda (a `main` monta o texto).
+func mostrar_resumo(texto: String) -> void:
+	_resumo.text = texto
+	_resumo.visible = texto != ""
