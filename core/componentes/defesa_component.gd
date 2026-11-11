@@ -55,6 +55,7 @@ func _ao_receber_golpe(golpe: Golpe, origem: Vector2) -> void:
 		return
 	if condicoes:
 		condicoes.preparar_golpe_recebido(golpe)
+	_aplicar_rajada_se_valer(golpe)
 	var bonus_ca := bonus_ca_corpo_a_corpo if golpe.corpo_a_corpo else 0
 	var resultado := _resolver(golpe, bonus_ca)
 	if golpe.cd_salvaguarda == 0 and bonus_ca > 0 and not resultado.acertou and resultado.d20 != Combate.FALHA_AUTOMATICA and resultado.total >= classe_armadura:
@@ -92,6 +93,16 @@ func receber_ambiente(golpe: Golpe, origem: Vector2) -> void:
 		vida.receber_dano(resultado.dano)
 	golpe.resolvido.emit(resultado, resultado.dano > 0 and vida != null and vida.esta_morto())
 	golpe_resolvido.emit(resultado, origem)
+
+
+## Rajada: se o golpe tinha vantagem de verdade e o toggle pediu a troca, abre mão dela.
+func _aplicar_rajada_se_valer(golpe: Golpe) -> void:
+	if not golpe.pode_rajada or golpe.rajada == null:
+		return
+	if not Combate.teve_vantagem(golpe):
+		return
+	golpe.vantagem = false
+	golpe.usou_rajada = true
 
 
 ## Ataque contra a CA, ou salvaguarda contra a CD do golpe (Borrifo Ácido).

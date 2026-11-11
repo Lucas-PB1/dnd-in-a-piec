@@ -32,6 +32,8 @@ signal defesa_mudou(ativa: bool, pronta: bool)
 signal aparou
 ## O modo da Investida mudou: true = empurra, false = dano extra.
 signal investida_mudou(empurra: bool)
+## Toggle da Rajada (estilo): ligada = abre mão da vantagem por 2º alvo.
+signal rajada_mudou(ligada: bool)
 ## Os dados de vida (Durável) mudaram.
 signal dados_de_vida_mudou(restantes: int, total: int)
 ## O veneno (Envenenador ou o item) mudou: doses que restam e se a arma está envenenada agora.
@@ -403,13 +405,19 @@ func pediu_arremesso() -> bool:
 	return true
 
 
-## Segundo K logo depois do tiro da Besta de Mão, com o talento: gasta a ação bônus e outro virote.
+## Segundo K logo depois do tiro: Besta de Mão (ação bônus) ou Disparo Duplo (estilo, sem ação bônus).
 func quer_disparo_extra() -> bool:
-	if _contador_buffer_arremesso <= 0.0 or ficha == null or not acao_bonus_livre():
+	if _contador_buffer_arremesso <= 0.0 or ficha == null:
 		return false
 	var arma := _arma_do_k()
-	var de_mao := arma != null and arma.besta and arma.leve and arma.disparavel()
-	return de_mao and ficha.tem_talento(Ficha.TALENTO_ESPECIALISTA_EM_BESTA) and _tem_municao(arma)
+	if arma == null or not arma.disparavel() or not _tem_municao(arma):
+		return false
+	if _estilos.disparo_duplo_pendente and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DISPARO_DUPLO):
+		return true
+	if not acao_bonus_livre():
+		return false
+	var de_mao := arma.besta and arma.leve
+	return de_mao and ficha.tem_talento(Ficha.TALENTO_ESPECIALISTA_EM_BESTA)
 
 
 ## Arma na mão, ou o ataque desarmado se a mão estiver vazia.
@@ -874,6 +882,8 @@ func _atualizar_contadores(delta: float) -> void:
 		aplicar_veneno()
 	if Input.is_action_just_pressed("investida"):
 		alternar_investida()
+	if Input.is_action_just_pressed("rajada"):
+		alternar_rajada()
 	# Toque duplo para correr, ou segurar "correr" (Shift; o analógico na borda).
 	_toque_duplo.janela = stats.janela_toque_duplo
 	var apertada := _direcao_apertada_agora()
@@ -1153,6 +1163,20 @@ func investida_empurra() -> bool:
 	return _investida.empurra
 
 
+## Liga/desliga a Rajada (só com o estilo preparado).
+func alternar_rajada() -> bool:
+	if ficha == null or not ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.RAJADA):
+		return false
+	var ligada := _estilos.alternar_rajada()
+	_texto.mostrar("Rajada: %s" % ("ligada" if ligada else "desligada"), COR_PARRY)
+	rajada_mudou.emit(ligada)
+	return true
+
+
+func rajada_ligada() -> bool:
+	return _estilos.rajada_ligada
+
+
 ## Quanto correu em linha reta: zera quando para, anda devagar ou vira.
 func _medir_corrida(delta: float) -> void:
 	_investida.medir(esta_correndo(), velocity.x, direcao_olhar, delta)
@@ -1211,12 +1235,28 @@ func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
 	var golpe := Equipamento.golpe(ficha, inventario, arma, extra)
 	_aplicar_estilos_ao_golpe(golpe, arma, extra)
 	_assinar(golpe)
+	_aplicar_rajada_ao_golpe(golpe, arma, extra)
 	if not arma.disparavel():
 		_aplicar_investida(golpe)
 	_aplicar_veneno_ao_golpe(golpe)
 	if inventario.esta_equipado(arma):
 		golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
 	return golpe
+
+
+## Toggle ligado + estilo: marca o golpe para trocar vantagem por 2º alvo (corpo a corpo).
+func _aplicar_rajada_ao_golpe(golpe: Golpe, arma: Arma, extra: bool) -> void:
+	if extra or arma.disparavel() or ficha == null:
+		return
+	if not ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.RAJADA) or not _estilos.rajada_ligada:
+		return
+	golpe.pode_rajada = true
+	var segundo := Equipamento.golpe(ficha, inventario, arma, false)
+	segundo.autor_id = golpe.autor_id
+	segundo.limiar_critico = golpe.limiar_critico
+	segundo.resolvido.connect(_ao_resolver_golpe_do_atacante)
+	_ligar_efeitos_de_talento(segundo)
+	golpe.rajada = segundo
 
 
 ## Bônus situacionais dos estilos (Selvageria, Escaramuçador, Oportunista, Artilheiro, Combatente Móvel).
@@ -1383,10 +1423,17 @@ func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
 	var golpe := _criar_golpe_de(arma, false)
 	if _inimigo_em_5_pes() and not _besta_ignora_perto(arma) and not _artilheiro_ignora_perto():
 		golpe.desvantagem = true
-	# Disparo Duplo: o 2º tiro do combo (ação bônus / encadeado) sai com desvantagem.
-	if extra and ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DISPARO_DUPLO):
+	var estilo_duplo := ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DISPARO_DUPLO)
+	# Disparo Duplo: os dois tiros saem com desvantagem; o 1º libera o 2º sem gastar ação bônus.
+	var do_estilo := estilo_duplo and (not extra or _estilos.disparo_duplo_pendente)
+	if do_estilo:
 		golpe.desvantagem = true
-	_marcar_ataque(extra, true)
+	var gastar_bonus := extra and not (estilo_duplo and _estilos.disparo_duplo_pendente)
+	if not extra and estilo_duplo:
+		_estilos.disparo_duplo_pendente = true
+	elif extra:
+		_estilos.disparo_duplo_pendente = false
+	_marcar_ataque(extra, true, gastar_bonus)
 	arma_arremessada.emit(arma, golpe, 0, _ataque.global_position, direcao_olhar, forca, mira, pilha,
 		ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE), _destreza())
 
@@ -1395,10 +1442,10 @@ func _artilheiro_ignora_perto() -> bool:
 	return ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARTILHEIRO)
 
 
-func _marcar_ataque(extra: bool, manter_pose: bool) -> void:
-	if extra:
+func _marcar_ataque(extra: bool, manter_pose: bool, gastar_acao_bonus: bool = true) -> void:
+	if extra and gastar_acao_bonus:
 		_tempo_desde_acao_bonus = 0.0
-	else:
+	elif not extra:
 		_tempo_desde_golpe = 0.0
 	_contador_buffer_arremesso = 0.0
 	if not manter_pose:

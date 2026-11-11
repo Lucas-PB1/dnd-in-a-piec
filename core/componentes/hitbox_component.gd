@@ -57,8 +57,11 @@ func _physics_process(_delta: float) -> void:
 			_entregar(alvo, _golpe)
 	elif _atingidos.is_empty():
 		_entregar(candidatos[0], _golpe)
-	elif _atingidos.size() == 1 and _golpe.trespassar and _golpe.acertou_algum:
-		_tentar_trespassar(candidatos)
+	elif _atingidos.size() == 1 and _golpe.acertou_algum:
+		if _golpe.usou_rajada and _golpe.rajada != null:
+			_tentar_segundo(candidatos, _golpe.rajada)
+		elif _golpe.trespassar != null:
+			_tentar_segundo(candidatos, _golpe.trespassar)
 
 
 ## Hurtboxes tocando a área que ainda não receberam nada, da mais perto à mais longe.
@@ -73,11 +76,12 @@ func _alvos_novos() -> Array[HurtboxComponent]:
 	return alvos
 
 
-func _tentar_trespassar(candidatos: Array[HurtboxComponent]) -> void:
+## 2º alvo perto do 1º (Trespassar ou Rajada).
+func _tentar_segundo(candidatos: Array[HurtboxComponent], segundo: Golpe) -> void:
 	var primeiro := _atingidos[0]
 	for alvo in candidatos:
 		if alvo.global_position.distance_to(primeiro.global_position) <= DISTANCIA_TRESPASSAR:
-			_entregar(alvo, _golpe.trespassar)
+			_entregar(alvo, segundo)
 			return
 
 

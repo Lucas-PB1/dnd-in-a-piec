@@ -10,6 +10,7 @@ func _initialize() -> void:
 func _rodar() -> void:
 	_testar_lista_e_ficha()
 	_testar_efeitos_de_combate()
+	_testar_rajada_e_disparo()
 	_testar_salvamento()
 	if _falhas == 0:
 		print("PASSOU: estilos de luta")
@@ -87,6 +88,37 @@ func _testar_efeitos_de_combate() -> void:
 	var soco: Arma = load("res://data/ataque_desarmado.tres")
 	var dado := ficha.dado_dano(soco, false, false, true)
 	_checar(dado.faces == Ficha.FACES_SOCO_ESTILO_LIVRE, "Desarmado livre: 1d8")
+
+
+func _testar_rajada_e_disparo() -> void:
+	var estilos := EstilosDoHeroi.new()
+	_checar(not estilos.rajada_ligada, "Rajada começa desligada")
+	_checar(estilos.alternar_rajada() and estilos.rajada_ligada, "toggle liga")
+	_checar(not estilos.alternar_rajada() and not estilos.rajada_ligada, "toggle desliga")
+
+	var golpe := Golpe.new("Teste", 5, Dado.new(1, 6, 2), TiposDano.CORTANTE, true)
+	golpe.vantagem = true
+	golpe.pode_rajada = true
+	golpe.rajada = Golpe.new("Rajada", 5, Dado.new(1, 6, 2), TiposDano.CORTANTE, true)
+	_aplicar_rajada_teste(golpe)
+	_checar(golpe.usou_rajada and not golpe.vantagem, "Rajada abre mão da vantagem")
+
+	var sem := Golpe.new("Sem", 5, Dado.new(1, 6), TiposDano.CORTANTE, true)
+	sem.pode_rajada = true
+	sem.rajada = Golpe.new("X", 5, Dado.new(1, 6), TiposDano.CORTANTE, true)
+	_aplicar_rajada_teste(sem)
+	_checar(not sem.usou_rajada, "sem vantagem a Rajada não troca")
+
+	estilos.disparo_duplo_pendente = true
+	_checar(estilos.disparo_duplo_pendente, "Disparo Duplo marca 2º tiro pendente")
+
+
+## Mesma regra da Defesa (troca vantagem → usou_rajada), sem montar nó.
+func _aplicar_rajada_teste(golpe: Golpe) -> void:
+	if not golpe.pode_rajada or golpe.rajada == null or not Combate.teve_vantagem(golpe):
+		return
+	golpe.vantagem = false
+	golpe.usou_rajada = true
 
 
 func _testar_salvamento() -> void:

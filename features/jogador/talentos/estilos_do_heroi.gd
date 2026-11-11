@@ -15,7 +15,16 @@ var selvageria_ativa: bool = false
 var oportunista_restante: float = 0.0
 var moveu_neste_turno: bool = false
 var deslocamento_extra_pes: float = 0.0
+## Rajada: true = abre mão da vantagem por 2º alvo; false = mantém vantagem.
+var rajada_ligada: bool = false
+## Disparo Duplo: o 1º tiro liberou um 2º imediato.
+var disparo_duplo_pendente: bool = false
 var _pixels_movidos: float = 0.0
+
+
+func alternar_rajada() -> bool:
+	rajada_ligada = not rajada_ligada
+	return rajada_ligada
 
 
 func resetar_turno() -> void:

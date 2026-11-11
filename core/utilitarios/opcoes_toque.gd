@@ -25,6 +25,7 @@ const HABILIDADES: Dictionary[StringName, String] = {
 	&"sorte": "Sorte",
 	&"defesa": "Defesa",
 	&"investida": "Investida",
+	&"rajada": "Rajada",
 	&"dado_de_vida": "Dado",
 	&"veneno": "Veneno",
 }

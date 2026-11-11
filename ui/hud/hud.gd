@@ -18,6 +18,7 @@ const COR_MISSAO_CUMPRIDA := Color(0.55, 0.95, 0.62, 1.0)
 @onready var _surto: Label = %Surto
 @onready var _sorte: Label = %Sorte
 @onready var _investida: Label = %Investida
+@onready var _rajada: Label = %Rajada
 @onready var _dados_de_vida: Label = %DadosDeVida
 @onready var _veneno: Label = %Veneno
 @onready var _barra_vida: ProgressBar = %BarraVida
@@ -119,6 +120,13 @@ func mostrar_veneno(doses: int, total: int, aplicado: bool, frasco_pronto: bool 
 func mostrar_investida(tem: bool, empurra: bool) -> void:
 	_investida.visible = tem
 	_investida.text = "Investida: %s" % ("empurrão" if empurra else "dano")
+
+
+## A linha da Rajada (estilo): ligada ou desligada. Sem o estilo some.
+func mostrar_rajada(tem: bool, ligada: bool) -> void:
+	_rajada.visible = tem
+	_rajada.text = "Rajada: %s" % ("ligada" if ligada else "desligada")
+
 
 ## A linha da Sorte (Sortudo): pontos que restam e se a próxima rolagem está com a sorte armada. Total 0 some.
 func mostrar_sorte(pontos: int, total: int, armada: bool) -> void:

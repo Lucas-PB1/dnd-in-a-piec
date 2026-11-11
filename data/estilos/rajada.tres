@@ -6,6 +6,6 @@
 script = ExtResource("1_rhxqu")
 id = &"rajada"
 nome = "Rajada"
-descricao = "Abre mão da vantagem num ataque para atacar outro alvo perto em seguida."
+descricao = "Toggle (R): ligada, abre mão de qualquer vantagem no ataque corpo a corpo para, se acertar, atacar outro alvo perto. Desligada, mantém a vantagem."
 fonte = "Grim Hollow"
 efeito = 14

@@ -171,6 +171,16 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 12
 text = "Investida"
 
+[node name="Rajada" type="Label" parent="Coluna"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.75, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.08, 0.03, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 12
+text = "Rajada"
+
 [node name="DadosDeVida" type="Label" parent="Coluna"]
 unique_name_in_owner = true
 visible = false

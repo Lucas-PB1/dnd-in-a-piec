@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Rajada (toggle R ligado/desligado) e Disparo Duplo (2º tiro automático com desvantagem) completos. Teste `teste_estilo_de_luta`.
 - Estilo de Luta do Guerreiro: 18 estilos (`data/estilos/`), escolha na criação, troca + capacidade 2 a partir do nível 2, efeitos de combate, Compêndio, save. Teste `teste_estilo_de_luta`.
 - Bestiário no **título**: botão abre a mesma tela da pausa com as criaturas do save (??? / reveladas). Teste `teste_bestiario`.
 - Invencibilidade ao nascer: 1 s (`proteger_ao_nascer`) ao começar, entrar na fase, cair do mapa ou reviver. Teste `teste_invencibilidade_ao_nascer`.

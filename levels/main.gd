@@ -170,6 +170,7 @@ func _ready() -> void:
 	_jogador.veneno_mudou.connect(_ao_mudar_veneno)
 	_jogador.defesa_mudou.connect(func(_ativa: bool, _pronta: bool) -> void: _atualizar_botoes_toque())
 	_jogador.investida_mudou.connect(_ao_mudar_investida)
+	_jogador.rajada_mudou.connect(_ao_mudar_rajada)
 	_jogador.folego_mudou.connect(func(_restantes: int, _total: int) -> void: _atualizar_botoes_toque())
 	_jogador.caiu.connect(_ao_cair)
 	_mostrar_personagem_no_hud()
@@ -642,6 +643,10 @@ func _ao_mudar_sorte(pontos: int, total: int, armada: bool) -> void:
 ## O modo da Investida mudou: a linha do HUD diz qual está valendo e o botão acende no empurrão.
 func _ao_mudar_investida(empurra: bool) -> void:
 	_hud.mostrar_investida(true, empurra)
+
+
+func _ao_mudar_rajada(ligada: bool) -> void:
+	_hud.mostrar_rajada(true, ligada)
 	_atualizar_botoes_toque()
 
 
@@ -870,6 +875,7 @@ func _ao_confirmar_estilos(_ids: Array[StringName]) -> void:
 	_jogador.ao_mudar_ficha()
 	_jogador.avisar("Estilos atualizados")
 	_pausa.mostrar_estilo(false)
+	_mostrar_personagem_no_hud()
 	if _jogador.ficha.escolhas_de_talento_pendentes() > 0:
 		_abrir_talento.call_deferred()
 
@@ -994,6 +1000,7 @@ func _atualizar_botoes_toque() -> void:
 	_controles_toque.mostrar_acao(&"sorte", _jogador.pontos_sorte_total() > 0)
 	_controles_toque.mostrar_acao(&"defesa", _jogador.ficha.tem_talento(Ficha.TALENTO_DUELISTA_DEFENSIVO))
 	_controles_toque.mostrar_acao(&"investida", _jogador.ficha.tem_talento(Ficha.TALENTO_INVESTIDA))
+	_controles_toque.mostrar_acao(&"rajada", _jogador.ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.RAJADA))
 	_controles_toque.mostrar_acao(&"dado_de_vida", _jogador.ficha.dados_de_vida() > 0)
 	_controles_toque.mostrar_acao(&"veneno", _jogador.veneno_visivel_na_ui())
 	_controles_toque.mostrar_acao(&"folego", _jogador.usos_folego_total() > 0)
@@ -1016,6 +1023,7 @@ func _acender_habilidades() -> void:
 	_controles_toque.definir_estado(&"dado_de_vida", BotaoToque.EstadoBotao.NORMAL if _jogador.dados_de_vida_restantes() > 0 else BotaoToque.EstadoBotao.DESLIGADO)
 	_controles_toque.definir_estado(&"veneno", BotaoToque.EstadoBotao.ACESO if _jogador.veneno_na_arma() != &"" else BotaoToque.EstadoBotao.NORMAL)
 	_controles_toque.definir_estado(&"investida", BotaoToque.EstadoBotao.ACESO if _jogador.investida_empurra() else BotaoToque.EstadoBotao.NORMAL)
+	_controles_toque.definir_estado(&"rajada", BotaoToque.EstadoBotao.ACESO if _jogador.rajada_ligada() else BotaoToque.EstadoBotao.NORMAL)
 	_controles_toque.definir_estado(&"folego", BotaoToque.EstadoBotao.NORMAL if _jogador.usos_folego() > 0 else BotaoToque.EstadoBotao.DESLIGADO)
 
 
@@ -1086,10 +1094,14 @@ func _mostrar_personagem_no_hud() -> void:
 	_hud.mostrar_folego(_jogador.usos_folego(), _jogador.usos_folego_total())
 	_hud.mostrar_progressao(_jogador.ficha.nivel, _jogador.ficha.experiencia, _jogador.ficha.xp_proximo_nivel())
 	_hud.mostrar_surto(_jogador.ficha.nivel, not _surto_usado)
+	var ficha := _jogador.ficha
+	_hud.mostrar_investida(ficha != null and ficha.tem_talento(Ficha.TALENTO_INVESTIDA), _jogador.investida_empurra())
+	_hud.mostrar_rajada(ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.RAJADA), _jogador.rajada_ligada())
 
 
 func _ao_mudar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> void:
 	_hud.mostrar_investida(_jogador.ficha != null and _jogador.ficha.tem_talento(Ficha.TALENTO_INVESTIDA), _jogador.investida_empurra())
+	_hud.mostrar_rajada(_jogador.ficha != null and _jogador.ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.RAJADA), _jogador.rajada_ligada())
 	var ficha := _jogador.ficha
 	_pausa.mostrar_talento(ficha != null and ficha.escolhas_de_talento_pendentes() > 0)
 	_pausa.mostrar_subclasse(ficha != null and ficha.escolha_de_subclasse_pendente())
