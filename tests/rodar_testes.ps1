@@ -13,8 +13,11 @@ $falhas = New-Object System.Collections.Generic.List[string]
 
 function Test-LinhaRelevante {
 	param([string]$linha)
+	# Ruído típico do Godot headless ao sair (não é falha do jogo).
 	if ($linha -match "ObjectDB instances were leaked") { return $false }
 	if ($linha -match "resources still in use at exit") { return $false }
+	if ($linha -match "RID allocations of type") { return $false }
+	if ($linha -match "RIDs of type .+ were leaked") { return $false }
 	return $linha -match "ok |PASSOU|FALHOU|ERRO|ERROR|WARNING|SCRIPT ERROR|Parse Error|Failed to"
 }
 
@@ -57,6 +60,8 @@ $trabalho = {
 		foreach ($linha in $linhas) {
 			if ($linha -match "ObjectDB instances were leaked") { continue }
 			if ($linha -match "resources still in use at exit") { continue }
+			if ($linha -match "RID allocations of type") { continue }
+			if ($linha -match "RIDs of type .+ were leaked") { continue }
 			if ($linha -match "ok |PASSOU|FALHOU|ERRO|ERROR|WARNING|SCRIPT ERROR|Parse Error|Failed to") {
 				$saida += $linha
 			}

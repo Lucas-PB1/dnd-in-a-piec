@@ -1,8 +1,8 @@
 extends SceneTree
-## Monta as animações "corte", "dano" e "morte" do herói a partir da folha do SpriteCook (heroi_corte_v4.png, quadros de
-## 84x84): recorta cada quadro para 80x80 com os pés no mesmo lugar dos outros (centro de baixo) e
-## põe a animação no heroi_frames.tres. Depois rode marcar_pontos_mao.gd (os pontos da mão deste golpe
-## estão fixos lá, porque as mãos sobem acima da cabeça e a busca automática não as acha).
+## Monta as animações "corte", "corte_duplo", "estocada", "dano" e "morte" do herói a partir das folhas do SpriteCook.
+## Corte/corte_duplo: recorta 84x84 → 80x80. Estocada/dano/morte: folhas já em 80x80.
+## Depois rode marcar_pontos_mao.gd (os pontos da mão do corte estão fixos lá, porque as mãos sobem
+## acima da cabeça e a busca automática não as acha).
 ##   godot --headless --path . --script res://tools/montar_golpe_heroi.gd
 ##   godot --headless --path . --import
 ##   godot --headless --path . --script res://tools/marcar_pontos_mao.gd
@@ -26,9 +26,11 @@ const RECORTE := Vector2i(2, 4)
 const VELOCIDADE := 12.0
 ## Folhas do SpriteCook que já vêm em quadros de 80x80: nome -> [arquivo, quadros, quadros por segundo].
 ## O dano toca em ~0,3 s (o recuo do herói); a morte, em ~1,2 s.
+## Estocada: SpriteCook custom (heroi_estocada.png) — lungada de lado, braço à frente.
 const ANIMACOES_PRONTAS := {
 	&"dano": ["heroi_dano_sc.png", 8, 26.0],
 	&"morte": ["heroi_morte_sc.png", 12, 10.0],
+	&"estocada": ["heroi_estocada.png", 8, 12.0],
 }
 
 

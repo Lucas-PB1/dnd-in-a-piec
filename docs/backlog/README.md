@@ -31,7 +31,7 @@ Nenhuma aberta nesta fila. Magia, raças e desvantagem de Furtividade na armadur
 ### Arte / polish
 | Pri | Arquivo | Tam. |
 |---|---|---|
-| 72–73 | `arte/armaduras-visuais`, `estocada-heroi` | P–M |
+| 72 | `arte/armaduras-visuais` | M |
 
 ### Dívidas técnicas
 | Pri | Arquivo |

@@ -34,7 +34,8 @@ const PIXELS_MINIMOS := 3
 ## A mão fica ~18 px acima dos pés e a lâmina tem ~30 px: acima de ~35° a ponta entra no chão.
 const ANGULOS := {
 	&"idle": 35.0, &"walk": 35.0, &"correr": 25.0, &"pulo_subindo": 20.0,
-	&"pulo_topo": 30.0, &"pulo_caindo": 40.0, &"aterrissar": 35.0, &"ataque": 35.0, &"corte": 35.0,
+	&"pulo_topo": 30.0, &"pulo_caindo": 40.0, &"aterrissar": 35.0, &"ataque": 35.0,
+	&"corte": 35.0, &"estocada": 10.0,
 }
 ## Pontos marcados à mão (relativos aos pés) para animações em que a mão sobe acima da cabeça e a busca
 ## por pele não a acha. "corte": golpe de cima do SpriteCook (tools/montar_golpe_heroi.gd); medidos na

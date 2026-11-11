@@ -78,7 +78,7 @@ func atualizar(estado: StringName, velocidade: Vector2, direcao_olhar: int, vel_
 	_sincronizar_mao()
 
 
-## Quadro escolhido pelo tempo do golpe: o corpo sobe e desce junto com a arma, em qualquer arma de corte.
+## Quadro escolhido pelo tempo do golpe: o corpo acompanha a arma (corte ou estocada).
 func _mostrar_quadro_do_golpe() -> void:
 	if animation != animacao_do_golpe:
 		animation = animacao_do_golpe

@@ -30,6 +30,7 @@ func _rodar() -> void:
 	_checar(_jogador.inventario.equipar(_jogador.inventario.itens[0]), "equipa a espada da mochila")
 	await _testar_espada_na_mao()
 	await _testar_golpe_no_chao()
+	await _testar_corpo_do_golpe()
 	await _testar_golpe_de_costas()
 	await _testar_golpe_no_ar()
 	await _testar_dano_rolado()
@@ -103,6 +104,38 @@ func _testar_espada_na_mao() -> void:
 	_checar(not espada.visible, "desequipada, a espada some da mão")
 	_jogador.inventario.equipar(_jogador.inventario.itens[0])
 	await _esperar(2)
+
+
+## Corte anima o corpo com `corte`; estocada (rapieira / espada curta) com `estocada`.
+func _testar_corpo_do_golpe() -> void:
+	var sprite: AnimatedSprite2D = _jogador.get_node("Sprite")
+	_checar(sprite.sprite_frames.has_animation(&"estocada"), "heroi_frames tem a animação estocada")
+	# A espada curta inicial é rastro (= estocada). Para o corte, equipa uma longa.
+	var longa := (load("res://data/armas/espada_longa.tres") as Arma).duplicate() as Arma
+	_jogador.inventario.adicionar(longa)
+	_checar(_jogador.inventario.equipar(longa) and longa.efeito == Arma.EFEITO_CORTE, "equipa espada longa (corte)")
+	await _colocar_ao_lado_do_boneco()
+	await _golpear()
+	_checar(await _esperar_animacao_do_golpe(&"corte"), "espada de corte toca o corpo `corte`")
+	await _esperar_golpe_acabar()
+	var rapieira := (load("res://data/armas/rapieira.tres") as Arma).duplicate() as Arma
+	_jogador.inventario.adicionar(rapieira)
+	_checar(_jogador.inventario.equipar(rapieira), "equipa a rapieira")
+	await _colocar_ao_lado_do_boneco()
+	await _golpear()
+	_checar(await _esperar_animacao_do_golpe(&"estocada"), "rapieira toca o corpo `estocada`")
+	await _esperar_golpe_acabar()
+	_checar(_jogador.inventario.equipar(longa), "volta a espada longa")
+
+
+## Espera o sprite entrar na animação de corpo do golpe (até ~0,5 s).
+func _esperar_animacao_do_golpe(nome: StringName) -> bool:
+	var sprite: AnimatedSprite2D = _jogador.get_node("Sprite")
+	for i in 30:
+		if _jogador.esta_golpeando() and sprite.animation == nome:
+			return true
+		await physics_frame
+	return false
 
 
 func _testar_golpe_de_costas() -> void:

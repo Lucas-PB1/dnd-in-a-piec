@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Estocada do herói: corpo `estocada` (`heroi_estocada.png`, SpriteCook, 20 créditos) nas armas de rastro (rapieira, lança…); mesmo pipeline do corte. Teste em `teste_ataque`.
 - Baú do arsenal: animação de abrir/fechar com arte CC0 do **r0ar** (`bau_abrindo.png`); fecha a tampa ao sair da tela.
 - Ladrilhos de cenário CC0: tilesets Gothicvania **Swamp** e **Cemetery** (pântano/ruína), **Buch** DB32 Cave (mina–covil); atlas com 6 temas; fases 7–10 no tema caverna.
 - Efeitos de golpe: arte **Kenney Particle Pack** (CC0) no lugar do desenho por script — arco (`slash`), rastro (`trace`), impacto (`circle`); montador `tools/montar_efeitos_golpe.gd`.

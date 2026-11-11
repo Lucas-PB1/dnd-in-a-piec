@@ -55,19 +55,19 @@ const FAISCAS_ATIVAR_SURTO := 18
 const FAISCAS_SEGUNDO_GOLPE := 22
 const FAISCAS_FOLEGO := 14
 const TEMPO_ANEL_FOLEGO := 0.7
-## Golpe de corte com o corpo animado (features/jogador/sprites/heroi_corte.png): 8 quadros; os 5 primeiros
-## preparam (os punhos sobem acima da cabeça) e o 6º (índice 5) é quando os punhos descem à frente.
+## Golpes com corpo animado (corte / estocada / corte_duplo): 8 quadros cada.
+## Corte: os 5 primeiros preparam (punhos sobem) e o 6º (índice 5) é quando descem à frente.
+## Estocada: lungada; o 5º quadro (índice 4) é a extensão máxima do braço.
 ## Tempo (s) da animação de morte antes da tela "Você caiu!" (12 quadros a 10 por segundo, e um respiro deitado).
 const DURACAO_MORTE := 1.4
 ## Quanto o herói desliza para o lado ao cair (px/s por segundo): ele freia e fica deitado onde caiu.
 const FREIO_DA_MORTE := 900.0
-const ANIMACAO_CORTE := &"corte"
 ## Com duas armas, a da frente descansa erguida (graus; negativo = ponta para cima), como a de trás.
 const ANGULO_GUARDA_DUPLA := -25.0
-const QUADROS_CORTE := 8
+const QUADROS_CORPO_GOLPE := 8
 const QUADRO_DO_ACERTO_CORTE := 5
-## Golpe extra das duas armas: o corpo (`corte_duplo`, 8 quadros) estica o braço até o quadro 3 e volta à guarda.
-const ANIMACAO_CORTE_DUPLO := &"corte_duplo"
+const QUADRO_DO_ACERTO_ESTOCADA := 4
+## Golpe extra das duas armas: o corpo (`corte_duplo`) estica o braço até o quadro 3 e volta à guarda.
 const QUADRO_DO_ACERTO_CORTE_DUPLO := 3
 ## O anel da ativação do Surto de Ação dura meio segundo.
 const DURACAO_ANEL_SURTO := 0.5
@@ -199,11 +199,9 @@ func _physics_process(delta: float) -> void:
 	_medir_corrida(delta)
 	_animacao.mao_por_cima = not _ataque.mao_fora_do_lugar()
 	_animacao.mirando = nome_estado() == &"Arremessando" and disparo_na_mao()
-	var corte := ANIMACAO_CORTE_DUPLO if _ataque.golpe_cruzado() else ANIMACAO_CORTE
-	_animacao.animacao_do_golpe = corte if _ataque.corpo_acompanha() else &""
+	_animacao.animacao_do_golpe = _ataque.animacao_do_corpo()
 	if _ataque.corpo_acompanha():
-		var acerto := QUADRO_DO_ACERTO_CORTE_DUPLO if _ataque.golpe_cruzado() else QUADRO_DO_ACERTO_CORTE
-		_animacao.quadro_do_golpe = _ataque.quadro_do_corpo(QUADROS_CORTE, acerto)
+		_animacao.quadro_do_golpe = _ataque.quadro_do_corpo(QUADROS_CORPO_GOLPE, _quadro_do_acerto_do_corpo())
 	_animacao.atualizar(_maquina.nome_estado_atual(), velocity, direcao_olhar, velocidade_andar(), velocidade_corrida())
 	var angulo_guarda := ANGULO_GUARDA_DUPLA if arma_secundaria() != null else _animacao.angulo_descanso()
 	_ataque.seguir_mao(_animacao.ponto_da_mao(), angulo_guarda, direcao_olhar, arma_atual())
@@ -1244,6 +1242,15 @@ func _ao_gastar_efeito(efeito: StringName) -> void:
 
 func _passar_recargas_de_talento(delta: float) -> void:
 	_recargas.passar(delta)
+
+## Quadro em que o corpo "acerta" na animação do golpe atual (índice 0).
+func _quadro_do_acerto_do_corpo() -> int:
+	if _ataque.golpe_cruzado():
+		return QUADRO_DO_ACERTO_CORTE_DUPLO
+	if _ataque.animacao_do_corpo() == &"estocada":
+		return QUADRO_DO_ACERTO_ESTOCADA
+	return QUADRO_DO_ACERTO_CORTE
+
 
 ## Corte Duplo (maestria) numa das armas leves: o golpe extra faz parte da ação de Ataque,
 ## sem gastar a ação bônus (sai em todo combo).

@@ -335,6 +335,12 @@
       "sha12": "",
       "label": "wight_drenar",
       "file": "features/wight/sprites/wight_drenar.png"
+    },
+    {
+      "asset_id": "ce8bac85-ea83-4d67-88be-eabbc5850a4b",
+      "sha12": "27e7a2951f1c",
+      "label": "heroi_estocada (8 quadros 80x80, custom estocada, 20 créditos; ligado às armas de rastro)",
+      "file": "features/jogador/sprites/heroi_estocada.png"
     }
   ]
 }
