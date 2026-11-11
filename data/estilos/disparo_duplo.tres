@@ -6,6 +6,6 @@
 script = ExtResource("1_daduk")
 id = &"disparo_duplo"
 nome = "Disparo Duplo"
-descricao = "Com arco ou besta: o 1º tiro sai com desvantagem e libera um 2º tiro imediato (K de novo), também com desvantagem, sem gastar a ação bônus."
+descricao = "Com arco ou besta: o 1º tiro sai com desvantagem e libera um 2º tiro imediato (J de novo), também com desvantagem, sem gastar a ação bônus."
 fonte = "Grim Hollow"
 efeito = 13

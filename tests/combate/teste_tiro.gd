@@ -1,5 +1,5 @@
 extends TesteBase
-## Tiro à distância: K gasta munição e a arma fica; a mira sobe o arco; longe e perto
+## Tiro à distância: J gasta munição e a arma fica; a mira sobe o arco; longe e perto
 ## dão desvantagem; os dois talentos de tiro tiram a parte que é deles.
 ## godot --headless --debug --path . --script res://tests/combate/teste_tiro.gd
 
@@ -54,7 +54,7 @@ func _testar_mao_da_besta() -> void:
 func _testar_disparo(cena: Node, jogador: Jogador) -> void:
 	var funda := _equipar(jogador, "funda", "pedra_funda", 3)
 	await _olhar_esquerda(jogador)
-	await _toque_k()
+	await _toque_j()
 	var pedras := jogador.inventario.item_chamado("Pedra de Funda")
 	_checar(jogador.inventario.quantidade_de(pedras) == 2 and jogador.inventario.esta_equipado(funda),
 		"o tiro gasta 1 pedra e a funda continua na mão")
@@ -70,20 +70,31 @@ func _testar_disparo(cena: Node, jogador: Jogador) -> void:
 func _testar_sem_municao(jogador: Jogador) -> void:
 	var pedras := jogador.inventario.item_chamado("Pedra de Funda")
 	jogador.inventario.descartar(pedras)
-	await _toque_k()
+	await _toque_j()
 	_checar(jogador.nome_estado() != &"Arremessando" and jogador.inventario.item_chamado("Pedra de Funda") == null,
 		"sem munição não dispara")
 
 
 func _testar_j_nao_corta(jogador: Jogador) -> void:
+	_equipar(jogador, "funda", "pedra_funda", 3)
 	await _no_chao(jogador)
 	while not jogador.pode_golpear():
 		await physics_frame
-	Input.action_press("atacar")
+	var pedras := jogador.inventario.item_chamado("Pedra de Funda")
+	var antes := jogador.inventario.quantidade_de(pedras)
+	await _toque_j()
+	_checar(jogador.inventario.quantidade_de(pedras) == antes - 1 and jogador.nome_estado() != &"Atacando",
+		"J com arma à distância dispara (não corta)")
+	while not jogador.pode_golpear():
+		await physics_frame
+	antes = jogador.inventario.quantidade_de(pedras)
+	Input.action_press("arremessar")
 	await physics_frame
-	Input.action_release("atacar")
 	await physics_frame
-	_checar(jogador.nome_estado() != &"Atacando", "J não dá corte com arma à distância")
+	Input.action_release("arremessar")
+	await physics_frame
+	_checar(jogador.inventario.quantidade_de(pedras) == antes and jogador.nome_estado() != &"Arremessando",
+		"K não dispara arma de disparo")
 
 
 func _testar_mira(cena: Node, jogador: Jogador) -> void:
@@ -130,13 +141,13 @@ func _testar_perto_e_talentos(cena: Node, jogador: Jogador) -> void:
 	await _no_chao(jogador)
 	while not jogador.pode_golpear():
 		await physics_frame
-	await _toque_k()
+	await _toque_j()
 	_checar(not golpes.is_empty() and golpes[0].desvantagem, "inimigo a 5 pés: o tiro sai com desvantagem")
 	jogador.ficha.talentos.append(Ficha.TALENTO_ESPECIALISTA_EM_BESTA)
 	_equipar(jogador, "besta_mao", "virote", 4)
 	while not jogador.pode_golpear():
 		await physics_frame
-	await _toque_k()
+	await _toque_j()
 	_checar(golpes.size() >= 2 and not golpes[1].desvantagem, "Especialista em Besta: besta de perto não leva desvantagem")
 
 
@@ -146,19 +157,19 @@ func _testar_tiro_extra(jogador: Jogador) -> void:
 	while not jogador.pode_golpear():
 		await physics_frame
 	var antes := jogador.inventario.quantidade_de(jogador.inventario.item_chamado("Virote"))
-	Input.action_press("arremessar")
+	Input.action_press("atacar")
 	await physics_frame
 	await physics_frame
-	Input.action_release("arremessar")
+	Input.action_release("atacar")
 	await physics_frame
-	Input.action_press("arremessar")
+	Input.action_press("atacar")
 	await physics_frame
 	await physics_frame
-	Input.action_release("arremessar")
+	Input.action_release("atacar")
 	await physics_frame
 	var virotes := jogador.inventario.item_chamado("Virote")
 	_checar(jogador.inventario.quantidade_de(virotes) == antes - 2 and not jogador.acao_bonus_livre(),
-		"Especialista em Besta: o segundo K gasta a ação bônus e outro virote")
+		"Especialista em Besta: o segundo J gasta a ação bônus e outro virote")
 
 
 func _equipar(jogador: Jogador, arma_id: String, municao_id: String, quantidade: int) -> Arma:
@@ -220,7 +231,7 @@ func _testar_curva(cena: Node) -> void:
 		and flecha_curto.velocity.length() > pedra_voo.velocity.length(),
 		"pelo alcance longo do livro: arco longo mais rápido que o curto, e o curto mais que a funda")
 	var toque := _soltar(cena, funda, pedra, 0.0, 14)
-	_checar(toque.velocity.length() < pedra_voo.velocity.length(), "toque no K sai mais fraco que a carga cheia")
+	_checar(toque.velocity.length() < pedra_voo.velocity.length(), "toque no J sai mais fraco que a carga cheia")
 	for voo in [pedra_voo, bala_voo, lenta, rapida, flecha_longo, flecha_curto, toque]:
 		voo.free()
 
@@ -238,7 +249,7 @@ func _testar_gesto(cena: Node, jogador: Jogador) -> void:
 	await _olhar_esquerda(jogador)
 	while not jogador.pode_golpear():
 		await physics_frame
-	Input.action_press("arremessar")
+	Input.action_press("atacar")
 	for i in 5:
 		await physics_frame
 		if jogador.nome_estado() == &"Arremessando":
@@ -247,7 +258,7 @@ func _testar_gesto(cena: Node, jogador: Jogador) -> void:
 	for i in 50:
 		await physics_frame
 	_checar(_indice_do_quadro(jogador) == AtaqueJogador.PASSOS_DA_CARGA - 1, "segurar até o fim, com Destreza 14, mostra o quadro cheio")
-	Input.action_release("arremessar")
+	Input.action_release("atacar")
 	await physics_frame
 	_checar(_indice_do_quadro(jogador) == AtaqueJogador.QUADRO_SOLTURA, "soltar mostra a soltura antes de voltar ao descanso")
 	for i in 30:
@@ -258,16 +269,16 @@ func _testar_gesto(cena: Node, jogador: Jogador) -> void:
 	jogador.ficha.atributos[Atributos.DESTREZA] = 8
 	while not jogador.pode_golpear():
 		await physics_frame
-	Input.action_press("arremessar")
+	Input.action_press("atacar")
 	for i in 100:
 		await physics_frame
 	_checar(_indice_do_quadro(jogador) < AtaqueJogador.PASSOS_DA_CARGA - 1, "Destreza 8 não chega no quadro cheio")
-	Input.action_release("arremessar")
+	Input.action_release("atacar")
 	await physics_frame
 	var tiro := _achar_voo(cena)
 	var referencia := _soltar(cena, arco, load("res://data/municoes/flecha.tres"), jogador.teto_da_carga(), 8)
 	_checar(tiro != null and absf(absf(tiro.velocity.x) - absf(referencia.velocity.x)) < 8.0,
-		"segurar o K com Destreza 8 para no teto, antes do alcance longo")
+		"segurar o J com Destreza 8 para no teto, antes do alcance longo")
 	referencia.free()
 	if tiro:
 		tiro.free()
@@ -303,11 +314,11 @@ func _achar_voo(cena: Node) -> ArmaArremessada:
 	return null
 
 
-func _toque_k() -> void:
-	Input.action_press("arremessar")
+func _toque_j() -> void:
+	Input.action_press("atacar")
 	await physics_frame
 	await physics_frame
-	Input.action_release("arremessar")
+	Input.action_release("atacar")
 	await physics_frame
 
 

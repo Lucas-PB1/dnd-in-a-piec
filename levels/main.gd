@@ -1004,7 +1004,8 @@ func _atualizar_botoes_toque() -> void:
 	_controles_toque.mostrar_acao(&"dado_de_vida", _jogador.ficha.dados_de_vida() > 0)
 	_controles_toque.mostrar_acao(&"veneno", _jogador.veneno_visivel_na_ui())
 	_controles_toque.mostrar_acao(&"folego", _jogador.usos_folego_total() > 0)
-	_controles_toque.mostrar_acao(&"arremessar", _jogador.inventario.equipado(Item.ESPACO_MAO) != null)
+	var na_mao := _jogador.inventario.equipado(Item.ESPACO_MAO) as Arma
+	_controles_toque.mostrar_acao(&"arremessar", na_mao != null and na_mao.arremessavel())
 	_controles_toque.definir_interacao(_rotulo_de_interacao())
 	_acender_habilidades()
 

@@ -105,7 +105,7 @@ func arremessavel() -> bool:
 	return arremesso_normal_pes > 0.0
 
 
-## Arma à distância: K dispara, a arma fica na mão e gasta munição.
+## Arma à distância: J dispara, a arma fica na mão e gasta munição.
 func disparavel() -> bool:
 	return disparo_normal_pes > 0.0
 

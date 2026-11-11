@@ -382,34 +382,34 @@ func tempo_para_proximo_golpe() -> float:
 	return maxf(intervalo_entre_golpes() - _tempo_desde_golpe, 0.0)
 
 
-## Apertou atacar há pouco (buffer) e já pode golpear. Arma à distância não corta: o tiro é o K.
+## Apertou atacar há pouco (buffer) e já pode agir. Com arma de disparo, J inicia o tiro.
+## Sem munição, avisa e não entra na pose.
 func pediu_ataque() -> bool:
+	if _contador_buffer_ataque <= 0.0 or not pode_golpear():
+		return false
 	var na_mao := inventario.equipado(Item.ESPACO_MAO) as Arma
 	if na_mao and na_mao.disparavel():
-		return false
-	return _contador_buffer_ataque > 0.0 and pode_golpear()
-
-
-## Apertou arremessar há pouco, já pode agir e a arma da mão arremessa ou dispara.
-## Sem munição, avisa e não entra na pose.
-func pediu_arremesso() -> bool:
-	if _contador_buffer_arremesso <= 0.0 or not pode_golpear():
-		return false
-	var arma := _arma_do_k()
-	if arma == null:
-		return false
-	if arma.disparavel() and not _tem_municao(arma):
-		avisar(AVISO_SEM_MUNICAO)
-		_contador_buffer_arremesso = 0.0
-		return false
+		if not _tem_municao(na_mao):
+			avisar(AVISO_SEM_MUNICAO)
+			_contador_buffer_ataque = 0.0
+			return false
+		return true
 	return true
 
 
-## Segundo K logo depois do tiro: Besta de Mão (ação bônus) ou Disparo Duplo (estilo, sem ação bônus).
-func quer_disparo_extra() -> bool:
-	if _contador_buffer_arremesso <= 0.0 or ficha == null:
+## Apertou arremessar (K) há pouco: só arma de arremesso (o disparo ficou no J).
+func pediu_arremesso() -> bool:
+	if _contador_buffer_arremesso <= 0.0 or not pode_golpear():
 		return false
-	var arma := _arma_do_k()
+	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
+	return arma != null and arma.arremessavel() and not arma.disparavel()
+
+
+## Segundo J logo depois do tiro: Besta de Mão (ação bônus) ou Disparo Duplo (estilo, sem ação bônus).
+func quer_disparo_extra() -> bool:
+	if _contador_buffer_ataque <= 0.0 or ficha == null:
+		return false
+	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
 	if arma == null or not arma.disparavel() or not _tem_municao(arma):
 		return false
 	if _estilos.disparo_duplo_pendente and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DISPARO_DUPLO):
@@ -708,9 +708,11 @@ func iniciar_golpe_extra() -> void:
 	_comecar_golpe(true)
 
 
-## K ainda está apertado (carregando o arremesso)?
+## Ainda segura a carga: J no disparo, K no arremesso.
 func segurando_arremesso() -> bool:
-	return Input.is_action_pressed("arremessar")
+	if disparo_na_mao():
+		return Input.is_action_pressed(&"atacar")
+	return Input.is_action_pressed(&"arremessar")
 
 
 ## Pose de carregar. No arremesso, `fracao` de 0 a 1 inclina a arma. No disparo, é a força
@@ -739,18 +741,18 @@ func disparo_na_mao() -> bool:
 	return arma != null and arma.disparavel() and ficha != null
 
 
-## Enquanto carrega o K, W mira e não vira pulo.
+## Enquanto carrega o gesto, W mira e não vira pulo.
 func anular_buffer_pulo() -> void:
 	_contador_buffer = 0.0
 
 
-## Solta o K. Arremesso: a arma sai da mão. Disparo: a arma fica e gasta 1 munição.
+## Solta a carga. Arremesso: a arma sai da mão. Disparo: a arma fica e gasta 1 munição.
 ## `forca` de 0 (alcance normal) a 1 (alcance longo). `mira` soma graus para cima no arco.
 ## `extra` = o segundo tiro da Besta de Mão (ação bônus).
 ## Sem ninguém escutando o sinal, nada é gasto.
 ## Contrato: a `main` conecta `arma_arremessada` em `_ready`. Testes headless sem main não arremessam.
 func lancar_arma(forca: float = 0.0, mira: float = 0.0, extra: bool = false) -> void:
-	var arma := _arma_do_k()
+	var arma := _arma_do_gesto()
 	if arma == null or not arma_arremessada.has_connections():
 		return
 	if arma.disparavel():
@@ -1395,7 +1397,7 @@ const MUDANCA_TATICA_SEGUNDOS := 3.0
 const COR_VENENO := Color(0.55, 0.9, 0.4)
 
 
-func _arma_do_k() -> Arma:
+func _arma_do_gesto() -> Arma:
 	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
 	if arma and (arma.arremessavel() or arma.disparavel()):
 		return arma
@@ -1418,7 +1420,7 @@ func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
 	var pilha := _gastar_municao(arma)
 	if pilha == null:
 		avisar(AVISO_SEM_MUNICAO)
-		_contador_buffer_arremesso = 0.0
+		_contador_buffer_ataque = 0.0
 		return
 	var golpe := _criar_golpe_de(arma, false)
 	if _inimigo_em_5_pes() and not _besta_ignora_perto(arma) and not _artilheiro_ignora_perto():
@@ -1447,6 +1449,7 @@ func _marcar_ataque(extra: bool, manter_pose: bool, gastar_acao_bonus: bool = tr
 		_tempo_desde_acao_bonus = 0.0
 	elif not extra:
 		_tempo_desde_golpe = 0.0
+	_contador_buffer_ataque = 0.0
 	_contador_buffer_arremesso = 0.0
 	if not manter_pose:
 		_ataque.carregar_arremesso(-1.0)

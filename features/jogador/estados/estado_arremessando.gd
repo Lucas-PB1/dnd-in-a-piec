@@ -1,17 +1,16 @@
 extends EstadoJogador
-## K em duas fases. CARREGANDO: a força sobe (toque = alcance normal; segurar = o teto da
-## pessoa) e W/S miram. No arremesso o teto é o alcance longo em 0,6 s e a arma inclina.
-## No disparo a força é a velocidade (a da arma no máximo), a Destreza limita o teto e o
-## tempo, e a arma troca de quadro. W não pula. Sem mexer na mira, o arremesso cai no chão
-## na distância da força e o disparo sai reto (e cai pelo peso da munição). SOLTANDO:
-## arremesso solta a arma; disparo gasta munição, mostra a soltura e a arma fica. No chão
-## o herói freia.
+## Carga em duas fases (J = disparo, K = arremesso). CARREGANDO: a força sobe (toque =
+## alcance normal; segurar = o teto) e W/S miram. No arremesso o teto é o alcance longo
+## em 0,6 s e a arma inclina. No disparo a força é a velocidade, a Destreza limita o teto
+## e o tempo, e a arma troca de quadro. W não pula. Sem mexer na mira, o arremesso cai no
+## chão na distância da força e o disparo sai reto. SOLTANDO: arremesso solta a arma;
+## disparo gasta munição, mostra a soltura e a arma fica. No chão o herói freia.
 
 enum Etapa { CARREGANDO, SOLTANDO }
 
 ## Tempo do gesto depois de soltar (s). O intervalo até o próximo ataque é o da iniciativa.
 const DURACAO_SOLTURA := 0.2
-## Graus por segundo ao mirar com W (cima) ou S (baixo) enquanto segura o K.
+## Graus por segundo ao mirar com W (cima) ou S (baixo) enquanto segura a carga.
 const VELOCIDADE_MIRA := 140.0
 ## Limite da mira (graus somados ao arco; positivo = para cima).
 const MIRA_CIMA := 70.0

@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo |
 |---|---|
-| 19 | `heroi/disparo-no-botao-ataque` |
 | 20 | `heroi/placar-kills-timer` |
 | 23 | `fases/tutorial` |
 | 24 | `fases/interacoes-e-afastadas` |

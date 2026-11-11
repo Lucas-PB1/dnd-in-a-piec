@@ -13,15 +13,15 @@ func configurar(dono: Node) -> void:
 	jogador = dono as Jogador
 
 
-## Se apertou atacar, troca para Atacando e retorna true.
+## Se apertou atacar: disparo vai para Arremessando; corpo a corpo para Atacando.
 func _foi_atacar() -> bool:
-	if jogador.pediu_ataque():
-		trocar_para.emit(&"Atacando")
-		return true
-	return false
+	if not jogador.pediu_ataque():
+		return false
+	trocar_para.emit(&"Arremessando" if jogador.disparo_na_mao() else &"Atacando")
+	return true
 
 
-## Se apertou arremessar com uma arma que arremessa, troca para Arremessando.
+## Se apertou arremessar com arma de arremesso (não de disparo), troca para Arremessando.
 func _foi_arremessar() -> bool:
 	if jogador.pediu_arremesso():
 		trocar_para.emit(&"Arremessando")

@@ -82,7 +82,7 @@ const DESTREZA_REFERENCIA := 14
 const TEMPO_CARGA_DISPARO := 0.6
 ## Força da carga (0 = mínima, 1 = cheia) com modificador de Destreza −1.
 const FORCA_MINIMA_DA_CARGA := 0.2
-## Modificador a partir do qual segurar o K chega na força cheia.
+## Modificador a partir do qual segurar a carga chega na força cheia.
 const MOD_CARGA_CHEIA := 2
 ## Tiro longo sem a desvantagem de distância.
 const TALENTO_ATIRADOR_DE_ELITE := &"atirador_de_elite"
