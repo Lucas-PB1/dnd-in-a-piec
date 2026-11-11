@@ -10,9 +10,9 @@ extends SceneTree
 const PASTA := "res://data/armaduras/"
 const PASTA_FONTE := "res://assets/armaduras/fonte_idylwild/"
 const PASTA_ICONES := "res://assets/armaduras/icones/"
-## Ladrilhos de textura das roupas (8x8), repetidos pelo shader no corpo do herói.
+## Ladrilhos de textura das roupas (16x16), repetidos pelo shader no corpo do herói.
 const PASTA_TEXTURAS := "res://assets/armaduras/texturas/"
-const TAMANHO_LADRILHO := 8
+const TAMANHO_LADRILHO := 16
 const COR_TACHA := Color(0.86, 0.8, 0.58)
 const TAMANHO_ICONE := 16
 ## Escudos: a mesma arte serve de ícone e de escudo na mão do herói.
@@ -169,7 +169,7 @@ func _icone(arquivo: String) -> Image:
 
 
 # --- Ladrilhos da roupa ------------------------------------------------------------
-# 8x8, nas cores da armadura. O shader repete o ladrilho na túnica e guarda a luz da arte.
+# 16x16, nas cores da armadura. O shader repete o ladrilho na túnica, com contraste/brilho.
 # Não há peça por cima do corpo: a armadura é só essa pintura.
 
 func _textura_corpo(arquivo: String, d: Array) -> Image:
@@ -186,9 +186,10 @@ func _pelo(cor: Color) -> Image:
 	var img := _ladrilho(Armadura.Padrao.LISO, cor)
 	var claro := cor.lightened(0.22)
 	var escuro := cor.darkened(0.38)
-	for p in [Vector2i(1, 2), Vector2i(1, 3), Vector2i(4, 5), Vector2i(4, 6), Vector2i(6, 1), Vector2i(6, 2)]:
+	for p in [Vector2i(2, 4), Vector2i(2, 5), Vector2i(8, 10), Vector2i(8, 11), Vector2i(12, 2), Vector2i(12, 3),
+			Vector2i(5, 13), Vector2i(14, 8)]:
 		img.set_pixelv(p, escuro)
-	for p in [Vector2i(1, 1), Vector2i(4, 4), Vector2i(6, 0)]:
+	for p in [Vector2i(2, 3), Vector2i(8, 9), Vector2i(12, 1), Vector2i(5, 12)]:
 		img.set_pixelv(p, claro)
 	return img
 
@@ -197,82 +198,112 @@ func _pelo(cor: Color) -> Image:
 func _ladrilho_aneis(cor: Color) -> Image:
 	var couro := Color(0.46, 0.32, 0.22).lerp(cor, 0.2)
 	var img := _ladrilho(Armadura.Padrao.LISO, couro)
-	_anel_solto(img, Vector2i(2, 2), cor)
-	_anel_solto(img, Vector2i(6, 5), cor)
+	_anel_solto(img, Vector2i(4, 4), cor)
+	_anel_solto(img, Vector2i(11, 10), cor)
+	_anel_solto(img, Vector2i(12, 3), cor)
 	return img
 
 
 func _ladrilho(padrao: Armadura.Padrao, cor: Color) -> Image:
 	var img := Image.create(TAMANHO_LADRILHO, TAMANHO_LADRILHO, false, Image.FORMAT_RGBA8)
-	var claro := cor.lightened(0.25)
-	var escuro := cor.darkened(0.35)
+	var claro := cor.lightened(0.28)
+	var escuro := cor.darkened(0.4)
+	var sombra := escuro.darkened(0.25)
 	img.fill(cor)
 	match padrao:
-		Armadura.Padrao.MALHA: _malha(img, cor, claro, escuro)
-		Armadura.Padrao.TACHAS: _couro(img, claro, escuro); _tachas(img)
-		Armadura.Padrao.PLACAS: _placas(img, cor, claro, escuro)
-		Armadura.Padrao.ACOLCHOADO: _acolchoado(img, claro, escuro)
-		Armadura.Padrao.ESCAMAS: _escamas(img, cor, claro, escuro)
-		_: _couro(img, claro, escuro)
+		Armadura.Padrao.MALHA:
+			_malha(img, cor, claro, escuro, sombra)
+		Armadura.Padrao.TACHAS:
+			_couro(img, claro, escuro, sombra)
+			_tachas(img)
+		Armadura.Padrao.PLACAS:
+			_placas(img, cor, claro, escuro, sombra)
+		Armadura.Padrao.ACOLCHOADO:
+			_acolchoado(img, claro, escuro)
+		Armadura.Padrao.ESCAMAS:
+			_escamas(img, cor, claro, escuro)
+		_:
+			_couro(img, claro, escuro, sombra)
 	return img
 
 
-## Couro: grão escuro salpicado e uma costura clara pontilhada.
-func _couro(img: Image, claro: Color, escuro: Color) -> void:
-	for p in [Vector2i(2, 5), Vector2i(5, 2), Vector2i(1, 1)]:
+## Couro: grão salpicado, sombra e costura na borda.
+func _couro(img: Image, claro: Color, escuro: Color, sombra: Color) -> void:
+	for p in [Vector2i(2, 3), Vector2i(5, 8), Vector2i(9, 4), Vector2i(12, 11), Vector2i(4, 13), Vector2i(14, 6)]:
 		img.set_pixelv(p, escuro)
-	for y in range(0, TAMANHO_LADRILHO, 2):
-		img.set_pixel(7, y, claro)
-
-
-## Tachas: dois rebites dourados com brilho em cima.
-func _tachas(img: Image) -> void:
-	for canto in [Vector2i(1, 2), Vector2i(5, 6)]:
-		img.fill_rect(Rect2i(canto, Vector2i(2, 2)), COR_TACHA.darkened(0.2))
-		img.set_pixelv(canto, COR_TACHA.lightened(0.3))
-
-
-## Placas: faixa com borda brilhante em cima, sombra e emenda embaixo, dois rebites.
-func _placas(img: Image, cor: Color, claro: Color, escuro: Color) -> void:
-	var faixas := [claro, cor.lightened(0.1), cor, cor, cor.darkened(0.1), cor.darkened(0.2), escuro, escuro.darkened(0.3)]
+	for p in [Vector2i(3, 2), Vector2i(10, 3), Vector2i(7, 10)]:
+		img.set_pixelv(p, sombra)
 	for y in TAMANHO_LADRILHO:
-		img.fill_rect(Rect2i(0, y, TAMANHO_LADRILHO, 1), faixas[y])
-	for x in [1, 6]:
-		img.set_pixel(x, 2, claro.lightened(0.3))
-		img.set_pixel(x, 3, escuro)
+		if y % 3 == 0:
+			img.set_pixel(15, y, claro)
+		if y % 4 == 1:
+			img.set_pixel(0, y, sombra)
 
 
-## Malha: anéis de 4x4 com o furo escuro; fileiras desencontradas.
-func _malha(img: Image, cor: Color, claro: Color, escuro: Color) -> void:
-	img.fill(escuro.darkened(0.2))
-	for celula_y in 2:
-		for celula_x in 2:
-			var origem := Vector2i(celula_x * 4 + (2 if celula_y == 1 else 0), celula_y * 4)
-			for p in [Vector2i(1, 1), Vector2i(2, 1), Vector2i(1, 2), Vector2i(2, 2)]:
-				img.set_pixelv(_no_ladrilho(origem + p), escuro.darkened(0.45))
-			for p in [Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(0, 2)]:
-				img.set_pixelv(_no_ladrilho(origem + p), claro)
-			for p in [Vector2i(3, 1), Vector2i(3, 2), Vector2i(1, 3), Vector2i(2, 3)]:
-				img.set_pixelv(_no_ladrilho(origem + p), cor)
+## Tachas: quatro rebites dourados com brilho.
+func _tachas(img: Image) -> void:
+	for canto in [Vector2i(2, 3), Vector2i(10, 4), Vector2i(4, 11), Vector2i(12, 12)]:
+		img.fill_rect(Rect2i(canto, Vector2i(2, 2)), COR_TACHA.darkened(0.2))
+		img.set_pixelv(canto, COR_TACHA.lightened(0.35))
 
 
-## Acolchoado: costuras em losango e um ponto claro no meio de cada gomo.
+## Placas: duas faixas com borda brilhante, emenda e rebites.
+func _placas(img: Image, cor: Color, claro: Color, escuro: Color, sombra: Color) -> void:
+	for y in TAMANHO_LADRILHO:
+		var tom: Color
+		if y < 2:
+			tom = claro.lightened(0.2)
+		elif y < 7:
+			tom = cor.lightened(0.05) if y < 4 else cor
+		elif y < 9:
+			tom = sombra
+		elif y < 14:
+			tom = cor.darkened(0.05) if y > 11 else cor.lightened(0.02)
+		else:
+			tom = escuro
+		img.fill_rect(Rect2i(0, y, TAMANHO_LADRILHO, 1), tom)
+	for x in [2, 8, 13]:
+		img.set_pixel(x, 3, Color(1, 1, 1).lerp(claro, 0.3))
+		img.set_pixel(x, 4, escuro)
+		img.set_pixel(x, 11, Color(1, 1, 1).lerp(claro, 0.3))
+		img.set_pixel(x, 12, escuro)
+	for x in TAMANHO_LADRILHO:
+		img.set_pixel(x, 7, sombra)
+		img.set_pixel(x, 8, claro.darkened(0.15))
+
+
+## Malha: anéis 4x4 em grade 4×4, fileiras desencontradas.
+func _malha(img: Image, cor: Color, claro: Color, escuro: Color, sombra: Color) -> void:
+	img.fill(sombra)
+	for fila in 4:
+		for col in 4:
+			var origem := Vector2i(col * 4 + (2 if fila % 2 == 1 else 0), fila * 4)
+			for p in [Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(3, 1),
+					Vector2i(0, 2), Vector2i(3, 2), Vector2i(1, 3), Vector2i(2, 3)]:
+				img.set_pixelv(_no_ladrilho(origem + p), claro if p.y == 0 else cor)
+			img.set_pixelv(_no_ladrilho(origem + Vector2i(1, 1)), sombra)
+			img.set_pixelv(_no_ladrilho(origem + Vector2i(2, 1)), sombra)
+			img.set_pixelv(_no_ladrilho(origem + Vector2i(1, 2)), escuro)
+			img.set_pixelv(_no_ladrilho(origem + Vector2i(2, 2)), escuro)
+
+
+## Acolchoado: losangos e pontos claros nos gomos.
 func _acolchoado(img: Image, claro: Color, escuro: Color) -> void:
 	for y in TAMANHO_LADRILHO:
 		for x in TAMANHO_LADRILHO:
-			if (x + y) % TAMANHO_LADRILHO == 0 or (x - y + TAMANHO_LADRILHO) % TAMANHO_LADRILHO == 0:
+			if (x + y) % 8 == 0 or (x - y + 16) % 8 == 0:
 				img.set_pixel(x, y, escuro)
-	img.set_pixel(4, 2, claro)
-	img.set_pixel(4, 6, claro)
+	for p in [Vector2i(4, 4), Vector2i(12, 4), Vector2i(4, 12), Vector2i(12, 12)]:
+		img.set_pixelv(p, claro)
 
 
-## Escamas: fileiras de escamas arredondadas, desencontradas.
+## Escamas: fileiras desencontradas de escamas maiores.
 func _escamas(img: Image, cor: Color, claro: Color, escuro: Color) -> void:
 	img.fill(escuro)
 	var forma := [[1, 2, claro], [0, 3, cor], [0, 3, cor.darkened(0.1)], [1, 2, escuro.darkened(0.2)]]
-	for fileira in 2:
-		for coluna in 2:
-			var origem := Vector2i(coluna * 4 + (2 if fileira == 1 else 0), fileira * 4)
+	for fileira in 4:
+		for coluna in 4:
+			var origem := Vector2i(coluna * 4 + (2 if fileira % 2 == 1 else 0), fileira * 4)
 			for dy in forma.size():
 				for dx in range(forma[dy][0], forma[dy][1] + 1):
 					img.set_pixelv(_no_ladrilho(origem + Vector2i(dx, dy)), forma[dy][2])
@@ -282,9 +313,13 @@ func _no_ladrilho(p: Vector2i) -> Vector2i:
 	return Vector2i(posmod(p.x, TAMANHO_LADRILHO), posmod(p.y, TAMANHO_LADRILHO))
 
 
-## Anel costurado de 3x3. O centro fica com o que já estava (o couro aparece no furo).
+## Anel costurado (centro livre = couro no furo).
 func _anel_solto(img: Image, centro: Vector2i, metal: Color) -> void:
 	img.set_pixelv(centro + Vector2i(0, -1), metal.lightened(0.35))
 	img.set_pixelv(centro + Vector2i(-1, 0), metal.lightened(0.15))
 	img.set_pixelv(centro + Vector2i(1, 0), metal.darkened(0.15))
 	img.set_pixelv(centro + Vector2i(0, 1), metal.darkened(0.3))
+	img.set_pixelv(centro + Vector2i(-1, -1), metal.lightened(0.1))
+	img.set_pixelv(centro + Vector2i(1, -1), metal)
+	img.set_pixelv(centro + Vector2i(-1, 1), metal.darkened(0.1))
+	img.set_pixelv(centro + Vector2i(1, 1), metal.darkened(0.2))

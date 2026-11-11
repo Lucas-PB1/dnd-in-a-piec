@@ -29,9 +29,7 @@ Nenhuma prioridade alta aberta. Criatura nova: `depois/minions-recolor` (via `/n
 Nenhuma aberta nesta fila. Magia, raças e desvantagem de Furtividade na armadura foram para `depois/`.
 
 ### Arte / polish
-| Pri | Arquivo | Tam. |
-|---|---|---|
-| 72 | `arte/armaduras-visuais` | M |
+Nenhuma aberta nesta fila.
 
 ### Dívidas técnicas
 | Pri | Arquivo |

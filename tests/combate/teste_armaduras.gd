@@ -44,8 +44,9 @@ func _testar_tabela() -> void:
 		and couro_batido.max_destreza == -1 and not couro_batido.desvantagem_furtividade, "Couro Batido: leve, CA 12 + DES")
 	_checar(_a("placas").ca_base == 18 and _a("placas").forca_minima == 15, "Placas: CA 18, FOR 15")
 	_checar(_a("couro").detalhe != null and _a("placas").detalhe != null and _a("cota_malha").detalhe != null
-		and _a("escudo").detalhe == null and _a("couro").icone.get_width() == 16,
-		"a armadura é o ladrilho na túnica; escudo não tem; ícone 16x16")
+		and _a("escudo").detalhe == null and _a("couro").icone.get_width() == 16
+		and _a("couro").detalhe.get_width() == 16 and _a("placas").detalhe.get_height() == 16,
+		"a armadura é o ladrilho 16x16 na túnica; escudo não tem; ícone 16x16")
 	_checar(_a("meia_armadura").max_destreza == 2 and _a("meia_armadura").desvantagem_furtividade, "Meia-Armadura: DES máx. 2, desv.")
 	_checar(_a("scumweed").max_destreza == 1, "Scumweed (Obojima): DES máx. 1")
 	_checar(_a("escudo").e_escudo() and _a("escudo").ca_base == 2 and _a("tampa_panela").ca_base == 1, "Escudo +2, Tampa de Panela +1")
