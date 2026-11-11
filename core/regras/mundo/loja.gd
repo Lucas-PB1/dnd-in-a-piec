@@ -75,18 +75,36 @@ static func renovar(ficha: Ficha, renovacoes_ja_feitas: int, indice_fase: int, r
 
 
 ## O estoque da fase: itens sorteados do arsenal que custam até o teto da fase; algumas armas vêm mágicas.
+## Sempre inclui pelo menos um tipo de munição (quando houver alguma no teto de preço).
 static func sortear_estoque(indice_fase: int, rng: RandomNumberGenerator) -> Array[Item]:
 	var teto := TETO_DE_PRECO_NA_FASE_1 * (1 << clampi(indice_fase - 1, 0, 10))
 	var candidatos: Array[Item] = []
+	var municoes: Array[Item] = []
 	for pasta in PASTAS_DO_ESTOQUE:
 		for recurso in Recursos.da_pasta(pasta):
-			if recurso is Item and preco(recurso) <= teto:
-				candidatos.append(recurso)
+			if not (recurso is Item) or preco(recurso) > teto:
+				continue
+			var item := recurso as Item
+			candidatos.append(item)
+			if item is Municao:
+				municoes.append(item)
 	var estoque: Array[Item] = []
+	if not municoes.is_empty():
+		var municao := municoes[rng.randi_range(0, municoes.size() - 1)] as Item
+		estoque.append(_copia_para_a_venda(municao, rng, indice_fase))
+		candidatos.erase(municao)
 	while estoque.size() < TAMANHO_DO_ESTOQUE and not candidatos.is_empty():
 		var sorteado := candidatos.pop_at(rng.randi_range(0, candidatos.size() - 1)) as Item
 		estoque.append(_copia_para_a_venda(sorteado, rng, indice_fase))
 	return estoque
+
+
+## Há pelo menos uma munição neste estoque?
+static func estoque_tem_municao(estoque: Array[Item]) -> bool:
+	for item in estoque:
+		if item is Municao:
+			return true
+	return false
 
 
 ## Compra o item: tira o ouro e põe uma cópia na mochila. A tela tira do estoque (menos a munição, que não acaba).

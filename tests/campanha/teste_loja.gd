@@ -71,15 +71,23 @@ func _testar_estoque() -> void:
 			barato = false  # na fase 1 só +1
 	_checar(fase_1.size() == Loja.TAMANHO_DO_ESTOQUE, "o estoque tem o tamanho certo")
 	_checar(barato, "na fase 1 só aparece coisa barata e no máximo +1")
+	_checar(Loja.estoque_tem_municao(fase_1), "fase 1 sempre tem munição")
 	var caro := false
+	var sem_municao := false
 	for i in 40:
-		for item in Loja.sortear_estoque(8, rng):
+		var estoque := Loja.sortear_estoque(8, rng)
+		for item in estoque:
 			caro = caro or Loja.preco(item) > 100
+		sem_municao = sem_municao or not Loja.estoque_tem_municao(estoque)
 	_checar(caro, "nas fases altas aparecem itens caros")
+	_checar(not sem_municao, "em 40 estoques altos sempre há munição")
 	var diferentes := {}
 	for item in Loja.sortear_estoque(5, rng):
 		diferentes[item.nome] = true
 	_checar(diferentes.size() > 1, "o estoque tem variedade")
+	var renovado: Array[Item] = []
+	renovado.assign((Loja.renovar(_ficha(), 0, 3, rng).estoque as Array))
+	_checar(Loja.estoque_tem_municao(renovado), "Trocar/renovar também traz munição")
 
 
 func _ficha() -> Ficha:

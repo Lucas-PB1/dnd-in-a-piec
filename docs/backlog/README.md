@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo |
 |---|---|
-| 11 | `regras/loja-sempre-municao` |
 | 12 | `regras/pocoes-cura` |
 | 13 | `mobile/defaults-primeira-execucao` |
 | 14 | `heroi/corrosao-mais-clara` |
