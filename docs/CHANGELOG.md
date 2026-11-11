@@ -3,6 +3,8 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Tutorial (fatia 2): Treino alongado com baú → loja → boneco (folga E ≥96 px), placas de K/arco, **50 po** no Novo Jogo. Teste `teste_tutorial`.
+- Tutorial (fatia 1): fase **Treino** (`fase_tutorial.tscn`) com placas de controle, sem inimigos; todo Novo Jogo passa por ela; porta leva à Clareira. Teste `teste_tutorial`.
 - Placar na HUD: abates, tempo da fase e da run; recordes locais (`user://placar.cfg`); resumo na derrota/vitória. Teste `teste_placar`.
 - Disparo no botão de ataque: J/Atacar carrega e atira; K/Lançar só arremessa. Testes `teste_tiro` / `teste_botoes_contextuais`.
 - Guerreiro níveis 7–8: teto 8, XP casa 6000/7200, talento no 8, Campeão no 7 com 3º estilo. Testes progressão/talento/estilo.

@@ -114,6 +114,7 @@ func _testar_fluxo_da_main() -> void:
 	var hud_vida: String = (cena.get_node("Hud/%Vida") as Label).text
 	_checar(hud_nome == "Aldric (Guerreiro)" and hud_vida == "PV 12/12", "HUD mostra nome, classe e vida (%s | %s)" % [hud_nome, hud_vida])
 	_checar_pacote_a(jogador)
+	_checar(cena._fase.nome_ambiente == "Treino" and cena._fase.indice == 0, "Novo Jogo começa no tutorial")
 	cena.queue_free()
 
 

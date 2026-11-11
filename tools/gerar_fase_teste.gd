@@ -109,6 +109,8 @@ func _initialize() -> void:
 	ResourceSaver.save(_criar_tileset(), CAMINHO_TILESET)
 	if so_a_fase == 0:
 		_gravar(_fase_reta(), _mapa_reto(), 0)
+		var tutorial := _fase_tutorial()
+		_gravar(tutorial, _mapa_de(tutorial), 0)
 	for definicao in _fases():
 		if so_a_fase == 0 or definicao.indice == so_a_fase:
 			_gravar(definicao, _mapa_de(definicao), definicao.tema)
@@ -122,6 +124,31 @@ func _fase_reta() -> Dictionary:
 		"nome": "Teste", "arquivo": "res://levels/fase_teste.tscn", "no": "FaseTeste",
 		"tema": 0, "indice": 0, "ultima": false, "quantidade": 0,
 		"tipos": sem_tipos, "largura": LARGURA_TESTE, "inicio": 2,
+	}
+
+
+## Antes da Clareira: sem inimigos (porta sempre abre), placas ensinam o básico.
+## Layout: início → baú → loja → boneco (J/K/arco) → porta (offsets do baú/boneco na main).
+func _fase_tutorial() -> Dictionary:
+	var sem_tipos: Array[StringName] = []
+	return {
+		"nome": "Treino", "arquivo": "res://levels/fase_tutorial.tscn", "no": "Fase",
+		"tema": 0, "indice": 0, "ultima": false, "quantidade": 0,
+		"tipos": sem_tipos, "luz_do_sol": true,
+		"missao": "", "largura": 42, "inicio": 2,
+		"buracos": [], "plataformas": [],
+		"chao": [], "plataforma": [], "porta": 39,
+		"degraus": [], "altas": [], "pontos": [],
+		"loja": Vector2(220, 0),
+		"enfeites": [["arbusto", 6, 0], ["arbusto", 14, 0], ["arbusto", 24, 0], ["arbusto", 32, 0]],
+		"placas": [
+			["A/D andar · Espaço pular", 5],
+			["E: baú (arsenal)", 7],
+			["E: loja (50 po)", 11],
+			["J no boneco · K azagaia", 16],
+			["Baú → arco · segure J", 20],
+			["Porta: Clareira (pode pular)", 35],
+		],
 	}
 
 
@@ -351,12 +378,36 @@ func _gravar(definicao: Dictionary, mapa: Array[String], tema: int) -> void:
 	_colocar_quebraveis(fase, definicao.get("quebraveis", []))
 	_colocar_lavas(fase, definicao.get("lavas", []))
 	_colocar_desafios(fase, definicao.get("desafios", []))
+	_colocar_placas(fase, definicao.get("placas", []))
 	_colocar_ceu(fase, mapa, CEU[tema])
 	var cena := PackedScene.new()
 	cena.pack(fase)
 	ResourceSaver.save(cena, definicao.arquivo)
 	print("Fase gerada: %s (%s)" % [definicao.nome, definicao.arquivo])
 	fase.free()
+
+
+## Placas de tutorial: [texto, coluna]. Ficam acima do chão, legíveis em pixel.
+func _colocar_placas(fase: Node2D, placas: Array) -> void:
+	if placas.is_empty():
+		return
+	var grupo := Node2D.new()
+	grupo.name = "Placas"
+	_adicionar(fase, grupo)
+	var i := 0
+	for entrada: Array in placas:
+		i += 1
+		var placa := Label.new()
+		placa.name = "Placa%d" % i
+		placa.text = String(entrada[0])
+		placa.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		placa.position = Vector2(int(entrada[1]) * TAM + TAM / 2.0 - 40.0, LINHA_ACAO * TAM - 48.0)
+		placa.add_theme_font_size_override(&"font_size", 10)
+		placa.add_theme_color_override(&"font_color", Color(0.95, 0.92, 0.75))
+		placa.add_theme_color_override(&"font_outline_color", Color.BLACK)
+		placa.add_theme_constant_override(&"outline_size", 3)
+		grupo.add_child(placa)
+		placa.owner = fase
 
 
 func _tipos(lista: Array) -> Array[StringName]:

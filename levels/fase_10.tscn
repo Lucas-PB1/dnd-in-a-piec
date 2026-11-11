@@ -252,7 +252,7 @@ animations = [{
 atlas = ExtResource("4_jehho")
 region = Rect2(0, 10, 64, 22)
 
-[node name="Fase" type="Node2D" unique_id=1508448414]
+[node name="Fase" type="Node2D" unique_id=1021643398]
 script = ExtResource("1_qdtw8")
 indice = 10
 ultima = true
@@ -263,145 +263,145 @@ tipos_permitidos = Array[StringName]([&"warrior", &"hobgoblin", &"bugbear", &"sk
 chefe = &"quimera"
 deslocamento_loja = Vector2(150, 0)
 
-[node name="Terreno" type="TileMapLayer" parent="." unique_id=1205082118]
+[node name="Terreno" type="TileMapLayer" parent="." unique_id=515322447]
 tile_map_data = PackedByteArray("AAATAAcAAAAAAAUAAAAUAAcAAAAEAAUAAAAZAAcAAAACAAUAAAAaAAcAAAACAAUAAAAbAAcAAAACAAUAAAAcAAcAAAACAAUAAAAQAAgAAAAFAAUAAAARAAgAAAAFAAUAAAASAAgAAAAFAAUAAAATAAgAAAABAAUAAAAUAAgAAAAHAAUAAAAAAAkAAAAEAAUAAAABAAkAAAAFAAUAAAACAAkAAAAEAAUAAAADAAkAAAAAAAUAAAAEAAkAAAAEAAUAAAAFAAkAAAAAAAUAAAAGAAkAAAAFAAUAAAAHAAkAAAAFAAUAAAAIAAkAAAAFAAUAAAAJAAkAAAAEAAUAAAAKAAkAAAAFAAUAAAALAAkAAAAEAAUAAAAMAAkAAAAFAAUAAAANAAkAAAAEAAUAAAAOAAkAAAAEAAUAAAAPAAkAAAAEAAUAAAAQAAkAAAABAAUAAAARAAkAAAAHAAUAAAASAAkAAAAHAAUAAAATAAkAAAAHAAUAAAAUAAkAAAAHAAUAAAAVAAkAAAAFAAUAAAAWAAkAAAAFAAUAAAAXAAkAAAAAAAUAAAAYAAkAAAAFAAUAAAAZAAkAAAAAAAUAAAAaAAkAAAAEAAUAAAAbAAkAAAAAAAUAAAAcAAkAAAAAAAUAAAAdAAkAAAAFAAUAAAAeAAkAAAAFAAUAAAAfAAkAAAAAAAUAAAAgAAkAAAAEAAUAAAAhAAkAAAAAAAUAAAAiAAkAAAAAAAUAAAAjAAkAAAAFAAUAAAAkAAkAAAAAAAUAAAAlAAkAAAAEAAUAAAAmAAkAAAAFAAUAAAAnAAkAAAAFAAUAAAAoAAkAAAAAAAUAAAApAAkAAAAFAAUAAAAqAAkAAAAFAAUAAAArAAkAAAAFAAUAAAAsAAkAAAAAAAUAAAAtAAkAAAAEAAUAAAAuAAkAAAAFAAUAAAAvAAkAAAAAAAUAAAAwAAkAAAAAAAUAAAAxAAkAAAAEAAUAAAAyAAkAAAAFAAUAAAAzAAkAAAAEAAUAAAA0AAkAAAAEAAUAAAA1AAkAAAAAAAUAAAA2AAkAAAAEAAUAAAA3AAkAAAAFAAUAAAA4AAkAAAAEAAUAAAA5AAkAAAAEAAUAAAA6AAkAAAAEAAUAAAA7AAkAAAAAAAUAAAA8AAkAAAAFAAUAAAA9AAkAAAAAAAUAAAA+AAkAAAAAAAUAAAA/AAkAAAAEAAUAAAAAAAoAAAAHAAUAAAABAAoAAAAGAAUAAAACAAoAAAABAAUAAAADAAoAAAAIAAUAAAAEAAoAAAAIAAUAAAAFAAoAAAAIAAUAAAAGAAoAAAAGAAUAAAAHAAoAAAAHAAUAAAAIAAoAAAABAAUAAAAJAAoAAAAGAAUAAAAKAAoAAAAIAAUAAAALAAoAAAAGAAUAAAAMAAoAAAAHAAUAAAANAAoAAAABAAUAAAAOAAoAAAAHAAUAAAAPAAoAAAAGAAUAAAAQAAoAAAAHAAUAAAARAAoAAAAGAAUAAAASAAoAAAAIAAUAAAATAAoAAAABAAUAAAAUAAoAAAABAAUAAAAVAAoAAAAIAAUAAAAWAAoAAAABAAUAAAAXAAoAAAAHAAUAAAAYAAoAAAAGAAUAAAAZAAoAAAAIAAUAAAAaAAoAAAAIAAUAAAAbAAoAAAAIAAUAAAAcAAoAAAAIAAUAAAAdAAoAAAAGAAUAAAAeAAoAAAABAAUAAAAfAAoAAAAHAAUAAAAgAAoAAAAIAAUAAAAhAAoAAAAIAAUAAAAiAAoAAAABAAUAAAAjAAoAAAAHAAUAAAAkAAoAAAAHAAUAAAAlAAoAAAAHAAUAAAAmAAoAAAAHAAUAAAAnAAoAAAABAAUAAAAoAAoAAAAIAAUAAAApAAoAAAAGAAUAAAAqAAoAAAAGAAUAAAArAAoAAAAGAAUAAAAsAAoAAAAGAAUAAAAtAAoAAAAHAAUAAAAuAAoAAAAIAAUAAAAvAAoAAAAHAAUAAAAwAAoAAAAIAAUAAAAxAAoAAAAGAAUAAAAyAAoAAAABAAUAAAAzAAoAAAAHAAUAAAA0AAoAAAAHAAUAAAA1AAoAAAAGAAUAAAA2AAoAAAABAAUAAAA3AAoAAAAIAAUAAAA4AAoAAAABAAUAAAA5AAoAAAAGAAUAAAA6AAoAAAAHAAUAAAA7AAoAAAABAAUAAAA8AAoAAAAGAAUAAAA9AAoAAAAGAAUAAAA+AAoAAAAGAAUAAAA/AAoAAAAGAAUAAAAAAAsAAAABAAUAAAABAAsAAAAGAAUAAAACAAsAAAAHAAUAAAADAAsAAAABAAUAAAAEAAsAAAAIAAUAAAAFAAsAAAAIAAUAAAAGAAsAAAAGAAUAAAAHAAsAAAAIAAUAAAAIAAsAAAAIAAUAAAAJAAsAAAAHAAUAAAAKAAsAAAAIAAUAAAALAAsAAAABAAUAAAAMAAsAAAABAAUAAAANAAsAAAAIAAUAAAAOAAsAAAAHAAUAAAAPAAsAAAAGAAUAAAAQAAsAAAAHAAUAAAARAAsAAAAIAAUAAAASAAsAAAAGAAUAAAATAAsAAAABAAUAAAAUAAsAAAAHAAUAAAAVAAsAAAAHAAUAAAAWAAsAAAAIAAUAAAAXAAsAAAAIAAUAAAAYAAsAAAAIAAUAAAAZAAsAAAAHAAUAAAAaAAsAAAABAAUAAAAbAAsAAAAGAAUAAAAcAAsAAAAGAAUAAAAdAAsAAAABAAUAAAAeAAsAAAAHAAUAAAAfAAsAAAAIAAUAAAAgAAsAAAAIAAUAAAAhAAsAAAAHAAUAAAAiAAsAAAAHAAUAAAAjAAsAAAAHAAUAAAAkAAsAAAAHAAUAAAAlAAsAAAAIAAUAAAAmAAsAAAABAAUAAAAnAAsAAAAGAAUAAAAoAAsAAAAHAAUAAAApAAsAAAAGAAUAAAAqAAsAAAAGAAUAAAArAAsAAAAGAAUAAAAsAAsAAAABAAUAAAAtAAsAAAAGAAUAAAAuAAsAAAAGAAUAAAAvAAsAAAAHAAUAAAAwAAsAAAAGAAUAAAAxAAsAAAABAAUAAAAyAAsAAAABAAUAAAAzAAsAAAAHAAUAAAA0AAsAAAAGAAUAAAA1AAsAAAABAAUAAAA2AAsAAAAGAAUAAAA3AAsAAAABAAUAAAA4AAsAAAABAAUAAAA5AAsAAAAIAAUAAAA6AAsAAAAIAAUAAAA7AAsAAAABAAUAAAA8AAsAAAABAAUAAAA9AAsAAAAHAAUAAAA+AAsAAAABAAUAAAA/AAsAAAAGAAUAAAD///r/AAADAAUAAABAAPr/AAADAAUAAAD///v/AAADAAUAAABAAPv/AAADAAUAAAD///z/AAADAAUAAABAAPz/AAADAAUAAAD///3/AAADAAUAAABAAP3/AAADAAUAAAD///7/AAADAAUAAABAAP7/AAADAAUAAAD/////AAADAAUAAABAAP//AAADAAUAAAD//wAAAAADAAUAAABAAAAAAAADAAUAAAD//wEAAAADAAUAAABAAAEAAAADAAUAAAD//wIAAAADAAUAAABAAAIAAAADAAUAAAD//wMAAAADAAUAAABAAAMAAAADAAUAAAD//wQAAAADAAUAAABAAAQAAAADAAUAAAD//wUAAAADAAUAAABAAAUAAAADAAUAAAD//wYAAAADAAUAAABAAAYAAAADAAUAAAD//wcAAAADAAUAAABAAAcAAAADAAUAAAD//wgAAAADAAUAAABAAAgAAAADAAUAAAD//wkAAAADAAUAAABAAAkAAAADAAUAAAD//woAAAADAAUAAABAAAoAAAADAAUAAAD//wsAAAADAAUAAABAAAsAAAADAAUAAAA=")
 tile_set = ExtResource("2_5c6o8")
 
-[node name="Armadilha2" type="Marker2D" parent="." unique_id=774921109 groups=["armadilha"]]
+[node name="Armadilha2" type="Marker2D" parent="." unique_id=1536887749 groups=["armadilha"]]
 position = Vector2(592, 224)
 
-[node name="Armadilha3" type="Marker2D" parent="." unique_id=1298356974 groups=["armadilha"]]
+[node name="Armadilha3" type="Marker2D" parent="." unique_id=54572560 groups=["armadilha"]]
 position = Vector2(880, 224)
 
-[node name="InicioJogador" type="Marker2D" parent="." unique_id=1402174671]
+[node name="InicioJogador" type="Marker2D" parent="." unique_id=1508417769]
 position = Vector2(80, 288)
 
-[node name="Armadilha5" type="Marker2D" parent="." unique_id=360294231 groups=["armadilha"]]
+[node name="Armadilha5" type="Marker2D" parent="." unique_id=1032391388 groups=["armadilha"]]
 position = Vector2(432, 288)
 
-[node name="Armadilha6" type="Marker2D" parent="." unique_id=785822265 groups=["armadilha"]]
+[node name="Armadilha6" type="Marker2D" parent="." unique_id=764788252 groups=["armadilha"]]
 position = Vector2(720, 288)
 
-[node name="Porta" type="Area2D" parent="." unique_id=384078541]
+[node name="Porta" type="Area2D" parent="." unique_id=313209650]
 position = Vector2(1936, 288)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="@CollisionShape2D@102" type="CollisionShape2D" parent="Porta" unique_id=270922144]
+[node name="@CollisionShape2D@107" type="CollisionShape2D" parent="Porta" unique_id=245673640]
 position = Vector2(0, -36)
 shape = SubResource("RectangleShape2D_m1pac")
 
-[node name="Enfeites" type="Node2D" parent="." unique_id=101515155]
+[node name="Enfeites" type="Node2D" parent="." unique_id=1342366629]
 z_index = -5
 
-[node name="SuporteTocha" type="Polygon2D" parent="Enfeites" unique_id=1906555515]
+[node name="SuporteTocha" type="Polygon2D" parent="Enfeites" unique_id=1250498873]
 position = Vector2(208, 224)
 color = Color(0.2, 0.13, 0.09, 1)
 polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
 
-[node name="ChamaTocha" type="AnimatedSprite2D" parent="Enfeites" unique_id=547586236]
+[node name="ChamaTocha" type="AnimatedSprite2D" parent="Enfeites" unique_id=1054012148]
 position = Vector2(208, 198)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_g40la")
 autoplay = "default"
 
-[node name="RochaGrande" type="Sprite2D" parent="Enfeites" unique_id=117162772]
+[node name="RochaGrande" type="Sprite2D" parent="Enfeites" unique_id=1988018982]
 position = Vector2(352, 249)
 texture = SubResource("AtlasTexture_t5py3")
 centered = false
 
-[node name="@Polygon2D@103" type="Polygon2D" parent="Enfeites" unique_id=1052132404]
+[node name="@Polygon2D@108" type="Polygon2D" parent="Enfeites" unique_id=527121999]
 position = Vector2(464, 224)
 color = Color(0.2, 0.13, 0.09, 1)
 polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
 
-[node name="@AnimatedSprite2D@104" type="AnimatedSprite2D" parent="Enfeites" unique_id=185033872]
+[node name="@AnimatedSprite2D@109" type="AnimatedSprite2D" parent="Enfeites" unique_id=1342883190]
 position = Vector2(464, 198)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_8o86a")
 autoplay = "default"
 
-[node name="CristalLargo" type="Sprite2D" parent="Enfeites" unique_id=2083038175]
+[node name="CristalLargo" type="Sprite2D" parent="Enfeites" unique_id=1288086610]
 position = Vector2(672, 226)
 texture = SubResource("AtlasTexture_dbp0c")
 centered = false
 
-[node name="@Polygon2D@105" type="Polygon2D" parent="Enfeites" unique_id=1499258856]
+[node name="@Polygon2D@110" type="Polygon2D" parent="Enfeites" unique_id=1026345955]
 position = Vector2(784, 224)
 color = Color(0.2, 0.13, 0.09, 1)
 polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
 
-[node name="@AnimatedSprite2D@106" type="AnimatedSprite2D" parent="Enfeites" unique_id=1961851459]
+[node name="@AnimatedSprite2D@111" type="AnimatedSprite2D" parent="Enfeites" unique_id=989790396]
 position = Vector2(784, 198)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_vvnrx")
 autoplay = "default"
 
-[node name="Cranio" type="Sprite2D" parent="Enfeites" unique_id=712149261]
+[node name="Cranio" type="Sprite2D" parent="Enfeites" unique_id=936491706]
 position = Vector2(945.5, 257)
 texture = SubResource("AtlasTexture_0oaxw")
 centered = false
 
-[node name="@Polygon2D@107" type="Polygon2D" parent="Enfeites" unique_id=944315931]
+[node name="@Polygon2D@112" type="Polygon2D" parent="Enfeites" unique_id=525400533]
 position = Vector2(1104, 224)
 color = Color(0.2, 0.13, 0.09, 1)
 polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
 
-[node name="@AnimatedSprite2D@108" type="AnimatedSprite2D" parent="Enfeites" unique_id=1424374193]
+[node name="@AnimatedSprite2D@113" type="AnimatedSprite2D" parent="Enfeites" unique_id=517615160]
 position = Vector2(1104, 198)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_7hwmq")
 autoplay = "default"
 
-[node name="CristalAlto" type="Sprite2D" parent="Enfeites" unique_id=1641719718]
+[node name="CristalAlto" type="Sprite2D" parent="Enfeites" unique_id=1428966825]
 position = Vector2(1267.5, 224)
 texture = SubResource("AtlasTexture_sqglm")
 centered = false
 
-[node name="@Polygon2D@109" type="Polygon2D" parent="Enfeites" unique_id=469441540]
+[node name="@Polygon2D@114" type="Polygon2D" parent="Enfeites" unique_id=1492534766]
 position = Vector2(1424, 224)
 color = Color(0.2, 0.13, 0.09, 1)
 polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
 
-[node name="@AnimatedSprite2D@110" type="AnimatedSprite2D" parent="Enfeites" unique_id=641112683]
+[node name="@AnimatedSprite2D@115" type="AnimatedSprite2D" parent="Enfeites" unique_id=1796111167]
 position = Vector2(1424, 198)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_30aq0")
 autoplay = "default"
 
-[node name="Cogumelo" type="Sprite2D" parent="Enfeites" unique_id=1062729763]
+[node name="Cogumelo" type="Sprite2D" parent="Enfeites" unique_id=1710597826]
 position = Vector2(1591, 237)
 texture = SubResource("AtlasTexture_8dcv6")
 centered = false
 
-[node name="@Polygon2D@111" type="Polygon2D" parent="Enfeites" unique_id=1676337939]
+[node name="@Polygon2D@116" type="Polygon2D" parent="Enfeites" unique_id=1859650427]
 position = Vector2(1744, 224)
 color = Color(0.2, 0.13, 0.09, 1)
 polygon = PackedVector2Array(-2, 0, 2, 0, 2, -18, -2, -18)
 
-[node name="@AnimatedSprite2D@112" type="AnimatedSprite2D" parent="Enfeites" unique_id=1122012248]
+[node name="@AnimatedSprite2D@117" type="AnimatedSprite2D" parent="Enfeites" unique_id=885764245]
 position = Vector2(1744, 198)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_67uw5")
 autoplay = "default"
 
-[node name="RochaBaixa" type="Sprite2D" parent="Enfeites" unique_id=343886667]
+[node name="RochaBaixa" type="Sprite2D" parent="Enfeites" unique_id=469064690]
 position = Vector2(1840, 266)
 texture = SubResource("AtlasTexture_mpe2e")
 centered = false
 
-[node name="Chefe" type="Marker2D" parent="." unique_id=1684792218]
+[node name="Chefe" type="Marker2D" parent="." unique_id=171173094]
 position = Vector2(1488, 288)
 
-[node name="Lava1" type="Area2D" parent="." unique_id=1882647667 instance=ExtResource("7_wtyrp")]
+[node name="Lava1" type="Area2D" parent="." unique_id=1104853114 instance=ExtResource("7_wtyrp")]
 position = Vector2(288, 288)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("8_fvrye")
 
-[node name="Lava2" type="Area2D" parent="." unique_id=1122424128 instance=ExtResource("7_wtyrp")]
+[node name="Lava2" type="Area2D" parent="." unique_id=62629495 instance=ExtResource("7_wtyrp")]
 position = Vector2(1120, 288)
 collision_layer = 0
 collision_mask = 2
@@ -409,7 +409,7 @@ monitorable = false
 script = ExtResource("8_fvrye")
 largura_ladrilhos = 2
 
-[node name="Ceu" type="Polygon2D" parent="." unique_id=533877568]
+[node name="Ceu" type="Polygon2D" parent="." unique_id=691221330]
 z_index = -10
 color = Color(0.12, 0.14, 0.18, 1)
 polygon = PackedVector2Array(-32, -192, 2080, -192, 2080, 384, -32, 384)

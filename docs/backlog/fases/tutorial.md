@@ -7,11 +7,16 @@ area: fases
 
 # Fase tutorial (como jogar)
 
-## Falta
-- Fase **antes** da campanha (ou antes dos controles avançados) que ensina o básico ao jogador.
-- Cobrir o que for possível: mover, pular, atacar, (disparo no botão de ataque se já existir), arremessar, interagir (E), inventário, loja/baú se couber, Fôlego/Surto em versão curta.
-- Interações com E **afastadas** (ver `interacoes-e-afastadas`); pedra do desafio com **arte de verdade** (ver `arte/pedra-desafio-pericia`).
-- Textos/placas claros; não substituir o Compêndio.
+## Feito (fatias 1–2)
+- Fase **Treino** antes da Clareira: sem inimigos; todo Novo Jogo entra nela; porta → Clareira.
+- Placas: andar/pular, baú, loja, J/K no boneco, arco (segurar J), porta.
+- Baú → loja → boneco com folga E ≥96 px; **50 po** ao criar personagem.
+- Teste `teste_tutorial` (+ Treino em `teste_posicao_da_loja`).
+
+## Falta (próximas fatias)
+- Fôlego/Surto em versão curta no Treino.
+- Pedra do desafio com **arte de verdade** (ver `arte/pedra-desafio-pericia`) se entrar no Treino.
+- Generalizar margem E em todas as fases (ver `interacoes-e-afastadas`).
 
 ## Pronto quando
-- Novo jogo (ou opção “Tutorial”) passa por essa fase e o jogador consegue os controles básicos sem ler código; teste de presença/fluxo.
+- Novo jogo passa pelo tutorial e o jogador consegue os controles básicos (incl. fatias restantes) sem ler código; testes de presença/fluxo.

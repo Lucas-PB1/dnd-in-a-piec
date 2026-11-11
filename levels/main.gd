@@ -21,6 +21,7 @@ const CENA_ANKHEG := preload("res://features/ankheg/ankheg.tscn")
 const CENA_MINOTAURO := preload("res://features/minotauro/minotauro.tscn")
 const CENA_WIGHT := preload("res://features/wight/wight.tscn")
 const CENA_QUIMERA := preload("res://features/quimera/quimera.tscn")
+const CENA_TUTORIAL := preload("res://levels/fase_tutorial.tscn")
 const CENAS_FASE: Array[PackedScene] = [
 	preload("res://levels/fase_1.tscn"),
 	preload("res://levels/fase_2.tscn"),
@@ -92,6 +93,13 @@ const DISTANCIA_ACOMPANHANTE_PX := 70.0
 const DISTANCIA_CRIATURA_PES := 15.0
 const AVISO_PORTA := "A porta não abre"
 const AVISO_MISSAO_CUMPRIDA := "Missão cumprida!"
+## Ouro de cortesia no Treino (Novo Jogo), para a loja servir de verdade.
+const OURO_TUTORIAL := 50
+## Posições fixas na Clareira (main.tscn); no Treino os offsets são relativos ao início.
+const POS_BAU_CLAREIRA := Vector2(150, 288)
+const POS_BONECO_CLAREIRA := Vector2(240, 288)
+const OFFSET_BAU_TUTORIAL := Vector2(90, 0)
+const OFFSET_BONECO_TUTORIAL := Vector2(400, 0)
 
 ## Começa pelo título e pela criação. Os testes desligam para jogar direto com a sugestão.
 @export var mostrar_inicio: bool = true
@@ -330,12 +338,12 @@ func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao
 	_jogador.configurar_ficha(ficha)
 	_jogador.definir_mente_tatica(false)
 	_jogador.receber_pacote(pacote)
+	_jogador.ganhar_ouro(OURO_TUTORIAL)
 	_mostrar_personagem_no_hud()
-	_apontar_monstros_para(_jogador)
 	_placar.iniciar_run()
-	_placar.iniciar_fase(_fase.indice)
-	_mostrar_placar()
 	tela.queue_free()
+	_entrar_fase(CENA_TUTORIAL)
+	_apontar_monstros_para(_jogador)
 	_pausar(false)
 	_musica.tocar_da_fase(_fase.indice)
 
@@ -434,7 +442,9 @@ func _tentar_atravessar() -> void:
 	if _fase.ultima:
 		_abrir_vitoria()
 		return
-	_placar.fechar_fase(true, false)
+	# Tutorial (índice 0): porta leva à Clareira. Demais: índice N → CENAS_FASE[N].
+	if _fase.indice > 0:
+		_placar.fechar_fase(true, false)
 	var seguinte := _fase.indice
 	if seguinte < CENAS_FASE.size():
 		# Chefe derrotado = longo; fase normal = curto (Surto/Fôlego voltam nos dois).
@@ -472,7 +482,7 @@ func _entrar_fase(cena: PackedScene, descanso_longo: bool = true) -> void:
 	_musica.tocar_da_fase(_fase.indice)
 
 
-## Baú e boneco ficam na clareira (e na fase reta de teste, índice 0). Nas outras fases não ocupam o caminho.
+## Baú e boneco ficam no Treino e na Clareira. Nas outras fases não ocupam o caminho.
 func _atualizar_pecas_da_fase() -> void:
 	var na_primeira := _fase.indice <= 1
 	_bau.visible = na_primeira
@@ -480,7 +490,19 @@ func _atualizar_pecas_da_fase() -> void:
 	var modo := Node.PROCESS_MODE_INHERIT if na_primeira else Node.PROCESS_MODE_DISABLED
 	_bau.process_mode = modo
 	_boneco.process_mode = modo
+	_posicionar_bau_e_boneco()
 	_posicionar_a_loja()
+
+
+## Treino: baú → loja → boneco com folga; Clareira mantém as posições clássicas.
+func _posicionar_bau_e_boneco() -> void:
+	if _fase.indice == 0:
+		var inicio := _fase.posicao_inicio()
+		_bau.global_position = inicio + OFFSET_BAU_TUTORIAL
+		_boneco.global_position = inicio + OFFSET_BONECO_TUTORIAL
+		return
+	_bau.global_position = POS_BAU_CLAREIRA
+	_boneco.global_position = POS_BONECO_CLAREIRA
 
 
 func _nascer_armadilhas() -> void:
