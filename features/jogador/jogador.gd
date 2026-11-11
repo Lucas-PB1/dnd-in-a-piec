@@ -1034,6 +1034,11 @@ func tem_item_veneno() -> bool:
 	return _item_veneno_basico() != null
 
 
+## HUD e toque: só com dose/frasco útil (e arma adequada no básico) ou veneno já na arma.
+func veneno_visivel_na_ui() -> bool:
+	return _veneno.visivel_na_ui(arma_atual(), tem_item_veneno())
+
+
 func _item_veneno_basico() -> Item:
 	for item in inventario.itens:
 		if item.nome == VenenoDoHeroi.NOME_ITEM_BASICO:

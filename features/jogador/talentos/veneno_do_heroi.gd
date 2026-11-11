@@ -20,12 +20,23 @@ func repor(ficha: Ficha) -> void:
 	apagar()
 
 
+## Arma cortante ou perfurante (o Veneno Básico do livro só cola nela).
+static func arma_serve_basico(arma: Arma) -> bool:
+	return arma != null and (arma.tipo_dano == TiposDano.CORTANTE or arma.tipo_dano == TiposDano.PERFURANTE)
+
+
 ## Qual veneno dá para passar agora? O potente primeiro; o básico só em arma cortante ou perfurante e com o item.
 func tipo_disponivel(arma: Arma, tem_item_basico: bool) -> StringName:
 	if doses > 0:
 		return POTENTE
-	var serve := arma.tipo_dano == TiposDano.CORTANTE or arma.tipo_dano == TiposDano.PERFURANTE
-	return BASICO if serve and tem_item_basico else &""
+	return BASICO if arma_serve_basico(arma) and tem_item_basico else &""
+
+
+## HUD/toque: há dose, veneno na arma, ou frasco + arma que aceita o básico.
+func visivel_na_ui(arma: Arma, tem_item_basico: bool) -> bool:
+	if na_arma != &"" or doses > 0:
+		return true
+	return tem_item_basico and arma_serve_basico(arma)
 
 
 ## Passa o veneno na arma. O potente gasta uma dose; o básico, o frasco (quem chama tira da mochila).

@@ -5,5 +5,6 @@
 [resource]
 script = ExtResource("1_item")
 nome = "Veneno Básico"
-descricao = "Frasco de veneno (PHB 2024, 100 PO). Ação bônus: passa numa arma cortante ou perfurante; o próximo acerto em até 15 s causa +1d4 de dano de veneno."
+descricao = "Frasco de veneno (PHB 2024, 100 PO). Como usar: N ou botão Veneno numa arma cortante ou perfurante (ação bônus). O próximo acerto em até 15 s causa +1d4 de dano de veneno."
 empilhavel = true
+preco = "100 GP"

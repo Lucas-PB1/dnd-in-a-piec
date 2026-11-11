@@ -176,7 +176,7 @@ func _ready() -> void:
 	_inventario.fechou.connect(_ao_fechar_modal)
 	_bau.abrir_pedido.connect(_abrir_bau)
 	_bau.perto_mudou.connect(_ao_mudar_interagivel.bind(ROTULO_ABRIR))
-	_jogador.inventario.mudou.connect(_atualizar_botoes_toque)
+	_jogador.inventario.mudou.connect(_ao_mudar_inventario_do_heroi)
 	_tela_bau.fechou.connect(_bau.fechar_tampa)
 	_tela_bau.fechou.connect(_ao_fechar_modal)
 	_lojista.abrir_pedido.connect(_abrir_loja)
@@ -638,8 +638,23 @@ func _ao_mudar_dados_de_vida(restantes: int, total: int) -> void:
 
 ## O veneno mudou (dose usada, arma envenenada, fase nova): o HUD diz o estado.
 func _ao_mudar_veneno(doses: int, total: int, aplicado: bool) -> void:
-	_hud.mostrar_veneno(doses, total, aplicado)
+	_atualizar_linha_do_veneno(doses, total, aplicado)
 	_atualizar_botoes_toque()
+
+
+## Mochila/equipamento mudou: botões de toque e a linha do veneno (frasco + arma certa).
+func _ao_mudar_inventario_do_heroi() -> void:
+	_atualizar_linha_do_veneno(
+		_jogador.doses_de_veneno(),
+		_jogador.ficha.doses_de_veneno() if _jogador.ficha else 0,
+		_jogador.veneno_na_arma() != &"")
+	_atualizar_botoes_toque()
+
+
+func _atualizar_linha_do_veneno(doses: int, total: int, aplicado: bool) -> void:
+	var frasco := _jogador.tem_item_veneno() and VenenoDoHeroi.arma_serve_basico(_jogador.arma_atual())
+	_hud.mostrar_veneno(doses, total, aplicado, frasco and total == 0 and not aplicado)
+
 
 ## Defesa aberta = botão aceso; esperando a recarga = avermelhado; pronta = normal.
 func _estado_da_defesa() -> BotaoToque.EstadoBotao:
@@ -946,7 +961,7 @@ func _atualizar_botoes_toque() -> void:
 	_controles_toque.mostrar_acao(&"defesa", _jogador.ficha.tem_talento(Ficha.TALENTO_DUELISTA_DEFENSIVO))
 	_controles_toque.mostrar_acao(&"investida", _jogador.ficha.tem_talento(Ficha.TALENTO_INVESTIDA))
 	_controles_toque.mostrar_acao(&"dado_de_vida", _jogador.ficha.dados_de_vida() > 0)
-	_controles_toque.mostrar_acao(&"veneno", _jogador.doses_de_veneno() > 0 or _jogador.veneno_na_arma() != &"" or _jogador.tem_item_veneno())
+	_controles_toque.mostrar_acao(&"veneno", _jogador.veneno_visivel_na_ui())
 	_controles_toque.mostrar_acao(&"folego", _jogador.usos_folego_total() > 0)
 	_controles_toque.mostrar_acao(&"arremessar", _jogador.inventario.equipado(Item.ESPACO_MAO) != null)
 	_controles_toque.definir_interacao(_rotulo_de_interacao())

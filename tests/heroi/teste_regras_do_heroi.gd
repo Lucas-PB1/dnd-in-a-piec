@@ -80,6 +80,14 @@ func _testar_veneno() -> void:
 	sem.repor(_ficha([]))
 	_checar(sem.tipo_disponivel(espada, true) == VenenoDoHeroi.BASICO and sem.tipo_disponivel(maca, true) == &"" and sem.tipo_disponivel(espada, false) == &"",
 		"sem doses, o básico só serve em arma cortante ou perfurante e com o item")
+	_checar(VenenoDoHeroi.arma_serve_basico(espada) and not VenenoDoHeroi.arma_serve_basico(maca),
+		"espada aceita Veneno Básico; maça não")
+	_checar(sem.visivel_na_ui(espada, true) and not sem.visivel_na_ui(maca, true) and not sem.visivel_na_ui(espada, false),
+		"UI do veneno: frasco só com arma adequada")
+	veneno.repor(envenenador)
+	_checar(veneno.visivel_na_ui(maca, false), "com doses potentes a UI aparece em qualquer arma")
+	var frasco := load("res://data/itens/veneno_basico.tres") as Item
+	_checar("N / botão Veneno" in ResumoItem.texto(frasco), "o resumo do Veneno Básico ensina N / botão")
 
 
 func _testar_janela_de_defesa() -> void:

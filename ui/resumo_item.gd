@@ -15,6 +15,13 @@ static func texto(item: Item, ficha: Ficha = null, inventario: Inventario = null
 			_referencia(partes, "", item.preco)
 			return " · ".join(partes)
 		return "%s\n%s" % [" · ".join(partes), item.descricao]
+	if item != null and item.nome == VenenoDoHeroi.NOME_ITEM_BASICO:
+		var dica := "N / botão Veneno · arma cortante ou perfurante"
+		if ficha == null:
+			var partes: PackedStringArray = [dica]
+			_referencia(partes, "", item.preco)
+			return " · ".join(partes)
+		return "%s\n%s" % [dica, item.descricao]
 	return item.descricao if item else ""
 
 

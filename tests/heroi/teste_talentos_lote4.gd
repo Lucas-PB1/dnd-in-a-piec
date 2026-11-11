@@ -131,6 +131,13 @@ func _testar_no_heroi() -> void:
 	var frasco := (load("res://data/itens/veneno_basico.tres") as Item).duplicate() as Item
 	jogador.inventario.adicionar(frasco)
 	_checar(jogador.tem_item_veneno(), "o item Veneno Básico fica na mochila")
+	_checar(jogador.veneno_visivel_na_ui(), "com frasco e espada a UI do veneno aparece")
+	var maca := _arma("maca").duplicate() as Arma
+	jogador.inventario.adicionar(maca)
+	jogador.inventario.equipar(maca)
+	_checar(not jogador.veneno_visivel_na_ui(), "com frasco e maça a UI some (só cortante/perfurante)")
+	jogador.inventario.equipar(espada)
+	_checar(jogador.veneno_visivel_na_ui(), "voltar a espada reaparece a UI")
 	jogador.descansar_longo()
 	_checar(jogador.aplicar_veneno() and jogador.veneno_na_arma() == VenenoDoHeroi.BASICO, "o Veneno Básico é passado na espada")
 	_checar(not jogador.tem_item_veneno(), "e o frasco é gasto")

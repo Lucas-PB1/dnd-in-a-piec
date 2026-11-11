@@ -103,10 +103,17 @@ func mostrar_dados_de_vida(restantes: int, total: int) -> void:
 	_dados_de_vida.text = "Dados de vida %d/%d" % [restantes, total]
 
 
-## A linha do veneno: doses potentes que restam e se a arma está envenenada. Sem nada some.
-func mostrar_veneno(doses: int, total: int, aplicado: bool) -> void:
-	_veneno.visible = total > 0 or aplicado
-	_veneno.text = "Veneno %d/%d%s" % [doses, total, " · na arma" if aplicado else ""]
+## A linha do veneno: doses (Envenenador), frasco pronto na arma certa, ou já na lâmina. Sem nada some.
+func mostrar_veneno(doses: int, total: int, aplicado: bool, frasco_pronto: bool = false) -> void:
+	_veneno.visible = total > 0 or aplicado or frasco_pronto
+	if total > 0:
+		_veneno.text = "Veneno %d/%d%s" % [doses, total, " · na arma" if aplicado else ""]
+	elif aplicado:
+		_veneno.text = "Veneno · na arma"
+	elif frasco_pronto:
+		_veneno.text = "Veneno · N na arma"
+	else:
+		_veneno.text = ""
 
 ## A linha da Investida (talento): qual modo vale agora, empurrão ou dano. Sem o talento some.
 func mostrar_investida(tem: bool, empurra: bool) -> void:
