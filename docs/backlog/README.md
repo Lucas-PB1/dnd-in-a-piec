@@ -26,7 +26,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 | Pri | Arquivo |
 |---|---|
 | 23 | `fases/tutorial` |
-| 25 | `arte/pedra-desafio-pericia` |
 | 26 | `heroi/intro-lore` |
 | 27 | `heroi/final-mais-legal` |
 | 28 | `arte/icone-do-jogo` |
@@ -38,7 +37,6 @@ Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
 ### Arte / polish
 | Pri | Arquivo |
 |---|---|
-| 25 | `arte/pedra-desafio-pericia` |
 | 28 | `arte/icone-do-jogo` |
 
 ### Dívidas técnicas

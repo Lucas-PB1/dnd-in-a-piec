@@ -11,18 +11,21 @@ func _rodar() -> void:
 	_testar_regra_pura()
 	await _testar_na_main()
 	await _testar_mente_tatica()
-	print("PASSOU: desafio de perícia" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
-	quit(_falhas)
+	_terminar("desafio de perícia")
 
 
 func _testar_regra_pura() -> void:
 	var desafio: DesafioPericia = load("res://features/desafio_pericia/desafio_pericia.tscn").instantiate()
 	root.add_child(desafio)
 	_checar(desafio.pericia_do_teste() == Pericia.ATLETISMO and desafio.cd_do_teste() == 12, "padrão: Atletismo CD 12")
+	var visual := desafio.get_node_or_null("Visual") as Sprite2D
+	_checar(visual != null and visual.texture != null
+		and visual.texture.resource_path.ends_with("pedra.png"),
+		"Visual é Sprite2D com a pedra CC0")
 	desafio.concluir(false)
 	_checar(not desafio.esta_resolvido(), "falha não remove o bloqueio")
 	desafio.concluir(true)
-	_checar(desafio.esta_resolvido(), "sucesso resolve uma vez")
+	_checar(desafio.esta_resolvido() and not visual.visible, "sucesso some a pedra")
 	desafio.queue_free()
 	_checar_cena_sem_nos_duplicados()
 

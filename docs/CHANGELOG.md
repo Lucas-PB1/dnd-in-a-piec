@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Arte da pedra empurrável: Basic Boulder (MystiqMiu, CC0) no `DesafioPericia` no lugar do ColorRect. Teste `teste_desafio_pericia`. Backlog `pedra-desafio-pericia` fechado.
 - Folga E: `Fase.FOLGA_INTERACAO_E` (96 px) entre loja/baú/desafio; pedra da Clareira em x=480; teste `teste_posicao_da_loja` cobre Treino + campanha. Backlog `interacoes-e-afastadas` fechado.
 - Tutorial (fatia 2): Treino alongado com baú → loja → boneco (folga E ≥96 px), placas de K/arco, **50 po** no Novo Jogo. Teste `teste_tutorial`.
 - Tutorial (fatia 1): fase **Treino** (`fase_tutorial.tscn`) com placas de controle, sem inimigos; todo Novo Jogo passa por ela; porta leva à Clareira. Teste `teste_tutorial`.

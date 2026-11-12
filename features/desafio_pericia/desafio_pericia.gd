@@ -26,7 +26,7 @@ var _recarga: float = 0.0
 
 @onready var _aviso: Label = $Aviso
 @onready var _colisao: CollisionShape2D = $Bloqueio/Colisao
-@onready var _visual: ColorRect = $Visual
+@onready var _visual: CanvasItem = $Visual
 @onready var _area: Area2D = $Area
 
 
