@@ -128,7 +128,7 @@ func _fase_reta() -> Dictionary:
 
 
 ## Antes da Clareira: sem inimigos (porta sempre abre), placas ensinam o básico.
-## Layout: início → baú → loja → boneco (J/K/arco) → porta (offsets do baú/boneco na main).
+## Layout: início → baú → loja → boneco → pedra → porta (offsets do baú/boneco na main).
 func _fase_tutorial() -> Dictionary:
 	var sem_tipos: Array[StringName] = []
 	return {
@@ -140,16 +140,22 @@ func _fase_tutorial() -> Dictionary:
 		"chao": [], "plataforma": [], "porta": 39,
 		"degraus": [], "altas": [], "pontos": [],
 		"loja": Vector2(220, 0),
+		# Boneco em ~480; folga E ≥96 → pedra em 600.
+		"desafios": [{
+			"x": 600, "rotulo": "Empurrar a pedra",
+			"aviso_sucesso": "A pedra rolou!", "aviso_falha": "A pedra não se moveu",
+		}],
 		"enfeites": [["arbusto", 6, 0], ["arbusto", 14, 0], ["arbusto", 24, 0], ["arbusto", 32, 0]],
 		"placas": [
 			["A/D andar · Espaço pular", 5],
-			["E: baú (arsenal)", 7],
-			["F = Fôlego (cura)", 9],
+			["E: baú · I: mochila", 7],
+			["F: Fôlego (cura)", 9],
 			["E: loja (50 po)", 12],
-			["J no boneco · K azagaia", 16],
+			["J: golpe · K: azagaia", 16],
 			["Baú → arco · segure J", 20],
-			["R = Surto (nível 2+)", 23],
-			["Porta: Clareira (pode pular)", 35],
+			["R: Surto (nível 2+)", 23],
+			["E: empurrar a pedra", 28],
+			["Porta → Clareira", 35],
 		],
 	}
 

@@ -1,60 +1,69 @@
 [gd_scene format=4]
 
-[ext_resource type="Script" path="res://levels/fase.gd" id="1_tbalh"]
-[ext_resource type="TileSet" path="res://assets/tiles/ladrilhos.tres" id="2_c47fi"]
+[ext_resource type="Script" path="res://levels/fase.gd" id="1_ipjwx"]
+[ext_resource type="TileSet" path="res://assets/tiles/ladrilhos.tres" id="2_tty3t"]
+[ext_resource type="PackedScene" path="res://features/desafio_pericia/desafio_pericia.tscn" id="3_cq4k5"]
+[ext_resource type="Script" path="res://features/desafio_pericia/desafio_pericia.gd" id="4_2la2a"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ipjwx"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_715qr"]
 size = Vector2(28, 72)
 
-[node name="Fase" type="Node2D" unique_id=637112457]
-script = ExtResource("1_tbalh")
+[node name="Fase" type="Node2D" unique_id=889279217]
+script = ExtResource("1_ipjwx")
 nome_ambiente = "Treino"
 luz_do_sol = true
 deslocamento_loja = Vector2(220, 0)
 
-[node name="Terreno" type="TileMapLayer" parent="." unique_id=1373072997]
+[node name="Terreno" type="TileMapLayer" parent="." unique_id=1853181473]
 tile_map_data = PackedByteArray("AAAAAAkAAAAEAAAAAAABAAkAAAAFAAAAAAACAAkAAAAEAAAAAAADAAkAAAAAAAAAAAAEAAkAAAAEAAAAAAAFAAkAAAAAAAAAAAAGAAkAAAAFAAAAAAAHAAkAAAAFAAAAAAAIAAkAAAAFAAAAAAAJAAkAAAAEAAAAAAAKAAkAAAAFAAAAAAALAAkAAAAEAAAAAAAMAAkAAAAFAAAAAAANAAkAAAAEAAAAAAAOAAkAAAAEAAAAAAAPAAkAAAAEAAAAAAAQAAkAAAAFAAAAAAARAAkAAAAEAAAAAAASAAkAAAAAAAAAAAATAAkAAAAEAAAAAAAUAAkAAAAFAAAAAAAVAAkAAAAFAAAAAAAWAAkAAAAFAAAAAAAXAAkAAAAAAAAAAAAYAAkAAAAFAAAAAAAZAAkAAAAAAAAAAAAaAAkAAAAEAAAAAAAbAAkAAAAAAAAAAAAcAAkAAAAAAAAAAAAdAAkAAAAFAAAAAAAeAAkAAAAFAAAAAAAfAAkAAAAAAAAAAAAgAAkAAAAEAAAAAAAhAAkAAAAAAAAAAAAiAAkAAAAAAAAAAAAjAAkAAAAFAAAAAAAkAAkAAAAAAAAAAAAlAAkAAAAEAAAAAAAmAAkAAAAFAAAAAAAnAAkAAAAFAAAAAAAoAAkAAAAAAAAAAAApAAkAAAAFAAAAAAAAAAoAAAAHAAAAAAABAAoAAAAGAAAAAAACAAoAAAABAAAAAAADAAoAAAAIAAAAAAAEAAoAAAAIAAAAAAAFAAoAAAAIAAAAAAAGAAoAAAAGAAAAAAAHAAoAAAAHAAAAAAAIAAoAAAABAAAAAAAJAAoAAAAGAAAAAAAKAAoAAAAIAAAAAAALAAoAAAAGAAAAAAAMAAoAAAAHAAAAAAANAAoAAAABAAAAAAAOAAoAAAAHAAAAAAAPAAoAAAAGAAAAAAAQAAoAAAAHAAAAAAARAAoAAAAGAAAAAAASAAoAAAAIAAAAAAATAAoAAAABAAAAAAAUAAoAAAABAAAAAAAVAAoAAAAIAAAAAAAWAAoAAAABAAAAAAAXAAoAAAAHAAAAAAAYAAoAAAAGAAAAAAAZAAoAAAAIAAAAAAAaAAoAAAAIAAAAAAAbAAoAAAAIAAAAAAAcAAoAAAAIAAAAAAAdAAoAAAAGAAAAAAAeAAoAAAABAAAAAAAfAAoAAAAHAAAAAAAgAAoAAAAIAAAAAAAhAAoAAAAIAAAAAAAiAAoAAAABAAAAAAAjAAoAAAAHAAAAAAAkAAoAAAAHAAAAAAAlAAoAAAAHAAAAAAAmAAoAAAAHAAAAAAAnAAoAAAABAAAAAAAoAAoAAAAIAAAAAAApAAoAAAAGAAAAAAAAAAsAAAABAAAAAAABAAsAAAAGAAAAAAACAAsAAAAHAAAAAAADAAsAAAABAAAAAAAEAAsAAAAIAAAAAAAFAAsAAAAIAAAAAAAGAAsAAAAGAAAAAAAHAAsAAAAIAAAAAAAIAAsAAAAIAAAAAAAJAAsAAAAHAAAAAAAKAAsAAAAIAAAAAAALAAsAAAABAAAAAAAMAAsAAAABAAAAAAANAAsAAAAIAAAAAAAOAAsAAAAHAAAAAAAPAAsAAAAGAAAAAAAQAAsAAAAHAAAAAAARAAsAAAAIAAAAAAASAAsAAAAGAAAAAAATAAsAAAABAAAAAAAUAAsAAAAHAAAAAAAVAAsAAAAHAAAAAAAWAAsAAAAIAAAAAAAXAAsAAAAIAAAAAAAYAAsAAAAIAAAAAAAZAAsAAAAHAAAAAAAaAAsAAAABAAAAAAAbAAsAAAAGAAAAAAAcAAsAAAAGAAAAAAAdAAsAAAABAAAAAAAeAAsAAAAHAAAAAAAfAAsAAAAIAAAAAAAgAAsAAAAIAAAAAAAhAAsAAAAHAAAAAAAiAAsAAAAHAAAAAAAjAAsAAAAHAAAAAAAkAAsAAAAHAAAAAAAlAAsAAAAIAAAAAAAmAAsAAAABAAAAAAAnAAsAAAAGAAAAAAAoAAsAAAAHAAAAAAApAAsAAAAGAAAAAAD///r/AAADAAAAAAAqAPr/AAADAAAAAAD///v/AAADAAAAAAAqAPv/AAADAAAAAAD///z/AAADAAAAAAAqAPz/AAADAAAAAAD///3/AAADAAAAAAAqAP3/AAADAAAAAAD///7/AAADAAAAAAAqAP7/AAADAAAAAAD/////AAADAAAAAAAqAP//AAADAAAAAAD//wAAAAADAAAAAAAqAAAAAAADAAAAAAD//wEAAAADAAAAAAAqAAEAAAADAAAAAAD//wIAAAADAAAAAAAqAAIAAAADAAAAAAD//wMAAAADAAAAAAAqAAMAAAADAAAAAAD//wQAAAADAAAAAAAqAAQAAAADAAAAAAD//wUAAAADAAAAAAAqAAUAAAADAAAAAAD//wYAAAADAAAAAAAqAAYAAAADAAAAAAD//wcAAAADAAAAAAAqAAcAAAADAAAAAAD//wgAAAADAAAAAAAqAAgAAAADAAAAAAD//wkAAAADAAAAAAAqAAkAAAADAAAAAAD//woAAAADAAAAAAAqAAoAAAADAAAAAAD//wsAAAADAAAAAAAqAAsAAAADAAAAAAA=")
-tile_set = ExtResource("2_c47fi")
+tile_set = ExtResource("2_tty3t")
 
-[node name="InicioJogador" type="Marker2D" parent="." unique_id=1209204320]
+[node name="InicioJogador" type="Marker2D" parent="." unique_id=505255267]
 position = Vector2(80, 288)
 
-[node name="Porta" type="Area2D" parent="." unique_id=290062472]
+[node name="Porta" type="Area2D" parent="." unique_id=1510062484]
 position = Vector2(1264, 288)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="@CollisionShape2D@4" type="CollisionShape2D" parent="Porta" unique_id=189285402]
+[node name="@CollisionShape2D@4" type="CollisionShape2D" parent="Porta" unique_id=1237844572]
 position = Vector2(0, -36)
-shape = SubResource("RectangleShape2D_ipjwx")
+shape = SubResource("RectangleShape2D_715qr")
 
-[node name="Enfeites" type="Node2D" parent="." unique_id=1233789665]
+[node name="Enfeites" type="Node2D" parent="." unique_id=813345423]
 z_index = -5
 
-[node name="Arbusto" type="Polygon2D" parent="Enfeites" unique_id=733034840]
+[node name="Arbusto" type="Polygon2D" parent="Enfeites" unique_id=1877247401]
 position = Vector2(208, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="@Polygon2D@5" type="Polygon2D" parent="Enfeites" unique_id=1720778127]
+[node name="@Polygon2D@5" type="Polygon2D" parent="Enfeites" unique_id=617267645]
 position = Vector2(464, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="@Polygon2D@6" type="Polygon2D" parent="Enfeites" unique_id=1727272848]
+[node name="@Polygon2D@6" type="Polygon2D" parent="Enfeites" unique_id=1088050366]
 position = Vector2(784, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="@Polygon2D@7" type="Polygon2D" parent="Enfeites" unique_id=1368356412]
+[node name="@Polygon2D@7" type="Polygon2D" parent="Enfeites" unique_id=1744792165]
 position = Vector2(1040, 288)
 color = Color(0.22, 0.48, 0.2, 1)
 polygon = PackedVector2Array(-14, 0, -10, -10, -16, -18, -6, -26, 0, -30, 8, -24, 16, -16, 12, -8, 14, 0)
 
-[node name="Placas" type="Node2D" parent="." unique_id=1207412685]
+[node name="DesafioPericia" type="Node2D" parent="." unique_id=468163531 groups=["desafio_pericia"] instance=ExtResource("3_cq4k5")]
+position = Vector2(600, 288)
+script = ExtResource("4_2la2a")
+rotulo = "Empurrar a pedra"
+aviso_sucesso = "A pedra rolou!"
+aviso_falha = "A pedra não se moveu"
 
-[node name="Placa1" type="Label" parent="Placas" unique_id=1232041847]
+[node name="Placas" type="Node2D" parent="." unique_id=498320180]
+
+[node name="Placa1" type="Label" parent="Placas" unique_id=1859911397]
 offset_left = 136.0
 offset_top = 208.0
 offset_right = 136.0
@@ -66,7 +75,7 @@ theme_override_constants/outline_size = 3
 text = "A/D andar · Espaço pular"
 horizontal_alignment = 1
 
-[node name="Placa2" type="Label" parent="Placas" unique_id=470857303]
+[node name="Placa2" type="Label" parent="Placas" unique_id=1940663562]
 offset_left = 200.0
 offset_top = 208.0
 offset_right = 200.0
@@ -75,10 +84,10 @@ theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "E: baú (arsenal)"
+text = "E: baú · I: mochila"
 horizontal_alignment = 1
 
-[node name="Placa3" type="Label" parent="Placas" unique_id=698243224]
+[node name="Placa3" type="Label" parent="Placas" unique_id=2020948616]
 offset_left = 264.0
 offset_top = 208.0
 offset_right = 264.0
@@ -87,10 +96,10 @@ theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "F = Fôlego (cura)"
+text = "F: Fôlego (cura)"
 horizontal_alignment = 1
 
-[node name="Placa4" type="Label" parent="Placas" unique_id=1969721569]
+[node name="Placa4" type="Label" parent="Placas" unique_id=691636643]
 offset_left = 360.0
 offset_top = 208.0
 offset_right = 360.0
@@ -102,7 +111,7 @@ theme_override_constants/outline_size = 3
 text = "E: loja (50 po)"
 horizontal_alignment = 1
 
-[node name="Placa5" type="Label" parent="Placas" unique_id=954768420]
+[node name="Placa5" type="Label" parent="Placas" unique_id=974402135]
 offset_left = 488.0
 offset_top = 208.0
 offset_right = 488.0
@@ -111,10 +120,10 @@ theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "J no boneco · K azagaia"
+text = "J: golpe · K: azagaia"
 horizontal_alignment = 1
 
-[node name="Placa6" type="Label" parent="Placas" unique_id=179038275]
+[node name="Placa6" type="Label" parent="Placas" unique_id=528853362]
 offset_left = 616.0
 offset_top = 208.0
 offset_right = 616.0
@@ -126,7 +135,7 @@ theme_override_constants/outline_size = 3
 text = "Baú → arco · segure J"
 horizontal_alignment = 1
 
-[node name="Placa7" type="Label" parent="Placas" unique_id=449959807]
+[node name="Placa7" type="Label" parent="Placas" unique_id=1033676639]
 offset_left = 712.0
 offset_top = 208.0
 offset_right = 712.0
@@ -135,10 +144,22 @@ theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "R = Surto (nível 2+)"
+text = "R: Surto (nível 2+)"
 horizontal_alignment = 1
 
-[node name="Placa8" type="Label" parent="Placas" unique_id=1641528197]
+[node name="Placa8" type="Label" parent="Placas" unique_id=193203673]
+offset_left = 872.0
+offset_top = 208.0
+offset_right = 872.0
+offset_bottom = 208.0
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+text = "E: empurrar a pedra"
+horizontal_alignment = 1
+
+[node name="Placa9" type="Label" parent="Placas" unique_id=1369395257]
 offset_left = 1096.0
 offset_top = 208.0
 offset_right = 1096.0
@@ -147,10 +168,10 @@ theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
-text = "Porta: Clareira (pode pular)"
+text = "Porta → Clareira"
 horizontal_alignment = 1
 
-[node name="Ceu" type="Polygon2D" parent="." unique_id=1904442835]
+[node name="Ceu" type="Polygon2D" parent="." unique_id=1205945772]
 z_index = -10
 color = Color(0.53, 0.78, 0.95, 1)
 polygon = PackedVector2Array(-32, -192, 1376, -192, 1376, 384, -32, 384)

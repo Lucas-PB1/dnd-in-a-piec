@@ -13,7 +13,7 @@ func _initialize() -> void:
 func _rodar() -> void:
 	await _testar_cena()
 	await _testar_fluxo()
-	_terminar("tutorial: Fôlego/Surto, baú/loja/alvo e fluxo → Clareira")
+	_terminar("tutorial completo: pedra, placas e fluxo → Clareira")
 
 
 func _testar_cena() -> void:
@@ -25,7 +25,7 @@ func _testar_cena() -> void:
 		"Treino: sem cota, sem tipos e sem chefe")
 	_checar(fase.get_node_or_null("Porta") != null, "Treino tem porta")
 	var placas: Node = fase.get_node_or_null("Placas")
-	_checar(placas != null and placas.get_child_count() >= 8, "Treino tem pelo menos 8 placas")
+	_checar(placas != null and placas.get_child_count() >= 9, "Treino tem pelo menos 9 placas")
 	var textos: Array[String] = []
 	for filho in placas.get_children():
 		if filho is Label:
@@ -35,9 +35,12 @@ func _testar_cena() -> void:
 	_checar(textos.any(func(t: String) -> bool: return "loja" in t), "placa ensina a loja")
 	_checar(textos.any(func(t: String) -> bool: return "Fôlego" in t or "Folego" in t), "placa ensina o Fôlego")
 	_checar(textos.any(func(t: String) -> bool: return "Surto" in t), "placa ensina o Surto")
-	_checar(textos.any(func(t: String) -> bool: return "azagaia" in t or "K" in t), "placa ensina arremesso")
+	_checar(textos.any(func(t: String) -> bool: return "azagaia" in t or "K" in t or "golpe" in t), "placa ensina golpe/arremesso")
 	_checar(textos.any(func(t: String) -> bool: return "arco" in t or "segure" in t), "placa ensina o arco")
+	_checar(textos.any(func(t: String) -> bool: return "pedra" in t or "empurrar" in t), "placa ensina a pedra")
 	_checar(textos.any(func(t: String) -> bool: return "Porta" in t or "Clareira" in t), "placa aponta a porta")
+	var pedra := fase.get_node_or_null("DesafioPericia") as Node2D
+	_checar(pedra != null and pedra.global_position.x >= 500.0, "Treino tem pedra depois do boneco")
 	fase.queue_free()
 	await physics_frame
 
