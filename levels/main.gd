@@ -95,6 +95,8 @@ const AVISO_PORTA := "A porta não abre"
 const AVISO_MISSAO_CUMPRIDA := "Missão cumprida!"
 ## Ouro de cortesia no Treino (Novo Jogo), para a loja servir de verdade.
 const OURO_TUTORIAL := 50
+## PV tirados ao entrar no Treino, para o Fôlego (F) servir na hora.
+const DANO_DEMONSTRACAO_TUTORIAL := 4
 ## Posições fixas na Clareira (main.tscn); no Treino os offsets são relativos ao início.
 const POS_BAU_CLAREIRA := Vector2(150, 288)
 const POS_BONECO_CLAREIRA := Vector2(240, 288)
@@ -343,6 +345,7 @@ func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao
 	_placar.iniciar_run()
 	tela.queue_free()
 	_entrar_fase(CENA_TUTORIAL)
+	_jogador.ferir_para_demonstracao(DANO_DEMONSTRACAO_TUTORIAL)
 	_apontar_monstros_para(_jogador)
 	_pausar(false)
 	_musica.tocar_da_fase(_fase.indice)

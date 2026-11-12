@@ -112,7 +112,10 @@ func _testar_fluxo_da_main() -> void:
 	_checar(jogador.ficha.nome == NOME_TESTE and jogador.vida_maxima() == 12, "herói recebe a ficha (nome e CON 15 -> 12 PV)")
 	var hud_nome: String = (cena.get_node("Hud/%Personagem") as Label).text
 	var hud_vida: String = (cena.get_node("Hud/%Vida") as Label).text
-	_checar(hud_nome == "Aldric (Guerreiro)" and hud_vida == "PV 12/12", "HUD mostra nome, classe e vida (%s | %s)" % [hud_nome, hud_vida])
+	var pv_treino := 12 - Main.DANO_DEMONSTRACAO_TUTORIAL
+	_checar(jogador.vida_atual() == pv_treino and hud_vida == "PV %d/12" % pv_treino,
+		"Treino tira PV para o Fôlego; HUD mostra (%s | %s)" % [hud_nome, hud_vida])
+	_checar(hud_nome == "Aldric (Guerreiro)", "HUD mostra nome e classe")
 	_checar_pacote_a(jogador)
 	_checar(cena._fase.nome_ambiente == "Treino" and cena._fase.indice == 0, "Novo Jogo começa no tutorial")
 	cena.queue_free()

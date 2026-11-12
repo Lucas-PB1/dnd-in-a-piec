@@ -620,6 +620,15 @@ func descansar_longo() -> void:
 	_repor_dados_e_veneno()
 
 
+## Tira PV direto (ignora invulnerabilidade ao nascer). Deixa pelo menos 1 — treino do Fôlego.
+func ferir_para_demonstracao(quantidade: int) -> void:
+	if quantidade <= 0 or _vida.esta_morto():
+		return
+	var qtd := mini(quantidade, _vida.vida_atual - 1)
+	if qtd > 0:
+		_vida.receber_dano(qtd)
+
+
 ## Second Wind: ação bônus, cura 1d10+nível, gasta um uso mesmo com a vida cheia.
 ## Devolve false se não havia uso, se a ação bônus já foi gasta ou se a classe não tem o poder.
 func usar_folego() -> bool:

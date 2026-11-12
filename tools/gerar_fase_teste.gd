@@ -144,9 +144,11 @@ func _fase_tutorial() -> Dictionary:
 		"placas": [
 			["A/D andar · Espaço pular", 5],
 			["E: baú (arsenal)", 7],
-			["E: loja (50 po)", 11],
+			["F = Fôlego (cura)", 9],
+			["E: loja (50 po)", 12],
 			["J no boneco · K azagaia", 16],
 			["Baú → arco · segure J", 20],
+			["R = Surto (nível 2+)", 23],
 			["Porta: Clareira (pode pular)", 35],
 		],
 	}

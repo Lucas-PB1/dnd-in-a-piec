@@ -1,9 +1,11 @@
 extends TesteBase
-## Tutorial: Treino sem inimigos, placas, baú/loja/boneco afastados, 50 po no Novo Jogo;
-## porta leva à Clareira. godot --headless --debug --path . --script res://tests/campanha/teste_tutorial.gd
+## Tutorial: Treino sem inimigos, placas (incl. F/R), baú/loja/boneco, 50 po, ferimento para
+## o Fôlego; porta → Clareira. godot --headless --debug --path . --script res://tests/campanha/teste_tutorial.gd
 
 const QUADROS := 20
 const NOME := "Treino"
+
+
 func _initialize() -> void:
 	_rodar.call_deferred()
 
@@ -11,7 +13,7 @@ func _initialize() -> void:
 func _rodar() -> void:
 	await _testar_cena()
 	await _testar_fluxo()
-	_terminar("tutorial: baú/loja/alvo e fluxo Novo Jogo → Treino → Clareira")
+	_terminar("tutorial: Fôlego/Surto, baú/loja/alvo e fluxo → Clareira")
 
 
 func _testar_cena() -> void:
@@ -23,7 +25,7 @@ func _testar_cena() -> void:
 		"Treino: sem cota, sem tipos e sem chefe")
 	_checar(fase.get_node_or_null("Porta") != null, "Treino tem porta")
 	var placas: Node = fase.get_node_or_null("Placas")
-	_checar(placas != null and placas.get_child_count() >= 6, "Treino tem pelo menos 6 placas")
+	_checar(placas != null and placas.get_child_count() >= 8, "Treino tem pelo menos 8 placas")
 	var textos: Array[String] = []
 	for filho in placas.get_children():
 		if filho is Label:
@@ -31,6 +33,8 @@ func _testar_cena() -> void:
 	_checar(textos.any(func(t: String) -> bool: return "andar" in t), "placa ensina a andar")
 	_checar(textos.any(func(t: String) -> bool: return "baú" in t or "bau" in t.to_lower()), "placa ensina o baú")
 	_checar(textos.any(func(t: String) -> bool: return "loja" in t), "placa ensina a loja")
+	_checar(textos.any(func(t: String) -> bool: return "Fôlego" in t or "Folego" in t), "placa ensina o Fôlego")
+	_checar(textos.any(func(t: String) -> bool: return "Surto" in t), "placa ensina o Surto")
 	_checar(textos.any(func(t: String) -> bool: return "azagaia" in t or "K" in t), "placa ensina arremesso")
 	_checar(textos.any(func(t: String) -> bool: return "arco" in t or "segure" in t), "placa ensina o arco")
 	_checar(textos.any(func(t: String) -> bool: return "Porta" in t or "Clareira" in t), "placa aponta a porta")
@@ -58,6 +62,9 @@ func _testar_fluxo() -> void:
 	_checar(main._fase.nome_ambiente == NOME and main._fase.indice == 0, "após criar, entra no Treino")
 	_checar(main._ids_da_cota.is_empty(), "Treino não sorteia inimigos")
 	_checar(jogador.ficha.ouro >= Main.OURO_TUTORIAL, "Novo Jogo dá ouro do tutorial")
+	_checar(jogador.vida_atual() == jogador.vida_maxima() - Main.DANO_DEMONSTRACAO_TUTORIAL,
+		"Treino tira PV para ensinar o Fôlego")
+	_checar(jogador.usos_folego() > 0, "ainda tem uso de Fôlego para curar")
 	var bau: Bau = main.get_node("Bau")
 	var boneco: Node2D = main.get_node("BonecoTreino")
 	var lojista: Node2D = main.get_node("Lojista")
