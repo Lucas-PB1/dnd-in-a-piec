@@ -546,6 +546,7 @@ func _nascer_armadilhas() -> void:
 	var nome_do_chefe := _nascer_chefe()
 	_missao = Missao.new(_fase.missao, _ids_da_cota.size(), nome_do_chefe)
 	_mostrar_missao()
+	_atualizar_porta()
 	_placar.iniciar_fase(_fase.indice)
 	_mostrar_placar()
 
@@ -665,6 +666,7 @@ func _ao_morreu_da_cota(id: int, experiencia: int, ouro: int) -> void:
 	_mostrar_placar()
 	if _missao.cumprida():
 		_jogador.avisar(AVISO_MISSAO_CUMPRIDA)
+		_atualizar_porta()
 	# Adia: quem morreu ainda está emitindo o sinal e não pode ser apagado agora.
 	if _heroi_na_porta:
 		_tentar_atravessar.call_deferred()
@@ -1160,8 +1162,15 @@ func tirar_criaturas() -> void:
 	_missao = Missao.new()
 	_mostrar_missao()
 	_apagar_monstros()
+	_atualizar_porta()
 	if _heroi_na_porta:
 		_tentar_atravessar.call_deferred()
+
+
+## Porta clara só com a cota vazia (Treino e missão cumprida).
+func _atualizar_porta() -> void:
+	if _fase != null:
+		_fase.definir_porta_liberada(_ids_da_cota.is_empty())
 
 
 ## Telas de pausa (título, criação, derrota) param o jogo e escondem o HUD.

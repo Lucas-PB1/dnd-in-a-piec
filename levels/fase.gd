@@ -14,6 +14,9 @@ const MARGEM_QUEDA := 64.0
 const PAREDES_POR_LADO := 1
 ## Porta da saída (arte CC0 do rubberduck, ver assets/CREDITOS.md): com os pés no chão do ponto da porta.
 const TEXTURA_PORTA := preload("res://assets/tiles/castelo/porta.png")
+## Aparência: travada (cota viva) vs liberada (pode atravessar).
+const COR_PORTA_TRAVADA := Color(0.48, 0.45, 0.58)
+const COR_PORTA_LIBERADA := Color(1.25, 1.12, 0.88)
 ## O teto invisível fica isto acima do topo da fase (px): o Atleta que escala não sai do mapa.
 const ALTURA_DO_TETO_ACIMA_PX := 96.0
 ## Topo da colisão da grama desce isto (px) para os pés entrarem na relva; o gerador do TileSet usa o mesmo valor.
@@ -47,6 +50,9 @@ const CAMADA_MUNDO := 1
 @onready var _terreno: TileMapLayer = $Terreno
 @onready var _inicio: Marker2D = $InicioJogador
 
+var _desenho_porta: Sprite2D
+var _porta_liberada: bool = false
+
 
 func _ready() -> void:
 	_criar_fundo()
@@ -55,6 +61,7 @@ func _ready() -> void:
 	if porta == null:
 		return
 	_desenhar_porta(porta)
+	_aplicar_aparencia_porta()
 	porta.body_entered.connect(_ao_tocar_porta)
 	porta.body_exited.connect(_ao_sair_da_porta)
 
@@ -84,12 +91,28 @@ func _adicionar_plano(corpo: StaticBody2D, normal: Vector2, distancia: float) ->
 
 ## A porta de verdade: um sprite de arco de madeira com moldura de pedra, atrás do herói.
 func _desenhar_porta(porta: Area2D) -> void:
-	var desenho := Sprite2D.new()
-	desenho.name = "Desenho"
-	desenho.texture = TEXTURA_PORTA
-	desenho.position = Vector2(0.0, -TEXTURA_PORTA.get_height() / 2.0)
-	desenho.z_index = -1
-	porta.add_child(desenho)
+	_desenho_porta = Sprite2D.new()
+	_desenho_porta.name = "Desenho"
+	_desenho_porta.texture = TEXTURA_PORTA
+	_desenho_porta.position = Vector2(0.0, -TEXTURA_PORTA.get_height() / 2.0)
+	_desenho_porta.z_index = -1
+	porta.add_child(_desenho_porta)
+
+
+## Cota zerada (ou Treino): porta clara; com inimigos, fica escurecida.
+func definir_porta_liberada(liberada: bool) -> void:
+	_porta_liberada = liberada
+	_aplicar_aparencia_porta()
+
+
+func porta_esta_liberada() -> bool:
+	return _porta_liberada
+
+
+func _aplicar_aparencia_porta() -> void:
+	if _desenho_porta == null:
+		return
+	_desenho_porta.modulate = COR_PORTA_LIBERADA if _porta_liberada else COR_PORTA_TRAVADA
 
 ## Põe o fundo em camadas do ambiente (se tiver) e esconde o céu liso que ficava no lugar.
 func _criar_fundo() -> void:

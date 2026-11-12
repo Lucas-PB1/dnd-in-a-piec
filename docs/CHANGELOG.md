@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Porta: aparência travada/liberada conforme a cota (`Fase.definir_porta_liberada`). Testes campanha/tutorial. Backlog `porta-aparencia-cota` fechado.
 - Quimera: animação `dano` na reação ao hit (sem trocar estado). Teste `teste_quimera`. Backlog `quimera-anim-dano` fechado.
 - Sinais do herói: `reapareceu` liga ao som `reaparecer` (tecido, baixo); `pulou` já tinha som. Teste `teste_som`. Backlog `sinais-heroi-orfaos` fechado.
 - Projétil nasce na ponta da arma (`AtaqueJogador.origem_do_projetil`), sem pulo no 1º quadro. Teste `teste_tiro`. Backlog `projetil-altura-nascimento` fechado.

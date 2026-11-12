@@ -24,4 +24,4 @@ decisão deste tema mudar.**
 
 ## Limites do mapa e porta
 - Toda `Fase` cria o nó `Limites` (`StaticBody2D` no mundo, camada 1) com três `WorldBoundaryShape2D`: lateral esquerda e direita (a partir da área jogável, sem as paredes das pontas) e um teto 96 px acima do topo. Servem ao Atleta, que escala sem limite de altura, e a qualquer corpo que tente sair do mapa.
-- A saída tem um desenho de porta (`Porta/Desenho`, 50x81 px, arte CC0 do rubberduck); a área da porta e a cota continuam como eram.
+- A saída tem um desenho de porta (`Porta/Desenho`, 50x81 px, arte CC0 do rubberduck). **Aparência:** travada (modulate escuro) enquanto a cota vive; liberada (clara/quente) ao zerar — `Fase.definir_porta_liberada` / `porta_esta_liberada`. A área e a regra da cota continuam iguais.
