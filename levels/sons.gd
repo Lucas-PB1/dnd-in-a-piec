@@ -19,6 +19,8 @@ const SONS := {
 	&"morte_heroi": [SINTETIZADO + "morte_heroi.wav"],
 	&"estouro": [SINTETIZADO + "estouro.wav"],
 	&"pulo": [RPG + "cloth1.ogg", RPG + "cloth2.ogg", RPG + "cloth3.ogg"],
+	## Queda do mapa / voltar ao início: mesmo tecido do pulo, um pouco mais baixo.
+	&"reaparecer": [RPG + "cloth1.ogg", RPG + "cloth2.ogg", RPG + "cloth3.ogg"],
 	&"pouso": [SINTETIZADO + "pouso.wav"],
 	&"passo": [RPG + "footstep00.ogg", RPG + "footstep01.ogg", RPG + "footstep02.ogg", RPG + "footstep03.ogg", RPG + "footstep04.ogg"],
 	&"arremesso": [RPG + "drawKnife1.ogg", RPG + "drawKnife2.ogg", RPG + "drawKnife3.ogg"],
@@ -60,7 +62,7 @@ const VOZ_DA_CRIATURA := {
 const DA_INTERFACE: Array[StringName] = [&"clique", &"abrir_tela", &"fechar_tela", &"confirmar"]
 ## Volume (dB) de cada som que não toca no volume padrão.
 const VOLUMES := {
-	&"golpe_monstro": -3.0, &"tremor": -2.0, &"passo": -9.0, &"pulo": -8.0, &"pouso": -5.0,
+	&"golpe_monstro": -3.0, &"tremor": -2.0, &"passo": -9.0, &"pulo": -8.0, &"reaparecer": -10.0, &"pouso": -5.0,
 	&"golpe": -4.0, &"golpe_pesado": -2.0, &"clique": -4.0, &"pegar_item": -4.0, &"equipar": -3.0,
 	&"aviso_goblin": -2.0, &"ataque_goblin": -1.0, &"aviso_morto": -2.0, &"ataque_morto": -1.0,
 	&"aviso_growl": -3.0, &"ataque_growl": -2.0,
@@ -145,6 +147,7 @@ func ligar_jogador(jogador: Jogador) -> void:
 	_ultimo_nivel = jogador.ficha.nivel if jogador.ficha else 0
 	_ultimo_folego = jogador.usos_folego()
 	jogador.pulou.connect(tocar.bind(&"pulo"))
+	jogador.reapareceu.connect(tocar.bind(&"reaparecer"))
 	jogador.aterrissou.connect(tocar.bind(&"pouso"))
 	jogador.golpe_iniciado.connect(_ao_golpear)
 	jogador.arma_arremessada.connect(_ao_arremessar)

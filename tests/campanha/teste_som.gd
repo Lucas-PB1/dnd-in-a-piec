@@ -81,6 +81,8 @@ func _testar_no_jogo() -> void:
 	sons.tocados.clear()
 	jogador.pulou.emit()
 	_checar(sons.tocados.get(&"pulo", 0) == 1, "pular toca o som do pulo")
+	jogador.reapareceu.emit()
+	_checar(sons.tocados.get(&"reaparecer", 0) == 1, "reaparecer toca o som de voltar")
 	jogador.golpe_iniciado.emit(null, false)
 	_checar(sons.tocados.get(&"golpe", 0) == 1, "golpear toca o golpe no ar")
 	var boneco_defesa: DefesaComponent = main.get_node("BonecoTreino").find_children("*", "DefesaComponent", true, false)[0]
