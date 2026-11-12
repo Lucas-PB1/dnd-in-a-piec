@@ -34,6 +34,7 @@
 | Efeitos de golpe (arco, rastro, impacto; `slash_*`, `trace_*`, `circle_*`) | Kenney Particle Pack, Kenney Vleugels (CC0) | https://kenney.nl/assets/particle-pack (também em OpenGameArt) | CC0 (crédito não é obrigatório) | `assets/efeitos/fonte_kenney_particle/` (originais), `assets/efeitos/` (tiras via `tools/montar_efeitos_golpe.gd`) |
 | Porta em arco de madeira (recorte da folha de castelo `castle_tileset_part3.png`; `assets/tiles/castelo/`, gerada por `tools/recortar_porta.gd`) | rubberduck | https://opengameart.org/content/pixel-art-castle-tileset | CC0 | `assets/tiles/castelo/porta.png` |
 | Pedra do desafio de perícia (Basic Boulder) | **MystiqMiu** | https://opengameart.org/content/basic-boulder | CC0 1.0 | `features/desafio_pericia/sprites/fonte_boulder/` (original), `features/desafio_pericia/sprites/pedra.png` |
+| Ícone do jogo (`icon.png`: wooden buckler + espada grande) | **Idylwild** (composito do projeto) | https://opengameart.org/node/171011 e Arsenal | CC0 1.0 | `icon.png` (via `tools/montar_icone.gd`) |
 
 
 Estatísticas do Gray Ooze: ficha de criatura do D&D 5e (Wizards of the Coast), usada como referência de regras.

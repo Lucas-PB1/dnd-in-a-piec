@@ -28,7 +28,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 | 23 | `fases/tutorial` |
 | 26 | `heroi/intro-lore` |
 | 27 | `heroi/final-mais-legal` |
-| 28 | `arte/icone-do-jogo` |
 | 40 | `fases/recalibrar-dificuldade` (depois das fatias de progressão/tutorial/placar) |
 
 ### Regras do livro
@@ -37,7 +36,6 @@ Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
 ### Arte / polish
 | Pri | Arquivo |
 |---|---|
-| 28 | `arte/icone-do-jogo` |
 
 ### Dívidas técnicas
 | Pri | Arquivo |

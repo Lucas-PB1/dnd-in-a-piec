@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Ícone do jogo: `icon.png` 128×128 (escudo + espada Idylwild CC0 via `tools/montar_icone.gd`); `project.godot` e preset Windows. Backlog `icone-do-jogo` fechado. Teste `teste_icone`.
 - Tutorial (fatia 3): placas Fôlego/Surto; Novo Jogo tira 4 PV no Treino para praticar F. Teste `teste_tutorial`.
 - Arte da pedra empurrável: Basic Boulder (MystiqMiu, CC0) no `DesafioPericia` no lugar do ColorRect. Teste `teste_desafio_pericia`. Backlog `pedra-desafio-pericia` fechado.
 - Folga E: `Fase.FOLGA_INTERACAO_E` (96 px) entre loja/baú/desafio; pedra da Clareira em x=480; teste `teste_posicao_da_loja` cobre Treino + campanha. Backlog `interacoes-e-afastadas` fechado.
