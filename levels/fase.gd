@@ -18,6 +18,8 @@ const TEXTURA_PORTA := preload("res://assets/tiles/castelo/porta.png")
 const ALTURA_DO_TETO_ACIMA_PX := 96.0
 ## Topo da colisão da grama desce isto (px) para os pés entrarem na relva; o gerador do TileSet usa o mesmo valor.
 const RECUO_PES_NA_GRAMA_PX := 10.0
+## Distância mínima (px) entre centros de coisas que usam E (loja, baú, desafio…), para as áreas não competirem.
+const FOLGA_INTERACAO_E := 96.0
 const CAMADA_MUNDO := 1
 
 ## Número da fase na campanha (1 a 10). A fase reta de teste fica em 0.
@@ -38,8 +40,8 @@ const CAMADA_MUNDO := 1
 @export var acompanhantes_do_chefe: Array[StringName] = []
 ## A fase é ao ar livre de dia: quem tem Sensibilidade à Luz Solar (Kobold) ataca com desvantagem.
 @export var luz_do_sol: bool = false
-## Onde fica a banca do lojista em relação ao ponto de partida (px): à vista, em chão firme e longe do baú (a 70 px do
-## começo; as áreas de interação não podem se sobrepor, senão o E abriria a loja em vez do arsenal).
+## Onde fica a banca do lojista em relação ao ponto de partida (px): à vista, em chão firme e a ≥ `FOLGA_INTERACAO_E`
+## de baú/desafio (senão o E abre a coisa errada).
 @export var deslocamento_loja: Vector2 = Vector2(250, 0)
 
 @onready var _terreno: TileMapLayer = $Terreno

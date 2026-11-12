@@ -4,9 +4,6 @@ extends TesteBase
 
 const QUADROS := 20
 const NOME := "Treino"
-const FOLGA_E := 96.0
-
-
 func _initialize() -> void:
 	_rodar.call_deferred()
 
@@ -65,8 +62,8 @@ func _testar_fluxo() -> void:
 	var boneco: Node2D = main.get_node("BonecoTreino")
 	var lojista: Node2D = main.get_node("Lojista")
 	_checar(bau.visible and boneco.visible and lojista.visible, "Treino mostra baú, boneco e loja")
-	_checar(absf(bau.global_position.x - lojista.global_position.x) >= FOLGA_E,
-		"baú e loja ficam a pelo menos %.0f px" % FOLGA_E)
+	_checar(absf(bau.global_position.x - lojista.global_position.x) >= Fase.FOLGA_INTERACAO_E,
+		"baú e loja ficam a pelo menos %.0f px" % Fase.FOLGA_INTERACAO_E)
 	_checar(boneco.global_position.x > lojista.global_position.x,
 		"boneco fica depois da loja no corredor")
 	main._heroi_na_porta = true

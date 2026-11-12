@@ -164,7 +164,8 @@ func _fases() -> Array[Dictionary]:
 			"chao": [33, 34], "plataforma": [], "porta": 35,
 			"degraus": [[12, 3, 1]], "altas": [[18, 4, 2], [25, 3, 2]], "pontos": [[19, 6]],
 			"desafios": [{
-				"x": 400, "rotulo": "Empurrar a pedra",
+				# Longe da loja (≥ Fase.FOLGA_INTERACAO_E): loja ~330 → pedra em 480.
+				"x": 480, "rotulo": "Empurrar a pedra",
 				"aviso_sucesso": "A pedra rolou!", "aviso_falha": "A pedra não se moveu",
 			}],
 			"enfeites": [["arbusto", 5, 0], ["arbusto", 10, 0], ["arbusto", 16, 0], ["arbusto", 22, 0], ["arbusto", 28, 0]],

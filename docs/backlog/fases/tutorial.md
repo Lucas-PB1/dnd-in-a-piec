@@ -16,7 +16,5 @@ area: fases
 ## Falta (próximas fatias)
 - Fôlego/Surto em versão curta no Treino.
 - Pedra do desafio com **arte de verdade** (ver `arte/pedra-desafio-pericia`) se entrar no Treino.
-- Generalizar margem E em todas as fases (ver `interacoes-e-afastadas`).
-
 ## Pronto quando
 - Novo jogo passa pelo tutorial e o jogador consegue os controles básicos (incl. fatias restantes) sem ler código; testes de presença/fluxo.
