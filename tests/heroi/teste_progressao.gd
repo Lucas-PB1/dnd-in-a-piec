@@ -68,10 +68,12 @@ func _testar_ficha() -> void:
 
 
 func _testar_dificuldade() -> void:
+	# Clareira base 1; +1 a cada 2 níveis (nv 1–2: 1, nv 3–4: 2, nv 5–6: 3).
 	_checar(_main.quantidade_inimigos_da_fase(1) == 1
-		and _main.quantidade_inimigos_da_fase(2) == 2
-		and _main.quantidade_inimigos_da_fase(3) == 3,
-		"a cota da fase 1 aumenta com o nível até a capacidade de pontos")
+		and _main.quantidade_inimigos_da_fase(2) == 1
+		and _main.quantidade_inimigos_da_fase(3) == 2
+		and _main.quantidade_inimigos_da_fase(5) == 3,
+		"a cota da fase 1 sobe a cada 2 níveis até a capacidade de pontos")
 
 
 func _testar_mente_tatica() -> void:
@@ -134,8 +136,8 @@ func _testar_surto_e_descanso() -> void:
 	_checar(_jogador.vida_atual() < _jogador.vida_maxima(), "descanso curto não enche PV")
 	_checar(_main._tipos_da_fase(3).has(Main.TIPO_WARRIOR),
 		"nível 3 libera o Guerreiro nas fases anteriores")
-	_checar(_main.quantidade_inimigos_da_fase(3) == 4,
-		"a fase 2 sorteia mais inimigos para um herói de nível 3")
+	_checar(_main.quantidade_inimigos_da_fase(3) == 3,
+		"a fase 2 sorteia +1 inimigo a cada 2 níveis (base 2 → 3 no nv 3)")
 	_main._entrar_fase(load("res://levels/fase_4.tscn"), true)
 	await physics_frame
 	_checar(_jogador.vida_atual() == _jogador.vida_maxima(), "sair de chefe = descanso longo: PV cheio")

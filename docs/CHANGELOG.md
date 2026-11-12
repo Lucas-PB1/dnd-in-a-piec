@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Recalibrar dificuldade (fatia 1): cotas `1/2/2/3/4/4/4/5/3/4`; extra +1 a cada 2 níveis; Cripta/Covil com mais pontos. ADR `base.md`. Testes progressão/regras/campanha.
 - Final mais legal: epílogo brincalhão na vitória (`data/epilogo_lore.tres`), placar da run, botões Jogar de novo / Menu. Testes `teste_vitoria` / `teste_campanha`. Backlog `final-mais-legal` fechado.
 - Tutorial completo: pedra de perícia no Treino (x=600), placas polidas; backlog `tutorial` fechado. Teste `teste_tutorial`.
 - Intro de lore enxuta (1 parágrafo + punch); texto em `data/intro_lore.tres`. Teste `teste_intro_lore`.

@@ -89,7 +89,8 @@ const CENAS_DOS_TIPOS: Dictionary[StringName, PackedScene] = {
 	TIPO_WIGHT: CENA_WIGHT,
 	TIPO_QUIMERA: CENA_QUIMERA,
 }
-const INIMIGOS_EXTRA_POR_NIVEL := 1
+## A cada N níveis acima do 1, a cota base ganha +1 (cap nos pontos da fase).
+const INIMIGOS_EXTRA_A_CADA_NIVEIS := 2
 ## Distância (px) dos primeiros acompanhantes do chefe até ele.
 const DISTANCIA_ACOMPANHANTE_PX := 70.0
 ## Onde a criatura trazida pela tela de comandos nasce, à frente do herói (pés).
@@ -644,7 +645,8 @@ func _registrar_no_bestiario(monstro: Node2D) -> void:
 
 func quantidade_inimigos_da_fase(nivel: int) -> int:
 	var pontos := _fase.pontos_armadilha()
-	return mini(_fase.quantidade + (nivel - 1) * INIMIGOS_EXTRA_POR_NIVEL, pontos.size())
+	var extra := floori(float(nivel - 1) / float(INIMIGOS_EXTRA_A_CADA_NIVEIS))
+	return mini(_fase.quantidade + extra, pontos.size())
 
 
 ## Todo monstro da cota tem o sinal `morreu`.
@@ -677,7 +679,7 @@ func _aplicar_experiencia(experiencia: int) -> void:
 	_atualizar_botoes_toque()
 
 
-## Cada fase fica com mais um inimigo por nível; níveis mais altos liberam Guerreiro cedo.
+## Cota sobe a cada 2 níveis; níveis mais altos liberam Guerreiro cedo.
 func _tipos_da_fase(nivel: int) -> Array[StringName]:
 	var tipos: Array[StringName] = _fase.tipos_permitidos.duplicate()
 	var liberar_guerreiro := (nivel >= Ficha.NIVEL_HABILIDADES_GUERREIRO and _fase.indice >= 3) or (nivel >= 3 and _fase.indice >= 2)

@@ -147,7 +147,7 @@ func _sorteios_iguais(um: Array[Dictionary], outro: Array[Dictionary]) -> bool:
 
 
 func _testar_fases() -> void:
-	var quantidades: Array[int] = [1, 2, 3, 3, 4, 4, 4, 5, 2, 3]
+	var quantidades: Array[int] = [1, 2, 2, 3, 4, 4, 4, 5, 3, 4]
 	for i in quantidades.size():
 		var fase: Fase = load("res://levels/fase_%d.tscn" % [i + 1]).instantiate()
 		root.add_child(fase)

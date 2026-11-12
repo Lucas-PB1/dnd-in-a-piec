@@ -160,7 +160,7 @@ func _fase_tutorial() -> Dictionary:
 	}
 
 
-## Clareira 1, Trilha 2, Pântano 3, Ruína 3, Fortaleza 4. Há mais pontos do que a quantidade.
+## Cotas: começo leve (1/2/2), meio estável, fim mais denso (Cripta 3, Covil 4). Sempre sobra ponto.
 func _fases() -> Array[Dictionary]:
 	var fases: Array[Dictionary] = [
 		{
@@ -190,7 +190,7 @@ func _fases() -> Array[Dictionary]:
 		},
 		{
 			"nome": "Pântano", "arquivo": "res://levels/fase_3.tscn", "no": "Fase",
-			"tema": 2, "indice": 3, "ultima": false, "quantidade": 3, "tipos": TIPOS_SEM_ARCO,
+			"tema": 2, "indice": 3, "ultima": false, "quantidade": 2, "tipos": TIPOS_SEM_ARCO,
 			"missao": "Limpe o pântano",
 			"largura": 48, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [Vector2i(8, 2), Vector2i(30, 2)], "plataformas": [Vector2i(16, 3)],
@@ -273,10 +273,10 @@ func _fases() -> Array[Dictionary]:
 		{
 			# A cripta do Wight, a fase 9 do plano.
 			"nome": "Cripta", "arquivo": "res://levels/fase_9.tscn", "no": "Fase",
-			"tema": 5, "indice": 9, "ultima": false, "quantidade": 2, "tipos": TIPOS_CRIPTA, "missao": "Desça à cripta",
+			"tema": 5, "indice": 9, "ultima": false, "quantidade": 3, "tipos": TIPOS_CRIPTA, "missao": "Desça à cripta",
 			"largura": 54, "inicio": 2,
 			"buracos": [Vector2i(12, 2)], "plataformas": [],
-			"chao": [15, 30], "plataforma": [], "porta": 50,
+			"chao": [15, 30, 40], "plataforma": [], "porta": 50,
 			# Arena do Wight (colunas 32 a 53, chão reto): ele espera na coluna 44; os acompanhantes (1 Skeleton e 1 Zombie;
 			# o Zombie vem do sorteio da cripta também) surgem perto dele quando ele percebe o herói.
 			"chefe": [&"wight", 44], "acompanhantes": [&"skeleton", &"zombie"],
@@ -291,11 +291,11 @@ func _fases() -> Array[Dictionary]:
 			# O covil da Quimera, a fase 10 (final). Arena larga e reta (colunas 30 a 63): ela espera na coluna 46.
 			# Duas poças de lava no chão (zona de 1d6 de fogo / rodada); dá para contornar pelos degraus/plataformas.
 			"nome": "Covil", "arquivo": "res://levels/fase_10.tscn", "no": "Fase",
-			"tema": 5, "indice": 10, "ultima": true, "quantidade": 3, "tipos": TIPOS_COVIL, "missao": "Enfrente a Quimera",
+			"tema": 5, "indice": 10, "ultima": true, "quantidade": 4, "tipos": TIPOS_COVIL, "missao": "Enfrente a Quimera",
 			"largura": 64, "inicio": 2, "loja": Vector2(150, 0),
 			"buracos": [], "plataformas": [],
 			"lavas": [Vector2i(9, 3), Vector2i(35, 2)],
-			"chao": [13, 22], "plataforma": [], "porta": 60,
+			"chao": [13, 22, 52], "plataforma": [], "porta": 60,
 			"chefe": [&"quimera", 46],
 			"degraus": [[16, 3, 1], [19, 2, 2]], "altas": [[25, 4, 2]], "pontos": [[18, 6], [27, 6]],
 			"enfeites": [
