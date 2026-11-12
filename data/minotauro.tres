@@ -6,7 +6,7 @@
 script = ExtResource("1_criatura")
 nome = "Minotauro de Baphomet"
 experiencia = 700
-ouro = 140
+ouro = 120
 tipo = "Large Monstrosity, Chaotic Evil"
 tamanho = 3
 classe_armadura = 14

@@ -6,7 +6,7 @@
 script = ExtResource("1_criatura")
 nome = "Ankheg"
 experiencia = 450
-ouro = 50
+ouro = 60
 tipo = "Large Monstrosity, Unaligned"
 tamanho = 3
 classe_armadura = 14

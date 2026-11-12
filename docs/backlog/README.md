@@ -25,7 +25,7 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo |
 |---|---|
-| 40 | `fases/recalibrar-dificuldade` (depois das fatias de progressão/tutorial/placar) |
+| — | (vazio: escolher em `depois/` ou `divida/`) |
 
 ### Regras do livro
 Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.

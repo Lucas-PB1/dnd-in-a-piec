@@ -31,7 +31,7 @@ Fonte: `history-lilac.vercel.app`, arquivos `Monster Manual/09 - Monsters (H).md
 - **No código:** cenas herdadas em `features/goblin/` (`hobgoblin_guerreiro` do Warrior, `bugbear_guerreiro` e `kobold_guerreiro` do Minion), com `criatura`, `escala_arte`, `cor_corpo` e caixas de colisão próprios. Tipo novo = cena + uma linha em `Main.CENAS_DOS_TIPOS` + o nome em `Fase.tipos_permitidos`.
 - **Táticas de Matilha** (`MatilhaDeCriatura` + regra `TaticasDeMatilha`): aliado do grupo `monstros` em pé (nem Caído nem morto) a 5 pés do alvo dá vantagem ao ataque — não precisa ser Goblin. **Luz do Sol:** `Fase.luz_do_sol` (fases 1 e 2); a main avisa cada monstro; o Kobold ataca com desvantagem.
 - **Bugbear:** o acerto de Agarrar usa a condição Agarrado que já existia (CD 12, escape por rodada). O Martelo Leve arremessado tem dano próprio (3d4+2). **Ainda não feito:** Abduzir (mover o agarrado sem custo) e a vantagem do Martelo Leve contra Agarrado, e o Martelo Leve em corpo a corpo.
-- **Hobgoblin:** o "mais 7 (3d4) de veneno" do Arco Longo entra como dano extra do golpe (`EfeitoDanoAdicional`), sem resistência separada. O ouro dos três (Hob 10, Bugbear 20, Kobold 2) é decisão do jogo, não do livro (recalibragem 2026-11-12).
+- **Hobgoblin:** o "mais 7 (3d4) de veneno" do Arco Longo entra como dano extra do golpe (`EfeitoDanoAdicional`), sem resistência separada. O ouro dos três (8, 15, 2) é decisão do jogo, não do livro. **Recalibragem de dificuldade não mexe em fichas** (CA/PV/dano/XP/ouro das criaturas).
 - **Arte:** Hobgoblin, Bugbear, Kobold, Skeleton e Zombie têm arte própria do **Gemini** (já ligada); Minion/Warrior/Ooze usam SpriteCook. Retratos do bestiário acompanham a arte atual.
 
 ## IA: saltar obstáculos, vãos e quedas (Goblin e variantes)
@@ -115,6 +115,9 @@ Monstruosidade Grande, Caótica e Má · **ND 6 (2.300 XP)** · CA 14 · **PV 11
 **Capacidades da ficha** (não são “extra do Goblin”; o comportamento deve viver em `core/` e ligar pelo `.tres`): **arremesso** (`ArremessoDeCriatura` + `ProjetilArremesso` — Goblin), **disparo + sensível ao sol** (`DisparoDeCriatura` — Goblin e Wight), **cobertura/estratégia/flanqueio** (`TaticaDeCriatura` — Goblin e Gray Ooze; chefes off), **investida/chifrada** (`InvestidaDeCriatura` — Minotauro e Quimera), **furtividade** (`FurtividadeDeCriatura` — clã Goblin; estado `Escondido` + esconder/revelar na feature), **Fuga Ágil** (`FugaAgilDeCriatura` — clã Goblin; estado `Desengajando` + `recuar` na feature), **Táticas de Matilha** (`MatilhaDeCriatura` — Hobgoblin/Kobold via script Goblin; aliados = grupo `monstros`), **voo** (`VooDeCriatura` + `voo_pes` — Quimera; mergulho/fúria/roleta na feature), **linha/área** (`LinhaDeCriatura` + `linha_*` — Ankheg Borrifo e Quimera Sopro; hitbox/VFX na feature), `escavacao_pes`, `drenar_*`, `garra_*`, corrosão.
 
 **Específico de verdade** (fica na feature): Ooze — squash visual no Caído; Ankheg — encenação cavar/emergir; Minotauro — quebrar `quebravel`; Wight — despertar → acompanhantes na main; Quimera — roleta de padrões + fúria + rugido + combo multi-janela. Hit-stun: minions entram em `LevandoDano`; chefes só piscam (mesma reação, política diferente).
+
+## Fichas = livro (não balancear por aqui)
+Dificuldade da campanha ajusta **cotas, tipos por fase, extra por nível, loja e marcos de XP do herói** — nunca CA/PV/dano/XP (nem ouro já definido) nas fichas `data/*.tres` só para “ficar mais fácil/difícil”.
 
 ## Conferência das fichas com o livro (2026-11-09)
 Todos os mobs foram conferidos com o Códice (CA, PV, atributos, ataques, alcances, XP, traços). Só divergia:

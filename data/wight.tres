@@ -6,7 +6,7 @@
 script = ExtResource("1_criatura")
 nome = "Corpo Seco (Wight)"
 experiencia = 700
-ouro = 150
+ouro = 120
 tipo = "Medium Undead, Neutral Evil"
 tamanho = 2
 classe_armadura = 14

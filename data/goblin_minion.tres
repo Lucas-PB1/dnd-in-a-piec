@@ -7,7 +7,7 @@
 script = ExtResource("1_criatura")
 nome = "Goblin Minion"
 experiencia = 25
-ouro = 2
+ouro = 3
 tipo = "Small Fey (Goblinoid), Chaotic Neutral"
 tamanho = 1
 classe_armadura = 12
