@@ -112,25 +112,25 @@
       "asset_id": "153d2592-aa9f-4fe4-bb8a-96d0acf0cffd",
       "sha12": "ee170bb28ed2",
       "label": "minion_base (personagem base do Goblin Minion, 82x82, 12 créditos; aprovada; base para animar)",
-      "file": "features/goblin/sprites/minion_base_spritecook.png"
+      "file": "features/humanoides/sprites/minion_base_spritecook.png"
     },
     {
       "asset_id": "08661288-4783-47bd-874a-dcc399d135b5",
       "sha12": "ab382c033e83",
       "label": "minion_arremesso (8 quadros 88x88, custom; PARCIAL: restos da adaga perto da cabeça nos quadros 4-5)",
-      "file": "features/goblin/sprites/minion_arremesso_sc.png"
+      "file": "features/humanoides/sprites/minion_arremesso_sc.png"
     },
     {
       "asset_id": "659e802e-cae3-43e8-bb45-7aca7b03dd01",
       "sha12": "3385738b8ab5",
       "label": "warrior_base (personagem base do Goblin Warrior, 70x70, 12 créditos; aprovada)",
-      "file": "features/goblin/sprites/warrior_base_spritecook.png"
+      "file": "features/humanoides/sprites/warrior_base_spritecook.png"
     },
     {
       "asset_id": "f4f32956-a74c-4ea3-a31f-86c28ac8db22",
       "sha12": "ec9ab4d88cdb",
       "label": "warrior_arco (8 quadros 76x76, custom; aprovado, flecha encaixada nos quadros 6-7)",
-      "file": "features/goblin/sprites/warrior_arco_sc.png"
+      "file": "features/humanoides/sprites/warrior_arco_sc.png"
     },
     {
       "asset_id": "f5a2d9c6-8bf4-43c3-b426-2f191fe3b8ea",
@@ -172,49 +172,49 @@
       "asset_id": "5c9da145-a7c9-44af-9321-7106bd125d5d",
       "sha12": "1ec273f85235",
       "label": "warrior_golpe (8 quadros 76x76, custom; bom, cimitarra um pouco distorcida nos quadros 5-6)",
-      "file": "features/goblin/sprites/warrior_golpe_sc.png"
+      "file": "features/humanoides/sprites/warrior_golpe_sc.png"
     },
     {
       "asset_id": "a7a56497-c714-4ddf-91ca-74031f625b93",
       "sha12": "d80eec396696",
       "label": "warrior_dano (8 quadros 76x76, preset hurt; aprovado, um pixel solto acima da cabeça nos quadros 2-5)",
-      "file": "features/goblin/sprites/warrior_dano_sc.png"
+      "file": "features/humanoides/sprites/warrior_dano_sc.png"
     },
     {
       "asset_id": "4ef1ccae-f002-4ddc-ae48-711b4d33f3b0",
       "sha12": "b038f544b61f",
       "label": "warrior_andar (8 quadros 76x76, preset walk + preparo; aprovado)",
-      "file": "features/goblin/sprites/warrior_andar_sc.png"
+      "file": "features/humanoides/sprites/warrior_andar_sc.png"
     },
     {
       "asset_id": "6e2a3802-5826-4cdc-82cc-7a3cb63700a4",
       "sha12": "7e4cbb812591",
       "label": "warrior_parado (8 quadros 76x76, preset idle; aprovado)",
-      "file": "features/goblin/sprites/warrior_parado_sc.png"
+      "file": "features/humanoides/sprites/warrior_parado_sc.png"
     },
     {
       "asset_id": "288e909d-6f66-49f5-8066-a8d4785515bc",
       "sha12": "dae0a84d3847",
       "label": "minion_golpe (8 quadros 88x88, custom; PARCIAL: quadros 5-6 bons, adaga deformada nos quadros 3 e 7)",
-      "file": "features/goblin/sprites/minion_golpe_sc.png"
+      "file": "features/humanoides/sprites/minion_golpe_sc.png"
     },
     {
       "asset_id": "3913ee03-ede8-4dac-a903-887663ec2f34",
       "sha12": "fc670259d4d8",
       "label": "minion_dano (8 quadros 88x88, preset hurt; aprovado)",
-      "file": "features/goblin/sprites/minion_dano_sc.png"
+      "file": "features/humanoides/sprites/minion_dano_sc.png"
     },
     {
       "asset_id": "9c8df00f-42eb-4171-9b3f-69c40611cc8b",
       "sha12": "d031e6f96076",
       "label": "minion_andar (8 quadros 88x88, preset walk + preparo; aprovado)",
-      "file": "features/goblin/sprites/minion_andar_sc.png"
+      "file": "features/humanoides/sprites/minion_andar_sc.png"
     },
     {
       "asset_id": "8cbcadbf-4ef2-4c13-9d64-f829887a7ab0",
       "sha12": "3106867b0cf5",
       "label": "minion_parado (8 quadros 88x88, preset idle; aprovado)",
-      "file": "features/goblin/sprites/minion_parado_sc.png"
+      "file": "features/humanoides/sprites/minion_parado_sc.png"
     },
     {
       "asset_id": "e1a697d4-ca27-4d78-9920-e655690e9a7e",

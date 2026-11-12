@@ -3,9 +3,9 @@ extends TesteBase
 ## Táticas de Matilha, Sensibilidade à Luz Solar, o agarrão do Bugbear e as cenas rodando sozinhas.
 ## godot --headless --debug --path . --script res://tests/criaturas/teste_minions_novos.gd
 
-const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
-const CENA_BUGBEAR := "res://features/goblin/bugbear_guerreiro.tscn"
-const CENA_KOBOLD := "res://features/goblin/kobold_guerreiro.tscn"
+const CENA_HOBGOBLIN := "res://features/humanoides/hobgoblin_guerreiro.tscn"
+const CENA_BUGBEAR := "res://features/humanoides/bugbear_guerreiro.tscn"
+const CENA_KOBOLD := "res://features/humanoides/kobold_guerreiro.tscn"
 const GRUPO := &"monstros"
 const POSICAO := Vector2(400, 288)
 

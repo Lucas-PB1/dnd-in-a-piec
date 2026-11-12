@@ -7,7 +7,7 @@ extends SceneTree
 ## A folha é 10×4 células de 32×64; o corpo fica na base da célula. O ataque horizontal
 ## (chão) ganha a espada do pacote na mão nos quadros em que o braço estica.
 
-const PASTA := "res://features/goblin/sprites/"
+const PASTA := "res://features/humanoides/sprites/"
 const FONTE := PASTA + "fonte_goblin_corps/"
 const DESTINO := PASTA + "goblin_guerreiro_frames.tres"
 const LARGURA := 56

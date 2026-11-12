@@ -11,7 +11,7 @@ const QUADROS := 8
 ## criatura -> pasta, prefixo dos arquivos, animações (nome -> [arquivo, fps, repete]).
 const CRIATURAS := {
 	"minion": {
-		"pasta": "res://features/goblin/sprites/",
+		"pasta": "res://features/humanoides/sprites/",
 		"animacoes": {
 			"parado": ["minion_parado_sc", 8.0, true],
 			"correr": ["minion_andar_sc", 12.0, true],
@@ -21,7 +21,7 @@ const CRIATURAS := {
 		},
 	},
 	"warrior": {
-		"pasta": "res://features/goblin/sprites/",
+		"pasta": "res://features/humanoides/sprites/",
 		"animacoes": {
 			"parado": ["warrior_parado_sc", 8.0, true],
 			"correr": ["warrior_andar_sc", 12.0, true],

@@ -123,7 +123,7 @@ func _testar_no_jogo() -> void:
 	_checar(sons.atenuacao_por_distancia(jogador.global_position + Vector2(Sons.DISTANCIA_MUDA_PX, 0.0)) <= Sons.ATENUACAO_MUDA_DB, "longe demais o som some")
 	_checar(sons.atenuacao_por_distancia(jogador.global_position + Vector2(Sons.DISTANCIA_CHEIA_PX + 64.0, 0.0)) < 0.0, "no meio o volume já cai")
 	# Criaturas e chefes
-	var goblin: Goblin = load("res://features/goblin/goblin.tscn").instantiate()
+	var goblin: Goblin = load("res://features/humanoides/goblin.tscn").instantiate()
 	main.add_child(goblin)
 	goblin.global_position = jogador.global_position + Vector2(40.0, 0.0)
 	await process_frame

@@ -31,7 +31,7 @@ func _testar_vale_com_aliado() -> void:
 	mundo.add_child(alvo)
 	alvo.global_position = Vector2(100, 0)
 	var ficha: CriaturaRPG = (load("res://data/kobold_warrior.tres") as CriaturaRPG).duplicate()
-	var atacante: Goblin = load("res://features/goblin/kobold_guerreiro.tscn").instantiate()
+	var atacante: Goblin = load("res://features/humanoides/kobold_guerreiro.tscn").instantiate()
 	atacante.criatura = ficha
 	mundo.add_child(atacante)
 	atacante.add_to_group(&"monstros")

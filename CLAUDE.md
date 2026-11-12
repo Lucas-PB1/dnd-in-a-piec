@@ -85,7 +85,7 @@ core/utilitarios/        ToqueDuplo, DesenhoArma, Recursos, Comandos, OpcoesToqu
 features/jogador/        herói: jogador, stats, animação, câmera, ataque, escudo, arma de trás, estados/, sprites/
 features/jogador/talentos/ regras puras dos talentos do herói (recargas, Sorte, dados de vida, veneno, defesa, Investida)
 features/gray_ooze/      Gray Ooze: cena, estados/, sprites/
-features/goblin/         Goblin Minion e Goblin Warrior: cenas, adaga, flecha, estados/, sprites/
+features/humanoides/         máquina compartilhada (Goblin, Hobgoblin, Bugbear, Kobold, Skeleton, Zombie): cenas, estados/, sprites/
 features/ankheg/        Ankheg (chefe da fase 3): cena, estados/, sprites/
 features/minotauro/      Minotauro de Baphomet (chefe da fase 6): cena, estados/, sprites/
 features/wight/          Corpo Seco / Wight (chefe da fase 9): cena, estados/, sprites/
@@ -155,7 +155,7 @@ comandos (fase, ponto da mão, prints) e armadilhas em `docs/how-to/receitas.md`
 Últimas fatias (lista completa em `docs/CHANGELOG.md`; o que falta em `docs/backlog/`):
 - Campanha de **10 fases** em 4 temas (Floresta, Ruínas, Subterrâneo, Covil): encontros, portas com cota, missões, ouro/drops, loja e vitória na fase 10 (Covil).
 - Chefes: Ankheg (3), Minotauro (6, blocos quebráveis), Wight (9, Skeleton/Zombie), Quimera (10). Lava do Covil ainda pendente.
-- Minions: Goblin Minion/Warrior, Gray Ooze, Kobold, Hobgoblin, Bugbear, Skeleton, Zombie (`features/goblin/` por herança).
+- Minions: Goblin Minion/Warrior, Gray Ooze, Kobold, Hobgoblin, Bugbear, Skeleton, Zombie (`features/humanoides/` por herança).
 - Guerreiro **1–8**: Surto/Mente Tática (2), subclasse Campeão (3), talentos gerais (4/6/8), Ataque Extra e Mudança Tática (5), Estilo Extra do Campeão (7); criação com antecedente; 30 talentos ligados.
 - Save/load (`Salvamento` → `user://save.json`), Compêndio com antecedentes/talentos, toque com **8 slots**.
 - Celular: APK em `builds/android/dnd_in_a_piece.apk` (ajustes de toque quando o feedback do aparelho aparecer).

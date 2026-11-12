@@ -3,7 +3,7 @@ extends TesteBase
 ## Constituição CD 5 + dano; não vale contra acerto crítico nem dano radiante), cena sozinha, morte e presença na Main.
 ## godot --headless --debug --path . --script res://tests/criaturas/teste_zombie.gd
 
-const CENA := "res://features/goblin/zombie_guerreiro.tscn"
+const CENA := "res://features/humanoides/zombie_guerreiro.tscn"
 const GOLPE_CERTEIRO := 100
 const DANO_FIXO := 1
 const TENTATIVAS := 300

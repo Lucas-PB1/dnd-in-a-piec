@@ -7,7 +7,7 @@ extends SceneTree
 ## para a direita. Também imprime onde ficam os pés e o meio do corpo no 1º quadro parado,
 ## para acertar o `offset` do sprite na cena.
 
-const PASTA := "res://features/goblin/sprites/"
+const PASTA := "res://features/humanoides/sprites/"
 const DESTINO := PASTA + "goblin_frames.tres"
 const TAMANHO_QUADRO := Vector2i(48, 32)
 ## nome da animação -> [quantidade de quadros, fps, repete]. O pacote usa 0,1 s por quadro.

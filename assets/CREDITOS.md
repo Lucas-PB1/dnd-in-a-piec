@@ -6,19 +6,19 @@
 | Ícones das armas (28 armas; ajustados por `tools/gerar_armas.gd`: haste esticada ou encurtada) | **Idylwild** | https://opengameart.org/content/idylwilds-arsenal | CC0 1.0 (domínio público; crédito não obrigatório) | `assets/armas/fonte_idylwild/` (originais), `assets/armas/` |
 | Ícones das armaduras e escudos (21; tinta própria nas que dividem o ícone) | **Idylwild** | https://opengameart.org/node/171011 (Idylwild's Armory) | CC0 1.0 (domínio público; crédito não obrigatório) | `assets/armaduras/fonte_idylwild/` (originais), `assets/armaduras/icones/` |
 | Armas à distância e munição (arcos, bestas, funda, zarabatana; flecha, virote, agulha, pedra, bala). Pistola e mosquete desenhados por script no mesmo estilo | **Idylwild** | https://opengameart.org/node/172926 (Idylwild's Aerial Arsenal) | CC0 1.0 (domínio público; crédito não obrigatório) | `assets/armas/fonte_aereo/` (originais), `assets/armas/`, `assets/armas/quadros/` |
-| Goblin Minion (parado, corrida, ataque e morte; GIFs convertidos em tiras PNG 48x32) | **thekingphoenix** | https://opengameart.org/content/goblin-free-pixelart (Goblin Free Pixelart) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/goblin/sprites/` |
+| Goblin Minion (parado, corrida, ataque e morte; GIFs convertidos em tiras PNG 48x32) | **thekingphoenix** | https://opengameart.org/content/goblin-free-pixelart (Goblin Free Pixelart) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/humanoides/sprites/` |
 | Fundos em camadas e ladrilhos de floresta e fortaleza (Forest of Illusion e Fort of Illusion; camadas `back`, `middle`, `mountains`, `front`, `tiles` e `tileset`) | **ansimuz (Luis Zuno)** | https://opengameart.org/content/sunnyland-forest-of-illusion e https://opengameart.org/content/fort-of-illusion | CC0 1.0 (domínio público; crédito opcional) | `assets/fundos/floresta/`, `assets/fundos/fortaleza/` |
 | Fundos e **tileset** do Pântano (Gothicvania Swamp; `back`, `middle`, `front`, `tileset.png`) | **ansimuz (Luis Zuno)** | https://opengameart.org/content/gotthicvania-swamp | CC0 1.0 (domínio público; crédito opcional) | `assets/fundos/pantano/` |
 | Fundos e **tileset** da Ruína (GothicVania Cemetery; `back`, `mountains`, `graveyard`, `tileset.png`) | **ansimuz (Luis Zuno)** | https://opengameart.org/content/gothicvania-cemetery-pack | CC0 1.0 (domínio público; crédito opcional) | `assets/fundos/ruina/` |
 | Ladrilhos de caverna (DB32 Cave tileset) | **Buch** | https://opengameart.org/content/db32-cave-tileset | CC0 1.0 (crédito não obrigatório) | `assets/tiles/caverna/chao/cave_tileset.png` |
 | Baú abrindo (8 quadros) | **r0ar** | https://opengameart.org/content/treasure-chest-sprite | CC0 1.0 | `features/bau/sprites/fonte_bau/` (originais), `features/bau/sprites/bau_abrindo.png` |
-| Goblin Warrior (soldado de lado: parado, andar, golpe com espada, morte). A flecha que ele atira é a do Aerial Arsenal | **MoikMellah** | https://opengameart.org/content/goblin-corps-mv-platformer-set (Goblin Corps) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/goblin/sprites/fonte_goblin_corps/` |
+| Goblin Warrior (soldado de lado: parado, andar, golpe com espada, morte). A flecha que ele atira é a do Aerial Arsenal | **MoikMellah** | https://opengameart.org/content/goblin-corps-mv-platformer-set (Goblin Corps) | CC0 1.0 (domínio público; crédito não obrigatório) | `features/humanoides/sprites/fonte_goblin_corps/` |
 | Herói | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/jogador/sprites/` |
 | Chão da floresta | Gerado no SpriteCook (tileset) | https://spritecook.ai | Conta do usuário | `assets/tiles/spritecook/` |
 | Ankheg (chefe da fase 3) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/ankheg/sprites/` |
 | Minotauro de Baphomet (chefe da fase 6) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/minotauro/sprites/` |
 | Corpo Seco / Wight (chefe da fase 9) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/wight/sprites/` |
-| Goblin Minion, Goblin Warrior e Gray Ooze (folhas atuais `*_sc.png`) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/goblin/sprites/`, `features/gray_ooze/sprites/` |
+| Goblin Minion, Goblin Warrior e Gray Ooze (folhas atuais `*_sc.png`) | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/humanoides/sprites/`, `features/gray_ooze/sprites/` |
 | Lojista | Gerado no SpriteCook | https://spritecook.ai | Conta do usuário | `features/loja/sprites/` |
 | Efeitos sonoros de RPG (espadas, passos, tecidos, portas) | Kenney Vleugels (CC0) | https://opengameart.org/content/50-rpg-sound-effects | CC0 | `assets/audio/kenney_rpg/` |
 | Sons de interface (cliques, abrir, fechar, confirmar) | Kenney Vleugels (CC0) | https://opengameart.org/content/interface-sounds | CC0 | `assets/audio/kenney_interface/` |
@@ -39,15 +39,15 @@
 
 Estatísticas do Gray Ooze: ficha de criatura do D&D 5e (Wizards of the Coast), usada como referência de regras.
 
-## Hobgoblin Warrior (features/goblin/sprites/hobgoblin_*.png)
+## Hobgoblin Warrior (features/humanoides/sprites/hobgoblin_*.png)
 Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
-## Bugbear Warrior (features/goblin/sprites/bugbear_*.png)
+## Bugbear Warrior (features/humanoides/sprites/bugbear_*.png)
 Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
-## Kobold Warrior (features/goblin/sprites/kobold_*.png)
+## Kobold Warrior (features/humanoides/sprites/kobold_*.png)
 Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
@@ -57,11 +57,11 @@ reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 (arquivo `opp3_cave_tiles.zip`, baixado em 2026-11-09). Usados só os arquivos de `environment/tiles/cave`, o fundo `bg_cave.png`
 e o baú; as guias do pacote não são usadas (o aviso do autor diz que podem ter ladrilhos antigos fora do domínio público).
 
-## Skeleton (features/goblin/sprites/skeleton_*.png)
+## Skeleton (features/humanoides/sprites/skeleton_*.png)
 Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 
-## Zombie (features/goblin/sprites/zombie_*.png)
+## Zombie (features/humanoides/sprites/zombie_*.png)
 Arte gerada com o Gemini (IA) e limpa, recortada e
 reduzida por scripts em `tools/`. Sem terceiros: uso livre no projeto.
 

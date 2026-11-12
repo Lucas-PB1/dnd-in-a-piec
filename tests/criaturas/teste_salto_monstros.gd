@@ -3,7 +3,7 @@ extends TesteBase
 ## mundo de blocos (subir um degrau, atravessar um buraco, descer atrás do alvo).
 ## godot --headless --debug --path . --script res://tests/criaturas/teste_salto_monstros.gd
 
-const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
+const CENA_HOBGOBLIN := "res://features/humanoides/hobgoblin_guerreiro.tscn"
 const LADRILHO := 32.0
 const CHAO_Y := 300.0
 const QUADROS_MAXIMOS := 360

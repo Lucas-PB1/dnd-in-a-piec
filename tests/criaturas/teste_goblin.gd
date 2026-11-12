@@ -3,7 +3,7 @@ extends TesteBase
 ## além de 20 pés), golpeia de perto, Desengaja (Fuga Ágil) e morre.
 ## godot --headless --debug --path . --script res://tests/criaturas/teste_goblin.gd
 
-const CENA_GOBLIN := "res://features/goblin/goblin.tscn"
+const CENA_GOBLIN := "res://features/humanoides/goblin.tscn"
 ## Dentro dos 60 pés (384 px) e além dos 20 (128 px): arremessa com desvantagem.
 const LONGE_PARA_ARREMESSO := 300.0
 ## Ao alcance da adaga (5 pés a partir da borda do corpo).

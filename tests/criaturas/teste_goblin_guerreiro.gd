@@ -3,7 +3,7 @@ extends TesteBase
 ## de 80 pés; flechas não acabam), cimitarra de perto, Fuga Ágil e morte.
 ## godot --headless --debug --path . --script res://tests/criaturas/teste_goblin_guerreiro.gd
 
-const CENA := "res://features/goblin/goblin_guerreiro.tscn"
+const CENA := "res://features/humanoides/goblin_guerreiro.tscn"
 ## Dentro dos 60 pés (384 px) e dos 80 (512 px): o tiro acerta sem desvantagem de distância.
 const LONGE := 300.0
 ## Ao alcance da cimitarra (5 pés a partir da borda do corpo).

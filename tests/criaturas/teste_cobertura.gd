@@ -4,7 +4,7 @@ extends TesteBase
 ## contra a parede.
 ## godot --headless --debug --path . --script res://tests/criaturas/teste_cobertura.gd
 
-const CENA_HOBGOBLIN := "res://features/goblin/hobgoblin_guerreiro.tscn"
+const CENA_HOBGOBLIN := "res://features/humanoides/hobgoblin_guerreiro.tscn"
 const CHAO_Y := 300.0
 const PLATAFORMA_Y := 220.0
 const BORDA_X := 150.0

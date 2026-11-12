@@ -3,7 +3,7 @@ extends TesteBase
 ## cena rodando sozinha, morte com a animação `morrer` e presença na Main (sorteio, bestiário, acompanhantes do Wight).
 ## godot --headless --debug --path . --script res://tests/criaturas/teste_skeleton.gd
 
-const CENA := "res://features/goblin/skeleton_guerreiro.tscn"
+const CENA := "res://features/humanoides/skeleton_guerreiro.tscn"
 const GOLPE_CERTEIRO := 100
 const DANO_FIXO := 4
 const TEMPO_DE_MORRER := 5.0

@@ -14,7 +14,7 @@ Inimigos atuais bastam por enquanto. Não priorizar SpriteCook/recolor até o us
 Bullywug, Bandit, Guard, Scout, Gnoll, Tough, Cultist, Priest Acolyte, Bandit Captain. Criar aos poucos (`/nova-criatura`).
 
 ## Onde
-`features/goblin/`, `data/`, fases, bestiário
+`features/humanoides/`, `data/`, fases, bestiário
 
 ## Pronto quando
 Cada um novo tem ficha, cena, fase(s) e teste; ou a lista acima foi cortada de propósito.

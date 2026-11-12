@@ -2,7 +2,7 @@ extends TesteBase
 ## Comportamento dos monstros: o aviso (brilho e pausa) antes do golpe, e a patrulha de quem
 ## perdeu o alvo. godot --headless --debug --path . --script res://tests/criaturas/teste_comportamento.gd
 
-const CENA_GOBLIN := "res://features/goblin/goblin.tscn"
+const CENA_GOBLIN := "res://features/humanoides/goblin.tscn"
 const CENA_OOZE := "res://features/gray_ooze/gray_ooze.tscn"
 const POSICAO := Vector2(900, 288)
 const VIDA_DE_TESTE := 999

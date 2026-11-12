@@ -18,7 +18,7 @@ const MARGEM := 8
 const FOLGA_LATERAL := 60
 const COR_PAINEL := Color(0.16, 0.16, 0.2)
 const ARTE_HEROI := "res://features/jogador/sprites/heroi_base.png"
-const ARTE_WARRIOR := "res://features/goblin/sprites/warrior_base_spritecook.png"
+const ARTE_WARRIOR := "res://features/humanoides/sprites/warrior_base_spritecook.png"
 
 ## Centro do corpo (x) da última tira medida por `_quadros`.
 var _ancora_ultima: float = 0.0
