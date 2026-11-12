@@ -5,8 +5,6 @@
 [resource]
 script = ExtResource("1_script")
 titulo = "Um pedaço de aventura"
-texto = "As criaturas da floresta acharam que o mundo inteiro era o quintal delas. Goblins, gosmas e bichos com nome difícil saíram do mato — e no fundo do covil, dizem, mora uma Quimera que te olha como lanche.
+texto = "Goblins, gosmas e uma Quimera faminta saíram do mato achando que o mundo era o quintal delas. Você? Guerreiro, arma na mão e a ideia genial de que \"avançar\" já é um plano.
 
-Você? Um Guerreiro, uma arma, umas moedas emprestadas e a firme ideia de que \"avançar\" já é um plano.
-
-Entre no Treino, bata no boneco, aprenda os botões… e vá atrás desse pedaço de história. Boa sorte. Vai precisar."
+Boa sorte. Vai precisar."
