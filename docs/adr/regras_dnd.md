@@ -71,7 +71,7 @@ e `tests/teste_combate_dnd.gd`.
 - Novo tipo de dano: **necrótico** (`TiposDano.NECROTICO`).
 
 ## Níveis 5–8 (regra da casa nos limites de XP)
-- A campanha vai até o **nível 8**. XP: 0, 300, 900, 2700 (livro) e **3600, 4800, 6000, 7200** (casa; o livro pede 6500/14000/23000/34000). Com a rampa de mobs, o herói chega alto na campanha; criação pode começar já no 7 ou 8.
+- A campanha vai até o **nível 8**. XP: 0, 300, 900, 2700 (livro) e **3600, 4800, 6000, 7200** (casa; o livro pede 6500/14000/23000/34000). Com as cotas recalibradas (começo leve, fim denso) e XP do livro nos mobs, a run típica aponta **~nível 7–8 no Covil**; criação pode começar já no 7 ou 8.
 - **Bônus de proficiência +3** do nível 5 em diante (`Ficha.bonus_proficiencia()`; a constante `BONUS_PROFICIENCIA` = +2 vale até o nível 4). Sobe ataque, CD, salvaguardas, perícias, Sortudo etc.
 - **Ataque Extra (nível 5)**: a ação de Atacar rola **dois golpes** seguidos (`Ficha.golpes_por_ataque()`; cada um com a sua rolagem). Com o **Surto de Ação** a ação inteira dobra: **quatro golpes**. O golpe da outra mão (arma dupla, ação bônus) **não** é multiplicado. Contador `Jogador._golpes_encadeados`; o estado Atacando encadeia os golpes. Crítico/abate do Mestre em Arma Grande soma mais um golpe.
 - **Mudança Tática (nível 5)**: usar o Fôlego dá **+15 pés de deslocamento por 3 s** (casa; no livro é um movimento livre sem ataque de oportunidade, que o jogo não tem).

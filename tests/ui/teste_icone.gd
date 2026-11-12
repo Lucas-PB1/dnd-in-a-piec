@@ -21,7 +21,7 @@ func _rodar() -> void:
 		for x in img.get_width():
 			if img.get_pixel(x, y).a > 0.5:
 				opacos += 1
-	_checar(opacos > LADO * LADO / 4, "ícone não está vazio")
+	_checar(opacos > LADO * LADO / 4.0, "ícone não está vazio")
 	var cfg := ConfigFile.new()
 	_checar(cfg.load("res://project.godot") == OK
 		and str(cfg.get_value("application", "config/icon", "")) == CAMINHO,

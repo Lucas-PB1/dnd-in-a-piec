@@ -31,7 +31,7 @@ Fonte: `history-lilac.vercel.app`, arquivos `Monster Manual/09 - Monsters (H).md
 - **No código:** cenas herdadas em `features/goblin/` (`hobgoblin_guerreiro` do Warrior, `bugbear_guerreiro` e `kobold_guerreiro` do Minion), com `criatura`, `escala_arte`, `cor_corpo` e caixas de colisão próprios. Tipo novo = cena + uma linha em `Main.CENAS_DOS_TIPOS` + o nome em `Fase.tipos_permitidos`.
 - **Táticas de Matilha** (`MatilhaDeCriatura` + regra `TaticasDeMatilha`): aliado do grupo `monstros` em pé (nem Caído nem morto) a 5 pés do alvo dá vantagem ao ataque — não precisa ser Goblin. **Luz do Sol:** `Fase.luz_do_sol` (fases 1 e 2); a main avisa cada monstro; o Kobold ataca com desvantagem.
 - **Bugbear:** o acerto de Agarrar usa a condição Agarrado que já existia (CD 12, escape por rodada). O Martelo Leve arremessado tem dano próprio (3d4+2). **Ainda não feito:** Abduzir (mover o agarrado sem custo) e a vantagem do Martelo Leve contra Agarrado, e o Martelo Leve em corpo a corpo.
-- **Hobgoblin:** o "mais 7 (3d4) de veneno" do Arco Longo entra como dano extra do golpe (`EfeitoDanoAdicional`), sem resistência separada. O ouro dos três (8, 15, 2) é decisão do jogo, não do livro.
+- **Hobgoblin:** o "mais 7 (3d4) de veneno" do Arco Longo entra como dano extra do golpe (`EfeitoDanoAdicional`), sem resistência separada. O ouro dos três (Hob 10, Bugbear 20, Kobold 2) é decisão do jogo, não do livro (recalibragem 2026-11-12).
 - **Arte:** Hobgoblin, Bugbear, Kobold, Skeleton e Zombie têm arte própria do **Gemini** (já ligada); Minion/Warrior/Ooze usam SpriteCook. Retratos do bestiário acompanham a arte atual.
 
 ## IA: saltar obstáculos, vãos e quedas (Goblin e variantes)

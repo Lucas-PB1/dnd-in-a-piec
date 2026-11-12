@@ -61,6 +61,10 @@ func _testar_renovar() -> void:
 
 
 func _testar_estoque() -> void:
+	_checar(Loja.teto_de_preco(1) == 25 and Loja.teto_de_preco(2) == 25
+		and Loja.teto_de_preco(3) == 50 and Loja.teto_de_preco(5) == 100
+		and Loja.teto_de_preco(9) == 400,
+		"teto de preço dobra a cada 2 fases")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 21
 	var fase_1 := Loja.sortear_estoque(1, rng)
@@ -75,7 +79,7 @@ func _testar_estoque() -> void:
 	var caro := false
 	var sem_municao := false
 	for i in 40:
-		var estoque := Loja.sortear_estoque(8, rng)
+		var estoque := Loja.sortear_estoque(10, rng)
 		for item in estoque:
 			caro = caro or Loja.preco(item) > 100
 		sem_municao = sem_municao or not Loja.estoque_tem_municao(estoque)

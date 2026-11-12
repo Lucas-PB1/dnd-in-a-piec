@@ -18,8 +18,10 @@ const DESCONTO_POR_PONTO_PERSUASAO := 0.02
 const DESCONTO_MAXIMO := 0.5
 ## Quanto o bônus mágico soma ao preço da arma/armadura (+1, +2, +3).
 const EXTRA_POR_BONUS_MAGICO := {1: 60, 2: 240, 3: 960}
-## Na fase 1 só aparece o que custa até isto; o teto dobra a cada fase (as caras ficam para o fim).
+## Na fase 1 só aparece o que custa até isto; o teto dobra a cada N fases (alinha à curva de cota).
 const TETO_DE_PRECO_NA_FASE_1 := 25
+## A cada este número de fases o teto dobra (1–2: 25, 3–4: 50, 5–6: 100…).
+const FASES_POR_DOBRO_DE_TETO := 2
 ## Quantos itens a loja põe à venda por visita, e a chance de arma/armadura vir mágica.
 const TAMANHO_DO_ESTOQUE := 7
 const CHANCE_ITEM_MAGICO := 0.25
@@ -83,10 +85,16 @@ static func renovar(ficha: Ficha, renovacoes_ja_feitas: int, indice_fase: int, r
 	return {&"resultado": Resultado.OK, &"estoque": sortear_estoque(indice_fase, rng)}
 
 
+## Teto de preço da fase: dobra a cada `FASES_POR_DOBRO_DE_TETO` fases.
+static func teto_de_preco(indice_fase: int) -> int:
+	var degraus := floori(float(maxi(indice_fase, 1) - 1) / float(FASES_POR_DOBRO_DE_TETO))
+	return TETO_DE_PRECO_NA_FASE_1 * (1 << clampi(degraus, 0, 10))
+
+
 ## O estoque da fase: itens sorteados do arsenal que custam até o teto da fase; algumas armas/armaduras vêm mágicas.
 ## Sempre inclui pelo menos um tipo de munição (quando houver alguma no teto de preço).
 static func sortear_estoque(indice_fase: int, rng: RandomNumberGenerator) -> Array[Item]:
-	var teto := TETO_DE_PRECO_NA_FASE_1 * (1 << clampi(indice_fase - 1, 0, 10))
+	var teto := teto_de_preco(indice_fase)
 	var candidatos: Array[Item] = []
 	var municoes: Array[Item] = []
 	for pasta in PASTAS_DO_ESTOQUE:

@@ -20,14 +20,15 @@ func _rodar() -> void:
 	var viu_cura := false
 	var viu_maior := false
 	for i in 80:
-		for item in Loja.sortear_estoque(2, rng):
+		# Cura 50 po → teto 50 a partir da fase 3; Maior 200 po → teto 200 a partir da 7.
+		for item in Loja.sortear_estoque(3, rng):
 			if item.nome == "Poção de Cura":
 				viu_cura = true
-		for item in Loja.sortear_estoque(4, rng):
+		for item in Loja.sortear_estoque(7, rng):
 			if item.nome == "Poção de Cura Maior":
 				viu_maior = true
-	_checar(viu_cura, "na fase 2 a Poção de Cura pode sair no estoque")
-	_checar(viu_maior, "na fase 4 a Poção Maior pode sair no estoque")
+	_checar(viu_cura, "na fase 3 a Poção de Cura pode sair no estoque")
+	_checar(viu_maior, "na fase 7 a Poção Maior pode sair no estoque")
 
 	var cena: Node = load("res://levels/main.tscn").instantiate()
 	cena.mostrar_inicio = false

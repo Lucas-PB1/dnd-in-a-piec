@@ -6,7 +6,7 @@
 script = ExtResource("1_criatura")
 nome = "Gray Ooze"
 experiencia = 100
-ouro = 5
+ouro = 4
 tipo = "Medium Ooze, Unaligned"
 tamanho = 2
 classe_armadura = 9
