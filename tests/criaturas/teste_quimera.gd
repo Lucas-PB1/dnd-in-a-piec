@@ -46,6 +46,7 @@ func _rodar() -> void:
 		await _testar_investida()
 		await _testar_voo()
 		await _testar_furia()
+		await _testar_animacao_dano()
 		await _testar_morte(cena)
 	cena.queue_free()
 
@@ -273,6 +274,25 @@ func _testar_furia() -> void:
 		_colocar_heroi_a(DISTANCIA_DE_PERCEBER)
 		rugiu = rugiu or _quimera.nome_estado() == &"Rugindo"
 	_checar(rugiu and not _quimera.deve_rugir(), "ela ruge ao enfurecer, uma vez só")
+
+
+## Hit no chefe: toca a arte `dano` sem sair do estado (só reação visual).
+func _testar_animacao_dano() -> void:
+	_checar(_quimera.get_node("Sprite").sprite_frames.has_animation(&"dano"),
+		"SpriteFrames tem a animação dano")
+	(_quimera.get_node("MaquinaEstados") as MaquinaEstados).trocar(&"Parado")
+	await physics_frame
+	var estado_antes := _quimera.nome_estado()
+	_quimera._piscar_dano()
+	await physics_frame
+	await physics_frame
+	_checar(_quimera.get_node("Sprite").animation == &"dano",
+		"ao apanhar, toca a animação dano")
+	_checar(_quimera.nome_estado() == estado_antes,
+		"a reação de dano não troca o estado do chefe")
+	await _esperar(QUADROS_POR_SEGUNDO)
+	_checar(_quimera.get_node("Sprite").animation != &"dano" or not _quimera.get_node("Sprite").is_playing(),
+		"depois da reação, a animação dano termina")
 
 
 func _testar_morte(cena: Main) -> void:

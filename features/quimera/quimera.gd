@@ -56,8 +56,9 @@ const FOLGA_PE := 6.0
 const PROFUNDIDADE_BEIRA := 20.0
 ## Quanto à frente da borda do corpo (px) o raio procura chão antes de descer do penhasco.
 const DISTANCIA_BEIRA := 40.0
-## Quanto tempo o sprite fica vermelho ao levar dano (s).
+## Quanto tempo o sprite fica vermelho ao levar dano (s); a animação `dano` pode durar mais.
 const TEMPO_PISCAR_DANO := 0.12
+const ANIM_DANO := &"dano"
 ## Tremor da câmera: no rugido e na cabeçada (px) e duração (s).
 const FORCA_ABALO_RUGIDO := 5.0
 const FORCA_ABALO_CABECADA := 4.0
@@ -126,6 +127,8 @@ var _gravidade: float = ProjectSettings.get_setting("physics/2d/default_gravity"
 var _tempo_desde_ataque: float = INF
 var _empurrao_restante: float = 0.0
 var _despertou: bool = false
+## Reação visual ao hit: toca `dano` sem trocar de estado; bloqueia `tocar` até acabar.
+var _reacao_dano_em_curso: bool = false
 var _saltador: SaltadorDeMonstro
 ## Cabeçada / investida da ficha (`chifrada_*`).
 var _investida: InvestidaDeCriatura
@@ -291,6 +294,10 @@ func correr_no_ar() -> void:
 
 
 func tocar(animacao: StringName) -> void:
+	if _reacao_dano_em_curso and animacao != &"morte":
+		return
+	if animacao == &"morte":
+		_reacao_dano_em_curso = false
 	if _sprite.animation == animacao and _sprite.is_playing():
 		return
 	_sprite.animation = animacao
@@ -311,6 +318,7 @@ func iniciar_ataque(animacao: StringName) -> void:
 
 ## Toca a animação do primeiro quadro sem mexer na velocidade (o bote e a investida já estão em movimento).
 func reiniciar(animacao: StringName) -> void:
+	_reacao_dano_em_curso = false
 	_sprite.animation = animacao
 	_sprite.frame = 0
 	_sprite.play()
@@ -318,6 +326,7 @@ func reiniciar(animacao: StringName) -> void:
 
 ## Congela num quadro (a queda do mergulho, o pouso).
 func mostrar_quadro(animacao: StringName, quadro: int) -> void:
+	_reacao_dano_em_curso = false
 	_sprite.animation = animacao
 	_sprite.frame = mini(quadro, _sprite.sprite_frames.get_frame_count(animacao) - 1)
 	_sprite.pause()
@@ -643,12 +652,37 @@ func _ao_resolver_golpe(resultado: Combate.Resultado, _origem: Vector2) -> void:
 		_piscar_dano()
 
 
-## Chefe não se assusta com golpe: só pisca (não interrompe o que está fazendo).
+## Chefe não troca de estado ao apanhar: toca a arte `dano` + vermelho, depois volta à pose.
 func _piscar_dano() -> void:
 	_sprite.modulate = cor_dano
-	await get_tree().create_timer(TEMPO_PISCAR_DANO).timeout
-	if is_inside_tree() and not _vida.esta_morto():
-		_sprite.modulate = Color.WHITE
+	if _reacao_dano_em_curso or not _sprite.sprite_frames.has_animation(ANIM_DANO):
+		await get_tree().create_timer(TEMPO_PISCAR_DANO).timeout
+		if is_inside_tree() and not _vida.esta_morto():
+			_sprite.modulate = Color.WHITE
+		return
+	_reacao_dano_em_curso = true
+	var anim_antes := _sprite.animation
+	var quadro_antes := _sprite.frame
+	var tocava := _sprite.is_playing()
+	_sprite.animation = ANIM_DANO
+	_sprite.frame = 0
+	_sprite.play()
+	var n := _sprite.sprite_frames.get_frame_count(ANIM_DANO)
+	var vel := _sprite.sprite_frames.get_animation_speed(ANIM_DANO)
+	var duracao := maxf(TEMPO_PISCAR_DANO, float(n) / maxf(vel, 0.001))
+	await get_tree().create_timer(duracao).timeout
+	if not is_inside_tree() or _vida.esta_morto():
+		_reacao_dano_em_curso = false
+		return
+	_sprite.modulate = Color.WHITE
+	if _sprite.animation == ANIM_DANO:
+		_sprite.animation = anim_antes
+		_sprite.frame = quadro_antes
+		if tocava:
+			_sprite.play()
+		else:
+			_sprite.pause()
+	_reacao_dano_em_curso = false
 
 
 func _preparar_condicoes() -> void:
@@ -665,6 +699,8 @@ func _aplicar_empurrao(delta: float) -> void:
 
 
 func _ao_morrer() -> void:
+	_reacao_dano_em_curso = false
+	_sprite.modulate = Color.WHITE
 	_defesa.invulneravel = true
 	desligar_golpe()
 	desligar_sopro()
