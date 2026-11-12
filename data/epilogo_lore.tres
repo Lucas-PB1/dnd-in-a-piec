@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="IntroLoreRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/intro_lore_rpg.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+titulo = "Pedaço concluído!"
+texto = "A Quimera descobriu que você não era lanche. O mato pode voltar a ser só mato — pelo menos até o próximo pedaço de aventura.
+
+Você avançou. Funcionou. Quem diria."

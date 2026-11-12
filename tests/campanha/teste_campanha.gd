@@ -160,6 +160,12 @@ func _testar_vitoria_e_jogar_de_novo() -> void:
 	_checar(tela != null and paused, "cota zerada na última fase: aparece a vitória e o jogo pausa")
 	if tela == null:
 		return
+	_checar("Pedaço" in (tela.get_node("%Titulo") as Label).text
+		or "concluído" in (tela.get_node("%Titulo") as Label).text.to_lower(),
+		"vitória mostra título de epílogo")
+	_checar(not (tela.get_node("%Epilogo") as Label).text.is_empty(), "vitória mostra o epílogo")
+	_checar("Abates" in (tela.get_node("%Resumo") as Label).text, "vitória mostra o placar da run")
+	_checar(tela.get_node_or_null("%Menu") != null, "vitória tem botão Menu")
 	(tela.find_child("JogarDeNovo", true, false) as Button).pressed.emit()
 	await _esperar(QUADROS_CURTOS)
 	_checar(_fase().indice == 1 and not paused, "Jogar de novo volta à fase 1 e despausa")

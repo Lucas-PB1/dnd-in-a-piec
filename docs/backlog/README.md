@@ -25,7 +25,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 ### Próximas
 | Pri | Arquivo |
 |---|---|
-| 27 | `heroi/final-mais-legal` |
 | 40 | `fases/recalibrar-dificuldade` (depois das fatias de progressão/tutorial/placar) |
 
 ### Regras do livro

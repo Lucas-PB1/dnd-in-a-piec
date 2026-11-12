@@ -10,6 +10,7 @@ const CENA_INTRO_LORE := preload("res://ui/intro_lore/tela_intro_lore.tscn")
 const CENA_DERROTA := preload("res://ui/derrota/tela_derrota.tscn")
 const CENA_VITORIA := preload("res://ui/vitoria/tela_vitoria.tscn")
 const INTRO_LORE := preload("res://data/intro_lore.tres")
+const EPILOGO_LORE := preload("res://data/epilogo_lore.tres")
 const CENA_ARREMESSO := preload("res://features/arremesso/arma_arremessada.tscn")
 const CENA_OOZE := preload("res://features/gray_ooze/gray_ooze.tscn")
 const CENA_GOBLIN := preload("res://features/goblin/goblin.tscn")
@@ -396,7 +397,9 @@ func _abrir_vitoria() -> void:
 	_musica.tocar(Musica.TAVERNA)
 	var tela: TelaVitoria = CENA_VITORIA.instantiate()
 	tela.jogar_de_novo_escolhido.connect(_ao_jogar_de_novo.bind(tela))
+	tela.menu_escolhido.connect(_ao_menu_da_vitoria.bind(tela))
 	_interface.add_child(tela)
+	tela.configurar(EPILOGO_LORE)
 	var extra := "\nNovo recorde da fase!" if novo else ""
 	tela.mostrar_resumo(_placar.texto_resumo(true) + extra)
 
@@ -408,6 +411,12 @@ func _ao_jogar_de_novo(tela: TelaVitoria) -> void:
 	_entrar_fase(CENAS_FASE[0])
 	_jogador.reviver()
 	_pausar(false)
+
+
+## Fecha a vitória e mostra o título (Novo Jogo / Continuar).
+func _ao_menu_da_vitoria(tela: TelaVitoria) -> void:
+	tela.queue_free()
+	_abrir_titulo()
 
 
 func _ligar_porta() -> void:
