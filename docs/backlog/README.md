@@ -37,7 +37,7 @@ Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
 ### Dívidas técnicas
 | Pri | Arquivo |
 |---|---|
-| 90+ | `divida/dry-*`, `split-jogador-gd`, `sinais-heroi-orfaos`, `projetil-altura-nascimento`, `quimera-anim-dano`, `renomear-features-goblin` … |
+| 90+ | `divida/dry-*`, `split-jogador-gd`, `sinais-heroi-orfaos`, `quimera-anim-dano`, `renomear-features-goblin` … |
 
 ### Depois
 | Pri | Arquivo |

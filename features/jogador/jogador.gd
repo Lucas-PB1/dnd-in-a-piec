@@ -1420,9 +1420,10 @@ func _arremessar(arma: Arma, forca: float, mira: float) -> void:
 	if ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARREMESSO):
 		golpe.dano = golpe.dano.com_bonus(Ficha.BONUS_ARREMESSO)
 	_assinar(golpe)
+	var origem := _ataque.origem_do_projetil(arma)
 	var extraida := inventario.extrair_uma(arma) as Arma
 	_marcar_ataque(false, false)
-	arma_arremessada.emit(extraida, golpe, pen, _ataque.global_position, direcao_olhar, forca, mira, null, false, _destreza())
+	arma_arremessada.emit(extraida, golpe, pen, origem, direcao_olhar, forca, mira, null, false, _destreza())
 
 
 func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
@@ -1444,8 +1445,9 @@ func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
 		_estilos.disparo_duplo_pendente = true
 	elif extra:
 		_estilos.disparo_duplo_pendente = false
+	var origem := _ataque.origem_do_projetil(arma)
 	_marcar_ataque(extra, true, gastar_bonus)
-	arma_arremessada.emit(arma, golpe, 0, _ataque.global_position, direcao_olhar, forca, mira, pilha,
+	arma_arremessada.emit(arma, golpe, 0, origem, direcao_olhar, forca, mira, pilha,
 		ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE), _destreza())
 
 

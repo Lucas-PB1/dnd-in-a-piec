@@ -22,6 +22,7 @@ func _rodar() -> void:
 	var jogador: Jogador = cena.get_node("Jogador")
 	jogador.global_position = Vector2(200, jogador.global_position.y)
 	await _no_chao(jogador)
+	_testar_origem_na_ponta(jogador)
 	await _testar_disparo(cena, jogador)
 	await _testar_sem_municao(jogador)
 	await _testar_j_nao_corta(jogador)
@@ -49,6 +50,25 @@ func _testar_mao_da_besta() -> void:
 	inv.equipar(besta)
 	_checar(inv.equipado(Item.ESPACO_MAO) == besta and inv.livre(Item.ESPACO_MAO_SECUNDARIA),
 		"Besta de Mão não vira a 2ª arma leve")
+
+
+func _testar_origem_na_ponta(jogador: Jogador) -> void:
+	var ataque: AtaqueJogador = jogador.get_node("Ataque")
+	var azagaia: Arma = load("res://data/armas/azagaia.tres")
+	jogador.direcao_olhar = 1
+	ataque.carregar_arremesso(1.0, 0.0)
+	ataque.seguir_mao(Vector2(10, -40), 0.0, 1, azagaia)
+	var mao := ataque.global_position
+	var origem := ataque.origem_do_projetil(azagaia)
+	_checar(origem.x > mao.x + azagaia.comprimento * 0.4,
+		"arremesso de ponta nasce à frente da mão (na ponta), não na pegada")
+	var arco: Arma = load("res://data/armas/arco_curto.tres")
+	ataque.carregar_arremesso(1.0, 0.0)
+	ataque.seguir_mao(Vector2(8, -50), 0.0, 1, arco)
+	mao = ataque.global_position
+	origem = ataque.origem_do_projetil(arco)
+	_checar(origem.x > mao.x + 1.0, "disparo nasce à frente da mão (ponta), não na altura da pegada só")
+	ataque.carregar_arremesso(-1.0)
 
 
 func _testar_disparo(cena: Node, jogador: Jogador) -> void:

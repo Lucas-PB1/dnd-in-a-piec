@@ -89,8 +89,8 @@ func _definir_perto(perto: bool) -> void:
 	perto_mudou.emit(perto)
 
 
-## Começa o voo. Chamar depois de entrar na árvore (a posição já é a da mão). `forca` de 0
-## (alcance normal) a 1 (alcance longo). `mira` soma graus para cima (0 = cai no chão).
+## Começa o voo. Chamar depois de entrar na árvore (a posição já é a da ponta / centro).
+## `forca` de 0 (alcance normal) a 1 (alcance longo). `mira` soma graus para cima (0 = cai no chão).
 ## `municao` preenchida = disparo que some ao acertar ou ao cair.
 func lancar(arma: Arma, golpe: Golpe, penalidade: int, direcao: int, forca: float = 0.0, mira: float = 0.0, municao: Municao = null, ignora_alcance_longo: bool = false, destreza: int = Ficha.DESTREZA_REFERENCIA) -> void:
 	_arma = arma

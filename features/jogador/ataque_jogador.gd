@@ -130,6 +130,31 @@ func carregar_arremesso(fracao: float, mira: float = 0.0, soltando: bool = false
 	_progresso_soltura = progresso
 
 
+## Ponta da arma no mundo: o projétil nasce aqui (não na pegada), para não “pular” no 1º quadro.
+## Arma que gira no arremesso usa o centro; o resto usa a ponta.
+func origem_do_projetil(arma: Arma) -> Vector2:
+	if arma == null or arma.comprimento <= 0.0:
+		return global_position
+	var angulo := _angulo_da_lamina(arma)
+	var ao_longo := Vector2.from_angle(deg_to_rad(angulo)) * arma.comprimento
+	if arma.arremessavel() and not arma.disparavel() and not arma.arremesso_de_ponta:
+		ao_longo *= 0.5
+	return to_global(ao_longo)
+
+
+## Ângulo da lâmina na pose atual (0 = à frente local; o `scale.x` do nó espelha).
+func _angulo_da_lamina(arma: Arma) -> float:
+	if _carga < 0.0:
+		return 0.0
+	if not arma.quadros_disparo.is_empty():
+		return -_mira
+	return clampf(
+		lerpf(ANGULOS_CARGA.x, ANGULOS_CARGA.y, _carga) - _mira,
+		LIMITE_MIRA_VISUAL.x,
+		LIMITE_MIRA_VISUAL.y
+	)
+
+
 ## A mão saiu do lugar da animação (golpe ou carga do arremesso): a camada da mão não deve
 ## cobrir a arma. No disparo a mão segura a empunhadura parada: a camada fica por cima.
 func mao_fora_do_lugar() -> bool:

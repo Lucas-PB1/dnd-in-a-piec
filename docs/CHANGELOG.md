@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Projétil nasce na ponta da arma (`AtaqueJogador.origem_do_projetil`), sem pulo no 1º quadro. Teste `teste_tiro`. Backlog `projetil-altura-nascimento` fechado.
 - Recalibrar dificuldade (fechado): cotas `1/2/2/3/4/4/4/5/3/4`; extra +1 a cada 2 níveis; loja dobra teto a cada 2 fases; XP documentado (~nv 7–8 no Covil). **Sem mexer em fichas de criatura.** Backlog `recalibrar-dificuldade` apagado.
 
 - Final mais legal: epílogo brincalhão na vitória (`data/epilogo_lore.tres`), placar da run, botões Jogar de novo / Menu. Testes `teste_vitoria` / `teste_campanha`. Backlog `final-mais-legal` fechado.
