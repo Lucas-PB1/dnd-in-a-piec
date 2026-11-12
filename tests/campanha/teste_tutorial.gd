@@ -58,8 +58,12 @@ func _testar_fluxo() -> void:
 	compra.aplicar({Atributos.FORCA: 15, Atributos.DESTREZA: 14, Atributos.CONSTITUICAO: 15,
 		Atributos.INTELIGENCIA: 8, Atributos.SABEDORIA: 10, Atributos.CARISMA: 8})
 	criacao.confirmada.emit(Ficha.new(jogador.classe, compra.valores, "Guia"), jogador.classe.pacotes_iniciais[0])
+	await process_frame
+	var intro := _achar(main, TelaIntroLore) as TelaIntroLore
+	_checar(intro != null, "após criar, abre a intro de lore")
+	intro.seguir_pedido.emit()
 	await _esperar(QUADROS)
-	_checar(main._fase.nome_ambiente == NOME and main._fase.indice == 0, "após criar, entra no Treino")
+	_checar(main._fase.nome_ambiente == NOME and main._fase.indice == 0, "após a intro, entra no Treino")
 	_checar(main._ids_da_cota.is_empty(), "Treino não sorteia inimigos")
 	_checar(jogador.ficha.ouro >= Main.OURO_TUTORIAL, "Novo Jogo dá ouro do tutorial")
 	_checar(jogador.vida_atual() == jogador.vida_maxima() - Main.DANO_DEMONSTRACAO_TUTORIAL,

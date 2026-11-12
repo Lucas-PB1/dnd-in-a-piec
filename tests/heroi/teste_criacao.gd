@@ -108,7 +108,12 @@ func _testar_fluxo_da_main() -> void:
 		Atributos.INTELIGENCIA: 15})
 	tela.confirmada.emit(Ficha.new(jogador.classe, compra.valores, NOME_TESTE), jogador.classe.pacotes_iniciais[0])
 	await process_frame
-	_checar(not paused, "ao confirmar, o jogo despausa")
+	_checar(paused, "após criar, a intro mantém o jogo pausado")
+	var intro := _achar(cena, TelaIntroLore) as TelaIntroLore
+	_checar(intro != null, "após criar, abre a intro de lore")
+	intro.seguir_pedido.emit()
+	await process_frame
+	_checar(not paused, "ao seguir a intro, o jogo despausa")
 	_checar(jogador.ficha.nome == NOME_TESTE and jogador.vida_maxima() == 12, "herói recebe a ficha (nome e CON 15 -> 12 PV)")
 	var hud_nome: String = (cena.get_node("Hud/%Personagem") as Label).text
 	var hud_vida: String = (cena.get_node("Hud/%Vida") as Label).text

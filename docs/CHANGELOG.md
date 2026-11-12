@@ -3,6 +3,7 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
+- Intro de lore (tom brincalhão) após a criação, antes do Treino; texto em `data/intro_lore.tres`. Teste `teste_intro_lore`. Backlog `intro-lore` fechado.
 - Ícone do jogo: `icon.png` 128×128 (escudo + espada Idylwild CC0 via `tools/montar_icone.gd`); `project.godot` e preset Windows. Backlog `icone-do-jogo` fechado. Teste `teste_icone`.
 - Tutorial (fatia 3): placas Fôlego/Surto; Novo Jogo tira 4 PV no Treino para praticar F. Teste `teste_tutorial`.
 - Arte da pedra empurrável: Basic Boulder (MystiqMiu, CC0) no `DesafioPericia` no lugar do ColorRect. Teste `teste_desafio_pericia`. Backlog `pedra-desafio-pericia` fechado.

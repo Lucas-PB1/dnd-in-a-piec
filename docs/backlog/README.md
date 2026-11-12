@@ -26,7 +26,6 @@ Não crie item só para “validar / jogar / anotar / aprovar sensação”. Qua
 | Pri | Arquivo |
 |---|---|
 | 23 | `fases/tutorial` |
-| 26 | `heroi/intro-lore` |
 | 27 | `heroi/final-mais-legal` |
 | 40 | `fases/recalibrar-dificuldade` (depois das fatias de progressão/tutorial/placar) |
 

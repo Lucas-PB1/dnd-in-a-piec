@@ -6,8 +6,10 @@ extends Node2D
 
 const CENA_TITULO := preload("res://ui/titulo/tela_titulo.tscn")
 const CENA_CRIACAO := preload("res://ui/criacao_personagem/tela_criacao.tscn")
+const CENA_INTRO_LORE := preload("res://ui/intro_lore/tela_intro_lore.tscn")
 const CENA_DERROTA := preload("res://ui/derrota/tela_derrota.tscn")
 const CENA_VITORIA := preload("res://ui/vitoria/tela_vitoria.tscn")
+const INTRO_LORE := preload("res://data/intro_lore.tres")
 const CENA_ARREMESSO := preload("res://features/arremesso/arma_arremessada.tscn")
 const CENA_OOZE := preload("res://features/gray_ooze/gray_ooze.tscn")
 const CENA_GOBLIN := preload("res://features/goblin/goblin.tscn")
@@ -344,6 +346,19 @@ func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao
 	_mostrar_personagem_no_hud()
 	_placar.iniciar_run()
 	tela.queue_free()
+	_abrir_intro_lore()
+
+
+## Lore brincalhão depois da criação; Continuar/Pular seguem para o Treino.
+func _abrir_intro_lore() -> void:
+	var intro: TelaIntroLore = CENA_INTRO_LORE.instantiate()
+	_interface.add_child(intro)
+	intro.configurar(INTRO_LORE)
+	intro.seguir_pedido.connect(_ao_seguir_da_intro.bind(intro))
+
+
+func _ao_seguir_da_intro(intro: TelaIntroLore) -> void:
+	intro.queue_free()
 	_entrar_fase(CENA_TUTORIAL)
 	_jogador.ferir_para_demonstracao(DANO_DEMONSTRACAO_TUTORIAL)
 	_apontar_monstros_para(_jogador)

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="IntroLoreRPG" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/dados/intro_lore_rpg.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+titulo = "Um pedaço de aventura"
+texto = "As criaturas da floresta acharam que o mundo inteiro era o quintal delas. Goblins, gosmas e bichos com nome difícil saíram do mato — e no fundo do covil, dizem, mora uma Quimera que te olha como lanche.
+
+Você? Um Guerreiro, uma arma, umas moedas emprestadas e a firme ideia de que \"avançar\" já é um plano.
+
+Entre no Treino, bata no boneco, aprenda os botões… e vá atrás desse pedaço de história. Boa sorte. Vai precisar."
