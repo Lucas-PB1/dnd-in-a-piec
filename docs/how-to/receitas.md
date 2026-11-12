@@ -97,14 +97,17 @@ Camadas em `docs/adr/criaturas.md`: kit sempre → capacidades do `.tres` → es
 3. Nó filho da `MaquinaEstados` na `.tscn` + `ext_resource` do script.
 4. Física e consultas ficam no script raiz (ferramentas); o estado só decide. Sem cadeia de `if`.
 
-## 5. Ação de entrada nova (tecla + toque)
+## 5. Ação de entrada nova (tecla + toque + gamepad)
 
 1. `project.godot`, seção `[input]`: a ação e a tecla padrão.
 2. Se o jogador pode trocar a tecla: `core/utilitarios/comandos.gd` (`ACOES` e `NOMES`).
+   `Comandos` só apaga/grava teclas — não remova eventos de joypad.
 3. No celular: um botão em `ui/controles_toque/controles_toque.gd` (tabela `BOTOES`:
    ação, texto, canto, centro, raio). O layout salvo do jogador continua valendo; o botão novo
    nasce na posição padrão.
-4. `docs/adr/interface.md`, linha "Ações de input".
+4. Gamepad: acrescente o botão/eixo em `tools/aplicar_mapeamento_gamepad.gd` e rode o tool
+   (grava o `project.godot`). Layout documentado em `docs/adr/interface.md` (Gamepad Xbox).
+5. `docs/adr/interface.md`, linha "Ações de input" / "Gamepad".
 
 ## 6. Tela nova (UI)
 

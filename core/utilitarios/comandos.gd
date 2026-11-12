@@ -56,13 +56,14 @@ static func nome(acao: StringName) -> String:
 
 
 ## Troca a tecla da ação. A tecla sai de qualquer outra ação que já a usava.
+## Só mexe em InputEventKey: botões/eixos de gamepad continuam na ação.
 static func aplicar_tecla(acao: StringName, tecla: Key) -> void:
 	if tecla == KEY_NONE or not InputMap.has_action(acao):
 		return
 	for outra in ACOES:
 		if outra != acao:
 			_tirar(outra, tecla)
-	InputMap.action_erase_events(acao)
+	_apagar_teclas(acao)
 	_adicionar(acao, tecla)
 
 
@@ -75,6 +76,7 @@ static func tecla_de(acao: StringName) -> String:
 
 
 ## Aplica o arquivo salvo. Sem arquivo, ficam as teclas do projeto.
+## Só substitui as teclas: eventos de gamepad do InputMap permanecem.
 static func carregar(caminho: String = ARQUIVO) -> void:
 	var cfg := ConfigFile.new()
 	if cfg.load(caminho) != OK:
@@ -82,7 +84,7 @@ static func carregar(caminho: String = ARQUIVO) -> void:
 	for acao in ACOES:
 		if not cfg.has_section_key("teclas", String(acao)) or not InputMap.has_action(acao):
 			continue
-		InputMap.action_erase_events(acao)
+		_apagar_teclas(acao)
 		_aplicar_salvas(acao, cfg.get_value("teclas", String(acao)))
 
 
@@ -114,6 +116,14 @@ static func _adicionar(acao: StringName, tecla: Key) -> void:
 	var evento := InputEventKey.new()
 	evento.physical_keycode = tecla
 	InputMap.action_add_event(acao, evento)
+
+
+static func _apagar_teclas(acao: StringName) -> void:
+	if not InputMap.has_action(acao):
+		return
+	for evento in InputMap.action_get_events(acao):
+		if evento is InputEventKey:
+			InputMap.action_erase_event(acao, evento)
 
 
 static func _tirar(acao: StringName, tecla: Key) -> void:

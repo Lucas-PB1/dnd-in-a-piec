@@ -42,6 +42,6 @@ Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
 ### Depois
 | Pri | Arquivo |
 |---|---|
-| 95–100 | `depois/gamepad`, `ios`, `renomear-jogo`, `municao-comum-inventario`, `atirador-elite-obstaculos`, `minions-recolor`, `magia`, `racas-especies`, `desvantagem-furtividade-armadura` |
+| 95–100 | `depois/ios`, `renomear-jogo`, `municao-comum-inventario`, `atirador-elite-obstaculos`, `minions-recolor`, `magia`, `racas-especies`, `desvantagem-furtividade-armadura` |
 
 Novo item: copie `_modelo.md` para a pasta da `area`.
