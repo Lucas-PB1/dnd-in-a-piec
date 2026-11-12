@@ -1,14 +1,9 @@
 class_name AnalogicoToque
-extends Control
+extends ControleToque
 ## Analógico virtual: o dedo arrasta o pino dentro do círculo. Para o lado anda; até a
 ## borda corre ("correr"); para cima mira para cima no tiro ("mirar_cima", não pula); para
 ## baixo abaixa ("mover_baixo"). Aperta as ações do InputMap, como as teclas.
 
-const SEM_DEDO := -1
-const CONTORNO := 1.5
-## Contorno do selecionado na edição.
-const CONTORNO_DESTAQUE := 2.5
-const COR_DESTAQUE := Color(1.0, 0.85, 0.3, 0.95)
 ## O toque que começa até esta fração além do círculo ainda pega o analógico.
 const FOLGA_TOQUE := 1.3
 ## Tamanho do pino, em fração do raio.
@@ -32,24 +27,9 @@ const ACAO_BAIXO := &"mover_baixo"
 @export var cor_corrida: Color = Color(1.0, 0.85, 0.45, 0.7)
 
 var _dedo: int = SEM_DEDO
-## Modo de edição do layout: não aperta nada (quem arrasta é o ControlesToque).
-var editando: bool = false:
-	set(valor):
-		editando = valor
-		soltar()
-## Selecionado na edição: ganha um contorno de destaque.
-var destacado: bool = false:
-	set(valor):
-		destacado = valor
-		queue_redraw()
 ## Onde está o pino (comprimento até 1).
 var _vetor: Vector2 = Vector2.ZERO
 var _apertadas: Dictionary[StringName, bool] = {}
-
-
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 func _input(evento: InputEvent) -> void:
@@ -83,10 +63,6 @@ func soltar() -> void:
 func _notification(qual: int) -> void:
 	if qual == NOTIFICATION_VISIBILITY_CHANGED and not is_visible_in_tree():
 		soltar()
-
-
-func _raio() -> float:
-	return minf(size.x, size.y) / 2.0
 
 
 func _centro() -> Vector2:
@@ -125,7 +101,6 @@ func _draw() -> void:
 	var centro := size / 2.0
 	draw_circle(centro, _raio(), cor_base)
 	var borda := cor_corrida if _apertadas.get(ACAO_CORRER, false) else cor_contorno
-	draw_arc(centro, _raio() - CONTORNO / 2.0, 0.0, TAU, 40, borda, CONTORNO, true)
+	draw_arc(centro, _raio() - CONTORNO / 2.0, 0.0, TAU, SEGMENTOS_ARCO, borda, CONTORNO, true)
 	draw_circle(centro + _vetor * _raio() * (1.0 - RAIO_PINO), _raio() * RAIO_PINO, cor_pino)
-	if destacado:
-		draw_arc(centro, _raio() + CONTORNO_DESTAQUE, 0.0, TAU, 40, COR_DESTAQUE, CONTORNO_DESTAQUE, true)
+	_desenhar_destaque(centro)

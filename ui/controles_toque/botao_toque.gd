@@ -1,19 +1,13 @@
 class_name BotaoToque
-extends Control
+extends ControleToque
 ## Botão redondo na tela de toque: o dedo em cima aperta a `acao` do InputMap, como a tecla
 ## (segurar = segurar; dois toques rápidos = toque duplo). Os eventos também chegam às telas
 ## que escutam `_unhandled_input`. Vários dedos ao mesmo tempo: cada
 ## botão guarda o dedo que o apertou. Com o jogo pausado não aperta (há um menu por cima),
 ## mas solta sempre, para nada ficar preso.
 
-const SEM_DEDO := -1
-## Grossura do contorno e tamanho da letra (px da tela de 360 de altura).
-const CONTORNO := 1.5
-## Contorno do selecionado na edição.
-const CONTORNO_DESTAQUE := 2.5
 ## Grossura do brilho em volta do botão aceso.
 const CONTORNO_BRILHO := 4.0
-const COR_DESTAQUE := Color(1.0, 0.85, 0.3, 0.95)
 const TAMANHO_TEXTO_MINIMO := 11
 const TAMANHO_TEXTO_MAXIMO := 18
 ## O texto cresce com o botão: fração do raio.
@@ -50,21 +44,6 @@ var estado: EstadoBotao = EstadoBotao.NORMAL:
 		if estado != valor:
 			estado = valor
 			queue_redraw()
-## Modo de edição do layout: não aperta nada (quem arrasta é o ControlesToque).
-var editando: bool = false:
-	set(valor):
-		editando = valor
-		soltar()
-## Selecionado na edição: ganha um contorno de destaque.
-var destacado: bool = false:
-	set(valor):
-		destacado = valor
-		queue_redraw()
-
-
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 func _input(evento: InputEvent) -> void:
@@ -124,10 +103,6 @@ func _notification(qual: int) -> void:
 		soltar()
 
 
-func _raio() -> float:
-	return minf(size.x, size.y) / 2.0
-
-
 func _contem(ponto: Vector2) -> bool:
 	return ponto.distance_to(global_position + size / 2.0) <= _raio()
 
@@ -140,8 +115,7 @@ func _draw() -> void:
 	draw_arc(centro, _raio() - CONTORNO / 2.0, 0.0, TAU, 32, _cor_do_contorno(), CONTORNO, true)
 	if seta != Vector2.ZERO:
 		_desenhar_seta(centro)
-	if destacado:
-		draw_arc(centro, _raio() + CONTORNO_DESTAQUE, 0.0, TAU, 32, COR_DESTAQUE, CONTORNO_DESTAQUE, true)
+	_desenhar_destaque(centro)
 	if texto != "":
 		var fonte := get_theme_default_font()
 		var tamanho := _tamanho_texto()

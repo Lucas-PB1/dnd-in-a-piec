@@ -156,8 +156,8 @@ para `core/`), **específico** (encenação do chefe). Molde simples: Ooze. Com 
 - Ações do InputMap (`project.godot`): `mover_esquerda`, `mover_direita`, `mover_baixo`, `pular`,
   `atacar`, `arremessar`, `folego`, `inventario`, `interagir`, `comandos`, `correr`, `mirar_cima`.
 - O código de jogo **só lê ações** (`Input.is_action_*`). Teclado e toque apertam as mesmas ações:
-  `BotaoToque` mantém a ação pressionada e propaga `InputEventAction` para telas que tratam
-  interações em `_unhandled_input`; `AnalogicoToque` mantém as ações direcionais.
+  `BotaoToque` / `AnalogicoToque` (herdam `ControleToque`) apertam as ações; o botão também
+  propaga `InputEventAction` para telas em `_unhandled_input`.
 - `Comandos` (`core/utilitarios/`): troca de tecla e `user://comandos.cfg`.
   `OpcoesToque`: modo, quando aparecer, layout e transparência em `user://toque.cfg`.
 
