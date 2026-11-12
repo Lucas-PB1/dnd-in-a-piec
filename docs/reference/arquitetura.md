@@ -114,6 +114,12 @@ HitboxComponent.ligar(golpe)
 ## 5. O herói (`features/jogador/`)
 
 - `jogador.gd` (`Jogador`): **ferramentas de física e API pública**. Não decide comportamento.
+  O gesto de disparo/arremesso (tipo da arma, teto da carga, munição, “ignora inimigo perto”)
+  mora em `gestos/gesto_de_arma.gd` (`GestoDeArma`). Quantos golpes a ação vale (Ataque Extra, Surto)
+  e quando o 2º J pede a outra mão ficam em `gestos/cadeia_de_golpe.gd` (`CadeiaDeGolpe`).
+  Os bônus do golpe (estilos, Rajada, Investida, autor e recarga) ficam em
+  `gestos/montagem_de_golpe.gd` (`MontagemDeGolpe`). O veneno já era `VenenoDoHeroi`.
+  O herói guarda o contador, a aura, liga os sinais e aplica.
 - `estados/` (máquina de estados): `Parado`, `Andando`, `Correndo`, `NoAr`, `Atacando`,
   `Arremessando`, `LevandoDano`, `Escalando` (Atleta), `Caido` (derrubado). Cada estado chama
   ferramentas do `Jogador` e emite `trocar_para`.

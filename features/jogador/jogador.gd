@@ -387,9 +387,9 @@ func tempo_para_proximo_golpe() -> float:
 func pediu_ataque() -> bool:
 	if _contador_buffer_ataque <= 0.0 or not pode_golpear():
 		return false
-	var na_mao := inventario.equipado(Item.ESPACO_MAO) as Arma
-	if na_mao and na_mao.disparavel():
-		if not _tem_municao(na_mao):
+	var na_mao := _arma_na_mao()
+	if GestoDeArma.e_disparo(na_mao):
+		if not GestoDeArma.tem_municao(inventario, na_mao):
 			avisar(AVISO_SEM_MUNICAO)
 			_contador_buffer_ataque = 0.0
 			return false
@@ -401,16 +401,15 @@ func pediu_ataque() -> bool:
 func pediu_arremesso() -> bool:
 	if _contador_buffer_arremesso <= 0.0 or not pode_golpear():
 		return false
-	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
-	return arma != null and arma.arremessavel() and not arma.disparavel()
+	return GestoDeArma.e_arremesso(_arma_na_mao())
 
 
 ## Segundo J logo depois do tiro: Besta de Mão (ação bônus) ou Disparo Duplo (estilo, sem ação bônus).
 func quer_disparo_extra() -> bool:
 	if _contador_buffer_ataque <= 0.0 or ficha == null:
 		return false
-	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
-	if arma == null or not arma.disparavel() or not _tem_municao(arma):
+	var arma := _arma_na_mao()
+	if not GestoDeArma.e_disparo(arma) or not GestoDeArma.tem_municao(inventario, arma):
 		return false
 	if _estilos.disparo_duplo_pendente and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DISPARO_DUPLO):
 		return true
@@ -435,14 +434,9 @@ func arma_secundaria() -> Arma:
 func quer_golpe_extra() -> bool:
 	if not _combo_pedido or _golpe_extra:
 		return false
-	if _extra_com_cabo():  # Mestre em Armas de Haste: a outra ponta da haste
+	if CadeiaDeGolpe.e_cabo(ficha, _arma_na_mao()):
 		return acao_bonus_livre()
-	var principal := inventario.equipado(Item.ESPACO_MAO) as Arma
-	var segunda := arma_secundaria()
-	if principal == null or principal.disparavel() or segunda == null or segunda.disparavel():
-		return false
-	var leves := principal.leve and (segunda.leve or ficha.tem_talento(Ficha.TALENTO_EMPUNHADURA_DUPLA))
-	return leves and (_tem_corte_duplo() or acao_bonus_livre())
+	return CadeiaDeGolpe.pede_duas_armas(_arma_na_mao(), arma_secundaria(), ficha, acao_bonus_livre())
 
 
 ## A ação bônus da rodada já voltou (o golpe extra sem Corte Duplo e o Second Wind a gastam).
@@ -732,22 +726,17 @@ func carregar_arremesso(fracao: float, mira: float = 0.0, soltando: bool = false
 
 ## Teto da força (0 a 1). No disparo, a Destreza limita; no arremesso, chega em 1.
 func teto_da_carga() -> float:
-	if not disparo_na_mao():
-		return 1.0
-	return ficha.teto_da_carga()
+	return GestoDeArma.teto(disparo_na_mao(), ficha)
 
 
 ## Segundos para chegar nesse teto. No disparo encolhe com Destreza alta.
 func tempo_ate_teto() -> float:
-	if not disparo_na_mao():
-		return Ficha.TEMPO_CARGA_DISPARO
-	return ficha.tempo_ate_teto_da_carga()
+	return GestoDeArma.tempo_ate_o_teto(disparo_na_mao(), ficha)
 
 
 ## A arma da mão principal é de disparo (os quadros e a Destreza valem).
 func disparo_na_mao() -> bool:
-	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
-	return arma != null and arma.disparavel() and ficha != null
+	return GestoDeArma.e_disparo(_arma_na_mao()) and ficha != null
 
 
 ## Enquanto carrega o gesto, W mira e não vira pulo.
@@ -1087,10 +1076,6 @@ func _item_veneno_basico() -> Item:
 	return null
 
 
-func _aplicar_veneno_ao_golpe(golpe: Golpe) -> void:
-	_veneno.aplicar_ao_golpe(golpe, ficha)
-
-
 func _apagar_veneno_da_arma() -> void:
 	_veneno.apagar()
 	_avisar_veneno()
@@ -1193,14 +1178,6 @@ func _medir_corrida(delta: float) -> void:
 	_investida.medir(esta_correndo(), velocity.x, direcao_olhar, delta)
 
 
-## Investida: o golpe feito depois de correr 10 pés em linha reta leva o efeito escolhido (uma vez por rodada).
-func _aplicar_investida(golpe: Golpe) -> void:
-	if ficha == null or not ficha.tem_talento(Ficha.TALENTO_INVESTIDA) or not _investida.carregada():
-		return
-	if not _recargas.em_recarga(Proficiencias.EFEITO_INVESTIDA):
-		_investida.aplicar(golpe)
-
-
 ## O Atleta se recupera na hora de levar um golpe (sem o instante sem controle).
 func tempo_de_recuo() -> float:
 	return 0.0 if ficha != null and ficha.tem_talento(Ficha.TALENTO_ATLETA) else stats.tempo_recuo
@@ -1244,12 +1221,13 @@ func _comecar_golpe(extra: bool, do_surto: bool = false) -> void:
 
 func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
 	var golpe := Equipamento.golpe(ficha, inventario, arma, extra)
-	_aplicar_estilos_ao_golpe(golpe, arma, extra)
+	if MontagemDeGolpe.aplicar_estilos(golpe, arma, extra, ficha, _estilos, _inimigo_em_5_pes(), _inimigo_maior_perto()):
+		_atualizar_equipamento()
 	_assinar(golpe)
 	_aplicar_rajada_ao_golpe(golpe, arma, extra)
-	if not arma.disparavel():
-		_aplicar_investida(golpe)
-	_aplicar_veneno_ao_golpe(golpe)
+	if MontagemDeGolpe.cabe_investida(arma, ficha, _investida.carregada(), _recargas.em_recarga(Proficiencias.EFEITO_INVESTIDA)):
+		_investida.aplicar(golpe)
+	_veneno.aplicar_ao_golpe(golpe, ficha)
 	if inventario.esta_equipado(arma):
 		golpe.arma_corroida.connect(_ao_corroer_arma.bind(arma))
 	return golpe
@@ -1257,9 +1235,7 @@ func _criar_golpe_de(arma: Arma, extra: bool) -> Golpe:
 
 ## Toggle ligado + estilo: marca o golpe para trocar vantagem por 2º alvo (corpo a corpo).
 func _aplicar_rajada_ao_golpe(golpe: Golpe, arma: Arma, extra: bool) -> void:
-	if extra or arma.disparavel() or ficha == null:
-		return
-	if not ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.RAJADA) or not _estilos.rajada_ligada:
+	if not MontagemDeGolpe.cabe_rajada(arma, extra, ficha, _estilos.rajada_ligada):
 		return
 	golpe.pode_rajada = true
 	var segundo := Equipamento.golpe(ficha, inventario, arma, false)
@@ -1270,28 +1246,29 @@ func _aplicar_rajada_ao_golpe(golpe: Golpe, arma: Arma, extra: bool) -> void:
 	golpe.rajada = segundo
 
 
-## Bônus situacionais dos estilos (Selvageria, Escaramuçador, Oportunista, Artilheiro, Combatente Móvel).
-func _aplicar_estilos_ao_golpe(golpe: Golpe, arma: Arma, extra: bool) -> void:
-	if ficha == null:
-		return
-	var bonus := 0
-	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.SELVAGERIA) and not extra and not arma.disparavel() and not _estilos.selvageria_ativa:
-		bonus += ficha.bonus_proficiencia()
-		_estilos.ativar_selvageria()
-		_atualizar_equipamento()
-	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ESCARAMUCADOR) and _estilos.moveu_neste_turno:
-		bonus += ficha.bonus_proficiencia()
-	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.OPORTUNISTA) and _estilos.consumir_oportunista():
-		golpe.bonus_ataque += Ficha.BONUS_OPORTUNISTA
-		bonus += Ficha.BONUS_OPORTUNISTA
-	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARTILHEIRO) and arma.disparavel() and _inimigo_em_5_pes():
-		bonus += Ficha.BONUS_ARTILHEIRO_PERTO
-	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.COMBATENTE_MOVEL):
-		_estilos.ativar_movimento_extra()
-	if ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.PELOS_PES) and _inimigo_maior_perto():
-		golpe.vantagem = true
-	if bonus != 0:
-		golpe.dano = golpe.dano.com_bonus(bonus)
+## Marca o herói como autor do golpe (e do 2º ataque do Trespassar): Atormentar dá vantagem
+## só a quem marcou o alvo. Os sinais ficam aqui porque apontam para o nó.
+func _assinar(golpe: Golpe) -> void:
+	MontagemDeGolpe.assinar(golpe, get_instance_id(), ficha, _gastar_sorte())
+	_ligar_sinais_do_golpe(golpe)
+	if golpe.trespassar:
+		_ligar_sinais_do_golpe(golpe.trespassar)
+
+
+func _ligar_sinais_do_golpe(golpe: Golpe) -> void:
+	golpe.resolvido.connect(_ao_resolver_golpe_do_atacante)
+	_ligar_efeitos_de_talento(golpe)
+
+
+## Os efeitos de "uma vez por rodada" só entram se a recarga acabou.
+func _ligar_efeitos_de_talento(golpe: Golpe) -> void:
+	golpe.efeitos.assign(MontagemDeGolpe.sem_os_em_recarga(golpe.efeitos, _recargas))
+	var escudo := golpe.efeito(Proficiencias.EFEITO_ESCUDO) as EfeitosDeTalento.GolpeDeEscudo
+	if escudo != null:
+		escudo.derruba = _escudo_derruba_agora
+	if golpe.tem(Proficiencias.EFEITO_ARMA_GRANDE):
+		golpe.resolvido.connect(_ao_resolver_golpe_do_mestre.bind(golpe))
+	golpe.efeito_usado.connect(_ao_gastar_efeito)
 
 
 ## Pelos Pés: inimigo maior que Médio a até 5 pés.
@@ -1319,36 +1296,7 @@ func _cabo_da_haste() -> Arma:
 
 ## O golpe extra deste herói é o da haste (tem o talento e uma arma de haste na mão)?
 func _extra_com_cabo() -> bool:
-	return ficha != null and ficha.tem_talento(Ficha.TALENTO_MESTRE_ARMAS_DE_HASTE) and ficha.e_arma_de_haste(inventario.equipado(Item.ESPACO_MAO) as Arma)
-
-## Marca o herói como autor do golpe (e do 2º ataque do Trespassar): Atormentar dá vantagem
-## só a quem marcou o alvo.
-func _assinar(golpe: Golpe) -> void:
-	golpe.autor_id = get_instance_id()
-	golpe.limiar_critico = ficha.limiar_critico() if ficha != null else Combate.ACERTO_CRITICO
-	if _gastar_sorte():  # Sortudo: o ataque rola um d20 a mais e fica o melhor
-		golpe.vantagem = true
-		if golpe.trespassar:
-			golpe.trespassar.vantagem = true
-	golpe.resolvido.connect(_ao_resolver_golpe_do_atacante)
-	_ligar_efeitos_de_talento(golpe)
-	if golpe.trespassar:
-		golpe.trespassar.autor_id = golpe.autor_id
-		golpe.trespassar.limiar_critico = golpe.limiar_critico
-		golpe.trespassar.resolvido.connect(_ao_resolver_golpe_do_atacante)
-		_ligar_efeitos_de_talento(golpe.trespassar)
-
-
-## Os efeitos de "uma vez por rodada" (Atacante Selvagem, Retalhador, Agarrador...) só entram no golpe se a recarga
-## acabou; quando o golpe gasta o efeito, a recarga começa. A regra é a mesma para todos (`EfeitoDeGolpe.por_rodada`).
-func _ligar_efeitos_de_talento(golpe: Golpe) -> void:
-	golpe.efeitos.assign(golpe.efeitos.filter(func(e: EfeitoDeGolpe) -> bool: return not (e.por_rodada and _recargas.em_recarga(e.id))))
-	var escudo := golpe.efeito(Proficiencias.EFEITO_ESCUDO) as EfeitosDeTalento.GolpeDeEscudo
-	if escudo != null:
-		escudo.derruba = _escudo_derruba_agora
-	if golpe.tem(Proficiencias.EFEITO_ARMA_GRANDE):
-		golpe.resolvido.connect(_ao_resolver_golpe_do_mestre.bind(golpe))
-	golpe.efeito_usado.connect(_ao_gastar_efeito)
+	return CadeiaDeGolpe.e_cabo(ficha, _arma_na_mao())
 
 
 ## Mestre em Arma Grande: crítico ou abate com arma Pesada dá um golpe extra, como o do Surto de Ação.
@@ -1386,11 +1334,7 @@ func _quadro_do_acerto_do_corpo() -> int:
 ## Corte Duplo (maestria) numa das armas leves: o golpe extra faz parte da ação de Ataque,
 ## sem gastar a ação bônus (sai em todo combo).
 func _tem_corte_duplo() -> bool:
-	var principal := inventario.equipado(Item.ESPACO_MAO) as Arma
-	var segunda := arma_secundaria()
-	var na_principal := principal != null and ficha.maestria_de(principal) == Proficiencias.CORTE_DUPLO
-	var na_segunda := segunda != null and ficha.maestria_de(segunda) == Proficiencias.CORTE_DUPLO
-	return na_principal or na_segunda
+	return CadeiaDeGolpe.tem_corte_duplo(ficha, _arma_na_mao(), arma_secundaria())
 
 
 ## Inimigo a até 5 pés: o tiro à distância sai com desvantagem (as bestas do talento, não).
@@ -1406,17 +1350,20 @@ const MUDANCA_TATICA_SEGUNDOS := 3.0
 const COR_VENENO := Color(0.55, 0.9, 0.4)
 
 
+func _arma_na_mao() -> Arma:
+	return inventario.equipado(Item.ESPACO_MAO) as Arma
+
+
 func _arma_do_gesto() -> Arma:
-	var arma := inventario.equipado(Item.ESPACO_MAO) as Arma
-	if arma and (arma.arremessavel() or arma.disparavel()):
-		return arma
-	return null
+	var arma := _arma_na_mao()
+	return arma if GestoDeArma.sai_no_gesto(arma) else null
 
 
 func _arremessar(arma: Arma, forca: float, mira: float) -> void:
 	var pen := inventario.penalidade(arma)
 	var golpe := Equipamento.golpe(ficha, inventario, arma)
-	_aplicar_estilos_ao_golpe(golpe, arma, false)
+	if MontagemDeGolpe.aplicar_estilos(golpe, arma, false, ficha, _estilos, _inimigo_em_5_pes(), _inimigo_maior_perto()):
+		_atualizar_equipamento()
 	if ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARREMESSO):
 		golpe.dano = golpe.dano.com_bonus(Ficha.BONUS_ARREMESSO)
 	_assinar(golpe)
@@ -1433,7 +1380,7 @@ func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
 		_contador_buffer_ataque = 0.0
 		return
 	var golpe := _criar_golpe_de(arma, false)
-	if _inimigo_em_5_pes() and not _besta_ignora_perto(arma) and not _artilheiro_ignora_perto():
+	if _inimigo_em_5_pes() and not GestoDeArma.ignora_inimigo_perto(ficha, arma):
 		golpe.desvantagem = true
 	var estilo_duplo := ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.DISPARO_DUPLO)
 	# Disparo Duplo: os dois tiros saem com desvantagem; o 1º libera o 2º sem gastar ação bônus.
@@ -1449,10 +1396,6 @@ func _disparar(arma: Arma, forca: float, mira: float, extra: bool) -> void:
 	_marcar_ataque(extra, true, gastar_bonus)
 	arma_arremessada.emit(arma, golpe, 0, origem, direcao_olhar, forca, mira, pilha,
 		ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE), _destreza())
-
-
-func _artilheiro_ignora_perto() -> bool:
-	return ficha != null and ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.ARTILHEIRO)
 
 
 func _marcar_ataque(extra: bool, manter_pose: bool, gastar_acao_bonus: bool = true) -> void:
@@ -1479,21 +1422,12 @@ func _gastar_municao(arma: Arma) -> Municao:
 	return pilha
 
 
-func _tem_municao(arma: Arma) -> bool:
-	var pilha := inventario.item_chamado(arma.municao)
-	return pilha != null and inventario.quantidade_de(pilha) > 0
-
-
 func _inimigo_em_5_pes() -> bool:
 	var limite := EscalaDnd.pes_para_pixels(DISTANCIA_PERTO_TIRO_PES)
 	for n in get_tree().get_nodes_in_group(GRUPO_INIMIGOS):
 		if n is Node2D and global_position.distance_to((n as Node2D).global_position) <= limite:
 			return true
 	return false
-
-
-func _besta_ignora_perto(arma: Arma) -> bool:
-	return ficha.tem_talento(Ficha.TALENTO_ATIRADOR_DE_ELITE) or (arma.besta and ficha.tem_talento(Ficha.TALENTO_ESPECIALISTA_EM_BESTA))
 
 
 ## Forma Corrosiva (ex.: Gray Ooze): a arma não mágica que causou dano perde precisão
@@ -1561,11 +1495,10 @@ func _atualizar_salvaguardas() -> void:
 ## Uma nova ação de Atacar: o Ataque Extra faz dela dois golpes, e o Surto de Ação dobra a ação inteira
 ## (quatro golpes no nível 5). O golpe da outra mão (ação bônus) não entra na conta.
 func _abrir_acao_de_atacar() -> void:
-	var golpes := ficha.golpes_por_ataque() if ficha != null else 1
+	var golpes := CadeiaDeGolpe.golpes_na_acao(ficha, _surto_armado)
 	if _surto_armado:
 		_surto_armado = false
 		_surto_em_curso = true
-		golpes *= 2
 	_golpes_encadeados = golpes - 1
 
 

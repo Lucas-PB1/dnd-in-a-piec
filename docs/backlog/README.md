@@ -37,7 +37,7 @@ Magia, raças e desvantagem de Furtividade na armadura ficam em `depois/`.
 ### Dívidas técnicas
 | Pri | Arquivo |
 |---|---|
-| 90+ | `divida/split-jogador-gd` … |
+| — | (pasta `divida/` vazia) |
 
 ### Depois
 | Pri | Arquivo |
