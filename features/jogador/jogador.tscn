@@ -138,8 +138,6 @@ shape = SubResource("FormaGolpe")
 [node name="Camera" type="Camera2D" parent="."]
 position = Vector2(0, -48)
 process_callback = 0
-position_smoothing_enabled = true
-position_smoothing_speed = 6.0
 script = ExtResource("5_camera")
 
 [node name="MaquinaEstados" type="Node" parent="." node_paths=PackedStringArray("estado_inicial")]

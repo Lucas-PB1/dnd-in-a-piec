@@ -39,10 +39,34 @@ func _testar_cena() -> void:
 	_checar(textos.any(func(t: String) -> bool: return "arco" in t or "segure" in t), "placa ensina o arco")
 	_checar(textos.any(func(t: String) -> bool: return "pedra" in t or "empurrar" in t), "placa ensina a pedra")
 	_checar(textos.any(func(t: String) -> bool: return "Porta" in t or "Clareira" in t), "placa aponta a porta")
+	_checar(_placas_nao_se_cobrem(placas), "as placas não se cobrem e o texto cabe na caixa")
 	var pedra := fase.get_node_or_null("DesafioPericia") as Node2D
 	_checar(pedra != null and pedra.global_position.x >= 500.0, "Treino tem pedra depois do boneco")
 	fase.queue_free()
 	await physics_frame
+
+
+## Caixas com largura de verdade: o texto centralizado cabe, e uma placa não pisa na outra.
+func _placas_nao_se_cobrem(placas: Node) -> bool:
+	var caixas: Array[Rect2] = []
+	for filho in placas.get_children():
+		var placa := filho as Label
+		if placa == null:
+			continue
+		var caixa := Rect2(placa.offset_left, placa.offset_top, placa.offset_right - placa.offset_left, placa.offset_bottom - placa.offset_top)
+		if caixa.size.x < 40.0 or caixa.size.y < 8.0:
+			return false
+		var fonte := placa.get_theme_font(&"font")
+		var tamanho := placa.get_theme_font_size(&"font_size")
+		var contorno := placa.get_theme_constant(&"outline_size")
+		var largura := fonte.get_string_size(placa.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tamanho).x + contorno * 2.0
+		if largura > caixa.size.x:
+			return false
+		for outra in caixas:
+			if caixa.intersects(outra):
+				return false
+		caixas.append(caixa)
+	return caixas.size() >= 9
 
 
 func _testar_fluxo() -> void:

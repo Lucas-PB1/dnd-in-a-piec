@@ -1,8 +1,9 @@
 class_name CameraJogador
 extends Camera2D
-## Câmera filha do herói: segue com suavização e "olha à frente" na direção indicada
-## pelo dono via olhar_para() (call down). Também treme (tremer()) quando algo bate forte.
-## Não conhece o Jogador.
+## Câmera filha do herói: cola no corpo. A suavização do Camera2D atrasava a tela
+## (parecia lag). O "olhar à frente" fica no olhar_para() (call down).
+## O callback permanece na física: com interpolação ligada, o Godot recusa o Idle.
+## Também treme (tremer()) quando algo bate forte. Não conhece o Jogador.
 
 ## Quantos pixels a câmera adianta na direção em que o herói olha.
 @export var olhar_frente: float = 56.0

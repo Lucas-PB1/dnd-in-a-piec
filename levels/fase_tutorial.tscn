@@ -64,10 +64,10 @@ aviso_falha = "A pedra não se moveu"
 [node name="Placas" type="Node2D" parent="." unique_id=935563095]
 
 [node name="Placa1" type="Label" parent="Placas" unique_id=241940075]
-offset_left = 136.0
-offset_top = 208.0
-offset_right = 136.0
-offset_bottom = 208.0
+offset_left = 8.0
+offset_top = 156.0
+offset_right = 228.0
+offset_bottom = 172.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -76,10 +76,10 @@ text = "A/D andar · Espaço pular"
 horizontal_alignment = 1
 
 [node name="Placa2" type="Label" parent="Placas" unique_id=1100374156]
-offset_left = 200.0
-offset_top = 208.0
-offset_right = 200.0
-offset_bottom = 208.0
+offset_left = 8.0
+offset_top = 174.0
+offset_right = 228.0
+offset_bottom = 190.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -88,9 +88,9 @@ text = "E: baú · I: mochila"
 horizontal_alignment = 1
 
 [node name="Placa3" type="Label" parent="Placas" unique_id=1272877333]
-offset_left = 264.0
-offset_top = 208.0
-offset_right = 264.0
+offset_left = 8.0
+offset_top = 192.0
+offset_right = 228.0
 offset_bottom = 208.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
@@ -100,10 +100,10 @@ text = "F: Fôlego (cura)"
 horizontal_alignment = 1
 
 [node name="Placa4" type="Label" parent="Placas" unique_id=1575829158]
-offset_left = 360.0
-offset_top = 208.0
-offset_right = 360.0
-offset_bottom = 208.0
+offset_left = 248.0
+offset_top = 174.0
+offset_right = 468.0
+offset_bottom = 190.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -113,9 +113,9 @@ horizontal_alignment = 1
 
 [node name="Placa5" type="Label" parent="Placas" unique_id=1914206713]
 offset_left = 488.0
-offset_top = 208.0
-offset_right = 488.0
-offset_bottom = 208.0
+offset_top = 156.0
+offset_right = 708.0
+offset_bottom = 172.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -124,9 +124,9 @@ text = "J: golpe · K: azagaia"
 horizontal_alignment = 1
 
 [node name="Placa6" type="Label" parent="Placas" unique_id=700941191]
-offset_left = 616.0
-offset_top = 208.0
-offset_right = 616.0
+offset_left = 488.0
+offset_top = 192.0
+offset_right = 708.0
 offset_bottom = 208.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
@@ -136,10 +136,10 @@ text = "Baú → arco · segure J"
 horizontal_alignment = 1
 
 [node name="Placa7" type="Label" parent="Placas" unique_id=428549873]
-offset_left = 712.0
-offset_top = 208.0
-offset_right = 712.0
-offset_bottom = 208.0
+offset_left = 728.0
+offset_top = 174.0
+offset_right = 948.0
+offset_bottom = 190.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -148,10 +148,10 @@ text = "R: Surto (nível 2+)"
 horizontal_alignment = 1
 
 [node name="Placa8" type="Label" parent="Placas" unique_id=199725222]
-offset_left = 872.0
-offset_top = 208.0
-offset_right = 872.0
-offset_bottom = 208.0
+offset_left = 968.0
+offset_top = 174.0
+offset_right = 1188.0
+offset_bottom = 190.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -160,10 +160,10 @@ text = "E: empurrar a pedra"
 horizontal_alignment = 1
 
 [node name="Placa9" type="Label" parent="Placas" unique_id=1421940994]
-offset_left = 1096.0
-offset_top = 208.0
-offset_right = 1096.0
-offset_bottom = 208.0
+offset_left = 1088.0
+offset_top = 156.0
+offset_right = 1308.0
+offset_bottom = 172.0
 theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.95, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)

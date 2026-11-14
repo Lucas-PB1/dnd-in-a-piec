@@ -3,7 +3,8 @@
 O que já foi feito, em ordem (fatias do jogo). **Acrescente uma linha ao fechar cada fatia.**
 O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
-- Montagem do golpe: `MontagemDeGolpe` (estilos, Rajada, Investida, autor, recarga). Veneno segue em `VenenoDoHeroi`. O herói só liga os sinais. Teste `teste_montagem_de_golpe`. Backlog `split-jogador-gd` fechado.
+- Câmera do herói: sem a suavização do Camera2D, que atrasava a tela e parecia lag. O olhar à frente continua no script.
+- Placas do Treino: cada texto tem caixa própria e as do começo ficam em linhas separadas, para não se cobrirem. Teste `teste_tutorial`.
 - Cadeia do corpo a corpo: `CadeiaDeGolpe` (Ataque Extra, Surto, duas armas, Corte Duplo, cabo da haste). O herói guarda contador e aura. Teste `teste_cadeia_de_golpe`.
 - Gesto de disparo/arremesso: regra pura `GestoDeArma` (`features/jogador/gestos/`). O herói só lê o botão. Teste `teste_gesto_de_arma`. O corte do corpo a corpo em `jogador.gd` continua na dívida `split-jogador-gd`.
 - Pasta `features/goblin/` virou `features/humanoides/` (mesma máquina para Goblin, Hobgoblin, Bugbear, Kobold, Skeleton e Zombie). Scripts `Goblin` / `estado_goblin_*` ficaram. Backlog `renomear-features-goblin` fechado.
