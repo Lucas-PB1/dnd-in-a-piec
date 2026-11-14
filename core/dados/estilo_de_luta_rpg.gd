@@ -36,6 +36,8 @@ enum Efeito {
 
 ## Pasta dos Resources de estilo.
 const PASTA := "res://data/estilos"
+## id -> estilo, montado na primeira consulta (os estilos não mudam durante o jogo).
+static var _por_id: Dictionary[StringName, EstiloDeLutaRPG] = {}
 
 
 ## Todos os estilos jogáveis, na ordem dos arquivos.
@@ -47,9 +49,9 @@ static func todos() -> Array[EstiloDeLutaRPG]:
 	return lista
 
 
-## Resource pelo id, ou null.
+## Resource pelo id, ou null. Consultado todo quadro (velocidade, CA): usa um índice montado uma vez.
 static func por_id(id_estilo: StringName) -> EstiloDeLutaRPG:
-	for estilo in todos():
-		if estilo.id == id_estilo:
-			return estilo
-	return null
+	if _por_id.is_empty():
+		for estilo in todos():
+			_por_id[estilo.id] = estilo
+	return _por_id.get(id_estilo)

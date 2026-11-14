@@ -255,3 +255,8 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 - `debug/file_logging/enable_file_logging=true`: o Godot grava `user://logs/godot.log` também no Android.
 - Desligado no headless (testes e ferramentas). Teste `tests/campanha/teste_registro_de_falhas.gd`.
 - Investigação do crash no nível 8: no PC o nível nunca passa de 8 (XP, criação e save travam no máximo), não há erro nem aviso com `--debug` e a memória fica estável (~135 MB do nível 1 ao 8). Falta o relatório do aparelho.
+
+## Jogo exportado a 5 FPS nas fases
+- Causa: `Ficha.tem_efeito_estilo()` → `EstiloDeLutaRPG.por_id()` → `todos()` → `Recursos.da_pasta()` listava e carregava a pasta `data/estilos` a cada consulta, e a velocidade do herói consulta o estilo todo quadro. No editor isso é rápido; no `.exe`/APK a pasta fica dentro do `.pck` e a fase caía para 4–7 FPS (medido no `.pck`: 218 ms por quadro antes, 16,7 ms depois).
+- `Recursos.da_pasta` agora lê cada pasta uma vez e guarda (`Recursos.esquecer()` limpa); `EstiloDeLutaRPG.por_id` usa um índice por id. Teste `tests/regras/teste_recursos.gd`.
+- Provável causa também do jogo fechando no celular no nível alto (mais estilos = mais leituras por quadro; o Android fecha app que não responde). Confirmar no aparelho.
