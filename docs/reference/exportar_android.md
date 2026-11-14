@@ -36,3 +36,11 @@ mas ainda é necessário conferir a sensação dos controles num aparelho físic
 
 O preset habilita arm64 e arm32. Para publicar na Google Play, configure uma chave de lançamento
 própria e exporte um AAB; não compartilhe uma chave privada no repositório.
+
+## Quando o jogo fecha sozinho no celular
+
+O jogo guarda uma caixa-preta (`RegistroDeFalhas`). Se ele fechar sem o jogador sair, na próxima
+abertura aparece "O jogo fechou sozinho da última vez" por cima do título: toque em **Copiar** e
+mande o texto. Ele traz os últimos passos (fase, telas, nível, escolhas) e o fim de
+`user://logs/godot.log` daquela vez. Com cabo USB e depuração ligada, `adb logcat` mostra também
+quedas nativas que o log do Godot não pega.

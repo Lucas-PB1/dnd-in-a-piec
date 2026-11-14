@@ -129,6 +129,8 @@ var _voltar_para_pausa: bool = false
 var _interagiveis_perto: Dictionary[String, int] = {}
 ## O título está escondido porque as Opções abriram por cima dele; ao fechar, ele volta.
 var _titulo_escondido: TelaTitulo
+## Último nível anotado na caixa-preta (só a subida de nível vira passo, não cada XP).
+var _nivel_registrado: int = 0
 ## Quantas vezes o herói derrotou cada criatura (o bestiário mostra e o save guarda).
 var _bestiario := Bestiario.new()
 ## O que a loja da fase tem à venda (sorteado ao entrar na fase; o comprado sai daqui).
@@ -168,6 +170,7 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+	RegistroDeFalhas.iniciar()
 	Comandos.carregar()
 	OpcoesToque.carregar()
 	_jogador.posicionar_no_inicio(_fase.posicao_inicio())
@@ -238,6 +241,7 @@ func _ready() -> void:
 	_nascer_armadilhas()
 	_sons.ligar_jogador(_jogador)
 	_sons.ligar_telas(_interface)
+	_registrar_telas()
 	if mostrar_inicio:
 		_abrir_titulo()
 	else:
@@ -245,6 +249,45 @@ func _ready() -> void:
 		_placar.iniciar_fase(_fase.indice)
 		_mostrar_placar()
 		_musica.tocar_da_fase(_fase.indice)
+
+
+## Caixa-preta (RegistroDeFalhas): em primeiro plano a sessão fica aberta; fechar o jogo ou ir para o
+## segundo plano a fecha (lá o celular pode matar o app sem ser queda).
+func _notification(qual: int) -> void:
+	match qual:
+		NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN:
+			RegistroDeFalhas.abrir_sessao()
+		NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_CLOSE_REQUEST:
+			RegistroDeFalhas.fechar_sessao()
+
+
+func _exit_tree() -> void:
+	RegistroDeFalhas.fechar_sessao()
+
+
+## Cada tela da Interface que abre ou fecha vira um passo da caixa-preta.
+func _registrar_telas() -> void:
+	for tela in _interface.get_children():
+		if tela is Control:
+			(tela as Control).visibility_changed.connect(_ao_mudar_tela_registrada.bind(tela))
+	_interface.child_entered_tree.connect(func(tela: Node) -> void: RegistroDeFalhas.marcar("Tela: %s" % tela.name))
+
+
+func _ao_mudar_tela_registrada(tela: Control) -> void:
+	RegistroDeFalhas.marcar("Tela: %s %s" % [tela.name, "aberta" if tela.visible else "fechada"])
+
+
+## A queda anterior: mostra o relatório por cima do título, para o jogador copiar e mandar.
+func _mostrar_relatorio_de_falha() -> void:
+	if not RegistroDeFalhas.houve_falha():
+		return
+	var tela := TelaRelatorioFalha.new()
+	tela.name = "TelaRelatorioFalha"
+	_interface.add_child(tela)
+	tela.mostrar(RegistroDeFalhas.relatorio())
+	tela.fechou.connect(func() -> void:
+		RegistroDeFalhas.descartar_relatorio()
+		tela.queue_free())
 
 
 ## Cronômetro: só com inimigos da cota vivos (pausa do jogo já para o `_process`).
@@ -269,6 +312,7 @@ func _abrir_titulo() -> void:
 	titulo.sair_escolhido.connect(get_tree().quit)
 	_interface.add_child(titulo)
 	titulo.mostrar_continuar(not Salvamento.ler().is_empty())
+	_mostrar_relatorio_de_falha()
 
 
 func _ao_escolher_novo_jogo(titulo: TelaTitulo) -> void:
@@ -310,6 +354,7 @@ func _ao_continuar(titulo: TelaTitulo) -> void:
 	var ficha := Salvamento.montar_ficha(dados)
 	if ficha == null:
 		return
+	RegistroDeFalhas.marcar("Continuar: nível %d, fase %d" % [ficha.nivel, Salvamento.fase_de(dados)])
 	titulo.queue_free()
 	_jogador.configurar_ficha(ficha)
 	_jogador.definir_mente_tatica(false)
@@ -341,6 +386,7 @@ func _ao_voltar_da_criacao(tela: TelaCriacao) -> void:
 
 
 func _ao_criar_personagem(ficha: Ficha, pacote: PacoteInicial, tela: TelaCriacao) -> void:
+	RegistroDeFalhas.marcar("Criou herói nível %d (%s)" % [ficha.nivel, pacote.nome if pacote else "sem pacote"])
 	_jogador.configurar_ficha(ficha)
 	_jogador.definir_mente_tatica(false)
 	_jogador.receber_pacote(pacote)
@@ -371,6 +417,7 @@ func _ao_seguir_da_intro(intro: TelaIntroLore) -> void:
 # --- Derrota ----------------------------------------------------------------------
 
 func _ao_cair() -> void:
+	RegistroDeFalhas.marcar("Herói caiu na fase %d" % _fase.indice)
 	_pausar(true)
 	_musica.tocar(Musica.DERROTA)
 	var tela: TelaDerrota = CENA_DERROTA.instantiate()
@@ -492,6 +539,7 @@ func _entrar_fase(cena: PackedScene, descanso_longo: bool = true) -> void:
 	var antiga := _fase
 	antiga.name = "FaseAntiga"
 	_fase = cena.instantiate()
+	RegistroDeFalhas.marcar("Fase %d %s (nível %d)" % [_fase.indice, _fase.nome_ambiente, _jogador.ficha.nivel])
 	_fase.name = "Fase"
 	add_child(_fase)
 	move_child(_fase, 0)
@@ -918,6 +966,7 @@ func _abrir_talento() -> void:
 
 ## O talento já está na ficha: o herói recalcula vida e CA.
 func _ao_escolher_talento(talento: TalentoRPG) -> void:
+	RegistroDeFalhas.marcar("Talento: %s" % talento.nome)
 	_jogador.ao_mudar_ficha()
 	_jogador.avisar(talento.nome)
 	_pausa.mostrar_talento(_jogador.ficha.escolhas_de_talento_pendentes() > 0)
@@ -939,6 +988,7 @@ func _abrir_subclasse() -> void:
 
 
 func _ao_escolher_subclasse(subclasse: SubclasseRPG) -> void:
+	RegistroDeFalhas.marcar("Subclasse: %s" % subclasse.nome)
 	_jogador.ao_mudar_ficha()
 	_jogador.avisar(subclasse.nome)
 	_pausa.mostrar_subclasse(false)
@@ -1194,6 +1244,9 @@ func _mostrar_personagem_no_hud() -> void:
 
 
 func _ao_mudar_progressao(nivel: int, experiencia: int, proximo_nivel: int) -> void:
+	if nivel != _nivel_registrado:
+		_nivel_registrado = nivel
+		RegistroDeFalhas.marcar("Nível %d (XP %d)" % [nivel, experiencia])
 	_hud.mostrar_investida(_jogador.ficha != null and _jogador.ficha.tem_talento(Ficha.TALENTO_INVESTIDA), _jogador.investida_empurra())
 	_hud.mostrar_rajada(_jogador.ficha != null and _jogador.ficha.tem_efeito_estilo(EstiloDeLutaRPG.Efeito.RAJADA), _jogador.rajada_ligada())
 	var ficha := _jogador.ficha

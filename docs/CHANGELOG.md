@@ -249,3 +249,9 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 
 ## Limpeza: backlog sem “validar sensação”
 - Removidos itens que só pediam jogar/anotar (`validar-chefes`, `balance-quimera`, `equilibrio-niveis-5-6`, `validar-apk`). Regra no `docs/backlog/README.md`: feedback de sensação não vira pendência.
+
+## Caixa-preta para quedas no celular
+- `RegistroDeFalhas` (`core/utilitarios/`): anota os passos (fase, telas, nível, criação, Continuar, talento, subclasse, derrota) em `user://ultimos_passos.txt` e marca a sessão aberta em primeiro plano. Se o jogo abrir com a sessão ainda aberta, a anterior caiu: o título mostra `TelaRelatorioFalha` com os últimos passos e o fim do log do Godot, com **Copiar**.
+- `debug/file_logging/enable_file_logging=true`: o Godot grava `user://logs/godot.log` também no Android.
+- Desligado no headless (testes e ferramentas). Teste `tests/campanha/teste_registro_de_falhas.gd`.
+- Investigação do crash no nível 8: no PC o nível nunca passa de 8 (XP, criação e save travam no máximo), não há erro nem aviso com `--debug` e a memória fica estável (~135 MB do nível 1 ao 8). Falta o relatório do aparelho.
