@@ -362,6 +362,7 @@ func _ao_continuar(titulo: TelaTitulo) -> void:
 	Salvamento.restaurar_bestiario(dados, _bestiario)
 	var indice := clampi(Salvamento.fase_de(dados) - 1, 0, CENAS_FASE.size() - 1)
 	_placar.iniciar_run()
+	_placar.quedas_run = Salvamento.quedas_de(dados)  # a run continua: as quedas de antes contam até zerar
 	_entrar_fase(CENAS_FASE[indice])
 	_mostrar_personagem_no_hud()
 	_apontar_monstros_para(_jogador)
@@ -418,6 +419,9 @@ func _ao_seguir_da_intro(intro: TelaIntroLore) -> void:
 
 func _ao_cair() -> void:
 	RegistroDeFalhas.marcar("Herói caiu na fase %d" % _fase.indice)
+	_placar.registrar_queda()
+	if mostrar_inicio:  # só no jogo de verdade (os testes pulam o início e não mexem no save)
+		Salvamento.gravar_quedas(_placar.quedas_run)
 	_pausar(true)
 	_musica.tocar(Musica.DERROTA)
 	var tela: TelaDerrota = CENA_DERROTA.instantiate()
@@ -440,7 +444,7 @@ func _tentar_de_novo(tela: TelaDerrota) -> void:
 
 
 func _abrir_vitoria() -> void:
-	var novo := _placar.fechar_fase(true, true)
+	var novo := _placar.fechar_fase(mostrar_inicio, true)  # recorde só no jogo de verdade (testes e scripts não sujam o placar)
 	_pausar(true)
 	_musica.tocar(Musica.TAVERNA)
 	var tela: TelaVitoria = CENA_VITORIA.instantiate()
@@ -449,7 +453,7 @@ func _abrir_vitoria() -> void:
 	_interface.add_child(tela)
 	tela.configurar(EPILOGO_LORE)
 	var extra := "\nNovo recorde da fase!" if novo else ""
-	tela.mostrar_resumo(_placar.texto_resumo(true) + extra)
+	tela.mostrar_resumo(_placar.texto_quedas_ate_zerar() + "\n" + _placar.texto_resumo(true, false) + extra)
 
 
 ## Volta à primeira fase, com vida cheia e armadilhas novas.
@@ -519,7 +523,7 @@ func _tentar_atravessar() -> void:
 		return
 	# Tutorial (índice 0): porta leva à Clareira. Demais: índice N → CENAS_FASE[N].
 	if _fase.indice > 0:
-		_placar.fechar_fase(true, false)
+		_placar.fechar_fase(mostrar_inicio, false)
 	var seguinte := _fase.indice
 	if seguinte < CENAS_FASE.size():
 		# Chefe derrotado = longo; fase normal = curto (Surto/Fôlego voltam nos dois).
@@ -928,7 +932,7 @@ func _abrir_pausa() -> void:
 
 ## Salva a ficha, a mochila e a fase atual. Ao continuar, o herói volta ao começo da fase.
 func _salvar_jogo() -> void:
-	var gravou := Salvamento.gravar(_jogador.ficha, _jogador.inventario, _fase.indice, _bestiario)
+	var gravou := Salvamento.gravar(_jogador.ficha, _jogador.inventario, _fase.indice, _bestiario, _placar.quedas_run)
 	if gravou:
 		_sons.tocar(&"confirmar")
 	_pausa.mostrar_aviso("Jogo salvo" if gravou else "Não foi possível salvar")
@@ -936,7 +940,7 @@ func _salvar_jogo() -> void:
 
 ## Entrou numa fase nova: guarda o progresso sozinho. Só no jogo de verdade (os testes pulam o início).
 func _salvar_ao_entrar_na_fase() -> void:
-	if mostrar_inicio and Salvamento.gravar(_jogador.ficha, _jogador.inventario, _fase.indice, _bestiario):
+	if mostrar_inicio and Salvamento.gravar(_jogador.ficha, _jogador.inventario, _fase.indice, _bestiario, _placar.quedas_run):
 		_jogador.avisar("Jogo salvo")
 
 

@@ -34,11 +34,26 @@ static func apagar() -> void:
 
 
 ## Grava o jogo. `indice_fase` é o número da fase (1 = Clareira). Devolve false se não conseguiu.
-static func gravar(ficha: Ficha, inventario: Inventario, indice_fase: int, bestiario: Bestiario = null) -> bool:
+## `quedas` = quantas vezes o herói caiu nesta run (Placar.quedas_run).
+static func gravar(ficha: Ficha, inventario: Inventario, indice_fase: int, bestiario: Bestiario = null, quedas: int = 0) -> bool:
 	var arquivo := FileAccess.open(caminho, FileAccess.WRITE)
 	if arquivo == null:
 		return false
-	arquivo.store_string(JSON.stringify(para_dicionario(ficha, inventario, indice_fase, bestiario), "\t"))
+	arquivo.store_string(JSON.stringify(para_dicionario(ficha, inventario, indice_fase, bestiario, quedas), "\t"))
+	return true
+
+
+## O herói caiu: atualiza só a contagem de quedas no save que já existe (o resto continua do começo
+## da fase). Assim fechar o jogo depois de cair não apaga a queda. false se não há save.
+static func gravar_quedas(quedas: int) -> bool:
+	var dados := ler()
+	if dados.is_empty():
+		return false
+	dados["run"] = {"quedas": maxi(quedas, 0)}
+	var arquivo := FileAccess.open(caminho, FileAccess.WRITE)
+	if arquivo == null:
+		return false
+	arquivo.store_string(JSON.stringify(dados, "\t"))
 	return true
 
 
@@ -55,7 +70,7 @@ static func ler() -> Dictionary:
 	return {}
 
 
-static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: int, bestiario: Bestiario = null) -> Dictionary:
+static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: int, bestiario: Bestiario = null, quedas: int = 0) -> Dictionary:
 	var itens: Array[Dictionary] = []
 	for item in inventario.itens:
 		itens.append({
@@ -87,12 +102,19 @@ static func para_dicionario(ficha: Ficha, inventario: Inventario, indice_fase: i
 		},
 		"mochila": {"itens": itens, "equipados": _posicoes_dos_equipados(inventario)},
 		"bestiario": bestiario.para_dicionario() if bestiario else {},
+		"run": {"quedas": maxi(quedas, 0)},
 	}
 
 
 ## Número da fase salva (pelo menos 1).
 static func fase_de(dados: Dictionary) -> int:
 	return maxi(int(dados.get("fase", 1)), 1)
+
+
+## Quedas do herói na run salva (save antigo, sem a contagem = 0).
+static func quedas_de(dados: Dictionary) -> int:
+	var run: Variant = dados.get("run", {})
+	return maxi(int((run as Dictionary).get("quedas", 0)), 0) if run is Dictionary else 0
 
 
 ## Monta a ficha salva, ou null se faltar a classe.

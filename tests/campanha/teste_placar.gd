@@ -47,7 +47,25 @@ func _testar_regra() -> void:
 	_checar(is_equal_approx(outro.melhor_da_fase(1), 50.0) and is_equal_approx(outro.melhor_run_s, 10.0),
 		"recordes voltam do arquivo")
 	_checar("Abates: 1 nesta fase" in placar.texto_resumo(), "resumo cita abates")
+	_testar_quedas(placar)
 	DirAccess.remove_absolute(placar.caminho)
+
+
+## Quedas do herói: somam na run, aparecem no resumo e na frase da vitória; uma run nova zera.
+func _testar_quedas(placar: Placar) -> void:
+	placar.iniciar_run()
+	_checar(placar.quedas_run == 0 and placar.texto_quedas_ate_zerar() == "Zerou sem cair nenhuma vez!",
+		"run nova começa sem quedas")
+	placar.registrar_queda()
+	_checar(placar.texto_quedas_ate_zerar() == "Caiu 1 vez até zerar.", "uma queda: singular")
+	placar.registrar_queda()
+	placar.registrar_queda()
+	_checar(placar.quedas_run == 3 and placar.texto_quedas_ate_zerar() == "Caiu 3 vezes até zerar.",
+		"quedas somam na run")
+	_checar("Quedas na run: 3" in placar.texto_resumo(), "o resumo (derrota e vitória) mostra as quedas")
+	_checar(placar.kills_run == 0, "queda do herói não conta como abate")
+	placar.iniciar_run()
+	_checar(placar.quedas_run == 0, "Novo Jogo / Jogar de novo zera as quedas")
 
 
 func _testar_na_main() -> void:
@@ -68,6 +86,23 @@ func _testar_na_main() -> void:
 	await _esperar(3)
 	_checar(is_equal_approx(cena._placar.tempo_fase_s, tempo_antes),
 		"sem inimigos da cota o timer não anda")
+	var melhor_antes := cena._placar.melhor_run_s
+	cena._placar.tempo_run_s = 1.0  # um tempo que bateria qualquer recorde
+	cena._abrir_vitoria()
+	await process_frame
+	_checar(is_equal_approx(cena._placar.melhor_run_s, melhor_antes), "fora do jogo de verdade (testes) a vitória não grava recorde")
+	var vitoria := cena.get_node("Interface").find_child("TelaVitoria", true, false)
+	if vitoria:
+		vitoria.queue_free()
+	var quedas_antes := cena._placar.quedas_run
+	cena._ao_cair()
+	await process_frame
+	var derrota := cena.get_node("Interface").find_child("TelaDerrota", true, false)
+	var textos := derrota.find_children("*", "Label", true, false).map(func(l: Label) -> String: return l.text) if derrota else []
+	_checar(cena._placar.quedas_run == quedas_antes + 1, "cair soma uma queda na run")
+	_checar(textos.any(func(t: String) -> bool: return ("Quedas na run: %d" % (quedas_antes + 1)) in t),
+		"a tela Você caiu mostra as quedas da run")
+	paused = false
 	cena.free()
 	await process_frame
 

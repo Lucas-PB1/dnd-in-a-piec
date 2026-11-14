@@ -260,3 +260,9 @@ O que falta: `docs/backlog/`. Decisões: `docs/adr/` (Diátaxis).
 - Causa: `Ficha.tem_efeito_estilo()` → `EstiloDeLutaRPG.por_id()` → `todos()` → `Recursos.da_pasta()` listava e carregava a pasta `data/estilos` a cada consulta, e a velocidade do herói consulta o estilo todo quadro. No editor isso é rápido; no `.exe`/APK a pasta fica dentro do `.pck` e a fase caía para 4–7 FPS (medido no `.pck`: 218 ms por quadro antes, 16,7 ms depois).
 - `Recursos.da_pasta` agora lê cada pasta uma vez e guarda (`Recursos.esquecer()` limpa); `EstiloDeLutaRPG.por_id` usa um índice por id. Teste `tests/regras/teste_recursos.gd`.
 - Provável causa também do jogo fechando no celular no nível alto (mais estilos = mais leituras por quadro; o Android fecha app que não responde). Confirmar no aparelho.
+
+## Quedas da run (quantas vezes o herói caiu até zerar)
+- `Placar.quedas_run` / `registrar_queda()`: cada "Você caiu!" soma 1. A derrota mostra "Quedas na run: N"; a vitória abre com "Caiu N vezes até zerar." (ou "Zerou sem cair nenhuma vez!").
+- Vai no save (`"run": {"quedas"}`, saves antigos = 0). Cair atualiza o save na hora (`Salvamento.gravar_quedas`); Continuar mantém; Novo Jogo e Jogar de novo zeram.
+- Bug corrigido: testes e scripts com janela gravavam recordes falsos (frações de segundo) no `user://placar.cfg` de verdade. Agora o recorde só é gravado com `mostrar_inicio` (jogo de verdade).
+- Testes em `teste_placar` e `teste_salvamento`.

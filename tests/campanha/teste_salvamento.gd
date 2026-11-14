@@ -42,6 +42,7 @@ func _rodar() -> void:
 	_checar(depois.penalidade(espada) == 2, "mochila: o desgaste volta (2)")
 	_checar(depois.quantidade_de(depois.item_chamado("Azagaia")) == 4, "mochila: a pilha volta com 4")
 	_checar(depois.equipados_em_ordem().size() == inventario.equipados_em_ordem().size(), "mochila: o mesmo número de equipados")
+	_testar_quedas(ficha, inventario)
 
 	var arquivo := FileAccess.open(guardado, FileAccess.WRITE)
 	arquivo.store_string("isto não é json {")
@@ -52,6 +53,22 @@ func _rodar() -> void:
 
 	print("PASSOU: todos os testes do Salvamento" if _falhas == 0 else "FALHOU: %d teste(s)" % _falhas)
 	quit(_falhas)
+
+
+## Quedas da run: vão no save, cair atualiza só elas, e save antigo sem a contagem começa em 0.
+func _testar_quedas(ficha: Ficha, inventario: Inventario) -> void:
+	_checar(Salvamento.quedas_de(Salvamento.ler()) == 0, "save sem quedas informadas: 0")
+	Salvamento.gravar(ficha, inventario, 4, null, 2)
+	_checar(Salvamento.quedas_de(Salvamento.ler()) == 2, "as quedas da run vão no save")
+	_checar(Salvamento.gravar_quedas(5), "cair atualiza as quedas no save que existe")
+	var dados := Salvamento.ler()
+	_checar(Salvamento.quedas_de(dados) == 5 and Salvamento.fase_de(dados) == 4 and Salvamento.montar_ficha(dados).nome == "Aldric",
+		"e o resto do save continua igual (fase e ficha)")
+	dados.erase("run")
+	_checar(Salvamento.quedas_de(dados) == 0, "save antigo, sem a contagem: 0 quedas")
+	Salvamento.apagar()
+	_checar(not Salvamento.gravar_quedas(1), "sem save, não cria um só com as quedas")
+	Salvamento.gravar(ficha, inventario, 3)
 
 
 func _montar_mochila() -> Inventario:

@@ -14,6 +14,9 @@ var kills_run: int = 0
 var tempo_fase_s: float = 0.0
 var tempo_run_s: float = 0.0
 var fase_atual: int = 1
+## Quantas vezes o herói caiu nesta run (a vitória mostra quantas foram até zerar).
+## Os abates acima são de inimigos; queda é a do herói ("Você caiu!").
+var quedas_run: int = 0
 ## Melhor tempo por índice de fase (1…N), em segundos.
 var _melhores_fase: Dictionary = {}
 var melhor_run_s: float = 0.0
@@ -23,6 +26,7 @@ var melhor_run_s: float = 0.0
 func iniciar_run() -> void:
 	kills_run = 0
 	tempo_run_s = 0.0
+	quedas_run = 0
 	carregar()
 
 
@@ -46,6 +50,21 @@ func registrar_morte() -> void:
 	kills_run += 1
 
 
+## O herói caiu (tela "Você caiu!").
+func registrar_queda() -> void:
+	quedas_run += 1
+
+
+## Frase da vitória: quantas vezes caiu até zerar.
+func texto_quedas_ate_zerar() -> String:
+	match quedas_run:
+		0:
+			return "Zerou sem cair nenhuma vez!"
+		1:
+			return "Caiu 1 vez até zerar."
+	return "Caiu %d vezes até zerar." % quedas_run
+
+
 ## Linha curta da HUD: abates da fase + tempos.
 func texto_hud() -> String:
 	return "Abates %d · Fase %s · Run %s" % [
@@ -53,11 +72,14 @@ func texto_hud() -> String:
 
 
 ## Resumo de fim (porta, vitória ou derrota).
-func texto_resumo(incluir_recorde: bool = true) -> String:
+## `incluir_quedas` = false na vitória, que já abre com a frase de texto_quedas_ate_zerar().
+func texto_resumo(incluir_recorde: bool = true, incluir_quedas: bool = true) -> String:
 	var linhas: PackedStringArray = [
 		"Abates: %d nesta fase · %d na run" % [kills_fase, kills_run],
 		"Tempo: fase %s · run %s" % [formatar_tempo(tempo_fase_s), formatar_tempo(tempo_run_s)],
 	]
+	if incluir_quedas:
+		linhas.append("Quedas na run: %d" % quedas_run)
 	if incluir_recorde:
 		var melhor := melhor_da_fase(fase_atual)
 		if melhor > 0.0:
